@@ -1,0 +1,45 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+    <header class="col-span-12 flex items-center gap-2 lg:gap-4">
+      <div class="grow">
+        <h1 class="font-dark font-bold lg:text-2xl">의뢰 고객 목록</h1>
+      </div>
+    </header>
+    <section class="stats stats-vertical col-span-12 w-full shadow-sm xl:stats-horizontal">
+      <div class="stat">
+        <div class="stat-title">Total Page Views</div>
+        <div class="stat-value">89,400</div>
+        <div class="stat-desc">21% more than last month</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">Total Page Views</div>
+        <div class="stat-value">89,400</div>
+        <div class="stat-desc">21% more than last month</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">Total Page Views</div>
+        <div class="stat-value">89,400</div>
+        <div class="stat-desc">21% more than last month</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">Total Page Views</div>
+        <div class="stat-value">89,400</div>
+        <div class="stat-desc">21% more than last month</div>
+      </div>
+    </section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}

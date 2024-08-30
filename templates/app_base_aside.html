@@ -1,0 +1,172 @@
+<aside class="drawer-side z-10">
+    <label for="my-drawer" class="drawer-overlay"></label>
+    <!-- sidebar menu -->
+    <nav class="flex min-h-screen w-72 flex-col gap-2 overflow-y-auto bg-base-100 px-6 py-10">
+        <div class="mx-4 flex items-center gap-2 font-black">
+            <svg
+                width="32"
+                height="32"
+                viewBox="0 0 1024 1024"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect x="256" y="670.72" width="512" height="256" rx="128" class="fill-base-content" />
+                <circle cx="512" cy="353.28" r="256" class="fill-base-content" />
+                <circle
+                    cx="512"
+                    cy="353.28"
+                    r="261"
+                    stroke="black"
+                    stroke-opacity="0.2"
+                    stroke-width="10" />
+                <circle cx="512" cy="353.28" r="114.688" class="fill-base-100" />
+            </svg>
+            휴먼영상의학센터
+        </div>
+        <ul class="menu">
+            <li>
+                <a href="{% url 'briefing:index' %}" class="active">
+                    <svg data-src="https://unpkg.com/heroicons/20/solid/home.svg" class="h-5 w-5"></svg>
+                    Briefing
+                </a>
+            </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
+                            class="h-5 w-5"></svg>
+                        Customers
+                    </summary>
+                    <ul>
+                        <li>
+                            <a 
+                                hx-get="{% url 'customer:index' %}" 
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                            >목록</a>
+                        </li>
+                        <li>
+                            <a 
+                                hx-get="{% url 'customer:new_customer' %}" 
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                            >
+                            새 고객 등록</a>
+                        </li>
+                        
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
+                            class="h-5 w-5"></svg>
+                         Radiologists
+                    </summary>
+                    <ul>
+                        <li><a>List</a></li>
+                        <li><a>New Doctor</a></li>
+                        
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <a>
+                    <svg
+                        data-src="https://unpkg.com/heroicons/20/solid/chart-pie.svg"
+                        class="h-5 w-5"></svg>
+                    Reports
+                </a>
+            </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/document-text.svg"
+                            class="h-5 w-5"></svg>
+                        Data Import
+                    </summary>
+                <ul>
+                    <li><a href="#"
+                        hx-get="{% url 'importdata:index' %}"
+                        hx-trigger="click"
+                        hx-target="#main_area"
+                        hx-swap="outerHTML"
+                        hx-push-url="true"
+                        >Import Platform Data</a></li>
+                    <li><a>Initial Dr Data</a></li>
+                    <li>
+                        <a href="#"
+                            hx-get="{% url 'importdata:temp_customer_view' %}"
+                            hx-trigger="click"
+                            hx-target="#main_area"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                        >Initial Customer Data</a></li>
+                </ul>
+            </li>
+            <li>
+                <a>
+                    <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
+                    Messages
+                    <span class="badge badge-info badge-sm">12</span>
+                </a>
+            </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/adjustments-vertical.svg"
+                            class="h-5 w-5"></svg>
+                        Settings
+                    </summary>
+                    <ul>
+                        <li>
+                            <a>Products</a>
+                            <ul>
+                                <li>
+                                    <a href="#"
+                                        hx-get="{% url 'product:index' %}"
+                                        hx-trigger="click"
+                                        hx-target="#main_area"
+                                        hx-swap="outerHTML"
+                                        hx-push-url="true"
+                                    >List</a>
+                                </li>
+                                <li><a>New Product</a></li>
+                                
+                            </ul>
+                        </li>
+                        <li>
+                            <a>Platform</a>
+                            <ul>
+                                <li>
+                                    <a href="#"
+                                        hx-get="{% url 'product:platform' %}"
+                                        hx-trigger="click"
+                                        hx-target="#main_area"
+                                        hx-swap="outerHTML"
+                                        hx-push-url="true"
+                                    >PACS</a>
+                                </li>
+                                <li><a>New Platform</a></li>
+                            </ul> 
+                        
+                        </li>
+                        
+                        <li><a>Plugins</a></li>
+                        <li><a>API</a></li>
+                        <li><a>Support</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </nav>
+    <!-- /sidebar menu -->
+</aside>

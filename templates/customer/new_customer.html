@@ -1,0 +1,79 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+   
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+		<div class="card-body grow-0">
+			<div class="flex justify-between gap-2">
+				<h2 class="card-title grow">
+					새 고객 등록 
+				</h2>
+			</div>
+      	</div>
+  
+     	<form class="card-body" action="">
+       
+		<div class="grid grid-cols-2 gap-2">
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">병원명</span>
+				</label>
+				<input type="text" placeholder="" required class="input input-bordered text-center font-mono" />
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">대표자명</span>
+				</label>
+				<input type="text" placeholder="" required class="input input-bordered text-center font-mono" />
+			</div>
+		</div>
+		<div class="grid grid-cols-2 gap-2">
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">전화번호</span>
+				</label>
+				<input type="text" placeholder="" required class="input input-bordered text-center font-mono" />
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">이메일</span>
+				</label>
+				<input type="text" placeholder="" required class="input input-bordered text-center font-mono" />
+			</div>
+		</div>
+		<div class="form-control">
+			
+				<label class="label">
+					<span class="label-text">주소</span>
+				</label>
+				<input type="text" placeholder="" required class="input input-bordered text-center font-mono" />
+			
+		</div>
+		<div class="form-control mt-4 gap-4">
+			<label class="flex cursor-pointer gap-4">
+				<input type="checkbox" class="checkbox checkbox-sm" checked />
+				<span class="label-text">약관에 동의함</span>
+			</label>
+			
+		</div>
+		<div class="form-control">
+			<div class="flex items-end py-4">
+				<button class="btn btn-primary grow">저장하기</button>
+			</div>
+		</div>
+		</form>
+	
+	</section>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

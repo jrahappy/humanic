@@ -1,0 +1,59 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+   
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+      <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+            <a class="link-hover link">List</a>
+          </h2>
+          <a class="btn btn-sm"
+            hx-get="{% url 'customer:new_customer' %}"
+            hx-trigger="click"
+            hx-target="#main_area"
+            hx-swap="outerHTML"
+          > 새 진료명 등록
+           </a>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="table">
+        <thead>
+          <tr class="bg-gray-700 text-white">
+            <th class="px-3 py-4 text-bold ">ID</th>
+            <th>Platform</th>
+            <th>Fee rate</th>
+            <th>-</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 ">
+          {% for pacs in platforms %}
+          <tr>
+            <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{{ pacs.id }}</td>
+            <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{{ pacs.name }}</td>
+            <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{{ pacs.fee_rate }}</td>
+            <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500">
+              <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

@@ -1,0 +1,68 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card-body grow-0">
+      <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+              <a class="link-hover link">Import Data(Excel File)</a>
+          </h2>
+          <a href="#"
+              hx-get="{% url 'importdata:index' %}"
+              hx-trigger="click"
+              hx-target="#main_area"
+              hx-swap="outerHTML"
+              class="btn btn-sm">Back to List</a>
+                      
+         
+      </div>
+
+      <div class="flex">
+     
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="flex-1 w-64">
+              <label class="label">
+                  <span class="label-text">날짜</span>
+              </label>
+              <input type="text" name="inport_date" id="inport_date" placeholder="" class="input input-bordered" />
+          </div>
+          <div class="flex-1 w-64">
+              <label class="label">
+                  <span class="label-text">메모</span>
+              </label>
+              <input type="text" name="inport_date" id="inport_date" placeholder="" class="input input-bordered" />
+          </div>
+          <div class="form-control">
+              <label for="photo" class="block text-sm font-medium leading-6 text-gray-900">파일 선택</label>
+              <div class="mt-2 flex items-center gap-x-3">
+                <input type="file" name="excel_file" id="excel_file" class="file-input w-full max-w-xs" />  
+                
+              </div>
+            </div>
+          <div class="form-control py-4 text-left">
+              
+            <button class="btn btn-primary btn-sm ">Upload</button>
+          </div>
+         
+        </form>
+      </div>
+    </div>
+  </section>
+    
+  {% endblock %}
+
+  {% block aside %}
+  
+    {% include 'app_base_aside.html' %}
+    
+  {% endblock %}
+  
+  
+  

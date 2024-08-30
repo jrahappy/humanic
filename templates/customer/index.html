@@ -1,0 +1,118 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+   
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+      <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+            <a class="link-hover link">목록</a>
+          </h2>
+          <a class="btn btn-sm"
+            hx-get="{% url 'customer:new_customer' %}"
+            hx-trigger="click"
+            hx-target="#main_area"
+            hx-swap="outerHTML"
+          > 새 고객 등록
+           </a>
+        </div>
+      </div>
+   
+
+  
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>병원명</th>
+            <th>담당자</th>
+            <th>연락처</th>
+            <th>
+              <span class="sr-only">Edit</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          {% for company in page_obj %}
+          <tr>
+            <td
+              class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
+            >
+              <a href="#"
+                hx-get="{% url 'customer:detail' 1205 %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                hx-history-push-url="true"
+                class="text-indigo-600 hover:text-indigo-900"
+                >{{ company.ein }}</a
+              >
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              {{ company.business_name }}
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              {{ company.name }}
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              {{ company.name }}
+            </td>
+            <td
+              class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6 lg:pr-8"
+            >
+              <a href="#" class="text-indigo-600 hover:text-indigo-900"
+                >Edit</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                <div>
+                  <p class="text-sm text-gray-700">
+                    Showing
+                    <span class="font-medium">{{ page_obj.start_index }}</span>
+                    to
+                    <span class="font-medium">{{ page_obj.end_index }}</span>
+                    of
+                    <span class="font-medium">{{ page_obj.paginator.count }}</span>
+                    results
+                  </p>
+                </div>
+                <div class="join">
+                  <button class="join-item btn"><<</button>
+                  <button class="join-item btn btn-active"><</button>
+                  <button class="join-item btn">></button>
+                  <button class="join-item btn">>></button>
+                </div>
+                
+                
+              </div>
+              
+            </td>
+          </tr>
+        
+        </tfoot>
+          
+      </table>
+    </div>
+  </div>
+  </section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

@@ -1,0 +1,81 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">History of Import Data</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'importdata:new_upload' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-sm">Import new data</a>
+                        
+            <a href="{% url 'importdata:doctor_list_import' %}" type="button"  class="btn btn-sm">Import Doctors</a>
+            <a href="{% url 'importdata:customer_list_import' %}" type="button"  class="btn btn-sm">Import Customers</a>
+        </div>
+    </div>
+    <div class="space-y-12">
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                    <table class="table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">작업자</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">메모</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Imported</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Cleanned</th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                    <span class="sr-only">보기</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for data in data %}
+                            <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.import_date }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.user }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.description }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.file }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.imported }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.cleaned }}</td>
+                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                    <a href="{% url 'importdata:create_rawdata' data.id %}" class="text-indigo-600 hover:text-indigo-900">Import</a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Clean</a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+
+                        {% endfor %}
+            
+                            <!-- More people... -->
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+
