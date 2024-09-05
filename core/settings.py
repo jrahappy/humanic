@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "django_extensions",
+    "widget_tweaks",
     "allauth",
     "allauth.account",
     "tailwind",
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     "provider",
     "product",
     "importdata",
+    "briefing",
 ]
 
 MIDDLEWARE = [
@@ -71,11 +74,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-LOGIN_REDICRECT_URL = "dashboard:index"
+LOGIN_REDIRECT_URL = "briefing:index"
 LOGOUT_REDIRECT_URL = "web:index"
 
 ACCOUNT_LOGOUT_REDIRECT = "web:index"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+
 # ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_EMAIL_REQUIRED = True
 # ACCOUNT_EMAIL_VERIFICATION = "none"
@@ -118,9 +122,17 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": BASE_DIR / "db.sqlite3",
+    # }
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "ewoo1200",
+        "HOST": "localhost",
+        "PORT": 5432,
     }
 }
 

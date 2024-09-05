@@ -6,9 +6,11 @@ from . import views
 app_name = "importdata"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("history_delete/<int:id>/", views.history_delete, name="history_delete"),
     path("new_upload", views.new_upload, name="new_upload"),
     path("create_rawdata/<int:id>/", views.create_rawdata, name="create_rawdata"),
-    path("create_doctor/", views.doctor_list_import, name="doctor_list_import"),
+    path("initial_dr_data/", views.initial_dr_data, name="initial_dr_data"),
+    path("temp_doctor/", views.temp_doctor, name="temp_doctor"),
     path("create_customer/", views.customer_list_import, name="customer_list_import"),
     path("temp_customer_view/", views.temp_customer_view, name="temp_customer_view"),
     path("temp_customer_clean/", views.temp_customer_clean, name="temp_customer_clean"),

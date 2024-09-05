@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import rawdata, importhistory
+from .models import rawdata, importhistory, temp_doctor_table, temp_customer_table
 from import_export.admin import ImportExportModelAdmin
 
 
@@ -33,3 +33,20 @@ class rawdataAdmin(ImportExportModelAdmin):
 
 admin.site.register(rawdata, rawdataAdmin)
 admin.site.register(importhistory)
+
+
+class temp_doctor_tableAdmin(ImportExportModelAdmin):
+    list_display = (
+        "name",
+        "specialty",
+        "doctor_id",
+        "email",
+        "cv3_id",
+        "onpacs_id",
+        "department",
+        "position",
+        "fee_rate",
+    )
+
+
+admin.site.register(temp_doctor_table, temp_doctor_tableAdmin)

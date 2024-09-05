@@ -1,4 +1,5 @@
 {% extends 'app_base.html' %}
+{% load currency_filters %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
@@ -7,35 +8,77 @@
 {% block content %}
     <header class="col-span-12 flex items-center gap-2 lg:gap-4">
       <div class="grow">
-        <h1 class="font-dark font-bold lg:text-2xl">의뢰 고객 목록</h1>
+        <h1 class="font-dark font-bold lg:text-2xl">의료진별로 보기</h1>
       </div>
     </header>
-    <section class="stats stats-vertical col-span-12 w-full shadow-sm xl:stats-horizontal">
-      <div class="stat">
-        <div class="stat-title">Total Page Views</div>
-        <div class="stat-value">89,400</div>
-        <div class="stat-desc">21% more than last month</div>
-      </div>
 
-      <div class="stat">
-        <div class="stat-title">Total Page Views</div>
-        <div class="stat-value">89,400</div>
-        <div class="stat-desc">21% more than last month</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-title">Total Page Views</div>
-        <div class="stat-value">89,400</div>
-        <div class="stat-desc">21% more than last month</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-title">Total Page Views</div>
-        <div class="stat-value">89,400</div>
-        <div class="stat-desc">21% more than last month</div>
-      </div>
-    </section>
     
+    <section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
+      
+      <div class="mt-2">
+        <div class="overflow-x-auto">
+          <form method="Get" action="{% url 'briefing:index'%}">
+            <select name="radiologist" id="radiologist" class="select select-bordered">
+              {% if selected_radiologist == 'None' %}
+                <option value="" selected>전체</option>
+              {% else %}
+                <option value="">전체</option>
+              {% endif %}
+
+              {% for radiologist in radiologists %}
+                
+                {% if radiologist == selected_radiologist %}
+                  <option value="{{ radiologist }}" selected>{{ radiologist }}</option>
+                {% else %}
+                  <option value="{{ radiologist }}">{{ radiologist }}</option>
+               {% endif %}
+              
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+        </div>
+
+      </div>
+        <div class="stat">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>병원명</th>
+                <th>Modality</th>
+                <th>합계</th>
+                <th>평균</th>
+                <th>Total Cases</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              {% for data in aggregation_data %}
+              <tr>
+                <td class="rigth">{{ data.apptitle }}</td>
+                <td>{{ data.equipment }}</td>
+                <td>{{ data.total_price|currency }}</td>
+                <td>{{ data.average_price|currency }}</td>
+                <td>{{ data.total_cases|floatformat:0 }}</td>
+              </tr>
+              
+              {% endfor %}
+              </tbody>
+              <tfoot>
+
+                <tr>
+                  <td colspan="2">Total</td>
+
+                  <td>{{ agg_data.total_price|currency }}</td>
+                  <td>{{ agg_data.average_price|currency }}</td>
+                  <td>{{ agg_data.total_cases|floatformat:0 }}</td>
+                </tr>
+              </tfoot>
+            
+          </table>
+        </div>
+      </div>
+  </section>
 {% endblock %}
 
 {% block aside %}

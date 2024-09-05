@@ -1,12 +1,21 @@
 from django.shortcuts import render, redirect
 from django.db import transaction
-from .models import rawdata, importhistory, temp_doctor_table, temp_customer_table
+from django.db.models import Count
+from django.utils import timezone
+from django.contrib import messages
+from .models import rawdata, temp_doctor_table, temp_customer_table, importhistory
 from customer.models import Company, Contract, ContractItem, Product, Platform
-from datetime import date
-import tablib
+from .forms import importhistoryForm
+
+
 from import_export import resources
 from tablib import Dataset
 from importdata.resources import rawdataResource, doctorResource, customerResource
+from datetime import date
+import tablib
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def temp_customer_clean(request):
@@ -42,99 +51,157 @@ def temp_customer_view(request):
     )
 
 
+@transaction.atomic
 def create_rawdata(request, id):
 
-    a_raw = importhistory.objects.get(id=id)
-    a_file = a_raw.file
-    print(a_raw.id)
-    rawdata_resource = rawdataResource()
-    dataset = Dataset()
-    new_rawdata = a_file
-    imported_data = dataset.load(new_rawdata.read(), format="xlsx")
-    # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
+    try:
+        a_raw = importhistory.objects.get(id=id)
+        source_from = a_raw.source_from
+        a_file = a_raw.file
 
-    # if not imported_data.has_errors():
-    for data in imported_data:
-        rawdata.objects.create(
-            apptitle=data[0],
-            case_id=data[1],
-            name=data[2],
-            department=data[3],
-            bodypart=data[4],
-            modality=data[5],
-            equipment=data[6],
-            studydescription=data[7],
-            imagecount=data[8],
-            accessionnumber=data[9],
-            readprice=data[10],
-            reader=data[11],
-            approver=data[12],
-            radiologist=data[13],
-            studydate=data[14],
-            approveddttm=data[15],
-            stat=data[16],
-            pacs=data[17],
-            requestdttm=data[18],
-            ecode=data[19],
-            sid=data[20],
-            patientid=data[21],
-            created_at=date.today(),
-            cleaned=False,
-            verified=False,
-            importhistory=a_raw,
-            updated_at=date.today(),
-        )
+        # rawdata_resource = rawdataResource()
+        dataset = Dataset()
+        new_rawdata = a_file
+        imported_data = dataset.load(new_rawdata.read(), format="xlsx")
+        # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
 
-    return redirect("importdata:index")
-    # else:
-    #     print(imported_data.errors)
+        # if not imported_data.has_errors():
+        for data in imported_data:
+
+            if source_from == "ONPACS":
+                rawdata.objects.create(
+                    apptitle=data[0],
+                    case_id=data[1],
+                    name=data[2],
+                    department=data[3],
+                    bodypart=data[4],
+                    modality=data[5],
+                    equipment=data[6],
+                    studydescription=data[7],
+                    imagecount=data[8],
+                    accessionnumber=data[9],
+                    readprice=data[10],
+                    reader=data[11],
+                    approver=data[12],
+                    radiologist=data[13],
+                    studydate=data[14],
+                    approveddttm=data[15],
+                    stat=data[16],
+                    pacs=data[17],
+                    requestdttm=data[18],
+                    ecode=data[19],
+                    sid=data[20],
+                    patientid=data[21],
+                    created_at=date.today(),
+                    cleaned=False,
+                    verified=False,
+                    importhistory=a_raw,
+                    updated_at=date.today(),
+                )
+            elif source_from == "ETC":
+
+                rawdata.objects.create(
+                    apptitle=data[0],
+                    case_id=data[1],
+                    equipment=data[2],
+                    studydescription=data[3],
+                    readprice=data[4],
+                    radiologist=data[5],
+                    created_at=date.today(),
+                    cleaned=False,
+                    verified=False,
+                    importhistory=a_raw,
+                    updated_at=date.today(),
+                )
+        a_raw.imported = True
+        a_raw.save()
+        return redirect("importdata:index")
+
+    except Exception as e:
+        logger.error(f"An error occurred during file upload: {e}")
+        messages.error(request, f"An error occurred: {e}")
+        return redirect("importdata:new_upload")
 
 
 def new_upload(request):
     user = request.user
-    print(user)
+    logger.info(f"User: {user}")
+    form = importhistoryForm()
+
     if request.method == "POST":
         data = request.POST
-        excel_file = request.FILES.get("excel_file")
+        excel_file = request.FILES.get("file")
+        print(excel_file)
+        logger.info(f"POST data: {data}")
+        logger.info(f"Uploaded file: {excel_file}")
 
-        import_history = importhistory.objects.create(
-            user=user,
-            import_date=data.get("import_date"),
-            description=data.get("description"),
-            file=excel_file,
-            created_at=date.today(),
-        )
-
-        return redirect("importdata:index")
+        try:
+            import_history = importhistory.objects.create(
+                user=user,
+                import_date=data.get("import_date"),
+                ayear=data.get("ayear"),
+                amonth=data.get("amonth"),
+                source_from=data.get("source_from"),
+                description=data.get("description"),
+                file=excel_file,
+                created_at=timezone.now(),  # Use timezone.now() for the current date and time
+            )
+            messages.success(request, "File uploaded successfully.")
+            logger.info("ImportHistory record created successfully.")
+            return redirect("importdata:index")
+        except Exception as e:
+            logger.error(f"An error occurred during file upload: {e}")
+            messages.error(request, f"An error occurred: {e}")
+            return redirect("importdata:new_upload")
 
     else:
-        today_date = date.today()
-        context = {"import_date": today_date}
+        today_date = date.today().strftime("%Y-%m-%d")
+
+        form = importhistoryForm(initial={"import_date": today_date})
+        context = {"import_date": today_date, "form": form}
 
     return render(request, "importdata/new_upload.html", context)
 
 
 # 임시로 사용하는 함수(초기 데이터 입력용)
-def doctor_list_import(request):
+def initial_dr_data(request):
+
     if request.method == "POST":
         data = request.POST
         excel_file = request.FILES.get("excel_file")
         print(excel_file)
 
-        doctor_resource = doctorResource()
+        # doctor_resource = doctorResource()
+        # new_doctor = excel_file
         dataset = Dataset()
-        new_doctor = excel_file
-        imported_data = dataset.load(new_doctor.read(), format="xlsx")
+        imported_data = dataset.load(excel_file.read(), format="xlsx")
 
         for data in imported_data:
-            temp_doctor_table.objects.create(
-                name=data[0],
-                doctor_id=data[1],
-            )
+            if data[0] == None:  # Skip empty rows
+                continue
+            else:
+                temp_doctor_table.objects.create(
+                    name=data[0],
+                    specialty=data[1],
+                    doctor_id=data[2],
+                    email=data[3],
+                    cv3_id=data[4],
+                    onpacs_id=data[5],
+                    department=data[6],
+                    position=data[7],
+                    fee_rate=data[8],
+                )
 
-        print("imported")
+        return redirect("importdata:temp_doctor")
+    else:
 
-    return render(request, "importdata/doctor_list_import.html")
+        return render(request, "importdata/initial_dr_data.html")
+
+
+def temp_doctor(request):
+    temp_doctor = temp_doctor_table.objects.all()
+
+    return render(request, "importdata/temp_doctor.html", {"data": temp_doctor})
 
 
 def customer_list_import(request):
@@ -159,6 +226,16 @@ def customer_list_import(request):
 
 
 def index(request):
-    import_history = importhistory.objects.all()
 
-    return render(request, "importdata/index.html", {"data": import_history})
+    import_histories = importhistory.objects.annotate(
+        rawdata_count=Count("rawdata")
+    ).all()
+
+    context = {"import_histories": import_histories}
+
+    return render(request, "importdata/index.html", context)
+
+
+def history_delete(request, id):
+    importhistory.objects.get(id=id).delete()
+    return redirect("importdata:index")

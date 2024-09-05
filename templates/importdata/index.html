@@ -1,10 +1,12 @@
 {% extends 'app_base.html' %}
+{% load custom_filters %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
 {% endblock %}
 
 {% block content %}
+
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
@@ -18,7 +20,7 @@
                 hx-swap="outerHTML"
                 class="btn btn-sm">Import new data</a>
                         
-            <a href="{% url 'importdata:doctor_list_import' %}" type="button"  class="btn btn-sm">Import Doctors</a>
+            <a href="{% url 'importdata:initial_dr_data' %}" type="button"  class="btn btn-sm">Import Doctors</a>
             <a href="{% url 'importdata:customer_list_import' %}" type="button"  class="btn btn-sm">Import Customers</a>
         </div>
     </div>
@@ -30,30 +32,42 @@
                     <table class="table">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">작업자</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일형식</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">년도</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">월</th>
+
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">메모</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">작업자</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Imported</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Cleanned</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">보기</span>
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                        {% for data in data %}
+                        {% for data in import_histories %}
                             <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.import_date }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.user }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.source_from }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ayear }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amonth }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.description }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.file }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.imported }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.cleaned }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.user }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 ">
+                                    <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Yes,No' }}/{{ data.rawdata_count }}</div>
+                                    
+                                </td>
                                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    <a href="{% url 'importdata:create_rawdata' data.id %}" class="text-indigo-600 hover:text-indigo-900">Import</a>
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Clean</a>
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                    {% if data.imported == False %}
+                                    <a href="{% url 'importdata:create_rawdata' data.id %}" class="btn btn-info">Import</a>
+                                    {% endif %}
+                                    <a href="{% url 'importdata:history_delete' data.id %}" class="btn btn-warning">Delete</a>
+                                    
                                 </td>
                             </tr>
                         {% empty %}

@@ -3,9 +3,26 @@ from accounts.models import CustomUser
 from customer.models import Company, Contract, ContractItem, Product, Platform
 
 
+class EditedData(models.Model):
+    apptitle = models.CharField(max_length=100, null=True, blank=True)
+    case_id = models.CharField(max_length=100, null=True, blank=True)
+    modality = models.CharField(max_length=100, null=True, blank=True)
+    description = models.CharField(max_length=100, null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    approver = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class temp_doctor_table(models.Model):
-    name = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    specialty = models.CharField(max_length=50, null=True, blank=True)
     doctor_id = models.CharField(max_length=100, null=True, blank=True)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    cv3_id = models.CharField(max_length=20, null=True, blank=True)
+    onpacs_id = models.CharField(max_length=20, null=True, blank=True)
+    department = models.CharField(max_length=20, null=True, blank=True)
+    position = models.CharField(max_length=20, null=True, blank=True)
+    fee_rate = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -20,8 +37,41 @@ class temp_customer_table(models.Model):
 
 
 class importhistory(models.Model):
+    SOURCES_FROM = {
+        "ONPACS": "ONPACS",
+        "CV3": "CV3",
+        "HPACS": "HPACS",
+        "ETC": "ETC",
+    }
+    AYEAR_CHOICES = {
+        "2023": "2023",
+        "2024": "2024",
+        "2025": "2025",
+        "2026": "2026",
+    }
+    AMONTH_CHOICES = {
+        "01": "01",
+        "02": "02",
+        "03": "03",
+        "04": "04",
+        "05": "05",
+        "06": "06",
+        "07": "07",
+        "08": "08",
+        "09": "09",
+        "10": "10",
+        "11": "11",
+        "12": "12",
+    }
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     import_date = models.DateField(auto_now_add=True)
+    source_from = models.CharField(
+        max_length=10, choices=SOURCES_FROM, null=True, blank=True
+    )
+    ayear = models.CharField(max_length=5, choices=AYEAR_CHOICES, null=True, blank=True)
+    amonth = models.CharField(
+        max_length=5, choices=AMONTH_CHOICES, null=True, blank=True
+    )
     description = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to="importdata/")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -66,6 +116,8 @@ class rawdata(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     cleaned = models.BooleanField(default=False)
     verified = models.BooleanField(default=False)
+    ayear = models.CharField(max_length=5, null=True, blank=True)
+    amonth = models.CharField(max_length=5, null=True, blank=True)
 
     def __str__(self):
         return self.case_id
