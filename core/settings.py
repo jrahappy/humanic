@@ -19,7 +19,12 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 # DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "humanrad.com",
+    "www.humanrad.com",
+    "127.0.0.1",
+    "34.238.113.45",
+]
 
 SITE_ID = 1
 
