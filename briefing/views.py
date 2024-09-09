@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 def index(request):
 
     radiologists = (
-        rawdata.objects.filter(importhistory=10)
+        rawdata.objects.filter(importhistory=2)
         .values_list("radiologist", flat=True)
         .distinct()
     )
@@ -19,7 +19,7 @@ def index(request):
     print(radiologist)
     if radiologist:
         aggregation_data = (
-            rawdata.objects.filter(importhistory=10, radiologist=radiologist)
+            rawdata.objects.filter(importhistory=2, radiologist=radiologist)
             .values("apptitle", "equipment")
             .annotate(
                 total_price=Sum("readprice"),
@@ -28,14 +28,14 @@ def index(request):
             )
         )
         agg_data = rawdata.objects.filter(
-            importhistory=6, radiologist=radiologist
+            importhistory=2, radiologist=radiologist
         ).aggregate(
             total_price=Sum("readprice"),
             average_price=Avg("readprice"),
             total_cases=Count("case_id"),
         )
     else:
-        aggregation_data = rawdata.objects.filter(importhistory=6).aggregate(
+        aggregation_data = rawdata.objects.filter(importhistory=2).aggregate(
             total_price=Sum("readprice"),
             average_price=Avg("readprice"),
             total_cases=Count("case_id"),
