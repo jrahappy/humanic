@@ -99,14 +99,14 @@ def create_rawdata(request, id):
         return redirect("importdata:index")
 
     except Exception as e:
-        logger.error(f"An error occurred during file upload: {e}")
+        # logger.error(f"An error occurred during file upload: {e}")
         messages.error(request, f"An error occurred: {e}")
         return redirect("importdata:new_upload")
 
 
 def new_upload(request):
     user = request.user
-    logger.info(f"User: {user}")
+    # logger.info(f"User: {user}")
     form = importhistoryForm()
 
     if request.method == "POST":
