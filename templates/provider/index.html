@@ -1,56 +1,112 @@
 {% extends 'app_base.html' %}
 
 {% block content %}
-<div>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="mt-2 lg:flex lg:items-center md:justify-between">
-        <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1 p-4">
             <h2 class="text-3xl font-bold tracking-tight leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                 영상의학 의료진 목록
             </h2>
         </div>
         <div class="mt-4 flex flex-shrink-0 md:ml-4 md:mt-0">
             <a href="{% url 'importdata:new_upload' %}" type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Import new data</a>
-            <a href="{% url 'importdata:doctor_list_import' %}" type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Import doctor data</a>
-            <a href="{% url 'importdata:customer_list_import' %}" type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Import customer data</a>
+            
         </div>
     </div>
     <div class="space-y-12">
         <div class="mt-8 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">성명</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">ID</th>
-                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                    <span class="sr-only">보기</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
-                        {% for data in  doctors %}
-                            <tr>
-                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.name }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.doctor_id }}</td>
-                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Clean</a>
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                </td>
-                            </tr>
-                        {% empty %}
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg p-2">
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID 1</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email 1</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name 1</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Specialty 1</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Specialty 2</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CV3 ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">OnPACS ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Rate</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">소속</th>
+                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                        <span class="sr-only">보기</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                            {% for data in  doctors %}
+                                <tr>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.username }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.email }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.real_name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.specialty1 }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.specialty2 }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.cv3_id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.onpacs_id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.fee_rate }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ data.profile.company }}</td>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                        <a href="#" class="text-indigo-600 hover:text-indigo-900">Clean</a>
+                                        <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                    </td>
+                                </tr>
+                            {% empty %}
 
-                        {% endfor %}
-            
-                            <!-- More people... -->
-                        </tbody>
-                    </table>
-                </div>
+                            {% endfor %}
+                
+                                
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="10" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Total: {{ doctors.paginator.count }}
+                                        <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                                            <div>
+                                              <p class="text-sm text-gray-700">
+                                                Showing
+                                                <span class="font-medium">{{ page_obj.start_index }}</span>
+                                                to
+                                                <span class="font-medium">{{ page_obj.end_index }}</span>
+                                                of
+                                                <span class="font-medium">{{ page_obj.paginator.count }}</span>
+                                                results
+                                              </p>
+                                            </div>
+                                            <div class="join">
+                                                <button class="join-item btn"><<</button>
+                                                <button class="join-item btn btn-active"><</button>
+                                                <button class="join-item btn">></button>
+                                                <button class="join-item btn">>></button>
+                                            </div>
+                                        </div>
+                                            
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="mt-4">
+                            
+                            <div class="join">
+                                {% if doctors.has_previous %}
+                                    <a href="?page=1" class="join-item btn">First</a>
+                                    <a href="?page={{ doctors.previous_page_number }}" class="join-item btn">Previous</a>
+                                {% endif %}
+                                <span class="join-item btn">
+                                    Page {{ doctors.number }} of {{ doctors.paginator.num_pages }}
+                                </span>
+                                {% if doctors.has_next %}
+                                    <a href="?page={{ doctors.next_page_number }}" class="join-item btn">Next</a>
+                                    <a href="?page={{ doctors.paginator.num_pages }}" class="join-item btn"">Last</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
     
 {% endblock %}

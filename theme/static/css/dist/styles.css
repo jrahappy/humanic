@@ -2478,6 +2478,10 @@ input.tab:checked + .tab-content,
   .btn-info {
     --btn-color: var(--fallback-in);
   }
+
+  .btn-warning {
+    --btn-color: var(--fallback-wa);
+  }
 }
 
 @supports (color: color-mix(in oklab, black, black)) {
@@ -2550,12 +2554,22 @@ input.tab:checked + .tab-content,
   .btn-info {
     --btn-color: var(--in);
   }
+
+  .btn-warning {
+    --btn-color: var(--wa);
+  }
 }
 
 .btn-info {
   --tw-text-opacity: 1;
   color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity)));
   outline-color: var(--fallback-in,oklch(var(--in)/1));
+}
+
+.btn-warning {
+  --tw-text-opacity: 1;
+  color: var(--fallback-wac,oklch(var(--wac)/var(--tw-text-opacity)));
+  outline-color: var(--fallback-wa,oklch(var(--wa)/1));
 }
 
 .btn.glass {
@@ -5341,6 +5355,10 @@ html:has(.drawer-toggle:checked) {
   stroke: #e5e7eb;
 }
 
+.stroke-info {
+  stroke: var(--fallback-in,oklch(var(--in)/1));
+}
+
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;
@@ -6057,11 +6075,6 @@ html:has(.drawer-toggle:checked) {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.hover\:text-black:hover {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity));
-}
-
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -6536,11 +6549,6 @@ html:has(.drawer-toggle:checked) {
   .lg\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
-  }
-
-  .lg\:text-xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
   }
 }
 

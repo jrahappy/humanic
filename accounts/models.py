@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from customer.models import Company
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class CustomUser(AbstractUser):
@@ -45,12 +46,27 @@ class CustomUser(AbstractUser):
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
+    real_name = models.CharField(max_length=30, null=True, blank=True)
+    specialty1 = models.CharField(max_length=30, null=True, blank=True)
+    specialty2 = models.CharField(max_length=30, null=True, blank=True)
+    position = models.CharField(max_length=30, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    cv3_id = models.CharField(max_length=30, null=True, blank=True)
+    onpacs_id = models.CharField(max_length=30, null=True, blank=True)
+
     bio = models.TextField(null=True, blank=True)
     cellphone = models.CharField(max_length=30, null=True, blank=True)
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, null=True, blank=True
     )
     employee_id = models.CharField(max_length=30, null=True, blank=True)
+    fee_rate = models.FloatField(
+        null=True,
+        blank=True,
+        default=0.7,
+        help_text="0.0~1.0",
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+    )
     extra_info1_str = models.CharField(max_length=20, null=True, blank=True)
     extra_info2_int = models.IntegerField(null=True, blank=True, default=0)
     extra_info3_bool = models.BooleanField("Extra info 3", default=False)

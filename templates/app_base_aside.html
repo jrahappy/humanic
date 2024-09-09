@@ -45,7 +45,7 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
-                            >목록</a>
+                            >List</a>
                         </li>
                         <li>
                             <a 
@@ -55,7 +55,7 @@
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
                             >
-                            새 고객 등록</a>
+                            New Customer</a>
                         </li>
                         
                     </ul>
@@ -70,8 +70,22 @@
                          Radiologists
                     </summary>
                     <ul>
-                        <li><a>List</a></li>
-                        <li><a>New Doctor</a></li>
+                        <li><a 
+                                hx-get="{% url 'provider:index' %}"
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+
+                            >List</a></li>
+                        <!-- <li><a href="#"
+                                hx-get="{% url 'provider:rawdata' %}"
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                            >Temp data</a></li> 
+                        <li><a>New Doctor</a></li>-->
                         
                     </ul>
                 </details>
@@ -100,7 +114,7 @@
                         hx-swap="outerHTML"
                         hx-push-url="true"
                         >Import Platform Data</a></li>
-                    <li><a href="#"
+                    <!-- <li><a href="#"
                         hx-get="{% url 'importdata:initial_dr_data' %}"
                         hx-trigger="click"
                         hx-target="#main_area"
@@ -118,22 +132,22 @@
                         >Initial Dr List</a></li>
                     <li>
                         <a href="#"
-                            hx-get="{% url 'importdata:temp_customer_view' %}"
+                            hx-get="{% url 'importdata:temp_customer' %}"
                             hx-trigger="click"
                             hx-target="#main_area"
                             hx-swap="outerHTML"
                             hx-push-url="true"
-                        >Initial Customer Data</a></li>
+                        >Initial Customer Data</a></li> -->
                 </ul>
             </li>
-            <li>
+            <!-- <li>
                 <a>
                     <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
                     Messages
                     <span class="badge badge-info badge-sm">12</span>
                 </a>
-            </li>
-            <li>
+            </li> -->
+            <!-- <li>
                 <details>
                     <summary>
                         <svg
@@ -180,7 +194,7 @@
                         <li><a>Support</a></li>
                     </ul>
                 </details>
-            </li>
+            </li> -->
         </ul>
     </nav>
     <!-- /sidebar menu -->

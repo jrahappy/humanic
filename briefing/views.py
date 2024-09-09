@@ -3,9 +3,10 @@ from django.db.models import Count, Sum, Avg
 from django_pivot.pivot import pivot
 from django_pivot.histogram import histogram
 from importdata.models import rawdata, importhistory
+from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
+@login_required
 def index(request):
 
     radiologists = (

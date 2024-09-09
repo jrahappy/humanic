@@ -50,3 +50,13 @@ class temp_doctor_tableAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(temp_doctor_table, temp_doctor_tableAdmin)
+
+
+class temp_customer_tableAdmin(ImportExportModelAdmin):
+    list_display = (
+        "name",
+        "customer_id",
+    )
+
+
+admin.site.register(temp_customer_table, temp_customer_tableAdmin)

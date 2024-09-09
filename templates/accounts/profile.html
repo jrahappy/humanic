@@ -1,0 +1,46 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                프로필 
+            </h2>
+        </div>
+    </div>
+    <div class="grid grid-cols-4 gap-4 p-4">
+        <div class="form-control">
+            <div class="flex flex-col items-center">
+                <img class="w-32 h-32 rounded-full object-cover mb-4" src="https://pbs.twimg.com/profile_images/508601156767997952/fFTdKUf2_400x400.jpeg" />
+                <div class="text-center max-w-md p-2">
+                    <h1>{{ user.username}}</h1>
+                    <div class="text-gray-400 mb-2 -mt-3">{{ user.email }}</div>
+                    <div class="flex items-center justify-center mx-auto">
+                        <img class="object-cover h-6 mr-1 opacity-60" src="https://img.icons8.com/material-outlined/50/000000/marker.png"> 
+                        {{ user.profile.company }}
+                    </div>
+                    <div class="my-8">
+                       {{ user.profile.bio }}
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="form-control pcol-auto">
+           
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}

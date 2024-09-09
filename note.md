@@ -1,0 +1,6 @@
+- AWS Lightsail setting : Done
+- AWS PostgreSQL setting : Done
+- Ubuntu server update : Done
+- .env Setting : Done
+- S3 Bucket setting 
+- Git setting

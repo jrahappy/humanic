@@ -29,7 +29,9 @@ def new_customer(request):
 def detail(request, customer_id):
     # Retrieve the customer object from the database
     # Pass the customer object to the template for rendering
-    return render(request, "customer/detail.html")
+    company = Company.objects.get(pk=customer_id).prefetch_related("contract_set")
+    context = {"company": company}
+    return render(request, "customer/detail.html", context)
 
 
 def new_contract(request, customer_id):

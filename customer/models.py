@@ -16,6 +16,7 @@ class Company(models.Model):
     office_email = models.EmailField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     ein = models.CharField(max_length=20, null=True, blank=True)
+    clinic_id = models.CharField(max_length=20, null=True, blank=True)
 
     class Meta:
         verbose_name = "Company"

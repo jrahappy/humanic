@@ -5,13 +5,13 @@
 	<div class="grow">
 		<h1 class="lg:text-2xl text-bold mx-2 px-4">{{ title }}</h1>
 	</div>
-	<div>
+	<!-- <div>
 		<input
 			type="text"
 			placeholder="Search"
 			class="input input-sm rounded-full max-sm:w-24" />
 	</div>
-	<!-- dropdown -->
+	
 	<div class="dropdown dropdown-end z-10">
 		<div tabindex="0" class="btn btn-circle btn-ghost">
 			<div class="indicator">
@@ -80,7 +80,7 @@
 			</li>
 		</ul>
 	</div>
-	<!-- /dropdown -->
+	-->
 	<!-- dropdown -->
 	<div class="dropdown-end dropdown z-10">
 		<div tabindex="0" class="avatar btn btn-circle btn-ghost">
@@ -92,16 +92,16 @@
 			tabindex="0"
 			class="menu dropdown-content mt-3 w-52 rounded-box bg-base-100 p-2 shadow-2xl">
 			<li>
-				<a>Profile</a>
+				<a href="{% url 'accounts:profile' %}">Profile</a>
 			</li>
-			<li>
+			<!-- <li>
 				<a>
 					Inbox
 					<span class="badge badge-success">12</span>
 				</a>
 			</li>
-			<li><a>Settings</a></li>
-			<li><a>Logout</a></li>
+			<li><a>Settings</a></li> -->
+			<li><a href="{% url 'account_logout' %}">Logout</a></li>
 		</ul>
 	</div>
 	<!-- /dropdown -->

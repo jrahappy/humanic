@@ -11,9 +11,17 @@ urlpatterns = [
     path("create_rawdata/<int:id>/", views.create_rawdata, name="create_rawdata"),
     path("initial_dr_data/", views.initial_dr_data, name="initial_dr_data"),
     path("temp_doctor/", views.temp_doctor, name="temp_doctor"),
-    path("create_customer/", views.customer_list_import, name="customer_list_import"),
-    path("temp_customer_view/", views.temp_customer_view, name="temp_customer_view"),
-    path("temp_customer_clean/", views.temp_customer_clean, name="temp_customer_clean"),
+    path(
+        "initial_customer_data/",
+        views.initial_customer_data,
+        name="initial_customer_data",
+    ),
+    path(
+        "temp_customer_import/", views.temp_customer_import, name="temp_customer_import"
+    ),
+    path("temp_customer/", views.temp_customer, name="temp_customer"),
+    # path("temp_customer_view/", views.temp_customer_view, name="temp_customer_view"),
+    # path("temp_customer_clean/", views.temp_customer_clean, name="temp_customer_clean"),
     # path("preview", views.preview, name="preview"),
     # path("rawdata", views.rawdata, name="rawdata"),
     # path("upload/", views.upload, name="upload"),

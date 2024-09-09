@@ -21,42 +21,102 @@
 			async></script>
 		<script src="//unpkg.com/alpinejs" defer></script>
 		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+		<style type="text/tailwindcss">
+			[x-cloak] { 
+				display: none !important; 
+			}
+			h1 {
+				@apply text-4xl font-bold mb-4
+			}
+			h2 {
+				@apply text-xl font-bold mb-2
+			}
+			p {
+				@apply mb-4
+			}
+			.button, button, [type='submit'], [type='button'] {
+				@apply bg-indigo-600 text-white font-bold px-6 py-4 inline-block 
+				rounded-lg shadow-lg transition-all cursor-pointer
+			}
+			.button:hover, button:hover, [type='submit']:hover, [type='button']:hover {
+				@apply bg-indigo-700
+			}
+			.button:active, button:active, [type='submit']:active, [type='button']:active {
+				@apply scale-95
+			}
+			.button.alert, button.alert {
+				@apply bg-red-700
+			}
+			.button.alert:hover, button.alert:hover {
+				@apply bg-red-600
+			}
+			.button-red {
+				@apply !bg-red-500 hover:!bg-red-600
+			}
+			.button-gray {
+				@apply !bg-gray-300 hover:!bg-[#c3c9d0]
+			}
+			.navitems>li>a {
+				@apply flex items-center gap-2 h-12 px-4 hover:bg-[rgba(31,41,55,0.3)] rounded-lg;
+			}
+			.hoverlist>* {
+				@apply hover:bg-gray-100 rounded-md transition duration-150;
+			}
+			.hoverlist>*>a {
+				@apply flex items-center p-2;
+			}
+			.highlight {
+				@apply !bg-indigo-100;
+			}
+			.allauth content a {
+				@apply underline underline-offset-2
+			}
+			.allauth content a:hover {
+				@apply text-indigo-500
+			}
+			.allauth form[action="/accounts/signup/"] ul {
+				@apply hidden
+			}
+			.allauth form[action="/accounts/signup/"] ul.errorlist {
+				@apply block
+			}
+			.allauth .helptext {
+				@apply block mt-4
+			}
+			label {
+				@apply hidden
+			}
+			input[type=file] {
+				@apply bg-white pl-0
+			}
+			.textarea, textarea, input {
+				@apply w-full rounded-lg py-4 px-5 bg-gray-100
+			}
+			.errorlist li {
+				@apply p-1 pl-4 border-l-red-500 border-l-4 border-solid mb-2 text-red-500
+			}
+			label[for="id_remember"] {
+				@apply inline-block w-auto mr-2
+			}
+			input[name="remember"] {
+				@apply w-auto
+			}
+			.alert-info { @apply bg-sky-600 }
+			.alert-success { @apply bg-emerald-600 }
+			.alert-warning { @apply bg-orange-600 }
+			.alert-danger { @apply bg-red-600 }
+		</style>
 	</head>
     <body class="drawer min-h-screen bg-base-200 lg:drawer-open">
+		{% include 'messages.html' %}
 		<input id="my-drawer" type="checkbox" class="drawer-toggle" />
 		<main class="drawer-content" id="main_area">
 			<div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 p-4 lg:gap-x-12 lg:p-6">
 	
 				{% block header %}
 				{% endblock %}
-
-				{% if messages %}
-					{% for message in messages %}
-					<div class="col-span-12" x-data="{ alert_open: true }">
-						<div x-show="alert_open">
-							<div role="alert" class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									class="stroke-info h-6 w-6 shrink-0">
-									<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-								</svg>
-								<span>{{ message }}</span>
-								<button class="btn btn-close" @click="alert_open = false">
-									Close
-								</button>
-							</div>
-						</div>
-					</div>
-					{% endfor %}
-				{% endif %}
-
-				
+	
 				{% block content %}
 				{% endblock %}
 	

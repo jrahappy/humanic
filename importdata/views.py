@@ -6,8 +6,6 @@ from django.contrib import messages
 from .models import rawdata, temp_doctor_table, temp_customer_table, importhistory
 from customer.models import Company, Contract, ContractItem, Product, Platform
 from .forms import importhistoryForm
-
-
 from import_export import resources
 from tablib import Dataset
 from importdata.resources import rawdataResource, doctorResource, customerResource
@@ -15,40 +13,23 @@ from datetime import date
 import tablib
 import logging
 
-logger = logging.getLogger(__name__)
 
-
-def temp_customer_clean(request):
+def temp_customer(request):
     temp_customer = temp_customer_table.objects.all()
-    v_ein = 2002020000
-    companies = []
+
+    return render(request, "importdata/temp_customer.html", {"data": temp_customer})
+
+
+def temp_customer_import(request):
+    temp_customer = temp_customer_table.objects.all()
 
     for data in temp_customer:
-        companies.append(
-            Company(
-                business_name=data.name,
-                ein=v_ein,
-            )
+        Company.objects.create(
+            business_name=data.name,
+            clinic_id=data.customer_id,
         )
-        v_ein += 1
 
-    try:
-        with transaction.atomic():
-            Company.objects.bulk_create(companies)
-            # temp_customer.delete()
-            return redirect("customer:index")
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return redirect("importdata:temp_customer_view")
-
-
-def temp_customer_view(request):
-    temp_customer = temp_customer_table.objects.all()
-
-    return render(
-        request, "importdata/temp_customer_view.html", {"data": temp_customer}
-    )
+    return redirect("customer:index")
 
 
 @transaction.atomic
@@ -132,8 +113,6 @@ def new_upload(request):
         data = request.POST
         excel_file = request.FILES.get("file")
         print(excel_file)
-        logger.info(f"POST data: {data}")
-        logger.info(f"Uploaded file: {excel_file}")
 
         try:
             import_history = importhistory.objects.create(
@@ -147,10 +126,9 @@ def new_upload(request):
                 created_at=timezone.now(),  # Use timezone.now() for the current date and time
             )
             messages.success(request, "File uploaded successfully.")
-            logger.info("ImportHistory record created successfully.")
             return redirect("importdata:index")
+
         except Exception as e:
-            logger.error(f"An error occurred during file upload: {e}")
             messages.error(request, f"An error occurred: {e}")
             return redirect("importdata:new_upload")
 
@@ -204,25 +182,27 @@ def temp_doctor(request):
     return render(request, "importdata/temp_doctor.html", {"data": temp_doctor})
 
 
-def customer_list_import(request):
+def initial_customer_data(request):
     if request.method == "POST":
         data = request.POST
         excel_file = request.FILES.get("excel_file")
+        print(excel_file)
 
-        customer_resource = customerResource()
         dataset = Dataset()
-        new_customer = excel_file
-        imported_data = dataset.load(new_customer.read(), format="xlsx")
+        imported_data = dataset.load(excel_file.read(), format="xlsx")
 
         for data in imported_data:
-            temp_customer_table.objects.create(
-                name=data[0],
-                customer_id=data[1],
-            )
+            if data[0] == None:  # Skip empty rows
+                continue
+            else:
+                temp_customer_table.objects.create(
+                    name=data[0],
+                    customer_id=data[1],
+                )
 
         print("customer imported")
 
-    return render(request, "importdata/customer_list_import.html")
+    return render(request, "importdata/initial_customer_data.html")
 
 
 def index(request):
