@@ -132,55 +132,45 @@ class rawdata(models.Model):
 class cleanData(models.Model):
     rawdata = models.ForeignKey(rawdata, on_delete=models.CASCADE)  # rawdata
     apptitle = models.CharField(max_length=100, null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)  # company
+    company = models.ForeignKey(
+        Company, on_delete=models.SET_NULL, null=True, blank=True
+    )  # company
 
     case_id = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     department = models.CharField(max_length=100, null=True, blank=True)
-    bodypart = models.CharField(max_length=100)
-    modality = models.CharField(max_length=100)
-    equipment = models.CharField(max_length=100)
+    bodypart = models.CharField(max_length=100, null=True, blank=True)
+    modality = models.CharField(max_length=100, null=True, blank=True)
+    equipment = models.CharField(max_length=100, null=True, blank=True)
     studydescription = models.CharField(max_length=100, null=True, blank=True)
-    imagecount = models.IntegerField(null=True, blank=True)
+    imagecount = models.IntegerField(null=True, blank=True, default=0)
     accessionnumber = models.CharField(max_length=100, null=True, blank=True)
     stat = models.CharField(max_length=100, null=True, blank=True)  # Emergency, Routine
 
-    readprice = models.FloatField(null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # product
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)  # contract
-    contract_item = models.ForeignKey(
-        ContractItem, on_delete=models.CASCADE
-    )  # contract_item
-
+    readprice = models.FloatField(null=True, blank=True, default=0)
     reader = models.CharField(max_length=100, null=True, blank=True)
-    reader_clean = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="reader_id"
-    )  # reader
-
     approver = models.CharField(max_length=100, null=True, blank=True)
-    approver_clean = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="approver_id"
-    )  # approver
     radiologist = models.CharField(max_length=100, null=True, blank=True)
-
+    provider = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=True
+    )  # provider
     studydate = models.CharField(max_length=100, null=True, blank=True)
-    studydate_clean = models.DateField(null=True, blank=True)
-
     approveddttm = models.CharField(max_length=100, null=True, blank=True)
-    approveddttm_clean = models.DateTimeField(null=True, blank=True)  # approveddttm
 
     pacs = models.CharField(max_length=100, null=True, blank=True)
-    Platform = models.ForeignKey(Platform, on_delete=models.CASCADE)  # platform
-
+    Platform = models.ForeignKey(
+        Platform, on_delete=models.SET_NULL, null=True, blank=True
+    )  # platform
     requestdttm = models.CharField(max_length=100, null=True, blank=True)
-    requestdttm_clean = models.DateTimeField(null=True, blank=True)  # requestdttm
 
     ecode = models.CharField(max_length=100, null=True, blank=True)
     sid = models.CharField(max_length=100, null=True, blank=True)
     patientid = models.CharField(max_length=100, null=True, blank=True)
 
+    ayear = models.CharField(max_length=5, null=True, blank=True)
+    amonth = models.CharField(max_length=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.case_id
@@ -189,4 +179,4 @@ class cleanData(models.Model):
         db_table = "cleandata"
         managed = True
         verbose_name = "cleandata"
-        verbose_name_plural = "cleandatas"
+        verbose_name_plural = "cleandata"

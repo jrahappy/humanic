@@ -1,9 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
 from django.contrib import messages
-from .models import rawdata, temp_doctor_table, temp_customer_table, importhistory
+from accounts.models import Profile
+from .models import (
+    rawdata,
+    temp_doctor_table,
+    temp_customer_table,
+    importhistory,
+    cleanData,
+)
 from customer.models import Company, Contract, ContractItem, Product, Platform
 from .forms import importhistoryForm
 from import_export import resources
@@ -12,6 +19,88 @@ from importdata.resources import rawdataResource, doctorResource, customerResour
 from datetime import date
 import tablib
 import logging
+from django.core.exceptions import MultipleObjectsReturned
+
+
+def clean_data(request, id):
+    v_importhistory = get_object_or_404(importhistory, id=id)
+    v_rawdata = rawdata.objects.filter(importhistory=id)
+    verified = False
+
+    for data in v_rawdata:
+        try:
+            company = Company.objects.filter(business_name=data.apptitle).first()
+            if company is None:
+                company = None
+        except MultipleObjectsReturned:
+            logging.error(
+                f"Multiple companies found with business_name={data.apptitle}"
+            )
+            company = Company.objects.filter(business_name=data.apptitle).first()
+
+        try:
+            radiologist = Profile.objects.filter(real_name=data.radiologist).first()
+            if radiologist is None:
+                radiologist = None
+                verified = False
+            else:
+                radiologist = radiologist.user
+                verified = True
+        except MultipleObjectsReturned:
+            logging.error(f"Multiple profiles found with real_name={data.radiologist}")
+            radiologist = Profile.objects.filter(real_name=data.radiologist).first()
+            verified = False
+
+        # try:
+        #     platform = Platform.objects.filter(name=data.pacs).first()
+        #     if platform is None:
+        #         platform = None
+        # except MultipleObjectsReturned:
+        #     logging.error(f"Multiple platforms found with name={data.pacs}")
+        #     platform = Platform.objects.filter(name=data.pacs).first()
+
+        cleanData.objects.create(
+            rawdata=data,
+            apptitle=data.apptitle,
+            company=company,
+            case_id=data.case_id,
+            name=data.name,
+            department=data.department,
+            bodypart=data.bodypart,
+            modality=data.modality,
+            equipment=data.equipment,
+            studydescription=data.studydescription,
+            imagecount=data.imagecount,
+            accessionnumber=data.accessionnumber,
+            readprice=data.readprice,
+            reader=data.reader,
+            approver=data.approver,
+            radiologist=data.radiologist,
+            provider=radiologist,
+            studydate=data.studydate,
+            approveddttm=data.approveddttm,
+            stat=data.stat,
+            pacs=data.pacs,
+            # platform=platform,
+            requestdttm=data.requestdttm,
+            ecode=data.ecode,
+            sid=data.sid,
+            patientid=data.patientid,
+            ayear=v_importhistory.ayear,
+            amonth=v_importhistory.amonth,
+            verified=verified,
+            created_at=date.today(),
+        )
+        print(f"Data cleaned: {data.case_id}")
+    return redirect("importdata:unverified_data", id=id)
+
+
+def unverified_data(request, id):
+    importhistory = importhistory.objects.get(id=id)
+    unverified_data = cleanData.objects.filter(importhistory=id, verified=False)
+    context = {"unverified_data": unverified_data}
+
+    return render(request, "importdata/unverified_data.html", context)
 
 
 def temp_customer(request):

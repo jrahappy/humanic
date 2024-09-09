@@ -1,0 +1,70 @@
+{% extends "support/_base.html" %}
+{% block title %}Intraoral Cases{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="h2 p-4">
+    Current app: {{ app_name }}
+</div>
+<div class="p-4">
+    <a class="btn btn-success" href="/dogfoot/table/all">All</a>
+    {% for app_name in app_names %}
+
+    <a class="btn btn-success" href="/dogfoot/table/{{app_name}}"> {{ app_name }}</a>
+
+    {% endfor %}
+
+</div>
+<div class="d-flex flex-row justify-content-start align-item-stretch flex-wrap p-2">
+    {% for table, columns in table_columns.items %}
+    <div class="card flex-shrink-1" style="width:16rem; margin-left:1rem; margin-bottom:1rem;">
+        <div class="card-header bg-dark h5 text-light ">
+            {{ table }}
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for column in columns %}
+            <li class="d-flex justify-content-between">
+                <span style="font-size:14px;font-weight: bold;margin-left:1rem;">{{ column.name }}</span>
+                <span style="font-size:14px;margin-right:1rem">{{ column.type_code }}</span>
+            </li>
+            {% endfor %}
+
+        </ul>
+        <a href="/dogfoot/table/{{app_name}}/{{table}}/generate" class="btn btn-danger">Generate Django Code</a>
+    </div>
+    {% endfor %}
+</div>
+<div class="d-flex flex-column flex-wrap p-2">
+    <div class="card" style="margin-left:1rem; margin-bottom:1rem;">
+        <div class="card-header bg-dark h5 text-light ">
+            urls.py
+        </div>
+        <pre><code>{{ code_gen.urls_gen|safe }}</code></pre>
+    </div>
+    <div class="card" style="margin-left:1rem; margin-bottom:1rem;">
+        <div class="card-header bg-dark h5 text-light ">
+            views.py
+        </div>
+        <pre><code>{{ code_gen.views_gen|safe }}</code></pre>
+    </div>
+    <div class="card" style="margin-left:1rem; margin-bottom:1rem;">
+        <div class="card-header bg-dark h5 text-light ">
+            forms.py
+        </div>
+        <pre><code>{{ code_gen.forms_gen|safe }}</code></pre>
+    </div>
+    <div class="card" style="margin-left:1rem; margin-bottom:1rem;">
+        <div class="card-header bg-dark h5 text-light ">
+            ~.html
+        </div>
+        <pre><code>{{ code_gen.html_gen|safe }}</code></pre>
+    </div>
+
+
+</div>
+
+
+{% endblock content %}

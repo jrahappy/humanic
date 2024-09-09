@@ -1,0 +1,30 @@
+{% extends "dogfoot/_base.html" %}
+{% load static %}
+{% load crispy_forms_tags%}
+{% block title %}Choices{% endblock %}
+
+{% block content %}
+<div class="p-4">
+    <a class="btn btn-success btn-sm" href="/dogfoot/table/all">All</a>
+    {% for choice in choices %}
+
+    <a class="btn btn-success btn-sm" href="/dogfoot/choices/{{name.id}}"> {{ choice.name }}</a>
+
+    {% endfor %}
+
+</div>
+
+<div class="h4 p-2">
+    
+</div>
+<div class="d-flex p-2 w-50">
+    <form method="POST" class="w-100"">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary btn-sm" type="submit">Save</button>
+    </form>
+     
+</div>
+
+
+{% endblock content %}

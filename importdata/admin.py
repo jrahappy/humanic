@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import rawdata, importhistory, temp_doctor_table, temp_customer_table
+from .models import (
+    rawdata,
+    importhistory,
+    temp_doctor_table,
+    temp_customer_table,
+    cleanData,
+)
 from import_export.admin import ImportExportModelAdmin
 
 
@@ -60,3 +66,5 @@ class temp_customer_tableAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(temp_customer_table, temp_customer_tableAdmin)
+
+admin.site.register(cleanData)

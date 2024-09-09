@@ -1,0 +1,51 @@
+{% extends "dogfoot/_base.html" %}
+{% block title %}Schema{% endblock %}
+
+
+{% block content %}
+<div class="p-4">
+    <a class="btn btn-success btn-sm" href="/dogfoot/table/all">All</a>
+    {% for choice in choices %}
+
+    <a class="btn btn-success btn-sm" href="/dogfoot/choices/{{name.id}}"> {{ choice.name }}</a>
+
+    {% endfor %}
+
+</div>
+
+<div class="h4 p-2">
+    
+</div>
+<div class="d-flex p-2 w-50">
+    <table class="table table-sm" >
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">C1</th>
+                <th scope="col">C2</th>
+                <th scope="col">C3</th>
+                <th scope="col">Order</th>
+                <th scope="col">
+                    <a class="btn btn-sm btn-primary" href="{% url 'dogfoot:choice-create'%}">Add</a> 
+                </th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for choice in choices %}
+
+        <tr>
+            <td>{{ choice.megachoices.c0 }}</td>
+            <td>{{ choice.megachoices.c1 }}</td>
+            <td>{{ choice.megachoices.c2 }}</td>
+            <td>{{ choice.megachoices.order }}</td>
+            <td>Edit</td>
+            
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+     
+</div>
+
+
+{% endblock content %}

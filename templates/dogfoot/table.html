@@ -1,0 +1,41 @@
+{% extends "support/_base.html" %}
+{% block title %}Intraoral Cases{% endblock %}
+
+
+{% block content %}
+<div class="h2 p-4">
+    Current app: {{ app_name }}
+</div>
+<div class="p-4">
+    <a class="btn btn-success" href="/dogfoot/table/all">All</a>
+    {% for app_name in app_names %}
+
+    <a class="btn btn-success" href="/dogfoot/table/{{app_name}}"> {{ app_name }}</a>
+
+    {% endfor %}
+
+</div>
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 row-cols-xxl-12   g-2 p-4">
+    {% for table, columns in table_columns.items %}
+    <div class="col">
+        <div class="card">
+            <div class="card-header bg-dark h5 text-light ">
+                {{ table }}
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for column in columns %}
+                <li class="d-flex justify-content-between">
+                    <span style="font-size:14px;font-weight: bold;margin-left:1rem;">{{ column.name }}</span>
+                    <span style="font-size:14px;margin-right:1rem">{{ column.type_code }}</span>
+                </li>
+                {% endfor %}
+
+            </ul>
+            <a href="/dogfoot/table/{{app_name}}/{{table}}/generate" class="btn btn-primary">Code Gen</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock content %}

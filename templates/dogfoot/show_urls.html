@@ -1,0 +1,63 @@
+{% extends "dogfoot/_base.html" %}
+{% load static %}
+{% load crispy_forms_tags%}
+{% block title %}Urls{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column p-2 w-100">
+    <div class="p-2">
+        <ul class="list-group list-group-horizontal">
+            {% for app   in app_names %}
+                <li class="btn btn-sm list-group-item me-1">
+                    <a href="{% url 'dogfoot:show-urls' %}?app_name={{app}}" value="{{app}}">{{ app }} </a> 
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="p-2 w-75">
+        <table class="table table-sm" id="json">
+            <thead>
+                <tr>
+                    <th>App</th>
+                    <th>URL</th>
+                    <th>View</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+<script>
+    var json = JSON.parse('{{ urlpatterns|escapejs }}');
+
+    var tbody = document.getElementById('json').getElementsByTagName('tbody')[0];
+    for (var app in json) {
+        json[app].forEach(function(pattern) {
+            var row = document.createElement('tr');
+
+            var cellApp = document.createElement('td');
+            cellApp.textContent = app;
+            row.appendChild(cellApp);
+
+            var cellUrl = document.createElement('td');
+            cellUrl.textContent = pattern[0];
+            row.appendChild(cellUrl);
+
+            var cellView = document.createElement('td');
+            cellView.textContent = pattern[1];
+            row.appendChild(cellView);
+
+            var cellName = document.createElement('td');
+            cellName.textContent = pattern[2];
+            row.appendChild(cellName);
+
+            tbody.appendChild(row);
+        });
+    }
+</script>
+
+{% endblock content %}
