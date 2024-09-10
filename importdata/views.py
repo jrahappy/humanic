@@ -92,12 +92,17 @@ def clean_data(request, id):
             created_at=date.today(),
         )
         print(f"Data cleaned: {data.case_id}")
-    return redirect("importdata:unverified_data", id=id)
+    return render(request, "importdata/clean_data.html", {"id": id})
 
 
 def unverified_data(request, id):
-    importhistory = importhistory.objects.get(id=id)
-    unverified_data = cleanData.objects.filter(importhistory=id, verified=False)
+    # importhistory = importhistory.objects.get(id=id)
+
+    unverified_data = (
+        cleanData.objects.filter(verified=False)
+        .prefetch_related("rawdata")
+        .filter(rawdata__importhistory=id)
+    )
     context = {"unverified_data": unverified_data}
 
     return render(request, "importdata/unverified_data.html", context)

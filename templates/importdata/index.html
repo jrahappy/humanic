@@ -68,6 +68,7 @@
                                     {% endif %}
                                     <a href="{% url 'importdata:clean_data' data.id %}" class="btn btn-warning">Clean</a>
                                     <a href="{% url 'importdata:history_delete' data.id %}" class="btn btn-warning">Delete</a>
+                                    <a href="{% url 'importdata:unverified_data' data.id %}" class="btn btn-info">unverified_data</a>
                                     
                                 </td>
                             </tr>

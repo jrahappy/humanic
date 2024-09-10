@@ -12,21 +12,25 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ["email", "username", "is_staff"]
+    list_display = ["email", "username", "is_staff", "is_doctor"]
+    search_fields = ["email", "username"]
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
 
 
 class ProfileAdmin(admin.ModelAdmin):
+    model = Profile
     list_display = [
         "user",
-        "cellphone",
         "company",
-        "extra_info1_str",
-        "extra_info2_int",
-        "extra_info3_bool",
+        "real_name",
+        "email",
+        "specialty1",
+        "specialty2",
+        "fee_rate",
     ]
+    search_fields = ["real_name"]
 
 
 admin.site.register(Profile, ProfileAdmin)
