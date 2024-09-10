@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
 from django.contrib import messages
-from accounts.models import Profile
+from accounts.models import Profile, CustomUser
 from .models import (
     rawdata,
     temp_doctor_table,
@@ -20,6 +20,8 @@ from datetime import date
 import tablib
 import logging
 from django.core.exceptions import MultipleObjectsReturned
+from django.utils import timezone
+from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 
 
 def clean_data(request, id):
@@ -100,12 +102,70 @@ def unverified_data(request, id):
 
     unverified_data = (
         cleanData.objects.filter(verified=False)
-        .prefetch_related("rawdata")
+        .select_related("rawdata")
         .filter(rawdata__importhistory=id)
+        .order_by("radiologist")
     )
+
+    paginator = Paginator(unverified_data, 300)
+
+    page = request.GET.get("page")
+    try:
+        unverified_data = paginator.page(page)
+    except PageNotAnInteger:
+        unverified_data = paginator.page(1)
+    except EmptyPage:
+        unverified_data = paginator.page(paginator.num_pages)
+
+    # for data in unverified_data:
+    #     print(data.case_id)
+
     context = {"unverified_data": unverified_data}
 
     return render(request, "importdata/unverified_data.html", context)
+
+
+def update_cleandata(request, id):
+
+    if request.method == "POST":
+        data = request.POST
+
+        unverified_rows = cleanData.objects.filter(radiologist=data.get("radiologist"))
+        print(data.get("radiologist"))
+        print(unverified_rows.count())
+        if unverified_rows.exists():
+            id = unverified_rows.first().rawdata.importhistory.id
+            provider = CustomUser.objects.get(username=data.get("provider"))
+
+            # Update each row
+            for row in unverified_rows:
+                row.provider = provider
+                row.verified = True
+                row.save()
+
+            # Redirect to the unverified_data view
+            return redirect(
+                "importdata:unverified_data",
+                id=id,
+            )
+        else:
+            messages.error(
+                request, "No unverified rows found for the selected radiologist."
+            )
+            return redirect("importdata:unverified_data", id=id)
+
+    else:
+        unverified_row = cleanData.objects.get(id=id)
+        selected_radiologist = unverified_row.radiologist[0:2]
+        filtered_providers = Profile.objects.filter(
+            real_name__startswith=selected_radiologist
+        ).select_related("user")
+        context = {
+            "unverified_row": unverified_row,
+            "filtered_providers": filtered_providers,
+        }
+
+        return render(request, "importdata/update_cleandata.html", context)
 
 
 def temp_customer(request):

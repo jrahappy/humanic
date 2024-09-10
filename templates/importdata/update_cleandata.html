@@ -1,0 +1,55 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+   
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+		<div class="card-body grow-0">
+			<div class="flex justify-between gap-2">
+				<h2 class="card-title grow">
+					진료기록사의 의사명과 의사ID 연결
+				</h2>
+			</div>
+      	</div>
+  
+     	<form class="card-body" method="Post">
+       {% csrf_token %}
+		<div class="grid grid-cols-2 gap-2">
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">의사명</span>
+				</label>
+				<input type="text" name="radiologist" value="{{ unverified_row.radiologist }}" placeholder="" required class="input input-bordered text-center font-mono" />
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">성명이 유사한 의사 목록</span>
+				</label>
+                <select name="provider" class="select select-bordered w-full">
+                    {% for doctor in filtered_providers %}
+                    <option value="{{ doctor.user}}">{{ doctor.real_name }}</option>
+                    {% endfor %}
+                </select>
+            	
+			</div>
+		</div>
+		<div class="form-control">
+			<div class="flex items-end py-4">
+				<button type="sumbit" class="btn btn-primary grow">연결하기</button>
+			</div>
+		</div>
+		</form>
+	
+	</section>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

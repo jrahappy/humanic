@@ -32,16 +32,15 @@
                     <table class="table">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">년도</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">월</th>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일형식</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">년도</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">월</th>
 
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">메모</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">작업자</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Imported</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">병원명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Case ID</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Company</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">의사명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Provider</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">보기</span>
                                 </th>
@@ -50,19 +49,17 @@
                         <tbody class="divide-y divide-gray-200 bg-white">
                         {% for data in unverified_data %}
                             <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.ayear }}</td>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.amonth }}</td>
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
+
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.apptitle }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.company}}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.case_id }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-black">{{ data.case_id}}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm font-black text-gray-500 ">{{ data.company }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.radiologist }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.provider }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.pacs }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 ">
-                                    <div class="badge badge-primary text-white"></div>
-                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm font-black text-gray-500">{{ data.provider }}</td>
                                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    <a href="#" class="btn btn-primary">Edit</a>
+                                    <a href="{% url 'importdata:update_cleandata' data.id %}" class="btn btn-primary">Edit</a>
                                 </td>
                             </tr>
                         {% empty %}

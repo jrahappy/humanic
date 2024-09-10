@@ -9,6 +9,7 @@ urlpatterns = [
     path("create_rawdata/<int:id>/", views.create_rawdata, name="create_rawdata"),
     path("clean_data/<int:id>/", views.clean_data, name="clean_data"),
     path("unverified_data/<int:id>/", views.unverified_data, name="unverified_data"),
+    path("update_cleandata/<int:id>/", views.update_cleandata, name="update_cleandata"),
     path("initial_dr_data/", views.initial_dr_data, name="initial_dr_data"),
     path("temp_doctor/", views.temp_doctor, name="temp_doctor"),
     path(
