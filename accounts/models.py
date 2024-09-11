@@ -49,6 +49,7 @@ class Profile(models.Model):
     real_name = models.CharField(max_length=30, null=True, blank=True)
     specialty1 = models.CharField(max_length=30, null=True, blank=True)
     specialty2 = models.CharField(max_length=30, null=True, blank=True)
+    specialty3 = models.CharField(max_length=30, null=True, blank=True)
     position = models.CharField(max_length=30, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     cv3_id = models.CharField(max_length=30, null=True, blank=True)

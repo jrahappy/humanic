@@ -7,14 +7,35 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import transaction
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 
 
 def index(request):
 
-    doctors = CustomUser.objects.filter(is_staff=False).select_related("profile")
-    paginator = Paginator(doctors, 10)  # Show 10 doctors per page
+    q = request.GET.get("q")
+    if q:
+        doctors = (
+            CustomUser.objects.filter(
+                Q(profile__real_name__icontains=q)
+                | Q(profile__specialty2__icontains=q)
+                | Q(profile__email__icontains=q)
+                | Q(profile__cv3_id__icontains=q)
+                | Q(profile__onpacs_id__icontains=q)
+            )
+            .filter(is_staff=False)
+            .select_related("profile")
+            .order_by("profile__real_name")
+        )
+    else:
+        doctors = (
+            CustomUser.objects.filter(is_staff=False)
+            .select_related("profile")
+            .order_by("-username")
+        )
 
+    paginator = Paginator(doctors, 10)  # Show 10 doctors per page
     page = request.GET.get("page")
+
     try:
         doctors = paginator.page(page)
     except PageNotAnInteger:
@@ -24,6 +45,17 @@ def index(request):
 
     context = {"doctors": doctors}
     return render(request, "provider/index.html", context)
+
+
+def new_provider(request):
+
+    return render(request, "provider/new_provider.html")
+
+
+def view_provider(request, id):
+    provider = CustomUser.objects.select_related("profile").get(pk=id)
+    print(provider.profile.real_name)
+    return render(request, "provider/view_provider.html", {"provider": provider})
 
 
 def rawdata(request):

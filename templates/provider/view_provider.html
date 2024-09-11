@@ -1,0 +1,102 @@
+{% extends 'app_base.html' %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+   
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+		<div class="card-body grow-0">
+			<div class="flex justify-between gap-2">
+				<h2 class="card-title grow">
+					세부 정보 보기
+				</h2>
+			</div>
+      	</div>
+    	<div class="grid grid-cols-4 gap-2 px-6">
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">성명(ID)</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.real_name }}</div>
+				
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">이메일</span>
+				</label>
+                <div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.email }}</div>
+				
+			</div>
+            <div class="form-control">
+				<label class="label">
+					<span class="label-text">휴대폰</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.cellphone }}</div>
+			</div>
+            <div class="form-control">
+				<label class="label">
+					<span class="label-text">소속</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.company }}</div>
+			</div>
+		</div>
+		<div class="grid grid-cols-4 gap-2 px-6 mt-4">
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">진료과</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty1 }}</div>
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">세부전공1</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty2 }}</div>
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">세부전공2</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty3 }}</div>
+			</div>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">CV3 ID / OnPACS ID</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.cv3_id }} / {{ provider.profile.onpacs_id }}</div>
+            </div>
+		</div>
+		<div class=" gap-2 px-6">
+            <div class="form-control col-span-4">
+				<label class="label">
+					<span class="label-text">메모</span>
+				</label>
+				<p class="text-start px-2 py-3 bg-base-200 rounded h-24">{{ provider.profile.bio }}</p>
+			</div>
+
+        </div>
+		<div class="grid grid-cols-4 gap-2 px-6">
+            <div class="flex gap-4">
+                <div class="flex items-end py-4">
+                    <button class="btn btn-primary grow">수정하기</button>
+                </div>
+                <div class="flex items-end py-4">
+                    <a href="{% url 'provider:index' %}" class="btn btn-secondary grow">목록으로</a>
+                </div>
+                <div class="flex items-end py-4">
+                    <button class="btn btn-info grow">단가 계약</button>
+                </div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+
