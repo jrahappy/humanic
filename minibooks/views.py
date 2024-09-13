@@ -1,0 +1,371 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db import transaction
+from django.db.models import Count
+from django.utils import timezone
+from django.contrib import messages
+from django.core.exceptions import MultipleObjectsReturned
+from django.utils import timezone
+from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
+from accounts.models import Profile, CustomUser
+from customer.models import Company, Contract, ContractItem, Product, Platform
+from .models import UploadHistory, ReportMaster
+from .forms import UploadHistoryForm
+from import_export import resources
+from tablib import Dataset
+from datetime import date
+import tablib
+import logging
+from utils.base_func import (
+    get_amonth_choices,
+    get_ayear_choices,
+    get_platform_choices,
+    get_amodality_choices,
+    get_specialty_choices,
+)
+
+
+def index(request):
+
+    upload_histories = UploadHistory.objects.annotate(
+        ReportMaster_count=Count("reportmaster")
+    ).all()
+
+    context = {"upload_histories": upload_histories}
+
+    return render(request, "minibooks/index.html", context)
+
+
+def history_delete(request, id):
+    UploadHistory.objects.get(id=id).delete()
+    return redirect("minibooks:index")
+
+
+def new_upload(request):
+    user = request.user
+    # logger.info(f"User: {user}")
+    form = UploadHistoryForm()
+
+    if request.method == "POST":
+        form = UploadHistoryForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            upload_history = form.save(commit=False)
+            upload_history.user = user
+            upload_history.created_at = timezone.now()
+            upload_history.save()
+            messages.success(request, "File uploaded successfully.")
+            return redirect("minibooks:index")
+        else:
+            messages.error(request, "An error occurred.")
+            return redirect("minibooks:new_upload")
+    else:
+        today_date = date.today().strftime("%Y-%m-%d")
+        form = UploadHistoryForm(initial={"import_date": today_date})
+        context = {"import_date": today_date, "form": form}
+
+    return render(request, "minibooks/new_upload.html", context)
+
+
+def clean_data(request, id):
+    v_uploadhistory = get_object_or_404(uploadhistory, id=id)
+    v_rawdata = rawdata.objects.filter(uploadhistory=id)
+    verified = False
+
+    for data in v_rawdata:
+        try:
+            company = Company.objects.filter(business_name=data.apptitle).first()
+            if company is None:
+                company = None
+        except MultipleObjectsReturned:
+            logging.error(
+                f"Multiple companies found with business_name={data.apptitle}"
+            )
+            company = Company.objects.filter(business_name=data.apptitle).first()
+
+        try:
+            radiologist = Profile.objects.filter(real_name=data.radiologist).first()
+            if radiologist is None:
+                radiologist = None
+                verified = False
+            else:
+                radiologist = radiologist.user
+                verified = True
+        except MultipleObjectsReturned:
+            logging.error(f"Multiple profiles found with real_name={data.radiologist}")
+            radiologist = Profile.objects.filter(real_name=data.radiologist).first()
+            verified = False
+
+        # try:
+        #     platform = Platform.objects.filter(name=data.pacs).first()
+        #     if platform is None:
+        #         platform = None
+        # except MultipleObjectsReturned:
+        #     logging.error(f"Multiple platforms found with name={data.pacs}")
+        #     platform = Platform.objects.filter(name=data.pacs).first()
+
+        cleanData.objects.create(
+            rawdata=data,
+            apptitle=data.apptitle,
+            company=company,
+            case_id=data.case_id,
+            name=data.name,
+            department=data.department,
+            bodypart=data.bodypart,
+            modality=data.modality,
+            equipment=data.equipment,
+            studydescription=data.studydescription,
+            imagecount=data.imagecount,
+            accessionnumber=data.accessionnumber,
+            readprice=data.readprice,
+            reader=data.reader,
+            approver=data.approver,
+            radiologist=data.radiologist,
+            provider=radiologist,
+            studydate=data.studydate,
+            approveddttm=data.approveddttm,
+            stat=data.stat,
+            pacs=data.pacs,
+            # platform=platform,
+            requestdttm=data.requestdttm,
+            ecode=data.ecode,
+            sid=data.sid,
+            patientid=data.patientid,
+            ayear=v_uploadhistory.ayear,
+            amonth=v_uploadhistory.amonth,
+            verified=verified,
+            created_at=date.today(),
+        )
+        print(f"Data cleaned: {data.case_id}")
+    return render(request, "importdata/clean_data.html", {"id": id})
+
+
+def unverified_data(request, id):
+    # uploadhistory = uploadhistory.objects.get(id=id)
+
+    unverified_data = (
+        cleanData.objects.filter(verified=False)
+        .select_related("rawdata")
+        .filter(rawdata__uploadhistory=id)
+        .order_by("radiologist")
+    )
+
+    paginator = Paginator(unverified_data, 300)
+
+    page = request.GET.get("page")
+    try:
+        unverified_data = paginator.page(page)
+    except PageNotAnInteger:
+        unverified_data = paginator.page(1)
+    except EmptyPage:
+        unverified_data = paginator.page(paginator.num_pages)
+
+    # for data in unverified_data:
+    #     print(data.case_id)
+
+    context = {"unverified_data": unverified_data}
+
+    return render(request, "importdata/unverified_data.html", context)
+
+
+def update_cleandata(request, id):
+
+    if request.method == "POST":
+        data = request.POST
+
+        radiologist_name = data.get("radiologist")
+        if radiologist_name:
+            unverified_rows = cleanData.objects.filter(
+                radiologist=radiologist_name, verified=False
+            )
+        else:
+            unverified_rows = cleanData.objects.none()
+        print(radiologist_name)
+        print(unverified_rows.count())
+
+        if unverified_rows.exists():
+            id = unverified_rows.first().rawdata.uploadhistory.id
+            provider = CustomUser.objects.get(username=data.get("provider"))
+            print(provider)
+            # Update each row
+            for row in unverified_rows:
+                row.provider = provider
+                row.verified = True
+                row.save()
+
+            # Redirect to the unverified_data view
+            return redirect(
+                "minibooks:unverified_data",
+                id=id,
+            )
+        else:
+            messages.error(
+                request, "No unverified rows found for the selected radiologist."
+            )
+            return redirect("minibooks:unverified_data", id=id)
+
+    else:
+        unverified_row = cleanData.objects.get(id=id)
+        selected_radiologist = unverified_row.radiologist[0:2]
+        filtered_providers = Profile.objects.filter(
+            real_name__startswith=selected_radiologist
+        ).select_related("user")
+        context = {
+            "unverified_row": unverified_row,
+            "filtered_providers": filtered_providers,
+        }
+
+        return render(request, "importdata/update_cleandata.html", context)
+
+
+def temp_customer(request):
+    temp_customer = temp_customer_table.objects.all()
+
+    return render(request, "importdata/temp_customer.html", {"data": temp_customer})
+
+
+def temp_customer_import(request):
+    temp_customer = temp_customer_table.objects.all()
+
+    for data in temp_customer:
+        Company.objects.create(
+            business_name=data.name,
+            clinic_id=data.customer_id,
+        )
+
+    return redirect("customer:index")
+
+
+@transaction.atomic
+def create_rawdata(request, id):
+
+    try:
+        a_raw = uploadhistory.objects.get(id=id)
+        source_from = a_raw.source_from
+        a_file = a_raw.file
+
+        # rawdata_resource = rawdataResource()
+        dataset = Dataset()
+        new_rawdata = a_file
+        imported_data = dataset.load(new_rawdata.read(), format="xlsx")
+        # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
+
+        # if not imported_data.has_errors():
+        for data in imported_data:
+
+            if source_from == "ONPACS":
+                rawdata.objects.create(
+                    apptitle=data[0],
+                    case_id=data[1],
+                    name=data[2],
+                    department=data[3],
+                    bodypart=data[4],
+                    modality=data[5],
+                    equipment=data[6],
+                    studydescription=data[7],
+                    imagecount=data[8],
+                    accessionnumber=data[9],
+                    readprice=data[10],
+                    reader=data[11],
+                    approver=data[12],
+                    radiologist=data[13],
+                    studydate=data[14],
+                    approveddttm=data[15],
+                    stat=data[16],
+                    pacs=data[17],
+                    requestdttm=data[18],
+                    ecode=data[19],
+                    sid=data[20],
+                    patientid=data[21],
+                    created_at=date.today(),
+                    cleaned=False,
+                    verified=False,
+                    uploadhistory=a_raw,
+                    updated_at=date.today(),
+                )
+            elif source_from == "ETC":
+
+                rawdata.objects.create(
+                    apptitle=data[0],
+                    case_id=data[1],
+                    equipment=data[2],
+                    studydescription=data[3],
+                    readprice=data[4],
+                    radiologist=data[5],
+                    created_at=date.today(),
+                    cleaned=False,
+                    verified=False,
+                    uploadhistory=a_raw,
+                    updated_at=date.today(),
+                )
+        a_raw.imported = True
+        a_raw.save()
+        return redirect("minibooks:index")
+
+    except Exception as e:
+        # logger.error(f"An error occurred during file upload: {e}")
+        messages.error(request, f"An error occurred: {e}")
+        return redirect("minibooks:new_upload")
+
+
+# 임시로 사용하는 함수(초기 데이터 입력용)
+def initial_dr_data(request):
+
+    if request.method == "POST":
+        data = request.POST
+        excel_file = request.FILES.get("excel_file")
+        print(excel_file)
+
+        # doctor_resource = doctorResource()
+        # new_doctor = excel_file
+        dataset = Dataset()
+        imported_data = dataset.load(excel_file.read(), format="xlsx")
+
+        for data in imported_data:
+            if data[0] == None:  # Skip empty rows
+                continue
+            else:
+                temp_doctor_table.objects.create(
+                    name=data[0],
+                    specialty=data[1],
+                    doctor_id=data[2],
+                    email=data[3],
+                    cv3_id=data[4],
+                    onpacs_id=data[5],
+                    department=data[6],
+                    position=data[7],
+                    fee_rate=data[8],
+                )
+
+        return redirect("minibooks:temp_doctor")
+    else:
+
+        return render(request, "importdata/initial_dr_data.html")
+
+
+def temp_doctor(request):
+    temp_doctor = temp_doctor_table.objects.all()
+
+    return render(request, "importdata/temp_doctor.html", {"data": temp_doctor})
+
+
+def initial_customer_data(request):
+    if request.method == "POST":
+        data = request.POST
+        excel_file = request.FILES.get("excel_file")
+        print(excel_file)
+
+        dataset = Dataset()
+        imported_data = dataset.load(excel_file.read(), format="xlsx")
+
+        for data in imported_data:
+            if data[0] == None:  # Skip empty rows
+                continue
+            else:
+                temp_customer_table.objects.create(
+                    name=data[0],
+                    customer_id=data[1],
+                )
+
+        print("customer imported")
+
+    return render(request, "importdata/initial_customer_data.html")

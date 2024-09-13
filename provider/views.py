@@ -32,6 +32,9 @@ def index(request):
             .select_related("profile")
             .order_by("-username")
         )
+        # update_profile = Profile.objects.filter(specialty2="신경두경부").update(
+        #     specialty2="신경두경"
+        # )
 
     paginator = Paginator(doctors, 10)  # Show 10 doctors per page
     page = request.GET.get("page")

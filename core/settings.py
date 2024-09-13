@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "crispy_tailwind",
     "import_export",
     "dogfoot",
+    "utils",
+    "minibooks",
     "accounts",
     "customer",
     "provider",

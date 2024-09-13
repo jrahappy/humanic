@@ -130,13 +130,20 @@ def update_cleandata(request, id):
     if request.method == "POST":
         data = request.POST
 
-        unverified_rows = cleanData.objects.filter(radiologist=data.get("radiologist"))
-        print(data.get("radiologist"))
+        radiologist_name = data.get("radiologist")
+        if radiologist_name:
+            unverified_rows = cleanData.objects.filter(
+                radiologist=radiologist_name, verified=False
+            )
+        else:
+            unverified_rows = cleanData.objects.none()
+        print(radiologist_name)
         print(unverified_rows.count())
+
         if unverified_rows.exists():
             id = unverified_rows.first().rawdata.importhistory.id
             provider = CustomUser.objects.get(username=data.get("provider"))
-
+            print(provider)
             # Update each row
             for row in unverified_rows:
                 row.provider = provider

@@ -32,6 +32,7 @@ urlpatterns = [
     path("provider/", include("provider.urls")),
     path("product/", include("product.urls")),
     path("importdata/", include("importdata.urls")),
+    path("minibooks/", include("minibooks.urls")),
     path("dogfoot/", include("dogfoot.urls")),
 ]
 

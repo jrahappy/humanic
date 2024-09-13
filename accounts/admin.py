@@ -14,6 +14,7 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ["email", "username", "is_staff", "is_doctor"]
     search_fields = ["email", "username"]
+    ordering = ["-username"]
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

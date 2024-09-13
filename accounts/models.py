@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from customer.models import Company
 from django.core.validators import MinValueValidator, MaxValueValidator
+from utils.base_func import get_specialty_choices
 
 
 class CustomUser(AbstractUser):
@@ -44,12 +45,27 @@ class CustomUser(AbstractUser):
 
 
 class Profile(models.Model):
+    # SPECIALTY_CHOICES = {
+    #     "복부비뇨": "복부/비뇨생식기",
+    #     "신경두경": "신경두경부",
+    #     "흉부심장": "흉부심장",
+    #     "심잘혈관": "심장혈관",
+    #     "근골격": "근골격",
+    #     "유방갑상": "유방/갑상선",
+    #     "소아": "소아",
+    #     "인터벤션": "인터벤션",
+    #     "정형외과": "정형외과",
+    # }
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     real_name = models.CharField(max_length=30, null=True, blank=True)
     specialty1 = models.CharField(max_length=30, null=True, blank=True)
-    specialty2 = models.CharField(max_length=30, null=True, blank=True)
-    specialty3 = models.CharField(max_length=30, null=True, blank=True)
+    specialty2 = models.CharField(
+        max_length=30, choices=get_specialty_choices, null=True, blank=True
+    )
+    specialty3 = models.CharField(
+        max_length=30, choices=get_specialty_choices, null=True, blank=True
+    )
     position = models.CharField(max_length=30, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     cv3_id = models.CharField(max_length=30, null=True, blank=True)

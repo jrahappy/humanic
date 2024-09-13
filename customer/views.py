@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from .models import Company, Contract, ContractItem, Product, Platform
+
+# from importData.models import cleanData
 from django.core.paginator import Paginator
 
 
@@ -29,7 +31,9 @@ def new_customer(request):
 def detail(request, customer_id):
     # Retrieve the customer object from the database
     # Pass the customer object to the template for rendering
-    company = Company.objects.get(pk=customer_id).prefetch_related("contract_set")
+    company = Company.objects.get(pk=customer_id)
+    # referred = cleanData.objects.filter(apptitle=company.business_name)
+    # context = {"company": company, "referred": referred}
     context = {"company": company}
     return render(request, "customer/detail.html", context)
 
