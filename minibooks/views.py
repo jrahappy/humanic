@@ -7,7 +7,8 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.utils import timezone
 from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 from accounts.models import Profile, CustomUser
-from customer.models import Company, Contract, ContractItem, Product, Platform
+from customer.models import Company, Contract, ContractItem
+from product.models import Product, Platform
 from .models import UploadHistory, ReportMaster
 from .forms import UploadHistoryForm
 from import_export import resources
@@ -22,6 +23,7 @@ from utils.base_func import (
     get_amodality_choices,
     get_specialty_choices,
 )
+from utils.models import ChoiceMaster
 
 
 def index(request):
@@ -67,181 +69,189 @@ def new_upload(request):
 
 
 def clean_data(request, id):
-    v_uploadhistory = get_object_or_404(uploadhistory, id=id)
-    v_rawdata = rawdata.objects.filter(uploadhistory=id)
-    verified = False
+    v_uploadhistory = get_object_or_404(UploadHistory, id=id)
+    v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False)
+
+    def get_verified_object(model, field, value):
+        obj = model.objects.filter(**{field: value}).first()
+        return obj, obj is not None
 
     for data in v_rawdata:
-        try:
-            company = Company.objects.filter(business_name=data.apptitle).first()
-            if company is None:
-                company = None
-        except MultipleObjectsReturned:
-            logging.error(
-                f"Multiple companies found with business_name={data.apptitle}"
-            )
-            company = Company.objects.filter(business_name=data.apptitle).first()
-
-        try:
-            radiologist = Profile.objects.filter(real_name=data.radiologist).first()
-            if radiologist is None:
-                radiologist = None
-                verified = False
-            else:
-                radiologist = radiologist.user
-                verified = True
-        except MultipleObjectsReturned:
-            logging.error(f"Multiple profiles found with real_name={data.radiologist}")
-            radiologist = Profile.objects.filter(real_name=data.radiologist).first()
-            verified = False
-
-        # try:
-        #     platform = Platform.objects.filter(name=data.pacs).first()
-        #     if platform is None:
-        #         platform = None
-        # except MultipleObjectsReturned:
-        #     logging.error(f"Multiple platforms found with name={data.pacs}")
-        #     platform = Platform.objects.filter(name=data.pacs).first()
-
-        cleanData.objects.create(
-            rawdata=data,
-            apptitle=data.apptitle,
-            company=company,
-            case_id=data.case_id,
-            name=data.name,
-            department=data.department,
-            bodypart=data.bodypart,
-            modality=data.modality,
-            equipment=data.equipment,
-            studydescription=data.studydescription,
-            imagecount=data.imagecount,
-            accessionnumber=data.accessionnumber,
-            readprice=data.readprice,
-            reader=data.reader,
-            approver=data.approver,
-            radiologist=data.radiologist,
-            provider=radiologist,
-            studydate=data.studydate,
-            approveddttm=data.approveddttm,
-            stat=data.stat,
-            pacs=data.pacs,
-            # platform=platform,
-            requestdttm=data.requestdttm,
-            ecode=data.ecode,
-            sid=data.sid,
-            patientid=data.patientid,
-            ayear=v_uploadhistory.ayear,
-            amonth=v_uploadhistory.amonth,
-            verified=verified,
-            created_at=date.today(),
-        )
-        print(f"Data cleaned: {data.case_id}")
-    return render(request, "importdata/clean_data.html", {"id": id})
-
-
-def unverified_data(request, id):
-    # uploadhistory = uploadhistory.objects.get(id=id)
-
-    unverified_data = (
-        cleanData.objects.filter(verified=False)
-        .select_related("rawdata")
-        .filter(rawdata__uploadhistory=id)
-        .order_by("radiologist")
-    )
-
-    paginator = Paginator(unverified_data, 300)
-
-    page = request.GET.get("page")
-    try:
-        unverified_data = paginator.page(page)
-    except PageNotAnInteger:
-        unverified_data = paginator.page(1)
-    except EmptyPage:
-        unverified_data = paginator.page(paginator.num_pages)
-
-    # for data in unverified_data:
-    #     print(data.case_id)
-
-    context = {"unverified_data": unverified_data}
-
-    return render(request, "importdata/unverified_data.html", context)
-
-
-def update_cleandata(request, id):
-
-    if request.method == "POST":
-        data = request.POST
-
-        radiologist_name = data.get("radiologist")
-        if radiologist_name:
-            unverified_rows = cleanData.objects.filter(
-                radiologist=radiologist_name, verified=False
-            )
-        else:
-            unverified_rows = cleanData.objects.none()
-        print(radiologist_name)
-        print(unverified_rows.count())
-
-        if unverified_rows.exists():
-            id = unverified_rows.first().rawdata.uploadhistory.id
-            provider = CustomUser.objects.get(username=data.get("provider"))
-            print(provider)
-            # Update each row
-            for row in unverified_rows:
-                row.provider = provider
-                row.verified = True
-                row.save()
-
-            # Redirect to the unverified_data view
-            return redirect(
-                "minibooks:unverified_data",
-                id=id,
-            )
-        else:
-            messages.error(
-                request, "No unverified rows found for the selected radiologist."
-            )
-            return redirect("minibooks:unverified_data", id=id)
-
-    else:
-        unverified_row = cleanData.objects.get(id=id)
-        selected_radiologist = unverified_row.radiologist[0:2]
-        filtered_providers = Profile.objects.filter(
-            real_name__startswith=selected_radiologist
-        ).select_related("user")
-        context = {
-            "unverified_row": unverified_row,
-            "filtered_providers": filtered_providers,
-        }
-
-        return render(request, "importdata/update_cleandata.html", context)
-
-
-def temp_customer(request):
-    temp_customer = temp_customer_table.objects.all()
-
-    return render(request, "importdata/temp_customer.html", {"data": temp_customer})
-
-
-def temp_customer_import(request):
-    temp_customer = temp_customer_table.objects.all()
-
-    for data in temp_customer:
-        Company.objects.create(
-            business_name=data.name,
-            clinic_id=data.customer_id,
+        company, company_verified = get_verified_object(
+            Company, "business_name", data.apptitle
         )
 
-    return redirect("customer:index")
+        ## 동명이인 처리(임시)
+        radiologist = data.radiologist
+        radiologist = radiologist.replace(" ", "").replace("\n", "").replace("\t", "")
+        if radiologist == "김수진(유방)":
+            radiologist = "김수진"
+        elif radiologist == "김수진(신경두경부)":
+            radiologist = "김수진B"
+
+        radiologist_profile, radiologist_verified = get_verified_object(
+            Profile, "real_name", radiologist
+        )
+
+        equipment = data.equipment
+        if equipment == "DR":
+            amodality = "CR"
+        elif equipment == "DT":
+            amodality = "CR"
+        else:
+            amodality = equipment
+
+        pacs_value = data.pacs if data.pacs else None
+        # ZOLVUE -> HPACS 변경(임시)
+        if pacs_value == "ZOLVUE":
+            pacs_value = "HPACS"
+        elif pacs_value == "None":
+            pacs_value = "ETC"
+
+        platform = Platform.objects.filter(name=pacs_value).first()
+        if platform:
+            platform_verified = True
+        else:
+            platform_verified = False
+
+        # print(
+        #     f"Company: {company}, Radiologist: {radiologist_profile}, Platform: {platform}"
+        # )
+
+        radiologist = radiologist_profile.user if radiologist_verified else None
+
+        if data.requestdttm:
+            try:
+                requestdt = timezone.make_aware(
+                    timezone.datetime.strptime(data.requestdttm, "%Y-%m-%d %H:%M:%S")
+                )
+                requestdt_verified = True
+            except (ValueError, TypeError):
+                if data.pacs != "ONSITE":
+                    requestdt = None
+                    requestdt_verified = False
+                else:
+                    requestdt_verified = True
+        else:
+            requestdt = None
+            requestdt_verified = True
+
+        if data.approveddttm:
+            try:
+                approvedt = timezone.make_aware(
+                    timezone.datetime.strptime(data.approveddttm, "%Y-%m-%d %H:%M:%S")
+                )
+                approvedt_verified = True
+            except (ValueError, TypeError):
+                if data.pacs != "ONSITE":
+                    approvedt = None
+                    approvedt_verified = False
+                else:
+                    approvedt_verified = True
+
+        else:
+            approvedt = None
+            approvedt_verified = True
+
+        verified = all(
+            [
+                company_verified,
+                radiologist_verified,
+                platform_verified,
+                requestdt_verified,
+                approvedt_verified,
+            ]
+        )
+        # 디버그용
+        # if not verified:
+        #     if not company_verified:
+        #         print(f"Company verification failed for data id: {data.id}")
+        #     if not radiologist_verified:
+        #         print(f"Radiologist verification failed for data id: {data.id}")
+        #     if not platform_verified:
+        #         print(f"Platform verification failed for data id: {data.id}")
+        #     if not requestdt_verified:
+        #         print(f"Request date verification failed for data id: {data.id}")
+        #     if not approvedt_verified:
+        #         print(f"Approval date verification failed for data id: {data.id}")
+        # verified = True
+
+        if verified:
+            ReportMaster.objects.filter(id=data.id).update(
+                company=company,
+                provider=radiologist,
+                amodality=amodality,
+                platform=platform,
+                requestdt=requestdt,
+                approvedt=approvedt,
+                verified=True,
+            )
+        else:
+            messages.error(request, f"Data for {data.id} not verified.")
+
+    return redirect("minibooks:index")
+
+
+# def update_cleandata(request, id):
+
+#     if request.method == "POST":
+#         data = request.POST
+
+#         radiologist_name = data.get("radiologist")
+#         if radiologist_name:
+#             unverified_rows = ReportMaster.objects.filter(
+#                 radiologist=radiologist_name, verified=False
+#             )
+#         else:
+#             unverified_rows = ReportMaster.objects.none()
+
+#         print(radiologist_name)
+#         print(unverified_rows.count())
+
+#         if unverified_rows.exists():
+#             id = unverified_rows.first().uploadhistory.id
+#             provider = CustomUser.objects.get(username=data.get("provider"))
+#             # print(provider)
+#             # Update each row
+#             for row in unverified_rows:
+#                 row.provider = provider
+#                 row.verified = True
+#                 row.save()
+
+#             # Redirect to the unverified_data view
+#             return redirect(
+#                 "minibooks:unverified_data",
+#                 id=id,
+#             )
+#         else:
+#             messages.error(
+#                 request, "No unverified rows found for the selected radiologist."
+#             )
+#             return redirect("minibooks:unverified_data", id=id)
+
+#     else:
+#         unverified_row = ReportMaster.objects.get(id=id)
+#         selected_radiologist = unverified_row.radiologist[0:2]
+#         filtered_providers = Profile.objects.filter(
+#             real_name__startswith=selected_radiologist
+#         ).select_related("user")
+#         context = {
+#             "unverified_row": unverified_row,
+#             "filtered_providers": filtered_providers,
+#         }
+
+#         return render(request, "minibooks/update_cleandata.html", context)
 
 
 @transaction.atomic
-def create_rawdata(request, id):
+def create_reportmaster(request, id):
 
     try:
-        a_raw = uploadhistory.objects.get(id=id)
-        source_from = a_raw.source_from
-        a_file = a_raw.file
+        a_raw = UploadHistory.objects.get(id=id)
+        platform = a_raw.platform
+        ayear = a_raw.ayear
+        amonth = a_raw.amonth
+        a_file = a_raw.afile
 
         # rawdata_resource = rawdataResource()
         dataset = Dataset()
@@ -250,61 +260,76 @@ def create_rawdata(request, id):
         # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
 
         # if not imported_data.has_errors():
+        i = 0
         for data in imported_data:
+            if data[0] == None:
+                print("Skip empty rows" + str(i))
+                i += 1
+            else:
 
-            if source_from == "ONPACS":
-                rawdata.objects.create(
-                    apptitle=data[0],
-                    case_id=data[1],
-                    name=data[2],
-                    department=data[3],
-                    bodypart=data[4],
-                    modality=data[5],
-                    equipment=data[6],
-                    studydescription=data[7],
+                ReportMaster.objects.create(
+                    apptitle=str(data[0]).strip() if data[0] else "",
+                    case_id=str(data[1]).strip() if data[1] else "",
+                    name=str(data[2]).strip() if data[2] else "",
+                    department=str(data[3]).strip() if data[3] else "",
+                    bodypart=str(data[4]).strip() if data[4] else "",
+                    modality=str(data[5]).strip() if data[5] else "",
+                    equipment=str(data[6]).strip() if data[6] else "",
+                    studydescription=str(data[7]).strip() if data[7] else "",
                     imagecount=data[8],
-                    accessionnumber=data[9],
+                    accessionnumber=str(data[9]).strip() if data[9] else "",
                     readprice=data[10],
-                    reader=data[11],
-                    approver=data[12],
-                    radiologist=data[13],
-                    studydate=data[14],
-                    approveddttm=data[15],
-                    stat=data[16],
-                    pacs=data[17],
-                    requestdttm=data[18],
-                    ecode=data[19],
-                    sid=data[20],
-                    patientid=data[21],
+                    reader=str(data[11]).strip() if data[11] else "",
+                    approver=str(data[12]).strip() if data[12] else "",
+                    radiologist=(
+                        str(data[13]).strip().replace("\n", "").replace("\t", "")
+                        if data[13]
+                        else ""
+                    ),
+                    studydate=str(data[14]).strip() if data[14] else "",
+                    approveddttm=str(data[15]).strip() if data[15] else "",
+                    stat=str(data[16]).strip() if data[16] else "",
+                    pacs=str(data[17]).strip() if data[17] else "",
+                    requestdttm=str(data[18]).strip() if data[18] else "",
+                    ecode=str(data[19]).strip() if data[19] else "",
+                    sid=str(data[20]).strip() if data[20] else "",
+                    patientid=str(data[21]).strip() if data[21] else "",
+                    ayear=str(ayear).strip() if ayear else "",
+                    amonth=str(amonth).strip() if amonth else "",
                     created_at=date.today(),
-                    cleaned=False,
                     verified=False,
                     uploadhistory=a_raw,
-                    updated_at=date.today(),
                 )
-            elif source_from == "ETC":
-
-                rawdata.objects.create(
-                    apptitle=data[0],
-                    case_id=data[1],
-                    equipment=data[2],
-                    studydescription=data[3],
-                    readprice=data[4],
-                    radiologist=data[5],
-                    created_at=date.today(),
-                    cleaned=False,
-                    verified=False,
-                    uploadhistory=a_raw,
-                    updated_at=date.today(),
-                )
-        a_raw.imported = True
-        a_raw.save()
+                a_raw.save()
+                i += 1
+        UploadHistory.objects.filter(id=id).update(imported=True)
+        messages.success(request, str(i) + " rows imported successfully.")
         return redirect("minibooks:index")
 
     except Exception as e:
         # logger.error(f"An error occurred during file upload: {e}")
         messages.error(request, f"An error occurred: {e}")
-        return redirect("minibooks:new_upload")
+        return redirect("minibooks:index")
+
+
+def snippet_reportmaster(request, id):
+    a_raw = UploadHistory.objects.get(id=id)
+
+    reportmasters = ReportMaster.objects.filter(uploadhistory=id).order_by("id")
+
+    total_rows = reportmasters.count()
+    paginator = Paginator(reportmasters, 10)
+    page = request.GET.get("page")
+    try:
+        reportmasters = paginator.page(page)
+    except PageNotAnInteger:
+        reportmasters = paginator.page(1)
+    except EmptyPage:
+        reportmasters = paginator.page(paginator.num_pages)
+
+    context = {"rs": reportmasters, "total_rows": total_rows}
+
+    return render(request, "minibooks/snippet_reportmaster.html", context)
 
 
 # 임시로 사용하는 함수(초기 데이터 입력용)

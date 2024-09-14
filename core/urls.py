@@ -33,6 +33,7 @@ urlpatterns = [
     path("product/", include("product.urls")),
     path("importdata/", include("importdata.urls")),
     path("minibooks/", include("minibooks.urls")),
+    path("report/", include("report.urls")),
     path("dogfoot/", include("dogfoot.urls")),
 ]
 

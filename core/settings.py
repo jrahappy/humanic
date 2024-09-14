@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django_extensions",
+    "django_filters",
     "widget_tweaks",
     "allauth",
     "allauth.account",

@@ -1,5 +1,6 @@
 from django.db import models
-from customer.models import Company, Platform
+from customer.models import Company
+from product.models import Platform
 from accounts.models import CustomUser, Profile
 from utils.base_func import (
     get_platform_choices,
@@ -60,14 +61,14 @@ class ReportMaster(models.Model):
     studydt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     approveddttm = models.CharField(max_length=100, null=True, blank=True)
-    approvedt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    approvedt = models.DateTimeField(null=True, blank=True)
 
     pacs = models.CharField(max_length=100, null=True, blank=True)
-    platform = models.CharField(
-        max_length=20, choices=get_platform_choices, null=True, blank=True
-    )
+    platform = models.ForeignKey(
+        Platform, on_delete=models.SET_NULL, null=True, blank=True
+    )  # platform
     requestdttm = models.CharField(max_length=100, null=True, blank=True)
-    requestdt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    requestdt = models.DateTimeField(null=True, blank=True)
 
     ecode = models.CharField(max_length=100, null=True, blank=True)
     sid = models.CharField(max_length=100, null=True, blank=True)
@@ -77,9 +78,10 @@ class ReportMaster(models.Model):
     amonth = models.CharField(max_length=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
+    unverified_message = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return self.case_id
+        return self.case_id if self.case_id else "No Case ID"
 
     class Meta:
         db_table = "reportmaster"
