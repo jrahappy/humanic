@@ -5,7 +5,7 @@
             <div >
                 <div x-cloak class="alert alert-{{ message.tags }} flex items-center py-3 pl-6 pr-4 bg-blue-500 text-white rounded-lg" role="alert"
                     x-show="alert_open"
-                    x-init="setTimeout(() => alert_open = true, 200), setTimeout(() => alert_open = false, 3000)"
+                    x-init="setTimeout(() => alert_open = true, 200), setTimeout(() => alert_open = false, 5000)"
                     x-transition:enter="duration-200 ease-out"
                     x-transition:enter-start="opacity-0 -translate-y-5"
                     x-transition:enter-end="opacity-100 translate-y-0"

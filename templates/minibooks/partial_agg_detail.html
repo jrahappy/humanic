@@ -1,0 +1,55 @@
+{% load crispy_forms_tags %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">Report Data (total:{{ total_rows }})</a>
+            </h2>
+            <a  _="on click transition opacity to 0 then hide agg_detail_modal"
+                class="btn"
+                >Close</a>
+        </div>
+        <div class="overflow-x-auto overflow-y-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="table table-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">병원명</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Case ID</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">환자명</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Body Part</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Platform</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Requested</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Approved</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">소요시간</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                {% for data in rs %}
+                    <tr>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.apptitle }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.case_id }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.equipment }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.bodypart }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.requestdt|date:"Y/m/d H/i/s" }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.approvedt|date:"Y/m/d H/i/s" }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.time_span }}</td>
+                        
+                    </tr>
+                {% empty %}
+
+                {% endfor %}
+    
+                    <!-- More people... -->
+                </tbody>
+            </table>
+        
+        </div>
+    </div>
+  </section>
+    

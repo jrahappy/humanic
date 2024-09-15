@@ -27,7 +27,7 @@
         <div class="mt-8 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                     <table class="table">
                         <thead class="bg-gray-50">
                             <tr>
@@ -38,7 +38,9 @@
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일출처</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Uploaded at</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Imported</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">데이터생성</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정합성확인</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">집계완료</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">보기</span>
                                 </th>
@@ -55,23 +57,44 @@
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.created_at }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 ">
-                                    <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Yes,No' }}/{{ data.ReportMaster_count }}</div>
+                                    {% if data.imported == False %}
+                                      <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">Create RawData</a>
+                                    {% else %}
+                                      <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Yes,No' }}/{{ data.ReportMaster_count }}</div>
+                                    {% endif %}
+
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 ">
+                                    {% if data.verified == False %}
+                                      <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정합성</a>
+                                    {% else %}
+                                      <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Yes,No' }}</div>
+                                    {% endif %}  
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 ">
+                                  {% if data.aggregated == False %}
+                                    <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">집계</a>
+                                  {% else %}
+                                    <a 
+                                      hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
+                                      hx-target="#general_modal" 
+                                      hx-swap="outerHTML" 
+                                      hx-trigger="click" 
+                                      hx-class="block" 
+                                      class="btn btn-sm">View</a>
+                                   
+                                  {% endif %}  
                                 </td>
                                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    {% if data.imported == False %}
-                                    <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info">Create RawData</a>
-                                    {% else %}
-                                    <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info">Validator</a>
-                                    {% endif %}
                                     <button 
                                         hx-get="{% url 'minibooks:snippet_reportmaster' data.id %}"
                                         hx-target="#general_modal"
                                         hx-swap="outerHTML"
                                         hx-trigger="click"
                                         hx-class="block"
-                                        class="btn">View
+                                        class="btn btn-sm">View
                                     </button>
-                                    <a href="{% url 'minibooks:history_delete' data.id %}" class="btn btn-warning">Delete</a>
+                                    <a href="{% url 'minibooks:history_delete' data.id %}" class="btn btn-sm btn-error">Delete</a>
                                     
                                 </td>
                             </tr>

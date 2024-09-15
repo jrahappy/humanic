@@ -1,0 +1,80 @@
+{% load crispy_forms_tags %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">Report Data (total:{{ total_rows }})</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'minibooks:index' %}"
+                hx-trigger="click"
+                hx-target="#general_modal"
+                hx-swap="outerHTML"
+                class="btn">Close</a>
+        </div>
+        <div class="overflow-x-auto overflow-y-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="table table-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">년도</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">월</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">병원</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독의</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Platform</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">횟수</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Verified</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                {% for data in rs %}
+                    <tr>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ayear }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amonth }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {{ data.company_business_name }}
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.provider_real_name }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amodality }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            <a 
+                                _="on click show #agg_detail_modal then on click go to the bottom of body"
+                                hx-get="{% url 'minibooks:agg_detail' data.id %}"
+                                hx-trigger="click"
+                                hx-target="#agg_detail_modal"
+                                hx-swap="innerHTML"
+                                class="link">{{ data.total_count }}</a>
+                            
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {% if data.verified %}
+                                <span class="badge badge-success">{{ data.verified }}</span>
+                            {% else %}
+                                <span class='badge badge-error'  alt="{{ data.unverified_message }}">{{ data.verified }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+
+                {% endfor %}
+    
+                    <!-- More people... -->
+                </tbody>
+            </table>
+        
+        </div>
+    </div>
+    <div id="agg_detail_modal" class="modal">
+        <div class="modal-box">
+        </div>
+    </div>
+    <div id="bottom_point" class="modal">
+        <div class="modal-box">
+        </div>
+    </div>
+  </section>
+

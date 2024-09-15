@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 from accounts.models import Profile, CustomUser
 from customer.models import Company, Contract, ContractItem
 from product.models import Product, Platform
-from .models import UploadHistory, ReportMaster
+from .models import UploadHistory, ReportMaster, ReportMasterStat
 from .forms import UploadHistoryForm
 from import_export import resources
 from tablib import Dataset
@@ -24,6 +24,7 @@ from utils.base_func import (
     get_specialty_choices,
 )
 from utils.models import ChoiceMaster
+from django.db.models import F, ExpressionWrapper, DurationField
 
 
 def index(request):
@@ -188,6 +189,13 @@ def clean_data(request, id):
             )
         else:
             messages.error(request, f"Data for {data.id} not verified.")
+
+    v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False)
+    total_rows = v_rawdata.count()
+    if total_rows == 0:
+        v_uploadhistory.verified = True
+        v_uploadhistory.save(update_fields=["verified"])
+        messages.success(request, "Data cleaned successfully.")
 
     return redirect("minibooks:index")
 
@@ -394,3 +402,114 @@ def initial_customer_data(request):
         print("customer imported")
 
     return render(request, "importdata/initial_customer_data.html")
+
+
+def aggregate_data(request, upload_history_id):
+    try:
+        # Aggregate data from ReportMaster
+        aggregation = (
+            ReportMaster.objects.values(
+                "provider", "company", "ayear", "amonth", "amodality", "platform"
+            )
+            .filter(uploadhistory=upload_history_id)
+            .annotate(total_count=Count("id"))
+        )
+
+        # Insert aggregated data into ReportMasterStat
+        for entry in aggregation:
+            provider = CustomUser.objects.get(id=entry["provider"])
+            company = Company.objects.get(id=entry["company"])
+            year = entry["ayear"]
+            month = entry["amonth"]
+            platform = Platform.objects.get(id=entry["platform"])
+            amodality = entry["amodality"]
+            total_count = entry["total_count"]
+
+            print(
+                f"Provider: {provider}, Company: {company}, Year: {year}, Month: {month}, Platform: {platform}, Modality: {amodality}, Total Count: {total_count}"
+            )
+
+            # Create or update the ReportMasterStat entry
+            ReportMasterStat.objects.update_or_create(
+                provider=provider,
+                company=company,
+                ayear=year,
+                amonth=month,
+                platform=platform,
+                amodality=amodality,
+                defaults={"total_count": total_count},
+                UploadHistory=UploadHistory.objects.get(id=upload_history_id),
+            )
+        UploadHistory.objects.filter(id=upload_history_id).update(aggregated=True)
+        return redirect("minibooks:index")
+
+    except Exception as e:
+        # Handle exceptions (e.g., log the error)
+        print(f"An error occurred: {e}")
+        messages.error(request, f"An error occurred: {e}")
+        return redirect("minibooks:index")
+
+
+def aggregate_data_result(request, upload_history_id):
+    # Get the aggregated data
+    aggregation = ReportMasterStat.objects.filter(
+        UploadHistory=upload_history_id
+    ).order_by("ayear", "amonth", "provider", "amodality")
+    aggregation = aggregation.select_related("company", "provider__profile")
+
+    # Add the real name of the provider's profile and company business name to the context
+    for entry in aggregation:
+        entry.provider_real_name = entry.provider.profile.real_name
+        entry.company_business_name = entry.company.business_name
+
+    total_rows = aggregation.count()
+    # Paginate the data
+    paginator = Paginator(aggregation, 10)
+    page = request.GET.get("page")
+    try:
+        aggregation = paginator.page(page)
+    except PageNotAnInteger:
+        aggregation = paginator.page(1)
+    except EmptyPage:
+        aggregation = paginator.page(paginator.num_pages)
+
+    context = {"rs": aggregation, "total_rows": total_rows}
+
+    return render(request, "minibooks/partial_aggregate_data_result.html", context)
+
+
+def agg_detail(request, id):
+    reportmasterstat = ReportMasterStat.objects.get(id=id)
+    reportmasters = (
+        ReportMaster.objects.filter(
+            provider=reportmasterstat.provider,
+            company=reportmasterstat.company,
+            ayear=reportmasterstat.ayear,
+            amonth=reportmasterstat.amonth,
+            platform=reportmasterstat.platform,
+            amodality=reportmasterstat.amodality,
+        )
+        .annotate(
+            time_span=ExpressionWrapper(
+                F("approvedt") - F("requestdt"), output_field=DurationField()
+            )
+        )
+        .order_by("id")
+    )
+
+    total_rows = reportmasters.count()
+    paginator = Paginator(reportmasters, 50)
+    page = request.GET.get("page")
+    try:
+        reportmasters = paginator.page(page)
+    except PageNotAnInteger:
+        reportmasters = paginator.page(1)
+    except EmptyPage:
+        reportmasters = paginator.page(paginator.num_pages)
+
+    # for report in reportmasters:
+    #     print(report.apptitle)
+
+    context = {"rs": reportmasters, "total_rows": total_rows}
+
+    return render(request, "minibooks/partial_agg_detail.html", context)
