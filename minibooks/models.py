@@ -29,6 +29,18 @@ class UploadHistory(models.Model):
         return self.name
 
 
+class UploadHistoryTrack(models.Model):
+    uploadhistory = models.ForeignKey(UploadHistory, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    action = models.CharField(max_length=50, null=True, blank=True)
+    result = models.CharField(max_length=250, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False, null=True, blank=True)
+
+    def __str__(self):
+        return self.uploadhistory.name
+
+
 # Create your models here.
 class ReportMaster(models.Model):
     uploadhistory = models.ForeignKey(

@@ -39,8 +39,8 @@
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Uploaded at</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">데이터생성</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정합성확인</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">집계완료</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정규화진행</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">통계생성</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">보기</span>
                                 </th>
@@ -58,7 +58,7 @@
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.created_at }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 ">
                                     {% if data.imported == False %}
-                                      <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">Create RawData</a>
+                                      <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">데이터생성</a>
                                     {% else %}
                                       <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Yes,No' }}/{{ data.ReportMaster_count }}</div>
                                     {% endif %}
@@ -66,14 +66,14 @@
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 ">
                                     {% if data.verified == False %}
-                                      <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정합성</a>
+                                      <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화진행</a>
                                     {% else %}
                                       <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Yes,No' }}</div>
                                     {% endif %}  
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 ">
                                   {% if data.aggregated == False %}
-                                    <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">집계</a>
+                                    <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화진행</a>
                                   {% else %}
                                     <a 
                                       hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
@@ -81,11 +81,20 @@
                                       hx-swap="outerHTML" 
                                       hx-trigger="click" 
                                       hx-class="block" 
-                                      class="btn btn-sm">View</a>
+                                      class="btn btn-sm btn-info">통계맛보기</a>
                                    
                                   {% endif %}  
                                 </td>
                                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                    <button 
+                                        onclick="base_modal.showModal()"
+                                        class="btn btn-sm btn-info" 
+                                        hx-get="{% url 'minibooks:partial_tracking' data.id %}"
+                                        hx-trigger="click"
+                                        hx-target="#base_modal"
+                                        
+                                        >작업트레킹</button>
+                                    
                                     <button 
                                         hx-get="{% url 'minibooks:snippet_reportmaster' data.id %}"
                                         hx-target="#general_modal"
@@ -94,8 +103,15 @@
                                         hx-class="block"
                                         class="btn btn-sm">View
                                     </button>
-                                    <a href="{% url 'minibooks:history_delete' data.id %}" class="btn btn-sm btn-error">Delete</a>
                                     
+                                    <button
+                                      onclick="base_modal.showModal()"
+                                      class="btn btn-sm btn-warning"
+                                      hx-get="{% url 'minibooks:history_delete' data.id %}"
+                                      hx-trigger="click"
+                                      hx-target="#base_modal"
+                                      hx-swap="innerHTML"
+                                      >Delete</button>
                                 </td>
                             </tr>
                         {% empty %}

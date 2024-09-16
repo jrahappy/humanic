@@ -9,8 +9,10 @@ from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 from accounts.models import Profile, CustomUser
 from customer.models import Company, Contract, ContractItem
 from product.models import Product, Platform
-from .models import UploadHistory, ReportMaster, ReportMasterStat
+from .models import UploadHistory, ReportMaster, ReportMasterStat, UploadHistoryTrack
 from .forms import UploadHistoryForm
+from .utils import log_uploadhistory
+from .tasks import upload_file, test_celery
 from import_export import resources
 from tablib import Dataset
 from datetime import date
@@ -28,10 +30,11 @@ from django.db.models import F, ExpressionWrapper, DurationField
 
 
 def index(request):
-
-    upload_histories = UploadHistory.objects.annotate(
-        ReportMaster_count=Count("reportmaster")
-    ).all()
+    upload_histories = (
+        UploadHistory.objects.annotate(ReportMaster_count=Count("reportmaster"))
+        .filter(is_deleted=False)
+        .order_by("-created_at")
+    )
 
     context = {"upload_histories": upload_histories}
 
@@ -39,8 +42,58 @@ def index(request):
 
 
 def history_delete(request, id):
-    UploadHistory.objects.get(id=id).delete()
-    return redirect("minibooks:index")
+    uh = get_object_or_404(UploadHistory, id=id)
+
+    if request.method == "POST":
+        uh.is_deleted = True
+        uh.save()
+        ReportMaster.objects.filter(uploadhistory=id).delete()
+        ReportMasterStat.objects.filter(UploadHistory=id).delete()
+        messages.success(request, "Report data deleted successfully.")
+        # tracking the upload history
+        log_uploadhistory(
+            request.user,
+            "Data Deleted",
+            f"UploadHistory#{id} deleted successfully.",
+            uh,
+        )
+        return redirect("minibooks:index")
+    else:
+        context = {"uh": uh}
+        return render(request, "minibooks/history_delete.html", context)
+
+
+# def new_upload(request):
+#     user = request.user
+#     # logger.info(f"User: {user}")
+#     form = UploadHistoryForm()
+
+#     if request.method == "POST":
+#         form = UploadHistoryForm(request.POST, request.FILES)
+
+#         if form.is_valid():
+#             upload_history = form.save(commit=False)
+#             upload_history.user = user
+#             upload_history.created_at = timezone.now()
+#             upload_history.save()
+#             messages.success(request, "File uploaded successfully.")
+#             # tracking the upload history
+#             log_uploadhistory(
+#                 request.user,
+#                 "File Uploaded",
+#                 "File uploaded successfully.",
+#                 upload_history,
+#             )
+#             return redirect("minibooks:index")
+#         else:
+#             messages.error(request, "An error occurred.")
+#             return redirect("minibooks:new_upload")
+#     else:
+#         today_date = date.today().strftime("%Y-%m-%d")
+#         form = UploadHistoryForm(initial={"import_date": today_date})
+#         context = {"import_date": today_date, "form": form}
+
+#     return render(request, "minibooks/new_upload.html", context)
 
 
 def new_upload(request):
@@ -55,8 +108,24 @@ def new_upload(request):
             upload_history = form.save(commit=False)
             upload_history.user = user
             upload_history.created_at = timezone.now()
+
+            uploaded_file = request.FILES["afile"]
+            file_name = uploaded_file.name
+            file_content = uploaded_file.read()
+
+            # Call the Celery task to handle the file upload
+            upload_file.delay(file_name, file_content)
+
             upload_history.save()
+
             messages.success(request, "File uploaded successfully.")
+            # tracking the upload history
+            log_uploadhistory(
+                request.user,
+                "FileUpload",
+                "File uploaded successfully.",
+                upload_history,
+            )
             return redirect("minibooks:index")
         else:
             messages.error(request, "An error occurred.")
@@ -67,6 +136,19 @@ def new_upload(request):
         context = {"import_date": today_date, "form": form}
 
     return render(request, "minibooks/new_upload.html", context)
+
+
+# def clean_data(request, id):
+#     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
+
+#     if request.method == "POST":
+#         # Call the Celery task
+#         clean_data_task.delay(id)
+#         messages.success(request, "Data cleaning task has been initiated.")
+#         return redirect("minibooks:index")
+
+#     context = {"uploadhistory": v_uploadhistory}
+#     return render(request, "minibooks/clean_data.html", context)
 
 
 def clean_data(request, id):
@@ -196,59 +278,23 @@ def clean_data(request, id):
         v_uploadhistory.verified = True
         v_uploadhistory.save(update_fields=["verified"])
         messages.success(request, "Data cleaned successfully.")
+        # tracking the upload history
+        log_uploadhistory(
+            request.user,
+            "Data Cleanning",
+            "Data cleanned successfully.",
+            v_uploadhistory,
+        )
+    else:
+        messages.error(request, "Data not cleaned successfully.")
+        log_uploadhistory(
+            request.user,
+            "Data Cleanning",
+            f"Failed: Data for {data.id} not verified.",
+            v_uploadhistory,
+        )
 
     return redirect("minibooks:index")
-
-
-# def update_cleandata(request, id):
-
-#     if request.method == "POST":
-#         data = request.POST
-
-#         radiologist_name = data.get("radiologist")
-#         if radiologist_name:
-#             unverified_rows = ReportMaster.objects.filter(
-#                 radiologist=radiologist_name, verified=False
-#             )
-#         else:
-#             unverified_rows = ReportMaster.objects.none()
-
-#         print(radiologist_name)
-#         print(unverified_rows.count())
-
-#         if unverified_rows.exists():
-#             id = unverified_rows.first().uploadhistory.id
-#             provider = CustomUser.objects.get(username=data.get("provider"))
-#             # print(provider)
-#             # Update each row
-#             for row in unverified_rows:
-#                 row.provider = provider
-#                 row.verified = True
-#                 row.save()
-
-#             # Redirect to the unverified_data view
-#             return redirect(
-#                 "minibooks:unverified_data",
-#                 id=id,
-#             )
-#         else:
-#             messages.error(
-#                 request, "No unverified rows found for the selected radiologist."
-#             )
-#             return redirect("minibooks:unverified_data", id=id)
-
-#     else:
-#         unverified_row = ReportMaster.objects.get(id=id)
-#         selected_radiologist = unverified_row.radiologist[0:2]
-#         filtered_providers = Profile.objects.filter(
-#             real_name__startswith=selected_radiologist
-#         ).select_related("user")
-#         context = {
-#             "unverified_row": unverified_row,
-#             "filtered_providers": filtered_providers,
-#         }
-
-#         return render(request, "minibooks/update_cleandata.html", context)
 
 
 @transaction.atomic
@@ -274,7 +320,6 @@ def create_reportmaster(request, id):
                 print("Skip empty rows" + str(i))
                 i += 1
             else:
-
                 ReportMaster.objects.create(
                     apptitle=str(data[0]).strip() if data[0] else "",
                     case_id=str(data[1]).strip() if data[1] else "",
@@ -305,19 +350,53 @@ def create_reportmaster(request, id):
                     ayear=str(ayear).strip() if ayear else "",
                     amonth=str(amonth).strip() if amonth else "",
                     created_at=date.today(),
-                    verified=False,
+                    # verified=False,
                     uploadhistory=a_raw,
                 )
                 a_raw.save()
+                # Call the Celery task
+                # test_celery.delay(i)
                 i += 1
         UploadHistory.objects.filter(id=id).update(imported=True)
         messages.success(request, str(i) + " rows imported successfully.")
+        log_uploadhistory(
+            request.user,
+            "Data Import",
+            "Data imported successfully.",
+            a_raw,
+        )
         return redirect("minibooks:index")
 
     except Exception as e:
         # logger.error(f"An error occurred during file upload: {e}")
         messages.error(request, f"An error occurred: {e}")
+        log_uploadhistory(
+            request.user,
+            "Data Import",
+            f"Failed: An error occurred: {e}",
+            a_raw,
+        )
         return redirect("minibooks:index")
+
+
+# def create_reportmaster(request, id):
+#     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
+
+#     # if request.method == "POST":
+#     # Call the Celery task
+#     create_reportmaster_task.delay(id)
+#     messages.success(request, "Data import task has been initiated.")
+#     log_uploadhistory(
+#         request.user,
+#         "Data Import",
+#         "Data imported successfully.",
+#         v_uploadhistory,
+#     )
+
+#     return redirect("minibooks:index")
+
+# context = {"uploadhistory": v_uploadhistory}
+# return render(request, "minibooks/create_reportmaster.html", context)
 
 
 def snippet_reportmaster(request, id):
@@ -441,12 +520,25 @@ def aggregate_data(request, upload_history_id):
                 UploadHistory=UploadHistory.objects.get(id=upload_history_id),
             )
         UploadHistory.objects.filter(id=upload_history_id).update(aggregated=True)
+        messages.success(request, "Data aggregated successfully.")
+        log_uploadhistory(
+            request.user,
+            "Data Aggregation",
+            "Data aggregated successfully.",
+            UploadHistory.objects.get(id=upload_history_id),
+        )
+
         return redirect("minibooks:index")
 
     except Exception as e:
         # Handle exceptions (e.g., log the error)
-        print(f"An error occurred: {e}")
         messages.error(request, f"An error occurred: {e}")
+        log_uploadhistory(
+            request.user,
+            "Data Aggregation",
+            f"Failed: An error occurred: {e}",
+            UploadHistory.objects.get(id=upload_history_id),
+        )
         return redirect("minibooks:index")
 
 
@@ -513,3 +605,12 @@ def agg_detail(request, id):
     context = {"rs": reportmasters, "total_rows": total_rows}
 
     return render(request, "minibooks/partial_agg_detail.html", context)
+
+
+def partial_tracking(request, id):
+    rs_tracking = UploadHistoryTrack.objects.filter(uploadhistory=id).order_by(
+        "-created_at"
+    )
+    context = {"rs_tracking": rs_tracking}
+
+    return render(request, "minibooks/partial_tracking.html", context)

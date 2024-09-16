@@ -137,6 +137,10 @@ DATABASES = {
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": env("POSTGRES_HOST"),
         "PORT": env("POSTGRES_PORT"),
+        "CONN_MAX_AGE": 600,  # Increase the connection age
+        "OPTIONS": {
+            "connect_timeout": 10,  # Increase the connection timeout
+        },
     }
 }
 
@@ -197,3 +201,10 @@ CRISPY_TEMPLATE_PACK = "tailwind"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "Asia/Seoul"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = "redis://default:toB0yMMAPkXnNWZHqmzPwylmeNykVFG0@redis-10712.c283.us-east-1-4.ec2.redns.redis-cloud.com:10712"
+CELERY_RESULT_BACKEND = "redis://default:toB0yMMAPkXnNWZHqmzPwylmeNykVFG0@redis-10712.c283.us-east-1-4.ec2.redns.redis-cloud.com:10712"

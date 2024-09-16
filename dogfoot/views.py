@@ -72,7 +72,7 @@ def home(request):
 
 
 def show_urls(request, app_name=None):
-    context = {"app_names": app_names()}
+    app_names = get_app_names
 
     app_name = request.GET.get("app_name", "")
     if app_name is not None and "all" not in app_name:
@@ -83,7 +83,13 @@ def show_urls(request, app_name=None):
         urlpatterns = get_all_url_patterns(get_resolver(None).url_patterns)
 
     urlpatterns_json = json.dumps(urlpatterns)
-    context["urlpatterns"] = urlpatterns_json
+
+    context = {
+        "app_name": app_name,
+        "app_names": app_names,
+        "urlpatterns": urlpatterns_json,
+    }
+
     return render(request, "dogfoot/show_urls.html", context)
 
 
@@ -131,6 +137,10 @@ def schema(request):
             or "social" in app_name
             or "server" in app_name
             or "storages" in app_name
+            or "widget_tweaks" in app_name
+            or "tailwind" in app_name
+            or "theme" in app_name
+            or "import_export" in app_name
         ):
             pass
         else:
@@ -173,7 +183,7 @@ def schema(request):
 app_name = []
 
 
-def all_tables(request):
+def get_app_names():
     app_configs = apps.get_app_configs()
     app_names = [
         app_config.name
@@ -183,8 +193,19 @@ def all_tables(request):
         if "crispy" not in app_config.name
         if "debug" not in app_config.name
         if "server" not in app_config.name
-        if "social" not in app_config.name
+        if "widget_tweaks" not in app_config.name
+        if "tailwind" not in app_config.name
+        if "theme" not in app_config.name
+        if "import_export" not in app_config.name
+        if "dogfoot" not in app_config.name
+        if "utils" not in app_config.name
     ]
+    return app_names
+
+
+def all_tables(request):
+    app_configs = apps.get_app_configs()
+    app_names = get_app_names
 
     with connection.cursor() as cursor:
         all_table_names = connection.introspection.table_names()
@@ -208,15 +229,7 @@ def all_tables(request):
 def get_tables(request, app_name):
 
     app_configs = apps.get_app_configs()
-    app_names = [
-        app_config.name
-        for app_config in app_configs
-        if "django" not in app_config.name
-        if "allauth" not in app_config.name
-        if "crispy" not in app_config.name
-        if "debug" not in app_config.name
-        if "server" not in app_config.name
-    ]
+    app_names = get_app_names
 
     if app_name == "all":
 
@@ -263,15 +276,7 @@ def get_tables(request, app_name):
 def dj_code_generate(request, app_name, model_name):
 
     app_configs = apps.get_app_configs()
-    app_names = [
-        app_config.name
-        for app_config in app_configs
-        if "django" not in app_config.name
-        if "allauth" not in app_config.name
-        if "crispy" not in app_config.name
-        if "debug" not in app_config.name
-        if "server" not in app_config.name
-    ]
+    app_names = get_app_names
     code_gen = get_dj_code_generate(app_name, model_name)
     table_columns = get_table_app(request, app_name)
 

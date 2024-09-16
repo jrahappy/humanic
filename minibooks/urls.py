@@ -28,6 +28,7 @@ urlpatterns = [
         name="aggregate_data_result",
     ),
     path("agg_detail/<int:id>/", views.agg_detail, name="agg_detail"),
+    path("partial_tracking/<int:id>/", views.partial_tracking, name="partial_tracking"),
     # path("unverified_data/<int:id>/", views.unverified_data, name="unverified_data"),
     # path("update_cleandata/<int:id>/", views.update_cleandata, name="update_cleandata"),
     # path("initial_dr_data/", views.initial_dr_data, name="initial_dr_data"),

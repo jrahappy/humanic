@@ -1,0 +1,15 @@
+from celery import shared_task
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from .models import ReportMaster, UploadHistory
+
+
+@shared_task
+def upload_file(file_name, file_content):
+    path = default_storage.save(file_name, ContentFile(file_content))
+    return path
+
+
+@shared_task
+def test_celery(id):
+    print("test_celery test #" + str(id))

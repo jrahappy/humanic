@@ -1,0 +1,33 @@
+{% block content %}
+
+<div class="modal-box w-11/12 max-w-5xl">
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2 pr-4 me-2">
+                <h2 class="card-title grow">
+                    Delete Upload File?
+                </h2>
+                <form method="dialog" class="p-4">
+                    <button class="btn btn-sm btn-secondary absolute right-2 top-2 px-4">Close</button>
+                </form>
+            </div>
+            <form method="post" action="{% url 'minibooks:history_delete' uh.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ uh.id }}">
+                <div class="form-control py-4 px-2 ">
+                    <div class="form-control py-4">
+                        {{ uh.name}}
+                    </div>
+                </div>
+                <div class="flex flex-colume form-control py-4 ">
+                    <div class="form-control py-4 gap-2">
+                        <button type="submit" class="btn btn-warning">Delete</button>
+                        
+                    </div>
+                </div>
+            </form> 
+       
+        </div>
+    </section>
+</div>  
+  {% endblock %}

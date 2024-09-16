@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
             <h2 class="card-title grow">
@@ -42,7 +42,6 @@
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <a 
-                                _="on click show #agg_detail_modal then on click go to the bottom of body"
                                 hx-get="{% url 'minibooks:agg_detail' data.id %}"
                                 hx-trigger="click"
                                 hx-target="#agg_detail_modal"
