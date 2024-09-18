@@ -66,6 +66,12 @@ class Profile(models.Model):
     specialty3 = models.CharField(
         max_length=30, choices=get_specialty_choices, null=True, blank=True
     )
+    specialty4 = models.CharField(
+        max_length=30, choices=get_specialty_choices, null=True, blank=True
+    )
+    specialty5 = models.CharField(
+        max_length=30, choices=get_specialty_choices, null=True, blank=True
+    )
     position = models.CharField(max_length=30, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     cv3_id = models.CharField(max_length=30, null=True, blank=True)

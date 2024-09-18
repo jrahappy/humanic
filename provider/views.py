@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
+from .forms import ProviderForm
 
 
 def index(request):
@@ -51,14 +52,46 @@ def index(request):
 
 
 def new_provider(request):
-
+    form = ProviderForm()
+    if request.method == "POST":
+        form = ProviderForm(request.POST)
+        if form.is_valid():
+            form.save(commit=False)
+            form.user = CustomUser.objects.create_user(
+                username=form.cleaned_data["user"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["user"],
+            )
+            form.user.is_doctor = True
+            form.user.save()
+            form.save()
+            messages.success(request, "Provider created successfully")
+            return redirect("provider:index")
+        else:
+            messages.error(request, "Error creating provider")
     return render(request, "provider/new_provider.html")
 
 
 def view_provider(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
-    print(provider.profile.real_name)
+    # print(provider.profile.real_name)
     return render(request, "provider/view_provider.html", {"provider": provider})
+
+
+def edit_provider(request, id):
+    provider = CustomUser.objects.select_related("profile").get(pk=id)
+    form = ProviderForm(instance=provider.profile)
+    if request.method == "POST":
+        form = ProviderForm(request.POST, instance=provider.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Provider updated successfully")
+            return redirect("provider:view_provider", provider.id)
+        else:
+            messages.error(request, "Error updating provider")
+    return render(
+        request, "provider/edit_provider.html", {"form": form, "provider": provider}
+    )
 
 
 def rawdata(request):
