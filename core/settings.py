@@ -194,6 +194,21 @@ STATICFILES_FINDERS = [
 ]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+AWS_QUERYSTRING_AUTH = False
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")  # noqa: F405
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")  # noqa: F405
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")  # noqa: F405
+AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME")  # noqa: F405
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
 
@@ -206,5 +221,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CELERY_TIMEZONE = "Asia/Seoul"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = "redis://default:toB0yMMAPkXnNWZHqmzPwylmeNykVFG0@redis-10712.c283.us-east-1-4.ec2.redns.redis-cloud.com:10712"
-CELERY_RESULT_BACKEND = "redis://default:toB0yMMAPkXnNWZHqmzPwylmeNykVFG0@redis-10712.c283.us-east-1-4.ec2.redns.redis-cloud.com:10712"
+CELERY_BROKER_URL = "amqp://localhost"
+CELERY_RESULT_BACKEND = "rpc://"
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
+# CELERY_BROKER_URL = "redis://localhost:6379"
+# CELERY_RESULT_BACKEND = "redis://localhost:6379"

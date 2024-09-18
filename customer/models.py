@@ -17,6 +17,7 @@ class Company(models.Model):
     website = models.URLField(null=True, blank=True)
     ein = models.CharField(max_length=20, null=True, blank=True)
     clinic_id = models.CharField(max_length=20, null=True, blank=True)
+    is_public = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Company"

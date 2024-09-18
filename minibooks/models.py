@@ -10,6 +10,10 @@ from utils.base_func import (
 )
 
 
+def upload_to(instance, filename):
+    return f"afiles/{instance.ayear}/{instance.amonth}/{filename}"
+
+
 class UploadHistory(models.Model):
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -18,7 +22,8 @@ class UploadHistory(models.Model):
     ayear = models.CharField(max_length=4, choices=get_ayear_choices)
     amonth = models.CharField(max_length=2, choices=get_amonth_choices)
     description = models.TextField(null=True, blank=True)
-    afile = models.FileField(upload_to="afiles/")
+    # afile = models.FileField(upload_to="afiles/")
+    afile = models.FileField(upload_to=upload_to)
     imported = models.BooleanField(default=False)
     verified = models.BooleanField(default=False, null=True, blank=True)
     aggregated = models.BooleanField(default=False, null=True, blank=True)
@@ -94,6 +99,8 @@ class ReportMaster(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
     unverified_message = models.CharField(max_length=200, null=True, blank=True)
+    excelrownum = models.IntegerField(null=True, blank=True, default=0)
+    pay_to_provider = models.FloatField(null=True, blank=True, default=0)
 
     def __str__(self):
         return self.case_id if self.case_id else "No Case ID"

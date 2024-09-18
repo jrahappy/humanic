@@ -1,0 +1,191 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">Upload Data 이력</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'minibooks:new_upload' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">Import new data</a>
+                        
+            
+        </div>
+    </div>
+    <div class="space-y-12">
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                    <table class="table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">년도</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">월</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">제목</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일출처</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Uploaded at</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">데이터생성</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정규화진행</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">통계생성</th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                    <span class="sr-only">보기</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for data in upload_histories %}
+                            <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ayear }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amonth }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.created_at }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 ">
+                                    {% if data.imported == False %}
+                                      <div hx-target="this" hx-swap="outerHTML">
+                                        <button class="btn btn-info btn-sm" hx-post="{% url 'minibooks:create_reportmaster_progress' data.id %}">데이터생성</button>
+                                      </div> 
+                                    {% else %}
+                                      <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Yes,No' }}/{{ data.ReportMaster_count }}</div>
+                                    {% endif %}
+
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 ">
+                                    {% if data.verified == False %}
+                                      <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화진행</a>
+                                    {% else %}
+                                      <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-primary btn-sm">정규화재진행</a>
+                                      <!-- <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Yes,No' }}</div> -->
+                                    {% endif %}  
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 ">
+                                  {% if data.aggregated == False %}
+                                    <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화진행</a>
+                                  {% else %}
+                                    <a 
+                                      hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
+                                      hx-target="#general_modal" 
+                                      hx-swap="outerHTML" 
+                                      hx-trigger="click" 
+                                      hx-class="block" 
+                                      class="btn btn-sm btn-info">통계맛보기</a>
+                                   
+                                  {% endif %}  
+                                </td>
+                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                    <button 
+                                        onclick="base_modal.showModal()"
+                                        class="btn btn-sm btn-info" 
+                                        hx-get="{% url 'minibooks:partial_tracking' data.id %}"
+                                        hx-trigger="click"
+                                        hx-target="#base_modal"
+                                        
+                                        >작업트레킹</button>
+                                    
+                                    <button 
+                                        hx-get="{% url 'minibooks:snippet_reportmaster' data.id %}"
+                                        hx-target="#general_modal"
+                                        hx-swap="outerHTML"
+                                        hx-trigger="click"
+                                        hx-class="block"
+                                        class="btn btn-sm">View
+                                    </button>
+                                    
+                                    <button
+                                      onclick="base_modal.showModal()"
+                                      class="btn btn-sm btn-warning"
+                                      hx-get="{% url 'minibooks:history_delete' data.id %}"
+                                      hx-trigger="click"
+                                      hx-target="#base_modal"
+                                      hx-swap="innerHTML"
+                                      >Delete</button>
+                                </td>
+                            </tr>
+                        {% empty %}
+
+                        {% endfor %}
+            
+                            <!-- More people... -->
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<div id="general_modal" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <!--
+      Background backdrop, show/hide based on modal state.
+  
+      Entering: "ease-out duration-300"
+        From: "opacity-0"
+        To: "opacity-100"
+      Leaving: "ease-in duration-200"
+        From: "opacity-100"
+        To: "opacity-0"
+    -->
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+  
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <!--
+          Modal panel, show/hide based on modal state.
+  
+          Entering: "ease-out duration-300"
+            From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            To: "opacity-100 translate-y-0 sm:scale-100"
+          Leaving: "ease-in duration-200"
+            From: "opacity-100 translate-y-0 sm:scale-100"
+            To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        -->
+        <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+          <div class="sm:flex sm:items-start">
+            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+              <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Deactivate account</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">Are you sure you want to deactivate your account? All of your data will be permanently removed from our servers forever. This action cannot be undone.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:ml-10 sm:mt-4 sm:flex sm:pl-4">
+            <button type="button" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto">Deactivate</button>
+            <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:ml-3 sm:mt-0 sm:w-auto">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

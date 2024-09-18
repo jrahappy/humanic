@@ -12,7 +12,8 @@ from product.models import Product, Platform
 from .models import UploadHistory, ReportMaster, ReportMasterStat, UploadHistoryTrack
 from .forms import UploadHistoryForm
 from .utils import log_uploadhistory
-from .tasks import upload_file, test_celery
+from .tasks import upload_file, my_task
+from celery.result import AsyncResult
 from import_export import resources
 from tablib import Dataset
 from datetime import date
@@ -63,39 +64,6 @@ def history_delete(request, id):
         return render(request, "minibooks/history_delete.html", context)
 
 
-# def new_upload(request):
-#     user = request.user
-#     # logger.info(f"User: {user}")
-#     form = UploadHistoryForm()
-
-#     if request.method == "POST":
-#         form = UploadHistoryForm(request.POST, request.FILES)
-
-#         if form.is_valid():
-#             upload_history = form.save(commit=False)
-#             upload_history.user = user
-#             upload_history.created_at = timezone.now()
-#             upload_history.save()
-#             messages.success(request, "File uploaded successfully.")
-#             # tracking the upload history
-#             log_uploadhistory(
-#                 request.user,
-#                 "File Uploaded",
-#                 "File uploaded successfully.",
-#                 upload_history,
-#             )
-#             return redirect("minibooks:index")
-#         else:
-#             messages.error(request, "An error occurred.")
-#             return redirect("minibooks:new_upload")
-#     else:
-#         today_date = date.today().strftime("%Y-%m-%d")
-#         form = UploadHistoryForm(initial={"import_date": today_date})
-#         context = {"import_date": today_date, "form": form}
-
-#     return render(request, "minibooks/new_upload.html", context)
-
-
 def new_upload(request):
     user = request.user
     # logger.info(f"User: {user}")
@@ -108,21 +76,12 @@ def new_upload(request):
             upload_history = form.save(commit=False)
             upload_history.user = user
             upload_history.created_at = timezone.now()
-
-            uploaded_file = request.FILES["afile"]
-            file_name = uploaded_file.name
-            file_content = uploaded_file.read()
-
-            # Call the Celery task to handle the file upload
-            upload_file.delay(file_name, file_content)
-
             upload_history.save()
-
             messages.success(request, "File uploaded successfully.")
             # tracking the upload history
             log_uploadhistory(
                 request.user,
-                "FileUpload",
+                "File Uploaded",
                 "File uploaded successfully.",
                 upload_history,
             )
@@ -138,22 +97,53 @@ def new_upload(request):
     return render(request, "minibooks/new_upload.html", context)
 
 
-# def clean_data(request, id):
-#     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
+# def new_upload(request):
+#     user = request.user
+#     # logger.info(f"User: {user}")
+#     form = UploadHistoryForm()
 
 #     if request.method == "POST":
-#         # Call the Celery task
-#         clean_data_task.delay(id)
-#         messages.success(request, "Data cleaning task has been initiated.")
-#         return redirect("minibooks:index")
+#         form = UploadHistoryForm(request.POST, request.FILES)
 
-#     context = {"uploadhistory": v_uploadhistory}
-#     return render(request, "minibooks/clean_data.html", context)
+#         if form.is_valid():
+#             upload_history = form.save(commit=False)
+#             upload_history.user = user
+#             upload_history.created_at = timezone.now()
+
+#             uploaded_file = request.FILES["afile"]
+#             file_name = uploaded_file.name
+#             file_content = uploaded_file.read()
+
+#             # Call the Celery task to handle the file upload
+#             upload_file.delay(file_name, file_content)
+
+#             upload_history.save()
+
+#             messages.success(request, "File uploaded successfully.")
+#             # tracking the upload history
+#             log_uploadhistory(
+#                 request.user,
+#                 "FileUpload",
+#                 "File uploaded successfully.",
+#                 upload_history,
+#             )
+#             return redirect("minibooks:index")
+#         else:
+#             messages.error(request, "An error occurred.")
+#             return redirect("minibooks:new_upload")
+#     else:
+#         today_date = date.today().strftime("%Y-%m-%d")
+#         form = UploadHistoryForm(initial={"import_date": today_date})
+#         context = {"import_date": today_date, "form": form}
+
+#     return render(request, "minibooks/new_upload.html", context)
 
 
 def clean_data(request, id):
     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
-    v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False)
+    v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False).order_by(
+        "id"
+    )
 
     def get_verified_object(model, field, value):
         obj = model.objects.filter(**{field: value}).first()
@@ -246,19 +236,6 @@ def clean_data(request, id):
             ]
         )
         # 디버그용
-        # if not verified:
-        #     if not company_verified:
-        #         print(f"Company verification failed for data id: {data.id}")
-        #     if not radiologist_verified:
-        #         print(f"Radiologist verification failed for data id: {data.id}")
-        #     if not platform_verified:
-        #         print(f"Platform verification failed for data id: {data.id}")
-        #     if not requestdt_verified:
-        #         print(f"Request date verification failed for data id: {data.id}")
-        #     if not approvedt_verified:
-        #         print(f"Approval date verification failed for data id: {data.id}")
-        # verified = True
-
         if verified:
             ReportMaster.objects.filter(id=data.id).update(
                 company=company,
@@ -270,7 +247,39 @@ def clean_data(request, id):
                 verified=True,
             )
         else:
-            messages.error(request, f"Data for {data.id} not verified.")
+            unverified_message = ""
+            if not company_verified:
+                print(f"Company verification failed for data id: {data.id}")
+                unverified_message += (
+                    f"Company verification failed for data id: {data.id}\n"
+                )
+            if not radiologist_verified:
+                print(f"Radiologist verification failed for data id: {data.id}")
+                unverified_message += (
+                    f"Company verification failed for data id: {data.id}\n"
+                )
+            if not platform_verified:
+                print(f"Platform verification failed for data id: {data.id}")
+                unverified_message += (
+                    f"Company verification failed for data id: {data.id}\n"
+                )
+            if not requestdt_verified:
+                print(f"Request date verification failed for data id: {data.id}")
+                unverified_message += (
+                    f"Company verification failed for data id: {data.id}\n"
+                )
+            if not approvedt_verified:
+                print(f"Approval date verification failed for data id: {data.id}")
+                unverified_message += (
+                    f"Company verification failed for data id: {data.id}\n"
+                )
+
+            ReportMaster.objects.filter(id=data.id).update(
+                verified=False,
+                unverified_message=unverified_message,
+            )
+            break
+            # messages.error(request, f"Data for {data.id} not verified.")
 
     v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False)
     total_rows = v_rawdata.count()
@@ -286,7 +295,7 @@ def clean_data(request, id):
             v_uploadhistory,
         )
     else:
-        messages.error(request, "Data not cleaned successfully.")
+        messages.error(request, "Fail:Please check the log.")
         log_uploadhistory(
             request.user,
             "Data Cleanning",
@@ -297,29 +306,38 @@ def clean_data(request, id):
     return redirect("minibooks:index")
 
 
-@transaction.atomic
+def get_progress(request, id):
+    v_uploadhistory = get_object_or_404(UploadHistory, id=id)
+    return render(request, "minibooks/progress.html", {"uh": v_uploadhistory})
+
+
 def create_reportmaster(request, id):
 
-    try:
-        a_raw = UploadHistory.objects.get(id=id)
-        platform = a_raw.platform
-        ayear = a_raw.ayear
-        amonth = a_raw.amonth
-        a_file = a_raw.afile
+    a_raw = UploadHistory.objects.get(id=id)
+    platform = a_raw.platform
+    ayear = a_raw.ayear
+    amonth = a_raw.amonth
+    a_file = a_raw.afile
 
-        # rawdata_resource = rawdataResource()
-        dataset = Dataset()
-        new_rawdata = a_file
-        imported_data = dataset.load(new_rawdata.read(), format="xlsx")
-        # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
+    # rawdata_resource = rawdataResource()
+    dataset = Dataset()
+    new_rawdata = a_file
+    imported_data = dataset.load(new_rawdata.read(), format="xlsx")
+    total_rows = len(imported_data)
+    print("Total rows: " + str(total_rows))
+    # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
 
-        # if not imported_data.has_errors():
-        i = 0
-        for data in imported_data:
-            if data[0] == None:
-                print("Skip empty rows" + str(i))
-                i += 1
-            else:
+    check_pre_work_count = ReportMaster.objects.filter(uploadhistory=id).count()
+    starting_row = check_pre_work_count
+
+    # if not imported_data.has_errors():
+    i = starting_row
+    for data in imported_data:
+        if data[0] == None:
+            print("Skip empty rows" + str(i))
+            i += 1
+        else:
+            try:
                 ReportMaster.objects.create(
                     apptitle=str(data[0]).strip() if data[0] else "",
                     case_id=str(data[1]).strip() if data[1] else "",
@@ -352,31 +370,44 @@ def create_reportmaster(request, id):
                     created_at=date.today(),
                     # verified=False,
                     uploadhistory=a_raw,
+                    excelrownum=i,
                 )
                 a_raw.save()
                 # Call the Celery task
                 # test_celery.delay(i)
                 i += 1
-        UploadHistory.objects.filter(id=id).update(imported=True)
-        messages.success(request, str(i) + " rows imported successfully.")
-        log_uploadhistory(
-            request.user,
-            "Data Import",
-            "Data imported successfully.",
-            a_raw,
-        )
-        return redirect("minibooks:index")
+            except Exception as e:
+                print(f"An error occurred during file upload: {e}")
+                messages.error(request, f"An error occurred: {e}")
+                log_uploadhistory(
+                    request.user,
+                    "Data Import",
+                    f"Failed: An error occurred at row#{i}: {e}",
+                    a_raw,
+                )
+                return redirect("minibooks:index")
 
-    except Exception as e:
-        # logger.error(f"An error occurred during file upload: {e}")
-        messages.error(request, f"An error occurred: {e}")
-        log_uploadhistory(
-            request.user,
-            "Data Import",
-            f"Failed: An error occurred: {e}",
-            a_raw,
-        )
-        return redirect("minibooks:index")
+    UploadHistory.objects.filter(id=id).update(imported=True)
+    messages.success(request, str(i) + " rows imported successfully.")
+    log_uploadhistory(
+        request.user,
+        "Data Import",
+        "Data imported successfully.",
+        a_raw,
+    )
+    return redirect("minibooks:index")
+
+
+# except Exception as e:
+#     # logger.error(f"An error occurred during file upload: {e}")
+#     messages.error(request, f"An error occurred: {e}")
+#     log_uploadhistory(
+#         request.user,
+#         "Data Import",
+#         f"Failed: An error occurred: {e}",
+#         a_raw,
+#     )
+#     return redirect("minibooks:index")
 
 
 # def create_reportmaster(request, id):

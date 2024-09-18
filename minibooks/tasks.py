@@ -11,5 +11,8 @@ def upload_file(file_name, file_content):
 
 
 @shared_task
-def test_celery(id):
-    print("test_celery test #" + str(id))
+def my_task(arg1, arg2):
+    # Task logic here
+    result = arg1 + arg2
+    print(result)
+    return result

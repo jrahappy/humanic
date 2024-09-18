@@ -5,6 +5,7 @@ from .models import Company, Contract, ContractItem, Product, Platform
 class CompanyAdmin(admin.ModelAdmin):
     list_display = [
         "business_name",
+        "is_public",
         "president_name",
         "address",
         "suite",
@@ -17,6 +18,7 @@ class CompanyAdmin(admin.ModelAdmin):
         "office_email",
         "website",
     ]
+    search_fields = ["business_name", "president_name"]
 
 
 admin.site.register(Company, CompanyAdmin)
