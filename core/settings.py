@@ -9,7 +9,8 @@ env = environ.Env(
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+# environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+environ.Env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = "django-insecure-$#=s7cx2!peci=xpv*3dpd0@zt293hv!)q7&4bi734njg0lh3v"
@@ -204,10 +205,10 @@ STORAGES = {
 }
 
 AWS_QUERYSTRING_AUTH = False
-AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")  # noqa: F405
-AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")  # noqa: F405
-AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")  # noqa: F405
-AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME")  # noqa: F405
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")  # noqa: F405
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")  # noqa: F405
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")  # noqa: F405
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")  # noqa: F405
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
@@ -218,11 +219,11 @@ CRISPY_TEMPLATE_PACK = "tailwind"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Celery Configuration Options
-CELERY_TIMEZONE = "Asia/Seoul"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = "amqp://localhost"
-CELERY_RESULT_BACKEND = "rpc://"
+# CELERY_TIMEZONE = "Asia/Seoul"
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
+# CELERY_BROKER_URL = "amqp://localhost"
+# CELERY_RESULT_BACKEND = "rpc://"
 # CELERY_TASK_TRACK_STARTED = True
 # CELERY_TASK_TIME_LIMIT = 30 * 60
 # CELERY_BROKER_URL = "redis://localhost:6379"
