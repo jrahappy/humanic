@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Company, Contract, ContractItem, Product, Platform
+from .forms import CompanyForm
 
 # from importData.models import cleanData
 from django.core.paginator import Paginator
@@ -7,7 +8,7 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 def index(request):
-    companies = Company.objects.all()
+    companies = Company.objects.all().order_by("business_name")
     paginator = Paginator(companies, 10)  # Show 10 companies per page
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -36,6 +37,18 @@ def detail(request, customer_id):
     # context = {"company": company, "referred": referred}
     context = {"company": company}
     return render(request, "customer/detail.html", context)
+
+
+def edit_customer(request, customer_id):
+    company = Company.objects.get(pk=customer_id)
+    if request.method == "POST":
+        form = CompanyForm(request.POST, instance=company)
+        if form.is_valid():
+            form.save()
+            return render(request, "customer/detail.html", {"company": company})
+    else:
+        form = CompanyForm(instance=company)
+    return render(request, "customer/edit_customer.html", {"form": form})
 
 
 def new_contract(request, customer_id):

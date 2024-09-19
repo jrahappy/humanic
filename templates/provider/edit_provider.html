@@ -23,7 +23,7 @@
 					<span class="label-text">성명(ID)</span>
 				</label>
 				<div class="text-start px-2 py-3">
-					{% render_field form.real_name class='input input-bordered w-full max-w-xs' %}
+					{% render_field form.real_name|append_attr:"disabled" class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
 			<div class="form-control col-span-2">

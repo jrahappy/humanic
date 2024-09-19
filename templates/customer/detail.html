@@ -7,28 +7,33 @@
 {% block content %}
 
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-      <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-          <h2 class="card-title grow">
-            고객 정보
-          </h2>
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <h2 class="card-title grow">
+                  고객 정보
+                </h2>
+            </div>
         </div>
-      </div>
-      <div class="overflow-x-auto p-4">
-        <table class="table">
-          <tr>
-            <td>{{ company.business_name }}</td>
-            <td>{{ company.president_name }}</td>
-          </tr>
-          <tr>
-            <td>{{ company.office_phone }}</td>
-            <td>{{ company.office_email }}</td>
-          </tr>
-          <tr>
-            <td colspan="2">서울시 강남구 서초동</td>
-          </tr>
-        </table>
-		  </div>
+        <div class="overflow-x-auto p-4">
+            <table class="table">
+                <tr>
+                    <td>{{ company.business_name }}</td>
+                    <td>{{ company.president_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ company.office_phone }}</td>
+                    <td>{{ company.office_email }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">서울시 강남구 서초동</td>
+                </tr>
+            </table>
+        </div>
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <a href="{% url 'customer:edit_customer' company.id %}" class="btn btn-sm btn-primary">수정</a>
+            </div>
+        </div>
 		
 	  </section>
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">

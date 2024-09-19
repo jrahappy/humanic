@@ -1,0 +1,121 @@
+{% extends 'app_base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}고객 정보{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <h2 class="card-title grow">
+                    고객 정보
+                </h2>
+            </div>
+        </div>
+        <form method="post">
+        {% csrf_token %}
+        <div class="grid grid-cols-4 gap-2 px-6">
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">상호명</span>
+                </label>
+                <div class="text-start px-2 py-3">
+                    {% render_field form.business_name|append_attr:'disabled'  class='input input-bordered w-full max-w-xs' %}
+                </div>
+            </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">대표자</span>
+                </label>
+                <div class="text-start px-2 py-3">
+                    {% render_field form.president_name class='input input-bordered w-full max-w-xs' %}
+                </div>
+            </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">전화</span>
+                </label>
+                <div class="text-start px-2 py-3">
+                    {% render_field form.office_phone class='input input-bordered w-full max-w-xs' %}
+                </div>
+            </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">이메일</span>
+                </label>
+                <div class="text-start px-2 py-3">
+                    {% render_field form.office_email class='input input-bordered w-full max-w-xs' %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-12 gap-2 px-6">
+            <div class="form-control col-span-12">
+                <label class="label">
+                    <span class="label-text">주소</span>
+                </label>
+                <div class="text-start px-2 py-3">
+                    {% render_field form.address class='input input-bordered w-full ' %}
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="grid grid-cols-12 gap-2 px-6">
+            <div class="form-control col-span-2 py-3 px-2">
+                <button type="submit" class="btn btn-primary">저장</button>
+            </div>
+        </div>
+	</section>
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <h2 class="card-title grow">
+                계약정보
+                </h2>
+                <a href="#"
+                hx-get="{% url 'customer:new_contract' 1205 %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                hx-push-url="true"
+                class="btn btn-sm btn-primary"> 새 계약  </a>
+            </div>
+        </div>
+        <div class="overflow-x-auto p-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>계약번호</td>
+                    <td>계약일</td>
+                    <td>시작일</td>
+                    <td>종료일</td>
+                    <td>-</td>
+                </tr>
+                </thead>
+                <tr>
+                <td>1202</td>
+                <td>2024/01/01</td>
+                <td>2024/01/01</td>
+                <td>2024/01/01</td>
+                <td class="text-right">
+                    <a href="#" class="btn btn-sm btn-primary"> 보기 </a>
+                </td>
+                </tr>
+                
+            </table>
+        </div>
+    </section>
+{% endblock %}
+
+{% block aside %}
+
+	  {% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

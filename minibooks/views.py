@@ -144,11 +144,14 @@ def clean_data(request, id):
     v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False).order_by(
         "id"
     )
+    v_rawdata_count = v_rawdata.count()
+    messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
     def get_verified_object(model, field, value):
         obj = model.objects.filter(**{field: value}).first()
         return obj, obj is not None
 
+    i = 0
     for data in v_rawdata:
         company, company_verified = get_verified_object(
             Company, "business_name", data.apptitle
@@ -246,6 +249,10 @@ def clean_data(request, id):
                 approvedt=approvedt,
                 verified=True,
             )
+            i += 1
+
+            if i % 500 == 0:
+                messages.info(request, f"{i} rows cleaned.")
         else:
             unverified_message = ""
             if not company_verified:
@@ -318,61 +325,113 @@ def create_reportmaster(request, id):
     ayear = a_raw.ayear
     amonth = a_raw.amonth
     a_file = a_raw.afile
+    # 상수들 준비
+    humanic = Company.objects.get(id=1)
+    humanic_platform = Platform.objects.filter(name="HPACS").first()
 
     # rawdata_resource = rawdataResource()
     dataset = Dataset()
     new_rawdata = a_file
     imported_data = dataset.load(new_rawdata.read(), format="xlsx")
     total_rows = len(imported_data)
-    print("Total rows: " + str(total_rows))
+    print(
+        "Total rows: "
+        + str(total_rows)
+        + "/File: "
+        + str(a_file)
+        + "/Platform: "
+        + str(platform)
+    )
     # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
 
     check_pre_work_count = ReportMaster.objects.filter(uploadhistory=id).count()
     starting_row = check_pre_work_count
 
     # if not imported_data.has_errors():
-    i = starting_row
+    i = starting_row + 1
     for data in imported_data:
         if data[0] == None:
             print("Skip empty rows" + str(i))
             i += 1
         else:
             try:
-                ReportMaster.objects.create(
-                    apptitle=str(data[0]).strip() if data[0] else "",
-                    case_id=str(data[1]).strip() if data[1] else "",
-                    name=str(data[2]).strip() if data[2] else "",
-                    department=str(data[3]).strip() if data[3] else "",
-                    bodypart=str(data[4]).strip() if data[4] else "",
-                    modality=str(data[5]).strip() if data[5] else "",
-                    equipment=str(data[6]).strip() if data[6] else "",
-                    studydescription=str(data[7]).strip() if data[7] else "",
-                    imagecount=data[8],
-                    accessionnumber=str(data[9]).strip() if data[9] else "",
-                    readprice=data[10],
-                    reader=str(data[11]).strip() if data[11] else "",
-                    approver=str(data[12]).strip() if data[12] else "",
-                    radiologist=(
-                        str(data[13]).strip().replace("\n", "").replace("\t", "")
-                        if data[13]
-                        else ""
-                    ),
-                    studydate=str(data[14]).strip() if data[14] else "",
-                    approveddttm=str(data[15]).strip() if data[15] else "",
-                    stat=str(data[16]).strip() if data[16] else "",
-                    pacs=str(data[17]).strip() if data[17] else "",
-                    requestdttm=str(data[18]).strip() if data[18] else "",
-                    ecode=str(data[19]).strip() if data[19] else "",
-                    sid=str(data[20]).strip() if data[20] else "",
-                    patientid=str(data[21]).strip() if data[21] else "",
-                    ayear=str(ayear).strip() if ayear else "",
-                    amonth=str(amonth).strip() if amonth else "",
-                    created_at=date.today(),
-                    # verified=False,
-                    uploadhistory=a_raw,
-                    excelrownum=i,
-                )
-                a_raw.save()
+                if platform == "ONPACS":
+                    ReportMaster.objects.create(
+                        apptitle=str(data[0]).strip() if data[0] else "",
+                        case_id=str(data[1]).strip() if data[1] else "",
+                        name=str(data[2]).strip() if data[2] else "",
+                        department=str(data[3]).strip() if data[3] else "",
+                        bodypart=str(data[4]).strip() if data[4] else "",
+                        modality=str(data[5]).strip() if data[5] else "",
+                        equipment=str(data[6]).strip() if data[6] else "",
+                        studydescription=str(data[7]).strip() if data[7] else "",
+                        imagecount=data[8],
+                        accessionnumber=str(data[9]).strip() if data[9] else "",
+                        readprice=data[10],
+                        reader=str(data[11]).strip() if data[11] else "",
+                        approver=str(data[12]).strip() if data[12] else "",
+                        radiologist=(
+                            str(data[13]).strip().replace("\n", "").replace("\t", "")
+                            if data[13]
+                            else ""
+                        ),
+                        studydate=str(data[14]).strip() if data[14] else "",
+                        approveddttm=str(data[15]).strip() if data[15] else "",
+                        stat=str(data[16]).strip() if data[16] else "",
+                        pacs=str(data[17]).strip() if data[17] else "",
+                        requestdttm=str(data[18]).strip() if data[18] else "",
+                        ecode=str(data[19]).strip() if data[19] else "",
+                        sid=str(data[20]).strip() if data[20] else "",
+                        patientid=str(data[21]).strip() if data[21] else "",
+                        ayear=str(ayear).strip() if ayear else "",
+                        amonth=str(amonth).strip() if amonth else "",
+                        created_at=date.today(),
+                        # verified=False,
+                        uploadhistory=a_raw,
+                        excelrownum=i,
+                    )
+                elif platform == "ETC":
+
+                    ReportMaster.objects.create(
+                        apptitle=data[0],
+                        case_id=data[1],
+                        equipment=data[2],
+                        studydescription=data[3],
+                        readprice=data[4],
+                        radiologist=data[5],
+                        created_at=date.today(),
+                        verified=False,
+                        uploadhistory=a_raw,
+                        excelrownum=i,
+                    )
+
+                else:
+                    ReportMaster.objects.create(
+                        apptitle="휴먼영상의학센터",
+                        company=humanic,
+                        case_id=data[7],
+                        name=data[13],
+                        bodypart=data[9],
+                        equipment=data[8],
+                        studydescription=data[10],
+                        imagecount=data[16],
+                        accessionnumber=data[11],
+                        readprice=data[15] if data[15] else 0,
+                        approver=data[6],
+                        radiologist=data[5],
+                        studydate=data[1],
+                        approveddttm=data[2],
+                        pacs="HPACS",
+                        platform=humanic_platform,
+                        requestdttm=data[4],
+                        patientid=data[12],
+                        created_at=date.today(),
+                        verified=False,
+                        uploadhistory=a_raw,
+                        excelrownum=i,
+                    )
+
+                # a_raw.save()
                 # Call the Celery task
                 # test_celery.delay(i)
                 i += 1
