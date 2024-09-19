@@ -138,10 +138,10 @@ DATABASES = {
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": env("POSTGRES_HOST"),
         "PORT": env("POSTGRES_PORT"),
-        "CONN_MAX_AGE": 3600,  # Set the connection age to 1 hour
-        "OPTIONS": {
-            "connect_timeout": 3660,  # Increase the connection timeout to 30 seconds
-        },
+        # "CONN_MAX_AGE": 3600,  # Set the connection age to 1 hour
+        # "OPTIONS": {
+        #     "connect_timeout": 3660,  # Increase the connection timeout to 30 seconds
+        # },
     }
 }
 
