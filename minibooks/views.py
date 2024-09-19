@@ -147,12 +147,25 @@ def clean_data(request, id):
     v_rawdata_count = v_rawdata.count()
     messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
+    v_platform = v_uploadhistory.platform
+    print(v_platform)
+    ayear = v_uploadhistory.ayear
+    amonth = v_uploadhistory.amonth
+
+    if v_platform == "ETC":
+        studydate = date(int(ayear), int(amonth), 1)
+        requestdt = studydate
+        approvedt = studydate
+        requestdt_verified = True
+        approvedt_verified = True
+
     def get_verified_object(model, field, value):
         obj = model.objects.filter(**{field: value}).first()
         return obj, obj is not None
 
     i = 0
     for data in v_rawdata:
+        print(data.id)
         company, company_verified = get_verified_object(
             Company, "business_name", data.apptitle
         )
@@ -168,7 +181,9 @@ def clean_data(request, id):
         radiologist_profile, radiologist_verified = get_verified_object(
             Profile, "real_name", radiologist
         )
+        radiologist = radiologist_profile.user if radiologist_verified else None
 
+        # Modality 처리
         equipment = data.equipment
         if equipment == "DR":
             amodality = "CR"
@@ -177,57 +192,68 @@ def clean_data(request, id):
         else:
             amodality = equipment
 
-        pacs_value = data.pacs if data.pacs else None
-        # ZOLVUE -> HPACS 변경(임시)
-        if pacs_value == "ZOLVUE":
-            pacs_value = "HPACS"
-        elif pacs_value == "None":
-            pacs_value = "ETC"
-
-        platform = Platform.objects.filter(name=pacs_value).first()
-        if platform:
+        # Platform 처리
+        if v_platform == "ETC":
+            # Platform 테이블의 ID  값을 넣음
+            platform = 5
             platform_verified = True
         else:
-            platform_verified = False
+            pacs_value = data.pacs if data.pacs else None
+            # ZOLVUE -> HPACS 변경(임시)
+            if pacs_value == "ZOLVUE":
+                pacs_value = "HPACS"
+            elif pacs_value == "None":
+                pacs_value = "ETC"
 
-        # print(
-        #     f"Company: {company}, Radiologist: {radiologist_profile}, Platform: {platform}"
-        # )
+            platform = Platform.objects.filter(name=pacs_value).first()
+            if platform:
+                platform_verified = True
+            else:
+                platform_verified = False
 
-        radiologist = radiologist_profile.user if radiologist_verified else None
-
-        if data.requestdttm:
-            try:
-                requestdt = timezone.make_aware(
-                    timezone.datetime.strptime(data.requestdttm, "%Y-%m-%d %H:%M:%S")
-                )
-                requestdt_verified = True
-            except (ValueError, TypeError):
-                if data.pacs != "ONSITE":
-                    requestdt = None
-                    requestdt_verified = False
-                else:
-                    requestdt_verified = True
-        else:
-            requestdt = None
+        # Request Date 처리
+        if v_platform == "ETC":
+            # requestdt = None
             requestdt_verified = True
-
-        if data.approveddttm:
-            try:
-                approvedt = timezone.make_aware(
-                    timezone.datetime.strptime(data.approveddttm, "%Y-%m-%d %H:%M:%S")
-                )
-                approvedt_verified = True
-            except (ValueError, TypeError):
-                if data.pacs != "ONSITE":
-                    approvedt = None
-                    approvedt_verified = False
-                else:
-                    approvedt_verified = True
+            # approvedt = None
+            approvedt_verified = True
 
         else:
-            approvedt = None
-            approvedt_verified = True
+            if data.requestdttm:
+                try:
+                    requestdt = timezone.make_aware(
+                        timezone.datetime.strptime(
+                            data.requestdttm, "%Y-%m-%d %H:%M:%S"
+                        )
+                    )
+                    requestdt_verified = True
+                except (ValueError, TypeError):
+                    if data.pacs != "ONSITE":
+                        requestdt = None
+                        requestdt_verified = False
+                    else:
+                        requestdt_verified = True
+            else:
+                requestdt = None
+                requestdt_verified = True
+
+            if data.approveddttm:
+                try:
+                    approvedt = timezone.make_aware(
+                        timezone.datetime.strptime(
+                            data.approveddttm, "%Y-%m-%d %H:%M:%S"
+                        )
+                    )
+                    approvedt_verified = True
+                except (ValueError, TypeError):
+                    if data.pacs != "ONSITE":
+                        approvedt = None
+                        approvedt_verified = False
+                    else:
+                        approvedt_verified = True
+            else:
+                approvedt = None
+                approvedt_verified = True
 
         verified = all(
             [
@@ -240,19 +266,40 @@ def clean_data(request, id):
         )
         # 디버그용
         if verified:
-            ReportMaster.objects.filter(id=data.id).update(
-                company=company,
-                provider=radiologist,
-                amodality=amodality,
-                platform=platform,
-                requestdt=requestdt,
-                approvedt=approvedt,
-                verified=True,
-            )
-            i += 1
+            # if i < 10:
+            #     print(f"valid ID for data: {data.id}")
+            # else:
+            #     break
 
-            if i % 500 == 0:
-                messages.info(request, f"{i} rows cleaned.")
+            if isinstance(data.id, int):  # Validate that data.id is a numeric value
+                v_count = ReportMaster.objects.filter(id=data.id).count()
+                # print(f"Count: {v_count}")
+                # print(
+                #     f"Company: {company} / Radiologist: {radiologist} / Platform: {platform} / Request Date: {requestdt} / Approval Date: {approvedt}"
+                # )
+                ReportMaster.objects.filter(id=data.id).update(
+                    company=company,
+                    provider=radiologist,
+                    amodality=amodality,
+                    platform=platform,
+                    requestdt=requestdt,
+                    approvedt=approvedt,
+                    verified=True,
+                )
+                # ReportMaster.objects.filter(id=data.id).update(
+                #     company=company,
+                #     provider=radiologist,
+                #     amodality=amodality,
+                #     platform=platform,
+                #     requestdt=requestdt,
+                #     approvedt=approvedt,
+                #     verified=True,
+                # )
+                print(f"Data for {data.id} / {i} verified.")
+                i += 1
+            else:
+                print(f"Invalid ID for data: {data.id}")
+
         else:
             unverified_message = ""
             if not company_verified:
@@ -263,22 +310,22 @@ def clean_data(request, id):
             if not radiologist_verified:
                 print(f"Radiologist verification failed for data id: {data.id}")
                 unverified_message += (
-                    f"Company verification failed for data id: {data.id}\n"
+                    f"Radiologist verification failed for data id: {data.id}\n"
                 )
             if not platform_verified:
                 print(f"Platform verification failed for data id: {data.id}")
                 unverified_message += (
-                    f"Company verification failed for data id: {data.id}\n"
+                    f"Platform verification failed for data id: {data.id}\n"
                 )
             if not requestdt_verified:
                 print(f"Request date verification failed for data id: {data.id}")
                 unverified_message += (
-                    f"Company verification failed for data id: {data.id}\n"
+                    f"Request date verification failed for data id: {data.id}\n"
                 )
             if not approvedt_verified:
                 print(f"Approval date verification failed for data id: {data.id}")
                 unverified_message += (
-                    f"Company verification failed for data id: {data.id}\n"
+                    f"Approval date verification failed for data id: {data.id}\n"
                 )
 
             ReportMaster.objects.filter(id=data.id).update(

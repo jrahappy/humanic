@@ -68,13 +68,7 @@
                                       {% if data.verified == False %}
                                         <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화진행</a>
                                       {% else %}
-                                        <div id="results-section">
-                                          <section class="section">
-                                              <div class="container" hx-get="{% url 'minibooks:get_progress' data.id %}" hx-target="#result_section" hx-swap="outerHTML" hx-trigger="load delay:300ms">
-                                                  <button class="btn btn-info btn-sm">test</button>
-                                              </div>
-                                          </section>
-                                        </div>
+                                        
                                         <a
                                         href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">재진행</a>
                                         <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Yes,No' }}</div>
