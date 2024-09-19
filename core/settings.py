@@ -25,6 +25,7 @@ ALLOWED_HOSTS = [
     "www.humanrad.com",
     "127.0.0.1",
     "34.238.113.45",
+    "3.87.68.112",
 ]
 
 SITE_ID = 1

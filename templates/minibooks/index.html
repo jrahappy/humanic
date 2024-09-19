@@ -37,7 +37,7 @@
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">제목</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일출처</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
-                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Uploaded at</th>
+                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Rows</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">데이터생성</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정규화진행</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">통계생성</th>
@@ -55,12 +55,12 @@
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.created_at }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ReportMaster_count }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.imported == False %}
                                         <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">데이터생성</a>
                                       {% else %}
-                                        <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Yes,No' }}/{{ data.ReportMaster_count }}</div>
+                                        <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Done,No' }}</div>
                                       {% endif %}
 
                                   </td>
@@ -68,10 +68,7 @@
                                       {% if data.verified == False %}
                                         <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화진행</a>
                                       {% else %}
-                                        
-                                        <a
-                                        href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">재진행</a>
-                                        <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Yes,No' }}</div>
+                                        <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Done,No' }}</div>
                                       {% endif %}
                                   </td>
                                   <td class="whitespace-nowrap px-3 py-4 ">
