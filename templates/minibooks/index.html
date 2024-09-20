@@ -1,5 +1,6 @@
 {% extends 'app_base.html' %}
 {% load custom_filters %}
+{% load humanize %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
@@ -38,9 +39,9 @@
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일출처</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">파일명</th>
                                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Rows</th>
-                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">데이터생성</th>
-                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정규화진행</th>
-                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">통계생성</th>
+                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">생성</th>
+                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">정규화</th>
+                                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">통계</th>
                                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                       <span class="sr-only">보기</span>
                                   </th>
@@ -54,11 +55,11 @@
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amonth }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ReportMaster_count }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile.name|filename }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ReportMaster_count|intcomma }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.imported == False %}
-                                        <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">데이터생성</a>
+                                        <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">생성</a>
                                       {% else %}
                                         <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Done,No' }}</div>
                                       {% endif %}
@@ -66,22 +67,23 @@
                                   </td>
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.verified == False %}
-                                        <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화진행</a>
+                                        <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화</a>
                                       {% else %}
-                                        <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Done,No' }}</div>
+                                        <div class="badge badge-{{ data.verified|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Done,No' }}</div>
                                       {% endif %}
                                   </td>
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                     {% if data.aggregated == False %}
-                                      <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화진행</a>
+                                      <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화</a>
                                     {% else %}
+                                      <div class="badge badge-{{ data.aggregated|yesno:'success,error' }} text-white">{{ data.aggregated|yesno:'Done,No' }}</div>
                                       <a 
                                         hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
                                         hx-target="#general_modal" 
                                         hx-swap="outerHTML" 
                                         hx-trigger="click" 
                                         hx-class="block" 
-                                        class="btn btn-sm btn-info">통계맛보기</a>
+                                        class="btn btn-sm btn-info">맛보기</a>
                                     
                                     {% endif %}  
                                   </td>
@@ -91,11 +93,9 @@
                                           class="btn btn-sm btn-info" 
                                           hx-get="{% url 'minibooks:partial_tracking' data.id %}"
                                           hx-trigger="click"
-                                          hx-target="#base_modal"
-                                          
-                                          >작업트레킹</button>
-                                      
-                                      <button 
+                                          hx-target="#base_modal"                                          
+                                          >Tracking</button>
+                                      <button
                                           hx-get="{% url 'minibooks:snippet_reportmaster' data.id %}"
                                           hx-target="#general_modal"
                                           hx-swap="outerHTML"
@@ -111,7 +111,7 @@
                                         hx-trigger="click"
                                         hx-target="#base_modal"
                                         hx-swap="innerHTML"
-                                        >Delete</button>
+                                        >Del</button>
                                   </td>
                               </tr>
                           {% empty %}

@@ -8,6 +8,7 @@ from utils.base_func import (
     get_amonth_choices,
     get_amodality_choices,
 )
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 def upload_to(instance, filename):
@@ -97,10 +98,27 @@ class ReportMaster(models.Model):
     ayear = models.CharField(max_length=5, null=True, blank=True)
     amonth = models.CharField(max_length=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    time_to_complete = models.IntegerField(
+        null=True, blank=True, default=0
+    )  # 분단위로 기록함  approvaldt-requestdt
+
     verified = models.BooleanField(default=False)
     unverified_message = models.CharField(max_length=200, null=True, blank=True)
     excelrownum = models.IntegerField(null=True, blank=True, default=0)
-    pay_to_provider = models.FloatField(null=True, blank=True, default=0)
+    adjusted_price = models.FloatField(null=True, blank=True, default=0)
+    is_onsite = models.BooleanField(default=False)  # Onsite 여부
+    applied_rate = models.FloatField(
+        null=True,
+        blank=True,
+        default=0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+    )
+    pay_to_provider = models.FloatField(
+        null=True, blank=True, default=0
+    )  # 의사에게 최종지급할 금액
+    is_completed = models.BooleanField(default=False)  # 정산완료
+
+    is_locked = models.BooleanField(default=False)  # 정산완료후 회계적으로 잠금처리
 
     def __str__(self):
         return self.case_id if self.case_id else "No Case ID"
@@ -131,9 +149,55 @@ class ReportMasterStat(models.Model):
     verified = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.reportmaster.case_id if self.reportmaster.case_id else "No Case ID"
+        return f"{self.ayear}-{self.amonth} {self.provider} {self.company} {self.platform} {self.amodality}"
 
     class Meta:
         db_table = "reportmasterstat"
         managed = True
         verbose_name = "reportmasterstat"
+
+
+class MagamMaster(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, verbose_name="작업자"
+    )
+    ayear = models.CharField("년도", max_length=4)
+    amonth = models.CharField("월", max_length=2)
+    target_rows = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.ayear}-{self.amonth}"
+
+    class Meta:
+        db_table = "magammaster"
+        managed = True
+        verbose_name = "magammaster"
+
+
+class MagamDetail(models.Model):
+    magammaster = models.ForeignKey(
+        MagamMaster, on_delete=models.CASCADE, verbose_name="마감"
+    )
+    humanrule = models.ForeignKey(
+        "HumanRules", on_delete=models.CASCADE, verbose_name="규칙"
+    )
+    affected_rows = models.IntegerField(default=0)
+    description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)
+
+
+class HumanRules(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    def_name = models.CharField(max_length=100)
+    def_value = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "rules"
+        managed = True
+        verbose_name = "rules"

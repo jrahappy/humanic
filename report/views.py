@@ -9,7 +9,7 @@ def index(request):
     report_filter = ReportFilter(request.GET, queryset=ReportMaster.objects.all())
     filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")
 
-    paginator = Paginator(filtered_qs, 10)
+    paginator = Paginator(filtered_qs, 100)
     page = request.GET.get("page")
     try:
         rmaster = paginator.page(page)

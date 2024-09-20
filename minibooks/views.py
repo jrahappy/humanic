@@ -751,3 +751,87 @@ def partial_tracking(request, id):
     context = {"rs_tracking": rs_tracking}
 
     return render(request, "minibooks/partial_tracking.html", context)
+
+
+def apply_rule_4_1(request):
+    # ## Rule 4-1 : - 일반촬영 CR 판독단가 1,333원 이하 건 → 1,000원 지급
+    selected_ayear = 2024
+    selected_amonth = 7
+
+    target_rows = ReportMaster.objects.filter(
+        ayear=selected_ayear, amonth=selected_amonth, amodality="CR", readprice__lt=1333
+    )
+    count_target_rows = target_rows.count()
+    target_rows.update(pay_to_provider=1000, is_completed=True)
+    messages.success(
+        request, f"Total {count_target_rows} cases are applied Rule 4.1 successfully."
+    )
+    return redirect("minibooks:index")
+
+
+def apply_rule_4_2(request):
+    # ## Rule 4-2 : - Chest CT(비조영) 판독단가 19,600원 이하 건 → 14,700원 조정
+    selected_ayear = 2024
+    selected_amonth = 7
+
+    target_rows = ReportMaster.objects.filter(
+        ayear=selected_ayear,
+        amonth=selected_amonth,
+        amodality="CT",
+        bodypart="CHEST",
+        readprice__lt=19600,
+    )
+    count_target_rows = target_rows.count()
+    target_rows.update(pay_to_provider=14700, is_completed=True)
+    messages.success(
+        request, f"Total {count_target_rows} cases are applied Rule 4.2 successfully."
+    )
+    return redirect("minibooks:index")
+
+
+def apply_rule_4_3(request):
+    ## Rule 4-3 : - MR 판독단가 40,000원 미만 건 → 71% 조정 (수수료율 구분없이 전체)
+    selected_ayear = 2024
+    selected_amonth = 7
+
+    target_rows = ReportMaster.objects.filter(
+        ayear=selected_ayear,
+        amonth=selected_amonth,
+        amodality="MR",
+        readprice__lt=40000,
+    )
+    count_target_rows = target_rows.count()
+    new_readprice = target_rows.readprice * 0.71
+    target_rows.update(
+        applied_rate=0.71, pay_to_provider=new_readprice, is_completed=True
+    )
+    messages.success(
+        request, f"Total {count_target_rows} cases are applied Rule 4.2 successfully."
+    )
+    return redirect("minibooks:index")
+
+
+def apply_rule_5(request):
+    ## Rule 5 : 나머지는 판독의 수수료율에 따라 계산함
+    selected_ayear = 2024
+    selected_amonth = 7
+    auser = request.user
+
+    provider = Profile.objects.get(user=auser)
+    fee_rate = provider.fee_rate
+
+    target_rows = ReportMaster.objects.filter(
+        ayear=selected_ayear,
+        amonth=selected_amonth,
+        is_complated=False,
+    ).exclude(pacs="ONSITE")
+
+    count_target_rows = target_rows.count()
+
+    target_rows.update(
+        applied_rate=fee_rate, pay_to_provider=new_readprice, is_completed=True
+    )
+    messages.success(
+        request, f"Total {count_target_rows} cases are applied Rule 4.2 successfully."
+    )
+    return redirect("minibooks:index")

@@ -6,78 +6,75 @@
 {% endblock %}
 
 {% block content %}
-    <header class="col-span-12 flex items-center gap-2 lg:gap-4">
-      <div class="grow">
-        <h1 class="font-dark font-bold lg:text-2xl">의료진별로 보기</h1>
-      </div>
-    </header>
-
-    
-    <section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
-      
-      <div class="mt-2">
-        <div class="overflow-x-auto">
-          <form method="Get" action="{% url 'briefing:index'%}">
-            <select name="radiologist" id="radiologist" class="select select-bordered">
-              {% if selected_radiologist == 'None' %}
+  <header class="col-span-12 flex items-center gap-2 lg:gap-4">
+    <div class="grow">
+      <h1 class="font-dark font-bold lg:text-2xl">의료진별로 보기</h1>
+    </div>
+  </header>
+  <section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
+    <div class="mt-2 px-4">
+      <form method="Get" action="{% url 'briefing:index'%}">
+        
+            <select name="provider" id="provider" class="select select-bordered">
+              {% if selected_provider == 'None' %}
                 <option value="" selected>전체</option>
               {% else %}
                 <option value="">전체</option>
               {% endif %}
-
-              {% for radiologist in radiologists %}
-                
-                {% if radiologist == selected_radiologist %}
-                  <option value="{{ radiologist }}" selected>{{ radiologist }}</option>
+            
+              {% for provider in providers %}
+                {% if provider.id|stringformat:"s" == selected_provider %}
+                  <option value="{{ provider.id }}" selected>{{ provider.profile.real_name }}</option>
                 {% else %}
-                  <option value="{{ radiologist }}">{{ radiologist }}</option>
-               {% endif %}
+                  <option value="{{ provider.id }}">{{ provider.profile.real_name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+
+            <select name="ayear" id="ayear" class="select select-bordered">
+              {% for ayear in ayears %}
+                
+                {% if ayear.choice_key|stringformat:"s" == selected_ayear %}
+                  <option value="{{ ayear.choice_key }}" selected>{{ ayear.choice_value }}</option>
+                {% else %}
+                  <option value="{{ ayear.choice_key }}">{{ ayear.choice_value }}</option>
+                {% endif %}
               
               {% endfor %}
             </select>
-            <button type="submit" class="btn btn-primary">Search</button>
-          </form>
-        </div>
+            <select name="amonth" id="amonth" class="select select-bordered">
+              {% for amonth in amonths %}
+                
+                {% if amonth.choice_key|stringformat:"s" == selected_amonth %}
+                  <option value="{{ amonth.choice_key }}" selected>{{ amonth.choice_value }}</option>
+                {% else %}
+                  <option value="{{ amonth.choice_key }}">{{ amonth.choice_value }}</option>
+                {% endif %}
 
-      </div>
-        <div class="stat">
-          <table class="table table-zebra">
-            <thead>
-              <tr>
-                <th>병원명</th>
-                <th>Modality</th>
-                <th>합계</th>
-                <th>평균</th>
-                <th>Total Cases</th>
-              </tr>
-            </thead>
-            <tbody>
-
-              {% for data in aggregation_data %}
-              <tr>
-                <td class="rigth">{{ data.apptitle }}</td>
-                <td>{{ data.equipment }}</td>
-                <td>{{ data.total_price|currency }}</td>
-                <td>{{ data.average_price|currency }}</td>
-                <td>{{ data.total_cases|floatformat:0 }}</td>
-              </tr>
-              
               {% endfor %}
-              </tbody>
-              <tfoot>
-
-                <tr>
-                  <td colspan="2">Total</td>
-
-                  <td>{{ agg_data.total_price|currency }}</td>
-                  <td>{{ agg_data.average_price|currency }}</td>
-                  <td>{{ agg_data.total_cases|floatformat:0 }}</td>
-                </tr>
-              </tfoot>
-            
-          </table>
-        </div>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        
+          </form>
       </div>
+      <hr class="m-4"/>
+      <div class="divider"></div>
+      <div class="stat">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>병원명</th>
+              <th>Modality</th>
+              <th>합계</th>
+              <th>평균</th>
+              <th>Total Cases</th>
+            </tr>
+          </thead>
+         
+          
+        </table>
+      </div>
+    </div>
   </section>
 {% endblock %}
 
