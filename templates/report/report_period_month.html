@@ -1,0 +1,42 @@
+{% load humanize %}
+
+<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2>{{ count_rpms }} 건</h2>
+            <a href="#"
+                hx-get="{% url 'minibooks:new_upload' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">Close</a>
+        </div>
+    </div>
+    <div class="card-body grow-0">
+        <div class="flex flex-wrap gap-4">
+            {% for rpm in rpms %}
+                <div class="card bg-base-100 w-1/4 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ rpm.radiologist }}</h2>:
+                        <p class="mb-2">
+                            Count: {{ rpm.total_cases|intcomma  }} <br>
+                            Revenue: {{ rpm.total_price|floatformat:0|intcomma  }} <br>
+                            Income: {{ rpm.total_provider|floatformat:0|intcomma }} <br>
+                        </p>
+                        <div class="card-actions justify-end">
+                            <button class="btn"
+                                ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.radiologist %}"
+                                hx-trigger="click"
+                                hx-target="#base_modal"
+                                
+                            >Details</button>
+                        </div>
+                    </div>
+                </div>
+               
+                 
+            {% endfor %}
+           
+        </div>
+    </div>
+</section>
