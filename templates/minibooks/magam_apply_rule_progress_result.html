@@ -1,0 +1,18 @@
+<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">진행률 {{ magam_id }} / {{ rule_id }}</a>
+            </h2>
+            <form method="dialog">
+                <!-- if there is a button, it will close the modal -->
+                <button class="btn">Close</button>
+            </form>
+        </div>
+        <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <progress class="progress progress-primary w-full" value="100" max="100"></progress>
+            <p class="mt-4">{{ i }}건 처리되었습니다.</p>
+        </div>
+    </div>
+  </section>
+    

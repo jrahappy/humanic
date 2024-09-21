@@ -50,3 +50,8 @@
 ## Rule 6 : 서울보라매, 일산병원외 ONSITE 공제수수료 계산
     - pace=ONSITE 경우에는 (1-판독의 지급수수료율) X readprice X -1로 하여  pay_to_doctor 에 넣고 is_complete=True
 
+
+## 매월 신규 추가되는 병원들을 정규화 작업전에 미리 확인해서 일괄 넣는 단계가 필요.
+    송파미소병원(tele)(SCU) 과 송파미소병원
+    열린의료재단서교의원
+

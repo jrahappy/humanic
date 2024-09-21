@@ -9,8 +9,16 @@ from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 from accounts.models import Profile, CustomUser
 from customer.models import Company, Contract, ContractItem
 from product.models import Product, Platform
-from .models import UploadHistory, ReportMaster, ReportMasterStat, UploadHistoryTrack
-from .forms import UploadHistoryForm
+from .models import (
+    UploadHistory,
+    ReportMaster,
+    ReportMasterStat,
+    UploadHistoryTrack,
+    MagamMaster,
+    MagamDetail,
+    HumanRules,
+)
+from .forms import UploadHistoryForm, MagamMasterForm
 from .utils import log_uploadhistory
 from .tasks import upload_file, my_task
 from celery.result import AsyncResult
@@ -446,6 +454,8 @@ def create_reportmaster(request, id):
                         studydescription=data[3],
                         readprice=data[4],
                         radiologist=data[5],
+                        ayear=str(ayear).strip() if ayear else "",
+                        amonth=str(amonth).strip() if amonth else "",
                         created_at=date.today(),
                         verified=False,
                         uploadhistory=a_raw,
@@ -472,6 +482,8 @@ def create_reportmaster(request, id):
                         platform=humanic_platform,
                         requestdttm=data[4],
                         patientid=data[12],
+                        ayear=str(ayear).strip() if ayear else "",
+                        amonth=str(amonth).strip() if amonth else "",
                         created_at=date.today(),
                         verified=False,
                         uploadhistory=a_raw,
@@ -653,8 +665,8 @@ def aggregate_data(request, upload_history_id):
                 amonth=month,
                 platform=platform,
                 amodality=amodality,
-                defaults={"total_count": total_count},
                 UploadHistory=UploadHistory.objects.get(id=upload_history_id),
+                defaults={"total_count": total_count},
             )
         UploadHistory.objects.filter(id=upload_history_id).update(aggregated=True)
         messages.success(request, "Data aggregated successfully.")
@@ -753,85 +765,307 @@ def partial_tracking(request, id):
     return render(request, "minibooks/partial_tracking.html", context)
 
 
-def apply_rule_4_1(request):
-    # ## Rule 4-1 : - 일반촬영 CR 판독단가 1,333원 이하 건 → 1,000원 지급
-    selected_ayear = 2024
-    selected_amonth = 7
+def apply_rule(request, magam_id, rule_id):
+    # Extract parameters from GET request
 
-    target_rows = ReportMaster.objects.filter(
-        ayear=selected_ayear, amonth=selected_amonth, amodality="CR", readprice__lt=1333
-    )
-    count_target_rows = target_rows.count()
-    target_rows.update(pay_to_provider=1000, is_completed=True)
-    messages.success(
-        request, f"Total {count_target_rows} cases are applied Rule 4.1 successfully."
-    )
+    magam = MagamMaster.objects.get(id=magam_id)
+    syear = magam.ayear
+    smonth = magam.amonth
+
+    rule = HumanRules.objects.get(id=rule_id)
+    selected_rule = rule.def_name
+
+    if selected_rule == "CRLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="CR",
+            readprice__lt=1333,
+        )
+        count_target_rows = target_rows.count()
+        target_rows.update(
+            pay_to_provider=1000, pay_to_human=F("readprice" - 1000), is_completed=True
+        )
+
+    elif selected_rule == "CTCHESTLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="CT",
+            bodypart="CHEST",
+            readprice__lt=19600,
+        )
+        count_target_rows = target_rows.count()
+        target_rows.update(pay_to_provider=14700, is_completed=True)
+        messages.success(
+            request,
+            f"Total {count_target_rows} cases are applied Rule 4.2 successfully.",
+        )
+    elif selected_rule == "MRLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="MR",
+            readprice__lt=40000,
+        )
+        count_target_rows = target_rows.count()
+        for row in target_rows:
+            new_readprice = row.readprice * 0.71
+            row.applied_rate = 0.71
+            row.pay_to_provider = new_readprice
+            row.is_completed = True
+            row.save()
+
+        messages.success(
+            request,
+            f"Total {count_target_rows} cases are applied Rule 4.3 successfully.",
+        )
+
     return redirect("minibooks:index")
 
 
-def apply_rule_4_2(request):
-    # ## Rule 4-2 : - Chest CT(비조영) 판독단가 19,600원 이하 건 → 14,700원 조정
-    selected_ayear = 2024
-    selected_amonth = 7
+def apply_rule_progress(request, magam_id, rule_id):
 
-    target_rows = ReportMaster.objects.filter(
-        ayear=selected_ayear,
-        amonth=selected_amonth,
-        amodality="CT",
-        bodypart="CHEST",
-        readprice__lt=19600,
+    magam = MagamMaster.objects.get(id=magam_id)
+    syear = magam.ayear
+    smonth = magam.amonth
+
+    rule = HumanRules.objects.get(id=rule_id)
+    selected_rule = rule.def_name
+
+    # CR 할인 계약 적용
+    if selected_rule == "CRLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="CR",
+            readprice__lt=1333,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=1000,
+            pay_to_human=F("readprice") - 1000,
+            applied_rate=1000 / F("readprice"),
+            is_completed=True,
+        )
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+    # CT 할인 계약 적용
+    elif selected_rule == "CTCHESTLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="CT",
+            bodypart="CHEST",
+            readprice__lt=19600,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=14700,
+            pay_to_human=F("readprice") - 14700,
+            applied_rate=14700 / F("readprice"),
+            is_completed=True,
+        )
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    # MR 할인 계약 적용
+    elif selected_rule == "MRLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="MR",
+            readprice__lt=40000,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=F("readprice") * 0.71,
+            pay_to_human=F("readprice") * (1 - 0.71),
+            applied_rate=0.71,
+            is_completed=True,
+        )
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    elif selected_rule == "GP":
+
+        providers = Profile.objects.filter(user__is_doctor=True).order_by(
+            "user__username"
+        )
+        i = 1
+        for provider in providers:
+            target_rows = ReportMaster.objects.filter(
+                ayear=syear,
+                amonth=smonth,
+                provider=provider.user,
+                is_completed=False,
+            ).exclude(
+                platform__id__in=[2, 3]
+            )  # ONSITE, HPACS(휴먼외래) 제외
+
+            count_target_rows = target_rows.count()
+            fee_rate = provider.fee_rate
+            i += count_target_rows
+            if count_target_rows > 0:
+                target_rows.update(
+                    applied_rate=fee_rate,
+                    pay_to_provider=F("readprice") * fee_rate,
+                    pay_to_human=F("readprice") * (1 - fee_rate),
+                    is_completed=True,
+                )
+
+                magam_detail = MagamDetail.objects.create(
+                    magammaster=magam,
+                    humanrule=rule,
+                    affected_rows=count_target_rows,
+                    description=f"Total {count_target_rows} cases of {provider.real_name} are applied Rule-GP successfully.",
+                    created_at=timezone.now(),
+                    is_completed=True,
+                )
+
+    elif selected_rule == "HMOUT":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            platform__id=2,
+            # is_completed=False,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=F("readprice") * 1,
+            pay_to_human=0,
+            applied_rate=1.0,
+            is_completed=True,
+        )
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    elif selected_rule == "GPONSITE":
+
+        providers = Profile.objects.filter(user__is_doctor=True).order_by(
+            "user__username"
+        )
+        i = 1
+        for provider in providers:
+            target_rows = ReportMaster.objects.filter(
+                ayear=syear,
+                amonth=smonth,
+                provider=provider.user,
+                platform__id=3,
+                # is_completed=False,
+            )  # ONSITE 경우
+
+            count_target_rows = target_rows.count()
+            i += count_target_rows
+            fee_rate = provider.fee_rate
+            if count_target_rows > 0:
+                target_rows.update(
+                    applied_rate=fee_rate,
+                    pay_to_provider=F("readprice") * fee_rate,
+                    pay_to_human=F("readprice") * (1 - fee_rate),
+                    is_onsite=True,
+                    is_completed=True,
+                )
+
+                magam_detail = MagamDetail.objects.create(
+                    magammaster=magam,
+                    humanrule=rule,
+                    affected_rows=count_target_rows,
+                    description=f"Total {count_target_rows} cases of {provider.real_name} are applied Rule-GP successfully.",
+                    created_at=timezone.now(),
+                    is_completed=True,
+                )
+    context = {
+        "i": i,
+    }
+    return render(request, "minibooks/magam_apply_rule_progress_result.html", context)
+
+
+def magam_list(request):
+    magam_list = MagamMaster.objects.all()
+    context = {"magam_list": magam_list}
+    return render(request, "minibooks/magam_list.html", context)
+
+
+def magam_new(request):
+    user = request.user
+    form = MagamMasterForm()
+
+    if request.method == "POST":
+        form = MagamMasterForm(request.POST)
+        selected_ayear = form.data.get("ayear")
+        selected_amonth = form.data.get("amonth")
+        target_rows = ReportMaster.objects.filter(
+            ayear=selected_ayear, amonth=selected_amonth
+        )
+
+        if form.is_valid():
+            magam = form.save(commit=False)
+            magam.user = request.user
+            magam.target_rows = target_rows.count()
+            magam.created_at = timezone.now()
+            magam.save()
+            messages.success(request, "New Magam created successfully.")
+            return redirect("minibooks:magam_list")
+        else:
+            messages.error(request, "An error occurred.")
+            return redirect("minibooks:magam_new")
+    else:
+        form = MagamMasterForm()
+        context = {"form": form, "user": user}
+
+    return render(request, "minibooks/magam_new.html", context)
+
+
+def magam_view(request, id):
+    magam = MagamMaster.objects.get(id=id)
+    count_completed_magam = ReportMaster.objects.filter(
+        ayear=magam.ayear, amonth=magam.amonth, is_completed=True
+    ).count()
+
+    magam_details = MagamDetail.objects.filter(magammaster=magam).order_by("-id")
+    humanrules = HumanRules.objects.all().order_by("rules_order")
+    result_humanrules = MagamDetail.objects.filter(magammaster=magam).order_by(
+        "-created_at"
     )
-    count_target_rows = target_rows.count()
-    target_rows.update(pay_to_provider=14700, is_completed=True)
-    messages.success(
-        request, f"Total {count_target_rows} cases are applied Rule 4.2 successfully."
-    )
-    return redirect("minibooks:index")
 
+    context = {
+        "magam": magam,
+        "magam_details": magam_details,
+        "rules": humanrules,
+        "result_humanrules": result_humanrules,
+        "count_completed_magam": count_completed_magam,
+    }
 
-def apply_rule_4_3(request):
-    ## Rule 4-3 : - MR 판독단가 40,000원 미만 건 → 71% 조정 (수수료율 구분없이 전체)
-    selected_ayear = 2024
-    selected_amonth = 7
-
-    target_rows = ReportMaster.objects.filter(
-        ayear=selected_ayear,
-        amonth=selected_amonth,
-        amodality="MR",
-        readprice__lt=40000,
-    )
-    count_target_rows = target_rows.count()
-    new_readprice = target_rows.readprice * 0.71
-    target_rows.update(
-        applied_rate=0.71, pay_to_provider=new_readprice, is_completed=True
-    )
-    messages.success(
-        request, f"Total {count_target_rows} cases are applied Rule 4.2 successfully."
-    )
-    return redirect("minibooks:index")
-
-
-def apply_rule_5(request):
-    ## Rule 5 : 나머지는 판독의 수수료율에 따라 계산함
-    selected_ayear = 2024
-    selected_amonth = 7
-    auser = request.user
-
-    provider = Profile.objects.get(user=auser)
-    fee_rate = provider.fee_rate
-
-    target_rows = ReportMaster.objects.filter(
-        ayear=selected_ayear,
-        amonth=selected_amonth,
-        is_complated=False,
-    ).exclude(pacs="ONSITE")
-
-    count_target_rows = target_rows.count()
-
-    target_rows.update(
-        applied_rate=fee_rate, pay_to_provider=new_readprice, is_completed=True
-    )
-    messages.success(
-        request, f"Total {count_target_rows} cases are applied Rule 4.2 successfully."
-    )
-    return redirect("minibooks:index")
+    return render(request, "minibooks/magam_view.html", context)

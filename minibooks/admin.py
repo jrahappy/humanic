@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import ReportMaster, UploadHistory, ReportMasterStat
+from .models import (
+    ReportMaster,
+    UploadHistory,
+    ReportMasterStat,
+    MagamMaster,
+    MagamDetail,
+    HumanRules,
+)
 
 
 class ReportMasterAdmin(admin.ModelAdmin):
@@ -33,3 +40,22 @@ class ReportMasterStatAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ReportMasterStat)
+
+admin.site.register(MagamMaster)
+
+
+class HumanRulesAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
+        "def_name",
+        "def_value",
+        "rules_order",
+        "created_at",
+    ]
+    search_fields = [
+        "name",
+    ]
+    ordering = ["rules_order"]
+
+
+admin.site.register(HumanRules, HumanRulesAdmin)

@@ -1,5 +1,5 @@
 from django import forms
-from .models import UploadHistory
+from .models import UploadHistory, MagamMaster, MagamDetail, ReportMasterStat
 
 
 class UploadHistoryForm(forms.ModelForm):
@@ -21,9 +21,17 @@ class UploadHistoryForm(forms.ModelForm):
         self.fields["amonth"].required = True
         self.fields["afile"].required = True
 
-    # def save(self, commit=True):
-    #     instance = super().save(commit=False)
-    #     # Perform any additional processing or validation here
-    #     if commit:
-    #         instance.save()
-    #     return instance
+
+class MagamMasterForm(forms.ModelForm):
+    class Meta:
+        model = MagamMaster
+        fields = [
+            "ayear",
+            "amonth",
+            # "target_rows",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(MagamMasterForm, self).__init__(*args, **kwargs)
+        self.fields["ayear"].required = True
+        self.fields["amonth"].required = True

@@ -116,8 +116,14 @@ class ReportMaster(models.Model):
     pay_to_provider = models.FloatField(
         null=True, blank=True, default=0
     )  # 의사에게 최종지급할 금액
-    is_completed = models.BooleanField(default=False)  # 정산완료
+    pay_to_human = models.FloatField(
+        null=True, blank=True, default=0
+    )  # 병원에게 최종지급할 금액
+    pay_to_service = models.FloatField(
+        null=True, blank=True, default=0
+    )  # 서비스사업자에게 최종지급할 금액
 
+    is_completed = models.BooleanField(default=False)  # 정산완료
     is_locked = models.BooleanField(default=False)  # 정산완료후 회계적으로 잠금처리
 
     def __str__(self):
@@ -194,6 +200,7 @@ class HumanRules(models.Model):
     description = models.TextField(null=True, blank=True)
     def_name = models.CharField(max_length=100)
     def_value = models.CharField(max_length=100)
+    rules_order = models.IntegerField(default=0, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
 

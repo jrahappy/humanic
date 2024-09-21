@@ -1,0 +1,47 @@
+{% extends 'app_base.html' %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">마감년월일 설정</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'minibooks:index' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn">Back to List</a>
+        </div>
+        <form method="post" action="{% url 'minibooks:magam_new' %}">
+            {% csrf_token %}
+            {{ form|crispy }}    
+        
+        <div class="form-control py-4 ">
+            <div class="form-control py-4">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </div> 
+        </form> 
+      </div>
+    </div>
+  </section>
+    
+  {% endblock %}
+
+  {% block aside %}
+  
+    {% include 'app_base_aside.html' %}
+    
+  {% endblock %}
+  
+  
+  
