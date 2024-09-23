@@ -1,4 +1,5 @@
 from django.db import models
+from product.models import Product, Platform
 
 
 # Create your models here.
@@ -18,6 +19,9 @@ class Company(models.Model):
     ein = models.CharField(max_length=20, null=True, blank=True)
     clinic_id = models.CharField(max_length=20, null=True, blank=True)
     is_public = models.BooleanField(default=False)
+    Platform = models.ForeignKey(
+        Platform, on_delete=models.CASCADE, null=True, blank=True
+    )
 
     class Meta:
         verbose_name = "Company"

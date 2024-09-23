@@ -11,8 +11,13 @@ urlpatterns = [
         name="report_period_month",
     ),
     path(
-        "report_period_month_radiologist/<int:ayear>/<int:amonth>/<str:radio>/",
+        "report_period_month_radiologist/<int:ayear>/<int:amonth>/<int:radio>/",
         views.report_period_month_radiologist,
         name="report_period_month_radiologist",
+    ),
+    path(
+        "report_period_month_radiologist_detail/<int:ayear>/<int:amonth>/<int:radio>/<str:company>/<str:amodality>/",
+        views.report_period_month_radiologist_detail,
+        name="report_period_month_radiologist_detail",
     ),
 ]

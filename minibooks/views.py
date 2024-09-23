@@ -20,11 +20,11 @@ from .models import (
 )
 from .forms import UploadHistoryForm, MagamMasterForm
 from .utils import log_uploadhistory
-from .tasks import upload_file, my_task
+from .tasks import upload_file, update_is_onsite
 from celery.result import AsyncResult
 from import_export import resources
 from tablib import Dataset
-from datetime import date
+from datetime import date, timedelta
 import tablib
 import logging
 from utils.base_func import (
@@ -35,7 +35,7 @@ from utils.base_func import (
     get_specialty_choices,
 )
 from utils.models import ChoiceMaster
-from django.db.models import F, ExpressionWrapper, DurationField
+from django.db.models import F, DurationField, ExpressionWrapper, fields
 
 
 def index(request):
@@ -1006,6 +1006,96 @@ def apply_rule_progress(request, magam_id, rule_id):
                     created_at=timezone.now(),
                     is_completed=True,
                 )
+    elif selected_rule == "RQTOAPV":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            # platform__id=2,
+            # is_completed=False,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        for row in target_rows:
+            if row.requestdt and row.approvedt:
+                temp_time_to_complete = row.approvedt - row.requestdt
+                temp_time_to_complete = temp_time_to_complete / timedelta(minutes=1)
+                row.time_to_complete = temp_time_to_complete
+                row.is_completed = True
+                row.save()
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    elif selected_rule == "NMRISONSITE":
+
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            pacs="ONSITE",
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+
+        target_rows.update(is_onsite=True)
+
+        # j = 0
+        # for row in target_rows:
+        #     row_id = row.id
+        #     if row.pacs == "ONSITE":
+        #         is_onsite = True
+        #     else:
+        #         is_onsite = False
+
+        #     update_is_onsite.delay(row_id, is_onsite)
+        #     # print(f"Row ID: {row_id} / is_onsite: {is_onsite}")
+        #     j += 1
+        #     print(j)
+        #     if j > 100:
+        #         break
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    elif selected_rule == "INIT":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            is_completed=False,
+            is_locked=False,
+            adjusted_price=0,
+            pay_to_provider=0,
+            pay_to_human=0,
+            pay_to_service=0,
+            applied_rate=0,
+        )
+        magam_detail = MagamDetail.objects.filter(magammaster=magam)
+        magam_detail.delete()
+
+        # magam_detail = MagamDetail.objects.create(
+        #     magammaster=magam,
+        #     humanrule=rule,
+        #     affected_rows=count_target_rows,
+        #     description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+        #     created_at=timezone.now(),
+        #     is_completed=True,
+        # )
+
     context = {
         "i": i,
     }

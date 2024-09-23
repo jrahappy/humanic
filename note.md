@@ -55,3 +55,4 @@
     송파미소병원(tele)(SCU) 과 송파미소병원
     열린의료재단서교의원
 
+ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provider %}"

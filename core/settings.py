@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django_extensions",
     "django_filters",
+    "django_celery_results",
     "widget_tweaks",
     "allauth",
     "allauth.account",
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_tailwind",
     "import_export",
+    "celery_progress",
     "dogfoot",
     "utils",
     "minibooks",
@@ -227,5 +229,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CELERY_RESULT_BACKEND = "rpc://"
 # CELERY_TASK_TRACK_STARTED = True
 # CELERY_TASK_TIME_LIMIT = 30 * 60
-# CELERY_BROKER_URL = "redis://localhost:6379"
+# CELERY_BROKER_URL = "redis://redis:6379/0"
 # CELERY_RESULT_BACKEND = "redis://localhost:6379"
+# redis://:password@hostname:port/db_number
+CELERY_BROKER_URL = "redis://default:U8MgDATfsXVcG4O1Kd4KdyXYrszN8mTS@redis-14318.c320.us-east-1-mz.ec2.redns.redis-cloud.com:14318"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = "django-db"
+# CELERY_RESULT_BACKEND = "redis://default:U8MgDATfsXVcG4O1Kd4KdyXYrszN8mTS@redis-14318.c320.us-east-1-mz.ec2.redns.redis-cloud.com:14318"

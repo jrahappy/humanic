@@ -14,22 +14,40 @@
     </div>
     <div class="card-body grow-0">
         <div class="flex flex-wrap gap-4">
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
-                        <th>판독자</th>
-                        <th>총건수</th>
-                        <th>총수익</th>
-                        <th>총수수료</th>
+                        <th>플랫폼</th>
+                        <th>병원명</th>
+                        <th>Modality</th>
+                        <th>건수</th>
+                        <th>OnSite</th>
+                        <th>총매출</th>
+                        <th>의사몫</th>
+                        <th>휴먼몫</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for rpm in rpms %}
                     <tr>
-                        <td>{{ rpm.radiologist }}</td>
-                        <td>{{ rpm.total_cases|intcomma  }}</td>
+                        <td>{{ rpm.platform }}</td>
+                        <td>{{ rpm.company__business_name }}</td>
+                        <td>{{ rpm.amodality }}</td>
+                        <td>
+                            <a href="#"
+                                hx-get="{% url 'report:report_period_month_radiologist_detail' ayear amonth radio rpm.company__business_name rpm.amodality %}"
+                                hx-trigger="click"
+                                hx-target="#general_modal"
+                                hx-swap="outerHTML">{{ rpm.total_cases|intcomma  }}</a>
+                            </td>
+                        <td>{{ rpm.is_onsite }}</td>
                         <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>
                         <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
+                        {% if rpm.is_onsite %}
+                        <td>{{ rpm.total_human|floatformat:0|intcomma|add:"-1" }}</td>
+                        {% else %}
+                        <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

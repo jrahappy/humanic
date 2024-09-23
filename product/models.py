@@ -22,7 +22,7 @@ class Product(models.Model):
 
 class Platform(models.Model):
     name = models.CharField(max_length=20)
-    fee_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    fee_rate = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
         return self.name

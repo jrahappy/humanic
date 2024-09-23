@@ -10,9 +10,12 @@ def upload_file(file_name, file_content):
     return path
 
 
-@shared_task
-def my_task(arg1, arg2):
-    # Task logic here
-    result = arg1 + arg2
-    print(result)
-    return result
+@shared_task(bind=True)
+def update_is_onsite(self, row_id, is_onsite):
+    is_onsite = True if is_onsite == "True" else False
+    rm = ReportMaster.objects.get(id=row_id)
+    rm.is_onsite = is_onsite
+    rm.save()
+    # print(f"Updated is_onsite for row_id: {row_id} to {is_onsite}")
+
+    return "Done"
