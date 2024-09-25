@@ -1044,21 +1044,30 @@ def apply_rule_progress(request, magam_id, rule_id):
 
         target_rows.update(is_onsite=True)
 
-        # j = 0
-        # for row in target_rows:
-        #     row_id = row.id
-        #     if row.pacs == "ONSITE":
-        #         is_onsite = True
-        #     else:
-        #         is_onsite = False
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
 
-        #     update_is_onsite.delay(row_id, is_onsite)
-        #     # print(f"Row ID: {row_id} / is_onsite: {is_onsite}")
-        #     j += 1
-        #     print(j)
-        #     if j > 100:
-        #         break
+    # 일산368/보라매87 병원 예외 처리 부분
+    elif selected_rule == "BORAME":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            company__id__in=[87, 368],
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
 
+        target_rows.update(
+            is_onsite=True,
+            pay_to_provider=F("pay_to_human") * -1,
+            pay_to_human=F("pay_to_human") * 1,
+        )
         magam_detail = MagamDetail.objects.create(
             magammaster=magam,
             humanrule=rule,

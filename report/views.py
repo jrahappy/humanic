@@ -31,7 +31,7 @@ def report_period(request):
         UploadHistory.objects.filter(is_deleted=False)
         .values("ayear", "amonth")
         .distinct()
-        .order_by("ayear", "amonth")
+        .order_by("-ayear", "-amonth")
     )
 
     context = {"buttons_year_month": buttons_year_month}
@@ -55,9 +55,42 @@ def report_period_month(request, ayear, amonth):
     )
     count_rpms = rpms.count()
 
-    context = {"rpms": rpms, "count_rpms": count_rpms, "ayear": ayear, "amonth": amonth}
+    context = {
+        "rpms": rpms,
+        "count_rpms": count_rpms,
+        "ayear": ayear,
+        "amonth": amonth,
+        # "companies": companies,
+    }
 
     return render(request, "report/report_period_month.html", context)
+
+
+def report_period_month_table(request, ayear, amonth):
+    rpms = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
+        .values(
+            "provider__profile__real_name", "provider"
+        )  # Use the related field's real_name
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+    count_rpms = rpms.count()
+
+    context = {
+        "rpms": rpms,
+        "count_rpms": count_rpms,
+        "ayear": ayear,
+        "amonth": amonth,
+        # "companies": companies,
+    }
+
+    return render(request, "report/report_period_month_table.html", context)
 
 
 def report_period_month_radiologist(request, ayear, amonth, radio):
@@ -75,8 +108,29 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             total_human=Sum("pay_to_human"),
             total_cases=Count("case_id"),
         )
+        .order_by("company__business_name", "amodality")
     )
     count_rpms = rpms.count()
+
+    # 일반 판독금액 합계
+    total_by_onsite = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values("is_onsite")
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("is_onsite")
+    )
+
+    provider = CustomUser.objects.get(id=radio)
+    companies = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values("company__business_name")
+        .distinct()
+    )
 
     context = {
         "rpms": rpms,
@@ -85,25 +139,29 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         "ayear": ayear,
         "amonth": amonth,
         "radio": radio,
+        "companies": companies,
+        "provider": provider,
+        "total_by_onsite": total_by_onsite,
     }
 
     return render(request, "report/report_period_month_radiologist.html", context)
 
 
 def report_period_month_radiologist_detail(
-    request, ayear, amonth, radio, company, amodality
+    request, ayear, amonth, provider, company, amodality
 ):
     rpms = ReportMaster.objects.filter(
         ayear=ayear,
         amonth=amonth,
-        provider=radio,
+        provider=provider,
         company__business_name=company,
         amodality=amodality,
-    )
+    ).order_by("case_id")[:500]
     count_rpms = rpms.count()
     # s_provider = CustomUser.objects.get(id=radio)
-    provider = Profile.objects.get(user=radio)
-
+    print(provider)
+    provider = CustomUser.objects.get(id=provider)
+    print("new provider:", provider.id)
     context = {
         "rpms": rpms,
         "count_rpms": count_rpms,

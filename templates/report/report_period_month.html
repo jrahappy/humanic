@@ -1,53 +1,65 @@
 {% load humanize %}
 
-<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-            <h2>{{ count_rpms }} Records</h2>
-            <a href="#"
-                hx-get="{% url 'minibooks:new_upload' %}"
-                hx-trigger="click"
-                hx-target="#main_area"
-                hx-swap="outerHTML"
-                class="btn btn-primary">Close</a>
+<section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div id ="general_content">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+
+                <h2>{{ count_rpms }} Records</h2>
+                <div>
+
+                    <a href="#"
+                    hx-get="{% url 'report:report_period_month_table' ayear amonth %}"
+                    hx-trigger="click"
+                    hx-target="#general_content"
+                    hx-swap="outerHTML"
+                    class="btn btn-primary">
+                    표로 보기</a>
+                    <a href="#"
+                    _="on click transition opacity to 0 then remove #general_content"
+                    class="btn btn-warning"
+                    >Close</a>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="card-body grow-0">
-        <div class="flex flex-wrap gap-4">
-            {% for rpm in rpms %}
-                <div class="card bg-base-100 w-64 shadow-xl">
-                    <div class="card-body">
-                        <h2 class="card-title">{{ rpm.provider__profile__real_name }}</h2>
-                        <p class="mb-2">
-                            <div class="flex justify-between">
-                                <span>판독건수</span>
-                                <span>{{ rpm.total_cases|intcomma  }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>매출</span>
-                                <span>{{ rpm.total_price|floatformat:0|intcomma  }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>판독료</span>
-                                <span>{{ rpm.total_provider|floatformat:0|intcomma }}</span>
-                            </div>
-                        </p>
-                        <div class="card-actions justify-end">
-                            <a  href="#"
+        <div class="card-body grow-0">
+            <div class="flex flex-wrap gap-4">
+                {% for rpm in rpms %}
+                    <div class="card bg-base-100 w-64 shadow-xl">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ rpm.provider__profile__real_name }}</h2>
+                            <p class="mb-2">
+                                <div class="flex justify-between">
+                                    <span>판독건수</span>
+                                    <span>{{ rpm.total_cases|intcomma  }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>매출</span>
+                                    <span>{{ rpm.total_price|floatformat:0|intcomma  }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>판독료</span>
+                                    <span>{{ rpm.total_provider|floatformat:0|intcomma }}</span>
+                                </div>
+                            </p>
+                            <div class="card-actions justify-end">
+                                <button 
+                                    onclick="base_modal.showModal()"
+                                    class="btn btn-sm btn-info" 
+                                    hx-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provider %}"
+                                    hx-trigger="click"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML"                                      
+                                >Detail</button>
                                 
-                                class="btn"
-                                hx-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provider %}"
-                                hx-trigger="click"
-                                hx-swap="outerHTML"
-                                hx-target="#general_modal"
-                            >Details</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-               
-                 
-            {% endfor %}
-           
+                
+                    
+                {% endfor %}
+            
+            </div>
         </div>
     </div>
 </section>

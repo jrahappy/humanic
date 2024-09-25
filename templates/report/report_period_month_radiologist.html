@@ -1,58 +1,123 @@
+{% load custom_filters %}
 {% load humanize %}
 
-<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-            <h2>{{ count_rpms }} 건</h2>
-            <a href="#"
-                hx-get="{% url 'minibooks:new_upload' %}"
-                hx-trigger="click"
-                hx-target="#main_area"
-                hx-swap="outerHTML"
-                class="btn btn-primary">Close</a>
+
+
+        <div class="modal-box card-body grow-0">
+            <div class="modal-action justify-between flex flex-row gap-2">
+                <h2></h2>
+                <form method="dialog">
+                    <button class="btn btn-warning">Close</button>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="card-body grow-0">
-        <div class="flex flex-wrap gap-4">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>플랫폼</th>
-                        <th>병원명</th>
-                        <th>Modality</th>
-                        <th>건수</th>
-                        <th>OnSite</th>
-                        <th>총매출</th>
-                        <th>의사몫</th>
-                        <th>휴먼몫</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for rpm in rpms %}
-                    <tr>
-                        <td>{{ rpm.platform }}</td>
-                        <td>{{ rpm.company__business_name }}</td>
-                        <td>{{ rpm.amodality }}</td>
-                        <td>
-                            <a href="#"
-                                hx-get="{% url 'report:report_period_month_radiologist_detail' ayear amonth radio rpm.company__business_name rpm.amodality %}"
-                                hx-trigger="click"
-                                hx-target="#general_modal"
-                                hx-swap="outerHTML">{{ rpm.total_cases|intcomma  }}</a>
-                            </td>
-                        <td>{{ rpm.is_onsite }}</td>
-                        <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>
-                        <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
-                        {% if rpm.is_onsite %}
-                        <td>{{ rpm.total_human|floatformat:0|intcomma|add:"-1" }}</td>
-                        {% else %}
-                        <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
+        <div class="card-body grow-0 flex items-center">
+            <div class="flex flex-wrap flex-col gap-4 w-1/2 ">
+                
+                <div class="card bg-neutral text-neutral-content w-full shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
+                        <p class="mb-2">
+                            이메일: {{ provider.email }}<br>
+                            연락처: {{ provider.profile.phone_number }}<br>
+                            고객병원: 총 {{ count_rpms }} 곳
+                        </p>
+                        <p>
+                            <table class="table">
+                                <tr>
+                                    <td>OnSite</td>
+                                    <td>건수</td>
+                                    <td>매출</td>
+                                    <td>판독료</td>
+                                    <td>수수료</td>
+                                </tr>
+                                {% for total in total_by_onsite %}
+                                {% if total.is_onsite %}
+                                <tr>
+                                    <td>차감</td>
+                                    <td>{{ total.total_cases|intcomma }}</td>
+                                    <td>{{ total.total_price|floatformat:0|intcomma }}</td>
+                                    <td><p class="text-red-900">{{ total.total_provider|floatformat:0|intcomma }}</p></td>
+                                    <td>{{ total.total_human|floatformat:0|intcomma }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td>지급</td>
+                                    <td>{{ total.total_cases|intcomma }}</td>
+                                    <td>{{ total.total_price|floatformat:0|intcomma }}</td>
+                                    <td>{{ total.total_provider|floatformat:0|intcomma }}</td>
+                                    <td>{{ total.total_human|floatformat:0|intcomma }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                               
+                            </table>
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                {% for company in companies %}
+                <div class="card bg-base-100  shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ company.company__business_name }}</h2>
+                        <p class="mb-2">
+                            <table class="table table-sm table-zebra w-full">
+                                <thead>
+                                    <tr class="bg-base-200">
+                                            
+                                        <th>Modality</th>
+                                        <th>건수</th>
+                                        <th>OnSite</th>
+                                        <th>매출</th>
+                                        <th>판독료</th>
+                                        <th>수수료</th>
+                                        <th>-</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rpm in rpms %}
+                                    {% if rpm.company__business_name == company.company__business_name %}
+                                    <tr>
+                                        
+                                        <td>{{ rpm.amodality }}</td>
+                                        <td>
+                                          {{ rpm.total_cases|intcomma  }}
+                                        </td>
+                                        <td>{{ rpm.is_onsite }}</td>
+                                        <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>  
+                                        <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
+                                        {% if rpm.is_onsite %}
+                                        <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+                                        {% else %}
+                                        <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+                                        {% endif %}
+                                        <td>
+                                            <a href="#"
+                                                hx-get="{% url 'report:report_period_month_radiologist_detail' ayear amonth provider.id rpm.company__business_name rpm.amodality %}"
+                                                hx-trigger="click"
+                                                hx-target="#base_modal"
+                                                hx-swap="innerHTML"
+                                                class="btn btn-sm btn-info"
+                                            >세분내역
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <!-- <tr>
+                                        <td colspan="7">{{ rpm.company__business_name }}/{{ company.company__business_name }}</td>
+                                    </tr>
+                                 -->
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        
         </div>
-    </div>
-</section>
+       
+</div>

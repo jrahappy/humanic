@@ -1,0 +1,50 @@
+{% load humanize %}
+
+<section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div id ="general_content">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <h2>{{ count_rpms }} Records</h2>
+                <a href="#"
+                    _="on click transition opacity to 0 then remove #general_content"
+                    
+                    class="btn btn-warning">Close</a>
+            </div>
+        </div>
+        <div class="card-body grow-0">
+            <div class="flex flex-wrap gap-4">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>판독자</th>
+                            <th>판독건수</th>
+                            <th>매출</th>
+                            <th>판독료</th>
+                            <th>-</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rpm in rpms %}
+                            <tr>
+                                <td>{{ rpm.provider__profile__real_name }}</td>
+                                <td>{{ rpm.total_cases|intcomma  }}</td>
+                                <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>
+                                <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
+                                <td>
+                                    <button 
+                                    onclick="base_modal.showModal()"
+                                    class="btn btn-sm btn-info" 
+                                    hx-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provider %}"
+                                    hx-trigger="click"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML"                                      
+                                >Detail</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
