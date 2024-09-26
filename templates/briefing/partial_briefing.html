@@ -1,0 +1,81 @@
+{% load custom_filters %}
+{% load humanize %}
+
+<h3 class="stats stat-value col-span-12 w-full bg-white text-gray-900 px-8 py-4 ">
+  {{syear}}. {{smonth}}
+</h3>
+<section class="stats stats-vertical col-span-12 w-full mb-4 shadow-sm xl:stats-horizontal">
+  
+  <div class="stat">
+    <div class="stat-title">의뢰고객병원</div>
+    <div class="stat-value">{{ cm_total|intcomma}}</div>
+    <div class="stat-desc"></div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">판독의</div>
+    <div class="stat-value">{{ dr_total|intcomma}}</div>
+    <div class="stat-desc"></div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">의뢰건수</div>
+    <div class="stat-value">{{ rp_total|intcomma }}&nbsp;<span class="badge badge-error text-white ">ER:{{rp_er_total_value|intcomma}}</span></div>
+    <div class="stat-desc"></div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">판독료</div>
+    <div class="stat-value">{{ revenue_total|floatformat:0|intcomma }}</div>
+    <div class="stat-desc"></div>
+  </div>
+</section>
+<div class="grid grid-cols-12 gap-2">
+     
+  <section class="card col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">병원별 (Top 15)</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <table class="table table-zebra">
+        <tbody>
+          {% for rs in rs_cm %}
+          <tr>
+            <td>{{ rs.company__business_name }}</td>
+            <td><p class="text-end">{{ rs.company_count|floatformat:0|intcomma }}</p></td>
+            <td><p class="text-end">{{ rs.company_total|floatformat:0|intcomma }}</p></td>
+            
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="card col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">판독의 (Top 15)</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <table class="table table-zebra">
+        <tbody>
+          {% for rs in rs_dr %}
+            <tr>
+              <td>{{ rs.provider__profile__real_name }}</td>
+              <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
+              <td><p class="text-end">{{ rs.provider_total|floatformat:0|intcomma }}</p></td>
+              
+            </tr>
+            {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>  
+ 
+</section>

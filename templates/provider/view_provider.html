@@ -1,6 +1,6 @@
 {% extends 'app_base.html' %}
-
-
+{% load humanize %}
+{% load  %}
 {% block header %}
     {% include 'app_base_header.html' %}
 {% endblock %}
@@ -13,7 +13,18 @@
 				<h2 class="card-title grow">
 					세부 정보 보기
 				</h2>
+				<div class="flex gap-4">
+					<div class="flex items-end py-4">
+						<a href="{% url 'provider:edit_provider' provider.id %}" class="btn btn-primary grow">수정하기</a>
+						
+					</div>
+					<div class="flex items-end py-4">
+						<a href="{% url 'provider:index' %}" class="btn btn-secondary grow">목록으로</a>
+					</div>
+				   
+				</div>
 			</div>
+
       	</div>
     	<div class="grid grid-cols-12 gap-2 px-6 mb-4">
 			<div class="form-control col-span-2">
@@ -101,20 +112,51 @@
 				<p class="text-start px-2 py-3 bg-base-200 rounded h-24">{{ provider.profile.bio }}</p>
 			</div>
         </div>
-		<div class="grid grid-cols-4 gap-2 px-6">
-            <div class="flex gap-4">
-                <div class="flex items-end py-4">
-					<a href="{% url 'provider:edit_provider' provider.id %}" class="btn btn-primary grow">수정하기</a>
-                    
-                </div>
-                <div class="flex items-end py-4">
-                    <a href="{% url 'provider:index' %}" class="btn btn-secondary grow">목록으로</a>
-                </div>
-                <div class="flex items-end py-4">
-                    <button class="btn btn-info grow">단가 계약</button>
-                </div>
+		
+	</section>
+	<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+		<div class="card-body grow-0">
+			<div class="flex justify-between gap-2">
+				<h2 class="card-title grow">
+					월별 판독현황 
+				</h2>
 			</div>
+	  	</div>
+		<div class="grid grid-cols-2 gap-2 px-6 mb-4">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>년도</th>
+						<th>월</th>
+						<th>판독건수</th>
+						<th>판독료</th>
+						<th>-</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for rs in rs_monthly %}
+						<tr>
+							<td>{{ rs.ayear }}</td>
+							<td>{{ rs.amonth }}</td>
+							<td>{{ rs.total_count_temp|floatformat:0|intcomma }}</td>
+							<td>{{ rs.total_revenue_temp|floatformat:0|intcomma }}</td>
+							<td>
+								<button 
+                                    onclick="base_modal.showModal()"
+                                    class="btn btn-sm btn-info" 
+                                    hx-get="{% url 'report:report_period_month_radiologist' rs.ayear rs.amonth provider.id %}"
+                                    hx-trigger="click"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML"                                      
+                                >Detail</button>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			
 		</div>
+
 	</section>
 {% endblock %}
 

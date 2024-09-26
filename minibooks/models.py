@@ -123,6 +123,7 @@ class ReportMaster(models.Model):
         null=True, blank=True, default=0
     )  # 서비스사업자에게 최종지급할 금액
 
+    is_emergency = models.BooleanField(default=False)  # 응급여부
     is_completed = models.BooleanField(default=False)  # 정산완료
     is_locked = models.BooleanField(default=False)  # 정산완료후 회계적으로 잠금처리
 
@@ -150,7 +151,9 @@ class ReportMasterStat(models.Model):
     amodality = models.CharField(
         "Modality", max_length=10, choices=get_amodality_choices
     )
+    emergency = models.BooleanField(default=False)
     total_count = models.IntegerField(default=0)
+    total_revenue = models.FloatField(default=0, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
 

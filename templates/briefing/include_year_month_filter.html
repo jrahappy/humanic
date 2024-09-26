@@ -1,0 +1,25 @@
+<div class="flex flex-column gap-4 px-6">
+    
+    {% for button_ym in buttons_year_month %}
+    <div class="">
+        <a href="#"
+            hx-get="{% url 'briefing:partial_briefing' %}?syear={{ button_ym.ayear }}&smonth={{ button_ym.amonth }}"
+            hx-trigger="click"
+            hx-target="#stat_panel"
+            hx-swap="innerHTML"
+            hx-transition=""
+
+            {% if button_ym.ayear == syear and button_ym.amonth == smonth %}
+
+
+            class="btn btn-sm "
+            {% else %}
+            class="btn btn-sm"
+            {% endif %}
+            >
+            {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
+        </a>
+    </div>
+    {% endfor %}
+   
+</div>

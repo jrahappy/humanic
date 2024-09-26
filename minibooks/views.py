@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import MultipleObjectsReturned
@@ -36,8 +36,10 @@ from utils.base_func import (
 )
 from utils.models import ChoiceMaster
 from django.db.models import F, DurationField, ExpressionWrapper, fields
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def index(request):
     upload_histories = (
         UploadHistory.objects.annotate(ReportMaster_count=Count("reportmaster"))
@@ -50,6 +52,7 @@ def index(request):
     return render(request, "minibooks/index.html", context)
 
 
+@login_required
 def history_delete(request, id):
     uh = get_object_or_404(UploadHistory, id=id)
 
@@ -72,6 +75,7 @@ def history_delete(request, id):
         return render(request, "minibooks/history_delete.html", context)
 
 
+@login_required
 def new_upload(request):
     user = request.user
     # logger.info(f"User: {user}")
@@ -147,6 +151,7 @@ def new_upload(request):
 #     return render(request, "minibooks/new_upload.html", context)
 
 
+@login_required
 def clean_data(request, id):
     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
     v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False).order_by(
@@ -373,6 +378,7 @@ def get_progress(request, id):
     return render(request, "minibooks/progress.html", {"uh": v_uploadhistory})
 
 
+@login_required
 def create_reportmaster(request, id):
 
     a_raw = UploadHistory.objects.get(id=id)
@@ -632,15 +638,22 @@ def initial_customer_data(request):
     return render(request, "importdata/initial_customer_data.html")
 
 
+@login_required
 def aggregate_data(request, upload_history_id):
     try:
         # Aggregate data from ReportMaster
         aggregation = (
             ReportMaster.objects.values(
-                "provider", "company", "ayear", "amonth", "amodality", "platform"
+                "provider",
+                "company",
+                "ayear",
+                "amonth",
+                "amodality",
+                "platform",
+                "is_emergency",
             )
             .filter(uploadhistory=upload_history_id)
-            .annotate(total_count=Count("id"))
+            .annotate(total_count=Count("id"), total_revenue=Sum("readprice"))
         )
 
         # Insert aggregated data into ReportMasterStat
@@ -651,10 +664,12 @@ def aggregate_data(request, upload_history_id):
             month = entry["amonth"]
             platform = Platform.objects.get(id=entry["platform"])
             amodality = entry["amodality"]
+            emergency = entry["is_emergency"]
             total_count = entry["total_count"]
+            total_revenue = entry["total_revenue"]
 
             print(
-                f"Provider: {provider}, Company: {company}, Year: {year}, Month: {month}, Platform: {platform}, Modality: {amodality}, Total Count: {total_count}"
+                f"Provider: {provider}, Company: {company}, Year: {year}, Month: {month}, Platform: {platform}, Modality: {amodality}, Total Count: {total_count}, Revenue: {total_revenue}"
             )
 
             # Create or update the ReportMasterStat entry
@@ -665,8 +680,9 @@ def aggregate_data(request, upload_history_id):
                 amonth=month,
                 platform=platform,
                 amodality=amodality,
+                emergency=emergency,
                 UploadHistory=UploadHistory.objects.get(id=upload_history_id),
-                defaults={"total_count": total_count},
+                defaults={"total_count": total_count, "total_revenue": total_revenue},
             )
         UploadHistory.objects.filter(id=upload_history_id).update(aggregated=True)
         messages.success(request, "Data aggregated successfully.")
@@ -691,6 +707,7 @@ def aggregate_data(request, upload_history_id):
         return redirect("minibooks:index")
 
 
+@login_required
 def aggregate_data_result(request, upload_history_id):
     # Get the aggregated data
     aggregation = ReportMasterStat.objects.filter(
@@ -719,6 +736,7 @@ def aggregate_data_result(request, upload_history_id):
     return render(request, "minibooks/partial_aggregate_data_result.html", context)
 
 
+@login_required
 def agg_detail(request, id):
     reportmasterstat = ReportMasterStat.objects.get(id=id)
     reportmasters = (
@@ -824,6 +842,7 @@ def apply_rule(request, magam_id, rule_id):
     return redirect("minibooks:index")
 
 
+@login_required
 def apply_rule_progress(request, magam_id, rule_id):
 
     magam = MagamMaster.objects.get(id=magam_id)
@@ -1077,6 +1096,25 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=True,
         )
 
+    elif selected_rule == "IS_EMERGENCY":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear, amonth=smonth, stat="응급"
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+
+        target_rows.update(
+            is_emergency=True,
+        )
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
     elif selected_rule == "INIT":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
@@ -1111,12 +1149,14 @@ def apply_rule_progress(request, magam_id, rule_id):
     return render(request, "minibooks/magam_apply_rule_progress_result.html", context)
 
 
+@login_required
 def magam_list(request):
     magam_list = MagamMaster.objects.all()
     context = {"magam_list": magam_list}
     return render(request, "minibooks/magam_list.html", context)
 
 
+@login_required
 def magam_new(request):
     user = request.user
     form = MagamMasterForm()
@@ -1147,6 +1187,7 @@ def magam_new(request):
     return render(request, "minibooks/magam_new.html", context)
 
 
+@login_required
 def magam_view(request, id):
     magam = MagamMaster.objects.get(id=id)
     count_completed_magam = ReportMaster.objects.filter(

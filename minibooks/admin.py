@@ -23,6 +23,10 @@ admin.site.register(ReportMaster, ReportMasterAdmin)
 class UploadHistoryAdmin(admin.ModelAdmin):
     list_display = [
         "name",
+        "imported",
+        "verified",
+        "aggregated",
+        "is_deleted",
         "created_at",
     ]
     search_fields = ["name", "created_at"]

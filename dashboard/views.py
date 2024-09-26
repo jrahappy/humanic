@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, "dashboard/index.html")
+    return render(request, "dashboard/daisyui.html")
 
 
 def daisyui(request):

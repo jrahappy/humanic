@@ -1,81 +1,20 @@
 {% extends 'app_base.html' %}
 {% load custom_filters %}
+{% load humanize %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
 {% endblock %}
 
 {% block content %}
-  <header class="col-span-12 flex items-center gap-2 lg:gap-4">
-    <div class="grow">
-      <h1 class="font-dark font-bold lg:text-2xl">의료진별로 보기</h1>
-    </div>
-  </header>
-  <section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
-    <div class="mt-2 px-4">
-      <form method="Get" action="{% url 'briefing:index'%}">
-        
-            <select name="provider" id="provider" class="select select-bordered">
-              {% if selected_provider == 'None' %}
-                <option value="" selected>전체</option>
-              {% else %}
-                <option value="">전체</option>
-              {% endif %}
-            
-              {% for provider in providers %}
-                {% if provider.id|stringformat:"s" == selected_provider %}
-                  <option value="{{ provider.id }}" selected>{{ provider.profile.real_name }}</option>
-                {% else %}
-                  <option value="{{ provider.id }}">{{ provider.profile.real_name }}</option>
-                {% endif %}
-              {% endfor %}
-            </select>
-
-            <select name="ayear" id="ayear" class="select select-bordered">
-              {% for ayear in ayears %}
-                
-                {% if ayear.choice_key|stringformat:"s" == selected_ayear %}
-                  <option value="{{ ayear.choice_key }}" selected>{{ ayear.choice_value }}</option>
-                {% else %}
-                  <option value="{{ ayear.choice_key }}">{{ ayear.choice_value }}</option>
-                {% endif %}
-              
-              {% endfor %}
-            </select>
-            <select name="amonth" id="amonth" class="select select-bordered">
-              {% for amonth in amonths %}
-                
-                {% if amonth.choice_key|stringformat:"s" == selected_amonth %}
-                  <option value="{{ amonth.choice_key }}" selected>{{ amonth.choice_value }}</option>
-                {% else %}
-                  <option value="{{ amonth.choice_key }}">{{ amonth.choice_value }}</option>
-                {% endif %}
-
-              {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-primary">Search</button>
-        
-          </form>
-      </div>
-      <hr class="m-4"/>
-      <div class="divider"></div>
-      <div class="stat">
-        <table class="table table-zebra">
-          <thead>
-            <tr>
-              <th>병원명</th>
-              <th>Modality</th>
-              <th>합계</th>
-              <th>평균</th>
-              <th>Total Cases</th>
-            </tr>
-          </thead>
-         
-          
-        </table>
-      </div>
-    </div>
-  </section>
+<section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
+  {% include "briefing/include_year_month_filter.html" %}
+</section>
+<div id="stat_panel" class="col-span-12 w-full">
+  
+  {% include "briefing/partial_briefing.html" %}
+    
+</div>
 {% endblock %}
 
 {% block aside %}
