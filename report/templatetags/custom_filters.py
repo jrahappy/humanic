@@ -1,4 +1,5 @@
 from django import template
+import os
 
 register = template.Library()
 
@@ -40,3 +41,9 @@ def sum_values_company(queryset, key):
 def break_loop(context):
     context["loop_break"] = True
     return ""
+
+
+@register.filter
+def filename(value):
+    """Extracts the filename from a file path or URL."""
+    return os.path.basename(value)
