@@ -55,8 +55,21 @@ def report_period_month(request, ayear, amonth):
     )
     count_rpms = rpms.count()
 
+    rp_humans = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .values("provider")
+        .annotate(
+            human_total_price=Sum("readprice"),
+            human_total_provider=Sum("pay_to_provider"),
+            human_total_human=Sum("pay_to_human"),
+            human_total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+
     context = {
         "rpms": rpms,
+        "rp_humans": rp_humans,
         "count_rpms": count_rpms,
         "ayear": ayear,
         "amonth": amonth,
@@ -82,8 +95,23 @@ def report_period_month_table(request, ayear, amonth):
     )
     count_rpms = rpms.count()
 
+    rp_humans = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .values("provider")
+        .annotate(
+            human_total_price=Sum("readprice"),
+            human_total_provider=Sum("pay_to_provider"),
+            human_total_human=Sum("pay_to_human"),
+            human_total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+
+    # print(rp_humans.count())
+
     context = {
         "rpms": rpms,
+        "rp_humans": rp_humans,
         "count_rpms": count_rpms,
         "ayear": ayear,
         "amonth": amonth,
@@ -103,10 +131,10 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             "is_onsite",
         )
         .annotate(
-            total_price=Sum("readprice"),
-            total_provider=Sum("pay_to_provider"),
-            total_human=Sum("pay_to_human"),
-            total_cases=Count("case_id"),
+            r_total_price=Sum("readprice"),
+            r_total_provider=Sum("pay_to_provider"),
+            r_total_human=Sum("pay_to_human"),
+            r_total_cases=Count("case_id"),
         )
         .order_by("company__business_name", "amodality")
     )

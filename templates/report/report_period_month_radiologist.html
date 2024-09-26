@@ -25,32 +25,28 @@
                         <p>
                             <table class="table">
                                 <tr>
-                                    <td>OnSite</td>
+                                    <td>구분</td>
                                     <td>건수</td>
                                     <td>매출</td>
                                     <td>판독료</td>
                                     <td>수수료</td>
                                 </tr>
                                 {% for total in total_by_onsite %}
-                                {% if total.is_onsite %}
                                 <tr>
-                                    <td>차감</td>
+                                    <td>{{ total.is_onsite|yesno:"OnSite,정상" }}</td>
                                     <td>{{ total.total_cases|intcomma }}</td>
                                     <td>{{ total.total_price|floatformat:0|intcomma }}</td>
                                     <td><p class="text-red-900">{{ total.total_provider|floatformat:0|intcomma }}</p></td>
                                     <td>{{ total.total_human|floatformat:0|intcomma }}</td>
                                 </tr>
-                                {% else %}
-                                <tr>
-                                    <td>지급</td>
-                                    <td>{{ total.total_cases|intcomma }}</td>
-                                    <td>{{ total.total_price|floatformat:0|intcomma }}</td>
-                                    <td>{{ total.total_provider|floatformat:0|intcomma }}</td>
-                                    <td>{{ total.total_human|floatformat:0|intcomma }}</td>
-                                </tr>
-                                {% endif %}
                                 {% endfor %}
-                               
+                                <tr class="bg-gray-200 font-semibold">
+                                    <td>합계</td>
+                                    <td>{{ total_by_onsite|sum_values:"total_cases"|intcomma }}</td>
+                                    <td>{{ total_by_onsite|sum_values:"total_price"|floatformat:0|intcomma }}</td>
+                                    <td>{{ total_by_onsite|sum_values:"total_provider"|floatformat:0|intcomma }}</td>
+                                    <td>{{ total_by_onsite|sum_values:"total_human"|floatformat:0|intcomma }}</td>
+                                </tr>
                             </table>
                         </p>
                     </div>
@@ -81,15 +77,15 @@
                                         
                                         <td>{{ rpm.amodality }}</td>
                                         <td>
-                                          {{ rpm.total_cases|intcomma  }}
+                                          {{ rpm.r_total_cases|intcomma  }}
                                         </td>
                                         <td>{{ rpm.is_onsite }}</td>
-                                        <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>  
-                                        <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
+                                        <td>{{ rpm.r_total_price|floatformat:0|intcomma  }}</td>  
+                                        <td>{{ rpm.r_total_provider|floatformat:0|intcomma }}</td>
                                         {% if rpm.is_onsite %}
-                                        <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+                                        <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
                                         {% else %}
-                                        <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+                                        <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
                                         {% endif %}
                                         <td>
                                             <a href="#"
@@ -109,6 +105,7 @@
                                  -->
                                     {% endif %}
                                     {% endfor %}
+                                    
                                 </tbody>
                             </table>
                         </p>

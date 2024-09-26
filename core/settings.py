@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "product",
     "importdata",
     "briefing",
+    "report",
 ]
 
 MIDDLEWARE = [

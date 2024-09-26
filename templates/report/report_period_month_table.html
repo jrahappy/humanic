@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load custom_filters %}
 
 <section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div id ="general_content">
@@ -13,13 +14,15 @@
         </div>
         <div class="card-body grow-0">
             <div class="flex flex-wrap gap-4">
-                <table class="table table-zebra w-full">
+                <table class="table table-zebra w-full table-xs">
                     <thead>
                         <tr>
                             <th>판독자</th>
                             <th>판독건수</th>
                             <th>매출</th>
                             <th>판독료</th>
+                            <th>수수료</th>
+                            <th>휴먼외래</th>
                             <th>-</th>
                         </tr>
                     </thead>
@@ -30,6 +33,15 @@
                                 <td>{{ rpm.total_cases|intcomma  }}</td>
                                 <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>
                                 <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
+                                <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+                                <td>
+                                    {% for human in rp_humans %}
+                                        {% if human.provider == rpm.provider %}
+                                            {{ human.human_total_provider|floatformat:0|intcomma }}
+                                            {% break_loop %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     <button 
                                     onclick="base_modal.showModal()"

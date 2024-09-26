@@ -83,3 +83,14 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 "이웅재"
 "김혜진"
 "김희정"
+
+## 화상회의 09/25/2024 ##
+
+  손경선 kasia71@humic.co.kr
+  이종엽 yuphim@humic.co.kr
+
+    ** 개선해야할 부분
+    1. 휴먼외래와 전체 판독료를 분리해서 합산해서 보여주야 함.
+    2. 동명 2인... 김혜진
+    3. 동명이인의 경우에 정확성을 기하기 위해 Approver 로 구분함.
+    4. 판독의 검색이 쉽게 함.
