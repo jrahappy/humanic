@@ -109,48 +109,6 @@ def new_upload(request):
     return render(request, "minibooks/new_upload.html", context)
 
 
-# def new_upload(request):
-#     user = request.user
-#     # logger.info(f"User: {user}")
-#     form = UploadHistoryForm()
-
-#     if request.method == "POST":
-#         form = UploadHistoryForm(request.POST, request.FILES)
-
-#         if form.is_valid():
-#             upload_history = form.save(commit=False)
-#             upload_history.user = user
-#             upload_history.created_at = timezone.now()
-
-#             uploaded_file = request.FILES["afile"]
-#             file_name = uploaded_file.name
-#             file_content = uploaded_file.read()
-
-#             # Call the Celery task to handle the file upload
-#             upload_file.delay(file_name, file_content)
-
-#             upload_history.save()
-
-#             messages.success(request, "File uploaded successfully.")
-#             # tracking the upload history
-#             log_uploadhistory(
-#                 request.user,
-#                 "FileUpload",
-#                 "File uploaded successfully.",
-#                 upload_history,
-#             )
-#             return redirect("minibooks:index")
-#         else:
-#             messages.error(request, "An error occurred.")
-#             return redirect("minibooks:new_upload")
-#     else:
-#         today_date = date.today().strftime("%Y-%m-%d")
-#         form = UploadHistoryForm(initial={"import_date": today_date})
-#         context = {"import_date": today_date, "form": form}
-
-#     return render(request, "minibooks/new_upload.html", context)
-
-
 @login_required
 def clean_data(request, id):
     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
@@ -508,38 +466,6 @@ def create_reportmaster(request, id):
     return redirect("minibooks:index")
 
 
-# except Exception as e:
-#     # logger.error(f"An error occurred during file upload: {e}")
-#     messages.error(request, f"An error occurred: {e}")
-#     log_uploadhistory(
-#         request.user,
-#         "Data Import",
-#         f"Failed: An error occurred: {e}",
-#         a_raw,
-#     )
-#     return redirect("minibooks:index")
-
-
-# def create_reportmaster(request, id):
-#     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
-
-#     # if request.method == "POST":
-#     # Call the Celery task
-#     create_reportmaster_task.delay(id)
-#     messages.success(request, "Data import task has been initiated.")
-#     log_uploadhistory(
-#         request.user,
-#         "Data Import",
-#         "Data imported successfully.",
-#         v_uploadhistory,
-#     )
-
-#     return redirect("minibooks:index")
-
-# context = {"uploadhistory": v_uploadhistory}
-# return render(request, "minibooks/create_reportmaster.html", context)
-
-
 def snippet_reportmaster(request, id):
     a_raw = UploadHistory.objects.get(id=id)
 
@@ -843,14 +769,64 @@ def apply_rule_progress(request, magam_id, rule_id):
     rule = HumanRules.objects.get(id=rule_id)
     selected_rule = rule.def_name
 
+    # 휴먼외래: 김성현, 이재희 원장님 모든 케이스에서 계산 제외
+    if selected_rule == "HMOFFDRS":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            provider__in=[72, 73],  # 이재희, 김성현 원장님 제외
+            # is_human_outpatient=True,
+            # is_take=False,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=0,
+            pay_to_human=0,
+            applied_rate=0,
+            is_completed=True,
+        )
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
     # 휴먼외래: 판독료 계산 1번적용
-    if selected_rule == "HMOUT":
+    elif selected_rule == "HMOFFUSXARF":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
             is_human_outpatient=True,
-            # platform__id=2,
-            # is_completed=False,
+            is_take=False,
+            amodality__in=["US", "XR", "RF"],
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=0,
+            pay_to_human=0,
+            applied_rate=0.0,
+            is_completed=True,
+        )
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    elif selected_rule == "HMOUT":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            is_human_outpatient=True,
+            is_take=False,
+            is_completed=False,
         )
         count_target_rows = target_rows.count()
         i = count_target_rows
@@ -1210,3 +1186,93 @@ def magam_view(request, id):
     }
 
     return render(request, "minibooks/magam_view.html", context)
+
+
+# 판독의별 해당 년, 월 판독료 재정산 함수
+def re_calc_share(request, ayear, amonth, provider_id):
+
+    provider = get_object_or_404(CustomUser, id=provider_id)
+    rs = ReportMaster.objects.filter(provider=provider, ayear=ayear, amonth=amonth)
+    total_rows = rs.count()
+
+    # 휴먼외래: 판독료 계산 1번적용.  US, XA, RF 제외
+    target_rows = rs.filter(is_human_outpatient=True).exclude(
+        Q(amodality="US") | Q(amodality="XA") | Q(amodality="RF")
+    )
+    count_target_rows = target_rows.count()
+    i = count_target_rows
+    target_rows.update(
+        pay_to_provider=F("readprice") * 1,
+        pay_to_human=0,
+        applied_rate=1.0,
+        is_completed=True,
+    )
+    # 휴먼외래: US, XA, RF는 별도 판독료 처리
+    target_rows = rs.filter(is_human_outpatient=True, amodality__in=["US", "XA", "RF"])
+    count_target_rows = target_rows.count()
+    i = count_target_rows
+    target_rows.update(
+        pay_to_provider=0,
+        pay_to_human=0,
+        applied_rate=0.0,
+        is_completed=True,
+    )
+
+    # 통합: CR 할인 계약 적용
+    target_rows = rs.filter(amodality="CR", readprice__lt=1333)
+    count_target_rows = target_rows.count()
+    i = count_target_rows
+    target_rows.update(
+        pay_to_provider=1000,
+        pay_to_human=F("readprice") - 1000,
+        applied_rate=1000 / F("readprice"),
+        is_completed=True,
+    )
+
+    # 통합: CT 할인 계약 적용
+    target_rows = rs.filter(amodality="CT", readprice__lt=19600)
+    count_target_rows = target_rows.count()
+    i = count_target_rows
+
+    target_rows.update(
+        pay_to_provider=14700,
+        pay_to_human=F("readprice") - 14700,
+        applied_rate=14700 / F("readprice"),
+        is_completed=True,
+    )
+
+    # 통합: 일반 판독료 계산
+    fee_rate = provider.profile.fee_rate
+    print(f"Fee rate: {fee_rate}")
+    target_rows = rs.filter(is_human_outpatient=False, is_take=False)
+    count_target_rows = target_rows.count()
+    i = count_target_rows
+    target_rows.update(
+        applied_rate=fee_rate,
+        pay_to_provider=F("readprice") * fee_rate,
+        pay_to_human=F("readprice") * (1 - fee_rate),
+        is_completed=True,
+    )
+
+    # 파견: ONSITE 판독료 계산(일산, 보라매병원으로 된 Excel 데이터만 대상임)
+    target_rows = rs.filter(is_human_outpatient=False, is_take=True)
+    count_target_rows = target_rows.count()
+    i = count_target_rows
+    fee_rate = provider.profile.fee_rate
+    target_rows.update(
+        applied_rate=fee_rate,
+        pay_to_provider=F("readprice") * (1 - fee_rate) * -1,
+        pay_to_human=F("readprice") * (1 - fee_rate),
+        is_completed=True,
+    )
+
+    # 전체: 판독 시간 계산
+    # for row in rs:
+    #     if row.requestdt and row.approvedt:
+    #         temp_time_to_complete = row.approvedt - row.requestdt
+    #         temp_time_to_complete = temp_time_to_complete / timedelta(minutes=1)
+    #         row.time_to_complete = temp_time_to_complete
+    #         row.is_completed = True
+    #         row.save()
+
+    return redirect("provider:view_provider", id=provider.id)

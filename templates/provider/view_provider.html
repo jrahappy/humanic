@@ -31,7 +31,7 @@
 				<label class="label">
 					<span class="label-text">성명(ID)</span>
 				</label>
-				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.real_name }}</div>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.real_name }}/{{provider.id}}</div>
 				
 			</div>
 			<div class="form-control col-span-2">
@@ -131,6 +131,7 @@
 						<th>판독건수</th>
 						<th>판독료</th>
 						<th>-</th>
+						<th>-</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -149,6 +150,16 @@
                                     hx-target="#base_modal"
                                     hx-swap="innerHTML"                                      
                                 >Detail</button>
+							</td>
+							<td>
+								<button 
+                                    onclick="base_modal.showModal()"
+                                    class="btn btn-sm btn-info" 
+                                    hx-get="{% url 'minibooks:re_calc_share' rs.ayear rs.amonth provider.id %}"
+                                    hx-trigger="click"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML"                                      
+                                >재계산</button>
 							</td>
 						</tr>
 					{% endfor %}

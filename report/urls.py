@@ -35,4 +35,5 @@ urlpatterns = [
         views.partial_search_provider_t,
         name="search_t",
     ),
+    path("report_customer/", views.report_customer, name="report_customer"),
 ]

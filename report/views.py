@@ -2,8 +2,17 @@ from django.shortcuts import render
 from minibooks.models import UploadHistory, ReportMaster
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .filters import ReportFilter
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Sum, Q, F
 from accounts.models import Profile, CustomUser
+from customer.models import Company
+from django.db.models.functions import Collate
+
+
+def report_customer(request):
+    buttons_customer = Company.objects.all().order_by("business_name")
+    context = {"buttons_customer": buttons_customer}
+
+    return render(request, "report/report_customer.html", context)
 
 
 def partial_search_provider(request):
@@ -15,6 +24,7 @@ def partial_search_provider(request):
         ReportMaster.objects.filter(
             ayear=ayear, amonth=amonth, provider__profile__real_name__icontains=q
         )
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values(
             "provider__profile__real_name", "provider"
         )  # Use the related field's real_name
@@ -31,6 +41,7 @@ def partial_search_provider(request):
     rp_humans = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
         .filter(Q(provider__profile__real_name__icontains=q))
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values("provider")
         .annotate(
             human_total_price=Sum("readprice"),
@@ -62,6 +73,7 @@ def partial_search_provider_t(request):
         ReportMaster.objects.filter(
             ayear=ayear, amonth=amonth, provider__profile__real_name__icontains=q
         )
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values(
             "provider__profile__real_name", "provider"
         )  # Use the related field's real_name
@@ -78,6 +90,7 @@ def partial_search_provider_t(request):
     rp_humans = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
         .filter(Q(provider__profile__real_name__icontains=q))
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values("provider")
         .annotate(
             human_total_price=Sum("readprice"),
@@ -136,6 +149,7 @@ def report_period(request):
 def report_period_month(request, ayear, amonth):
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values(
             "provider__profile__real_name", "provider"
         )  # Use the related field's real_name
@@ -151,6 +165,7 @@ def report_period_month(request, ayear, amonth):
 
     rp_humans = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values("provider")
         .annotate(
             human_total_price=Sum("readprice"),
@@ -176,6 +191,7 @@ def report_period_month(request, ayear, amonth):
 def report_period_month_table(request, ayear, amonth):
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values(
             "provider__profile__real_name", "provider"
         )  # Use the related field's real_name
@@ -191,6 +207,7 @@ def report_period_month_table(request, ayear, amonth):
 
     rp_humans = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
         .values("provider")
         .annotate(
             human_total_price=Sum("readprice"),
