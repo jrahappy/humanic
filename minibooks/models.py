@@ -85,9 +85,9 @@ class ReportMaster(models.Model):
     approvedt = models.DateTimeField(null=True, blank=True)
 
     pacs = models.CharField(max_length=100, null=True, blank=True)
-    platform = models.ForeignKey(
-        Platform, on_delete=models.SET_NULL, null=True, blank=True
-    )  # platform
+    # platform = models.ForeignKey(
+    #     Platform, on_delete=models.SET_NULL, null=True, blank=True
+    # )  # platform
     requestdttm = models.CharField(max_length=100, null=True, blank=True)
     requestdt = models.DateTimeField(null=True, blank=True)
 
@@ -126,6 +126,8 @@ class ReportMaster(models.Model):
     is_emergency = models.BooleanField(default=False)  # 응급여부
     is_completed = models.BooleanField(default=False)  # 정산완료
     is_locked = models.BooleanField(default=False)  # 정산완료후 회계적으로 잠금처리
+    is_human_outpatient = models.BooleanField(default=False)  # 외래여부
+    is_take = models.BooleanField(default=False)  # 차감대상여부
 
     def __str__(self):
         return self.case_id if self.case_id else "No Case ID"
@@ -146,12 +148,13 @@ class ReportMasterStat(models.Model):
     )
     ayear = models.CharField("년도", max_length=4)
     amonth = models.CharField("월", max_length=2)
-    aday = models.CharField(max_length=2, null=True, blank=True)
-    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
+    # platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
     amodality = models.CharField(
         "Modality", max_length=10, choices=get_amodality_choices
     )
-    emergency = models.BooleanField(default=False)
+    emergency = models.BooleanField(default=False)  # 응급여부
+    human_outpatient = models.BooleanField(default=False)  # 휴먼외래여부
+    give_or_take = models.BooleanField(default=False)  # False Give, True=take차감
     total_count = models.IntegerField(default=0)
     total_revenue = models.FloatField(default=0, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -173,6 +176,7 @@ class MagamMaster(models.Model):
     ayear = models.CharField("년도", max_length=4)
     amonth = models.CharField("월", max_length=2)
     target_rows = models.IntegerField(default=0)
+    completed_rows = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
 

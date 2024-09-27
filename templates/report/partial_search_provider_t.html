@@ -1,0 +1,32 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<tbody id="search-results">
+    {% for rpm in rpms %}
+        <tr>
+            <td>{{ rpm.provider__profile__real_name }}</td>
+            <td>{{ rpm.total_cases|intcomma  }}</td>
+            <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>
+            <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>
+            <td>{{ rpm.total_human|floatformat:0|intcomma }}</td>
+            <td>
+                {% for human in rp_humans %}
+                    {% if human.provider == rpm.provider %}
+                        {{ human.human_total_provider|floatformat:0|intcomma }}
+                        {% break_loop %}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <button 
+                onclick="base_modal.showModal()"
+                class="btn btn-sm btn-info" 
+                hx-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provider %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                hx-swap="innerHTML"                                      
+            >Detail</button>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>

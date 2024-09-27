@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import MultipleObjectsReturned
@@ -160,17 +160,18 @@ def clean_data(request, id):
     v_rawdata_count = v_rawdata.count()
     messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
+    # 휴먼외래, 차감대상, 일반으로 구분하는 정산방법에 대한 구분임 (임시)
     v_platform = v_uploadhistory.platform
-    print(v_platform)
+    # print(v_platform)
     ayear = v_uploadhistory.ayear
     amonth = v_uploadhistory.amonth
 
-    if v_platform == "ETC":
-        studydate = date(int(ayear), int(amonth), 1)
-        requestdt = studydate
-        approvedt = studydate
-        requestdt_verified = True
-        approvedt_verified = True
+    # if v_platform == "ETC":
+    #     studydate = date(int(ayear), int(amonth), 1)
+    #     requestdt = studydate
+    #     approvedt = studydate
+    #     requestdt_verified = True
+    #     approvedt_verified = True
 
     def get_verified_object(model, field, value):
         obj = model.objects.filter(**{field: value}).first()
@@ -206,67 +207,50 @@ def clean_data(request, id):
             amodality = equipment
 
         # Platform 처리
-        if v_platform == "ETC":
+        if v_platform == "HPACS":
             # Platform 테이블의 ID  값을 넣음
-            platform = 5
+            is_human_outpatient = True
+            is_take = False
             platform_verified = True
-        else:
-            pacs_value = data.pacs if data.pacs else None
-            # ZOLVUE -> HPACS 변경(임시)
-            if pacs_value == "ZOLVUE":
-                pacs_value = "HPACS"
-            elif pacs_value == "None":
-                pacs_value = "ETC"
 
-            platform = Platform.objects.filter(name=pacs_value).first()
-            if platform:
-                platform_verified = True
-            else:
-                platform_verified = False
+        elif v_platform == "TAKE":
+            is_human_outpatient = False
+            is_take = True
+            platform_verified = True
 
         # Request Date 처리
-        if v_platform == "ETC":
-            # requestdt = None
-            requestdt_verified = True
-            # approvedt = None
-            approvedt_verified = True
-
-        else:
-            if data.requestdttm:
-                try:
-                    requestdt = timezone.make_aware(
-                        timezone.datetime.strptime(
-                            data.requestdttm, "%Y-%m-%d %H:%M:%S"
-                        )
-                    )
-                    requestdt_verified = True
-                except (ValueError, TypeError):
-                    if data.pacs != "ONSITE":
-                        requestdt = None
-                        requestdt_verified = False
-                    else:
-                        requestdt_verified = True
-            else:
-                requestdt = None
+        if data.requestdttm:
+            try:
+                requestdt = timezone.make_aware(
+                    timezone.datetime.strptime(data.requestdttm, "%Y-%m-%d %H:%M:%S")
+                )
                 requestdt_verified = True
+            except (ValueError, TypeError):
+                if data.pacs != "ONSITE":
+                    requestdt = None
+                    requestdt_verified = False
+                else:
+                    requestdt_verified = True
+        else:
+            requestdt = None
+            requestdt_verified = True
 
-            if data.approveddttm:
-                try:
-                    approvedt = timezone.make_aware(
-                        timezone.datetime.strptime(
-                            data.approveddttm, "%Y-%m-%d %H:%M:%S"
-                        )
-                    )
-                    approvedt_verified = True
-                except (ValueError, TypeError):
-                    if data.pacs != "ONSITE":
-                        approvedt = None
-                        approvedt_verified = False
-                    else:
-                        approvedt_verified = True
-            else:
-                approvedt = None
+        # Request Date 처리
+        if data.approveddttm:
+            try:
+                approvedt = timezone.make_aware(
+                    timezone.datetime.strptime(data.approveddttm, "%Y-%m-%d %H:%M:%S")
+                )
                 approvedt_verified = True
+            except (ValueError, TypeError):
+                if data.pacs != "ONSITE":
+                    approvedt = None
+                    approvedt_verified = False
+                else:
+                    approvedt_verified = True
+        else:
+            approvedt = None
+            approvedt_verified = True
 
         verified = all(
             [
@@ -294,7 +278,9 @@ def clean_data(request, id):
                     company=company,
                     provider=radiologist,
                     amodality=amodality,
-                    platform=platform,
+                    # 9/26 추가
+                    is_human_outpatient=is_human_outpatient,
+                    is_take=is_take,
                     requestdt=requestdt,
                     approvedt=approvedt,
                     verified=True,
@@ -451,22 +437,22 @@ def create_reportmaster(request, id):
                         uploadhistory=a_raw,
                         excelrownum=i,
                     )
-                elif platform == "ETC":
+                # elif platform == "ETC":
 
-                    ReportMaster.objects.create(
-                        apptitle=data[0],
-                        case_id=data[1],
-                        equipment=data[2],
-                        studydescription=data[3],
-                        readprice=data[4],
-                        radiologist=data[5],
-                        ayear=str(ayear).strip() if ayear else "",
-                        amonth=str(amonth).strip() if amonth else "",
-                        created_at=date.today(),
-                        verified=False,
-                        uploadhistory=a_raw,
-                        excelrownum=i,
-                    )
+                # ReportMaster.objects.create(
+                #     apptitle=data[0],
+                #     case_id=data[1],
+                #     equipment=data[2],
+                #     studydescription=data[3],
+                #     readprice=data[4],
+                #     radiologist=data[5],
+                #     ayear=str(ayear).strip() if ayear else "",
+                #     amonth=str(amonth).strip() if amonth else "",
+                #     created_at=date.today(),
+                #     verified=False,
+                #     uploadhistory=a_raw,
+                #     excelrownum=i,
+                # )
 
                 else:
                     ReportMaster.objects.create(
@@ -474,7 +460,7 @@ def create_reportmaster(request, id):
                         company=humanic,
                         case_id=data[7],
                         name=data[13],
-                        bodypart=data[9],
+                        bodypart=data[14],
                         equipment=data[8],
                         studydescription=data[10],
                         imagecount=data[16],
@@ -649,7 +635,8 @@ def aggregate_data(request, upload_history_id):
                 "ayear",
                 "amonth",
                 "amodality",
-                "platform",
+                "is_human_outpatient",
+                "is_take",
                 "is_emergency",
             )
             .filter(uploadhistory=upload_history_id)
@@ -662,14 +649,16 @@ def aggregate_data(request, upload_history_id):
             company = Company.objects.get(id=entry["company"])
             year = entry["ayear"]
             month = entry["amonth"]
-            platform = Platform.objects.get(id=entry["platform"])
+            # platform = Platform.objects.get(id=entry["platform"])
             amodality = entry["amodality"]
             emergency = entry["is_emergency"]
+            human_outpatient = entry["is_human_outpatient"]
+            give_or_take = entry["is_take"]
             total_count = entry["total_count"]
             total_revenue = entry["total_revenue"]
 
             print(
-                f"Provider: {provider}, Company: {company}, Year: {year}, Month: {month}, Platform: {platform}, Modality: {amodality}, Total Count: {total_count}, Revenue: {total_revenue}"
+                f"Provider: {provider}, Company: {company}, Year: {year}, Month: {month}, Modality: {amodality}, Total Count: {total_count}, Revenue: {total_revenue}"
             )
 
             # Create or update the ReportMasterStat entry
@@ -678,9 +667,10 @@ def aggregate_data(request, upload_history_id):
                 company=company,
                 ayear=year,
                 amonth=month,
-                platform=platform,
                 amodality=amodality,
                 emergency=emergency,
+                human_outpatient=human_outpatient,
+                give_or_take=give_or_take,
                 UploadHistory=UploadHistory.objects.get(id=upload_history_id),
                 defaults={"total_count": total_count, "total_revenue": total_revenue},
             )
@@ -745,7 +735,7 @@ def agg_detail(request, id):
             company=reportmasterstat.company,
             ayear=reportmasterstat.ayear,
             amonth=reportmasterstat.amonth,
-            platform=reportmasterstat.platform,
+            # platform=reportmasterstat.platform,
             amodality=reportmasterstat.amodality,
         )
         .annotate(
@@ -819,6 +809,7 @@ def apply_rule(request, magam_id, rule_id):
             request,
             f"Total {count_target_rows} cases are applied Rule 4.2 successfully.",
         )
+    # 사용하지 않음
     elif selected_rule == "MRLOW":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
@@ -852,125 +843,13 @@ def apply_rule_progress(request, magam_id, rule_id):
     rule = HumanRules.objects.get(id=rule_id)
     selected_rule = rule.def_name
 
-    # CR 할인 계약 적용
-    if selected_rule == "CRLOW":
+    # 휴먼외래: 판독료 계산 1번적용
+    if selected_rule == "HMOUT":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
-            amodality="CR",
-            readprice__lt=1333,
-        )
-        count_target_rows = target_rows.count()
-        i = count_target_rows
-        target_rows.update(
-            pay_to_provider=1000,
-            pay_to_human=F("readprice") - 1000,
-            applied_rate=1000 / F("readprice"),
-            is_completed=True,
-        )
-
-        magam_detail = MagamDetail.objects.create(
-            magammaster=magam,
-            humanrule=rule,
-            affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
-            created_at=timezone.now(),
-            is_completed=True,
-        )
-    # CT 할인 계약 적용
-    elif selected_rule == "CTCHESTLOW":
-        target_rows = ReportMaster.objects.filter(
-            ayear=syear,
-            amonth=smonth,
-            amodality="CT",
-            bodypart="CHEST",
-            readprice__lt=19600,
-        )
-        count_target_rows = target_rows.count()
-        i = count_target_rows
-        target_rows.update(
-            pay_to_provider=14700,
-            pay_to_human=F("readprice") - 14700,
-            applied_rate=14700 / F("readprice"),
-            is_completed=True,
-        )
-
-        magam_detail = MagamDetail.objects.create(
-            magammaster=magam,
-            humanrule=rule,
-            affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
-            created_at=timezone.now(),
-            is_completed=True,
-        )
-
-    # MR 할인 계약 적용
-    elif selected_rule == "MRLOW":
-        target_rows = ReportMaster.objects.filter(
-            ayear=syear,
-            amonth=smonth,
-            amodality="MR",
-            readprice__lt=40000,
-        )
-        count_target_rows = target_rows.count()
-        i = count_target_rows
-        target_rows.update(
-            pay_to_provider=F("readprice") * 0.71,
-            pay_to_human=F("readprice") * (1 - 0.71),
-            applied_rate=0.71,
-            is_completed=True,
-        )
-
-        magam_detail = MagamDetail.objects.create(
-            magammaster=magam,
-            humanrule=rule,
-            affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
-            created_at=timezone.now(),
-            is_completed=True,
-        )
-
-    elif selected_rule == "GP":
-
-        providers = Profile.objects.filter(user__is_doctor=True).order_by(
-            "user__username"
-        )
-        i = 1
-        for provider in providers:
-            target_rows = ReportMaster.objects.filter(
-                ayear=syear,
-                amonth=smonth,
-                provider=provider.user,
-                is_completed=False,
-            ).exclude(
-                platform__id__in=[2, 3]
-            )  # ONSITE, HPACS(휴먼외래) 제외
-
-            count_target_rows = target_rows.count()
-            fee_rate = provider.fee_rate
-            i += count_target_rows
-            if count_target_rows > 0:
-                target_rows.update(
-                    applied_rate=fee_rate,
-                    pay_to_provider=F("readprice") * fee_rate,
-                    pay_to_human=F("readprice") * (1 - fee_rate),
-                    is_completed=True,
-                )
-
-                magam_detail = MagamDetail.objects.create(
-                    magammaster=magam,
-                    humanrule=rule,
-                    affected_rows=count_target_rows,
-                    description=f"Total {count_target_rows} cases of {provider.real_name} are applied Rule-GP successfully.",
-                    created_at=timezone.now(),
-                    is_completed=True,
-                )
-
-    elif selected_rule == "HMOUT":
-        target_rows = ReportMaster.objects.filter(
-            ayear=syear,
-            amonth=smonth,
-            platform__id=2,
+            is_human_outpatient=True,
+            # platform__id=2,
             # is_completed=False,
         )
         count_target_rows = target_rows.count()
@@ -990,30 +869,95 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=True,
         )
 
-    elif selected_rule == "GPONSITE":
-
-        providers = Profile.objects.filter(user__is_doctor=True).order_by(
-            "user__username"
+    # 통합: CR 할인 계약 적용
+    elif selected_rule == "CRLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="CR",
+            readprice__lt=1333,
+            is_completed=False,
+            is_human_outpatient=False,
+            is_take=False,
         )
-        i = 1
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        target_rows.update(
+            pay_to_provider=1000,
+            pay_to_human=F("readprice") - 1000,
+            applied_rate=1000 / F("readprice"),
+            is_completed=True,
+        )
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+    # 통합: CT 할인 계약 적용
+    elif selected_rule == "CTCHESTLOW":
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            amodality="CT",
+            readprice__lt=19600,
+            is_human_outpatient=False,
+            is_take=False,
+            is_completed=False,
+        )
+
+        # target_rows = ReportMaster.objects.filter(
+        #     ayear=syear,
+        #     amonth=smonth,
+        #     amodality="CT",
+        #     readprice__lt=19600,
+        #     is_completed=False,
+        # ).filter(Q(bodypart__icontains="chest") | Q(bodypart__icontains="abdomen"))
+
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+
+        target_rows.update(
+            pay_to_provider=14700,
+            pay_to_human=F("readprice") - 14700,
+            applied_rate=14700 / F("readprice"),
+            is_completed=True,
+        )
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    # 통합: 일반 판독료 계산
+    elif selected_rule == "GP":
+
+        providers = Profile.objects.filter(user__is_doctor=True).order_by("real_name")
+        i = 0
         for provider in providers:
             target_rows = ReportMaster.objects.filter(
                 ayear=syear,
                 amonth=smonth,
                 provider=provider.user,
-                platform__id=3,
-                # is_completed=False,
-            )  # ONSITE 경우
-
+                is_completed=False,
+                is_human_outpatient=False,
+                is_take=False,
+            )
             count_target_rows = target_rows.count()
-            i += count_target_rows
             fee_rate = provider.fee_rate
+            i += count_target_rows
             if count_target_rows > 0:
                 target_rows.update(
                     applied_rate=fee_rate,
                     pay_to_provider=F("readprice") * fee_rate,
                     pay_to_human=F("readprice") * (1 - fee_rate),
-                    is_onsite=True,
                     is_completed=True,
                 )
 
@@ -1021,16 +965,53 @@ def apply_rule_progress(request, magam_id, rule_id):
                     magammaster=magam,
                     humanrule=rule,
                     affected_rows=count_target_rows,
-                    description=f"Total {count_target_rows} cases of {provider.real_name} are applied Rule-GP successfully.",
+                    description=f"Total {count_target_rows} cases of {provider.real_name} are applied Rule-{selected_rule} successfully.",
                     created_at=timezone.now(),
                     is_completed=True,
                 )
+
+    # 파견: ONSITE 판독료 계산(일산, 보라매병원으로 된 Excel 데이터만 대상임)
+    elif selected_rule == "GPONSITE":
+
+        providers = Profile.objects.filter(user__is_doctor=True).order_by("real_name")
+        i = 0
+        for provider in providers:
+            target_rows = ReportMaster.objects.filter(
+                ayear=syear,
+                amonth=smonth,
+                provider=provider.user,
+                is_completed=False,
+                is_human_outpatient=False,
+                is_take=True,  # 파견 경우(일산, 보라매병원)
+            )
+
+            count_target_rows = target_rows.count()
+            i += count_target_rows
+            fee_rate = provider.fee_rate
+            if count_target_rows > 0:
+                target_rows.update(
+                    applied_rate=fee_rate,
+                    # pay_to_provider=F("readprice") * fee_rate,
+                    # pay_to_human=F("readprice") * (1 - fee_rate),
+                    pay_to_provider=F("readprice") * (1 - fee_rate) * -1,
+                    pay_to_human=F("readprice") * (1 - fee_rate),
+                    is_completed=True,
+                )
+
+                magam_detail = MagamDetail.objects.create(
+                    magammaster=magam,
+                    humanrule=rule,
+                    affected_rows=count_target_rows,
+                    description=f"Total {count_target_rows} cases of {provider.real_name} are applied Rule-{selected_rule} successfully.",
+                    created_at=timezone.now(),
+                    is_completed=True,
+                )
+
+    # 전체: 판독 시간 계산
     elif selected_rule == "RQTOAPV":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
-            # platform__id=2,
-            # is_completed=False,
         )
         count_target_rows = target_rows.count()
         i = count_target_rows
@@ -1051,6 +1032,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=True,
         )
 
+    # 전체: ONSITE 로 표시된 모든 경우에 is_onsite=True 적용
     elif selected_rule == "NMRISONSITE":
 
         target_rows = ReportMaster.objects.filter(
@@ -1072,30 +1054,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=True,
         )
 
-    # 일산368/보라매87 병원 예외 처리 부분
-    elif selected_rule == "BORAME":
-        target_rows = ReportMaster.objects.filter(
-            ayear=syear,
-            amonth=smonth,
-            company__id__in=[87, 368],
-        )
-        count_target_rows = target_rows.count()
-        i = count_target_rows
-
-        target_rows.update(
-            is_onsite=True,
-            pay_to_provider=F("pay_to_human") * -1,
-            pay_to_human=F("pay_to_human") * 1,
-        )
-        magam_detail = MagamDetail.objects.create(
-            magammaster=magam,
-            humanrule=rule,
-            affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
-            created_at=timezone.now(),
-            is_completed=True,
-        )
-
+    # 전체: 응급 판독료 표시(통계를 위해서만 사용)
     elif selected_rule == "IS_EMERGENCY":
         target_rows = ReportMaster.objects.filter(
             ayear=syear, amonth=smonth, stat="응급"
@@ -1114,7 +1073,49 @@ def apply_rule_progress(request, magam_id, rule_id):
             created_at=timezone.now(),
             is_completed=True,
         )
+    # 전체: 마감 재확인을 함(휴먼, 파견, 일반 각각의 행수를 합하여 전체 목표 행합계가 일치하는지 확인)
+    elif selected_rule == "RECHECK":
+        # 작업완료된 마스터테이블의 행수를 확인함
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear, amonth=smonth, is_completed=True
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
 
+        # 마감작업한 통계테이블의 행수를 확인함
+        total_magam_rows = MagamMaster.objects.filter(
+            ayear=syear, amonth=smonth
+        ).aggregate(Sum("target_rows"))
+
+        count_total_magam_rows = total_magam_rows["target_rows__sum"]
+
+        # 마감작업한 통계테이블의 완료행수 필드를 업데이트함
+        rs_magam = MagamMaster.objects.filter(ayear=syear, amonth=smonth)
+        rs_magam.update(
+            completed_rows=count_total_magam_rows,
+        )
+
+        if count_target_rows == count_total_magam_rows:
+            rs_magam.update(
+                is_completed=True,
+            )
+            msg = "Successful"
+        else:
+            rs_magam.update(
+                is_completed=False,
+            )
+            msg = "Failed"
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Target row is {count_target_rows}, 마감 is {count_total_magam_rows}. {rule.name} does {msg}.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    # 초기화함(모든 마감작업에 적용되었던 Rule들 초기상태로 되돌림)
     elif selected_rule == "INIT":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,

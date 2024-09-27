@@ -2,8 +2,102 @@ from django.shortcuts import render
 from minibooks.models import UploadHistory, ReportMaster
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .filters import ReportFilter
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from accounts.models import Profile, CustomUser
+
+
+def partial_search_provider(request):
+    ayear = request.GET.get("ayear")
+    amonth = request.GET.get("amonth")
+    q = request.GET.get("q", "")
+
+    rpms = (
+        ReportMaster.objects.filter(
+            ayear=ayear, amonth=amonth, provider__profile__real_name__icontains=q
+        )
+        .values(
+            "provider__profile__real_name", "provider"
+        )  # Use the related field's real_name
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+    count_rpms = rpms.count()
+
+    rp_humans = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .filter(Q(provider__profile__real_name__icontains=q))
+        .values("provider")
+        .annotate(
+            human_total_price=Sum("readprice"),
+            human_total_provider=Sum("pay_to_provider"),
+            human_total_human=Sum("pay_to_human"),
+            human_total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+
+    context = {
+        "rpms": rpms,
+        "rp_humans": rp_humans,
+        "count_rpms": count_rpms,
+        "ayear": ayear,
+        "amonth": amonth,
+        # "companies": companies,
+    }
+
+    return render(request, "report/partial_search_provider.html", context)
+
+
+def partial_search_provider_t(request):
+    ayear = request.GET.get("ayear")
+    amonth = request.GET.get("amonth")
+    q = request.GET.get("q", "")
+
+    rpms = (
+        ReportMaster.objects.filter(
+            ayear=ayear, amonth=amonth, provider__profile__real_name__icontains=q
+        )
+        .values(
+            "provider__profile__real_name", "provider"
+        )  # Use the related field's real_name
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+    count_rpms = rpms.count()
+
+    rp_humans = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .filter(Q(provider__profile__real_name__icontains=q))
+        .values("provider")
+        .annotate(
+            human_total_price=Sum("readprice"),
+            human_total_provider=Sum("pay_to_provider"),
+            human_total_human=Sum("pay_to_human"),
+            human_total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+
+    context = {
+        "rpms": rpms,
+        "rp_humans": rp_humans,
+        "count_rpms": count_rpms,
+        "ayear": ayear,
+        "amonth": amonth,
+        # "companies": companies,
+    }
+
+    return render(request, "report/partial_search_provider_t.html", context)
 
 
 def index(request):
@@ -143,7 +237,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     # 일반 판독금액 합계
     total_by_onsite = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
-        .values("is_onsite")
+        .values("is_take")
         .annotate(
             total_price=Sum("readprice"),
             total_provider=Sum("pay_to_provider"),

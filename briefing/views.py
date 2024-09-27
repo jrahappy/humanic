@@ -163,7 +163,7 @@ def partial_briefing(request):
     dr_total = dr.count()
 
     # 의뢰수 구하기
-    # rp_total = rs.aggregate(report_count=Sum("total_count"))
+    #   rp_total = rs.aggregate(report_count=Sum("total_count"))
     rp_total = ReportMaster.objects.filter(ayear=syear, amonth=smonth).aggregate(
         report_count=Count("id")
     )

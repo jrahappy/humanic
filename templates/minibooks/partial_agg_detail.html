@@ -20,7 +20,9 @@
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">환자명</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Body Part</th>
-                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Platform</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">휴먼외래여부</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">차감여부</th>
+
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Requested</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Approved</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">소요시간</th>
@@ -35,7 +37,8 @@
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.equipment }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.bodypart }}</td>
-                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.human_outpatient }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.give_or_take }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.requestdt|date:"Y/m/d H/i/s" }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.approvedt|date:"Y/m/d H/i/s" }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.time_span }}</td>

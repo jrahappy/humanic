@@ -4,17 +4,6 @@ import os
 register = template.Library()
 
 
-# @register.filter(name="sum_values")
-# def sum_values(queryset, key):
-#     total = 0
-#     for item in queryset:
-#         value = getattr(item, key, 0)
-#         print(f"Item: {item}, Key: {key}, Value: {value}")  # Debug statement
-#         total += value
-#     print(f"Total: {total}")  # Debug statement
-#     return total
-
-
 @register.filter(name="sum_values")
 def sum_values(queryset, key):
     total = 0
@@ -47,3 +36,13 @@ def break_loop(context):
 def filename(value):
     """Extracts the filename from a file path or URL."""
     return os.path.basename(value)
+
+
+@register.filter
+def currency(value):
+    try:
+        value = float(value)
+    except (ValueError, TypeError):
+        return value
+    # return "${}".format(intcomma(floatformat(value, 2)))
+    return "{}".format(intcomma(floatformat(value, 0)))

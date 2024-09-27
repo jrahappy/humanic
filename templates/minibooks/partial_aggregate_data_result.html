@@ -23,7 +23,8 @@
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">병원</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독의</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
-                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Platform</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">휴먼외래</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">차감대상</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">횟수</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Verified</th>
                     </tr>
@@ -39,7 +40,8 @@
                         </td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.provider_real_name }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amodality }}</td>
-                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.human_outpatient }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.give_or_take }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <a 
                                 hx-get="{% url 'minibooks:agg_detail' data.id %}"

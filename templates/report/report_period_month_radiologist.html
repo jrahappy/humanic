@@ -33,7 +33,7 @@
                                 </tr>
                                 {% for total in total_by_onsite %}
                                 <tr>
-                                    <td>{{ total.is_onsite|yesno:"OnSite,정상" }}</td>
+                                    <td>{{ total.is_onsite|yesno:"ONSite,TELE" }}</td>
                                     <td>{{ total.total_cases|intcomma }}</td>
                                     <td>{{ total.total_price|floatformat:0|intcomma }}</td>
                                     <td><p class="text-red-900">{{ total.total_provider|floatformat:0|intcomma }}</p></td>

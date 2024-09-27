@@ -66,8 +66,8 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 적용은 일단 고객병원별 월별로 집계를 낸 후에 해당 병원의 영업, PACS, 원격판독 시스템 정보를 가지고 별도의 수수료 지급테이블에 넣는 것이 좋을 것 같음
 
 ## onsite 관련 처리 ##
-일산368, 보라매87 에만 적용함
-해당 병원에 판독한 의사들 목록
+일산368, 보라매87 파일로 올라온 것만 차감률 적용함
+그 외 해당 병원에 판독한 건들은 정상계산(아래는 해당 의사들 목록임)
 
 "전우선"
 "송용섭"
@@ -91,6 +91,51 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 
     ** 개선해야할 부분
     1. 휴먼외래와 전체 판독료를 분리해서 합산해서 보여주야 함.
-    2. 동명 2인... 김혜진
+    2. 동명 2인... 김혜진 145
     3. 동명이인의 경우에 정확성을 기하기 위해 Approver 로 구분함.
     4. 판독의 검색이 쉽게 함.
+
+    문제점 : 
+     CR, CT 가격이 너무 낮은 경우는 휴먼외래에도 적용되는지? 
+     CTROW 이슈 Chest CT(비조영) 판독단가 19,600원 이하 건 → 14,700원 조정.. 어떻게 아는지.. 
+
+"CHEST TO PELVIS"
+"CHEST/SPINE"
+"CHEST\PELVIS"
+"CHEST PA"
+"CHEST\NECK"
+"CHEST/NECK"
+"CHEST LUNG"
+"Chest Lung"
+"CHEST LAT"
+"CHEST/HEAD"
+"CHEST [DIRECT]"
+"CHEST\CT_CHEST(ENHANCEMENT)"
+"CHEST/CSPINE"
+"CHEST AP"
+"CHESTABDPELVIS"
+"CHEST\ABDOMEN"
+"CHEST/ABDOMEN"
+"CHEST,ABDOMEN"
+"CHEST"
+"Chest"
+"chest"
+"ABODOMEN SUPINE"
+"abodomen"
+"ABDOMEN  SUPINE"
+"ABDOMEN SUPINE"
+"ABDOMENPELVIS"
+"Abdomen+Pelvis"
+"Abdomen + Pelvis"
+"Abdomen+pelvis"
+"ABDOMEN\PANCREAS"
+"ABDOMEN/NECK"
+"ABDOMEN\LIVER"
+"ABDOMEN/HEAD"
+"ABDOMEN/EXTREMITY"
+"ABDOMEN ERECT"
+"ABDOMEN\CHEST"
+"ABDOMEN/CHEST"
+"ABDOMEN\BILEDUCT\PANCREAS\LIVER"
+"ABDOMEN"
+"Abdomen"

@@ -5,9 +5,13 @@
         <div class="card-body grow-0">
             <div class="flex justify-between gap-2">
 
-                <div>
+                <div class="w-1/2">
                     <label class="input input-bordered flex items-center gap-2">
-                        <input type="text" class="grow" placeholder="Search" />
+                        <input name="q" type="text" class="grow" placeholder="판독의 찾기..."
+                            hx-get="{% url 'report:search' %}?ayear={{ ayear }}&amonth={{amonth}}" 
+                            hx-trigger="input changed delay:500ms, search" 
+                            hx-target="#search-results" 
+                        />
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 16 16"
@@ -37,7 +41,8 @@
             </div>
         </div>
         <div class="card-body grow-0">
-            <div class="flex flex-wrap gap-4">
+
+            <div id="search-results" class="flex flex-wrap gap-4">
                 {% for rpm in rpms %}
                     <div class="card bg-base-100 w-64 shadow-xl">
                         <div class="card-body">

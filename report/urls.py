@@ -25,4 +25,14 @@ urlpatterns = [
         views.report_period_month_radiologist_detail,
         name="report_period_month_radiologist_detail",
     ),
+    path(
+        "search/",
+        views.partial_search_provider,
+        name="search",
+    ),
+    path(
+        "search_t/",
+        views.partial_search_provider_t,
+        name="search_t",
+    ),
 ]
