@@ -9,10 +9,15 @@
                 <button class="btn">Close</button>
             </form>
         </div>
-        <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <progress class="progress progress-primary w-full" value="100" max="100"></progress>
-            <p class="mt-4">{{ i }}건 처리되었습니다.</p>
+        <div
+            hx-get="{ url 'minibooks:magam_apply_rule_progress_check' magam_id=1 rule_id=1 }"
+            hx-trigger="every 1000ms"
+            hx-target="this"
+            hx-swap="innerHTML">
+            <progress class="progress progress-primary w-full" value="{{ i }}" max="100"></progress>
+            <p class="mt-4">{{ i }}건  남았습니다. </p>
         </div>
+    
     </div>
   </dialog>
-    
+

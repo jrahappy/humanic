@@ -44,6 +44,11 @@ urlpatterns = [
         name="apply_rule_progress",
     ),
     path(
+        "magam/apply_rule_progress_check/<int:magam_id>/<int:rule_id>/",
+        views.apply_rule_progress_check,
+        name="apply_rule_progress_check",
+    ),
+    path(
         "magam/recalc/<str:ayear>/<str:amonth>/<int:provider_id>/",
         views.re_calc_share,
         name="re_calc_share",

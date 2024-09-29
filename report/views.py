@@ -1,18 +1,89 @@
 from django.shortcuts import render
-from minibooks.models import UploadHistory, ReportMaster
+from minibooks.models import UploadHistory, ReportMaster, ReportMasterStat
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .filters import ReportFilter
-from django.db.models import Count, Sum, Q, F
+from django.db.models import Count, Sum, Q, F, Func, Avg
 from accounts.models import Profile, CustomUser
 from customer.models import Company
 from django.db.models.functions import Collate
 
 
+def report_customer_detail(request, id):
+    ko_kr = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+    company = Company.objects.get(id=id)
+    rpms = ReportMasterStat.objects.filter(company=company).order_by("-created_at")
+    rpms_agg = (
+        rpms.values("ayear", "amonth", "amodality")
+        .annotate(
+            t_count=Sum("total_count"),
+            # avg_price=F("total_revenue") / F("total_count"),
+            t_revenue=Sum("total_revenue"),
+        )
+        .order_by("ayear", "amonth", "amodality")
+    )
+
+    tt_count_array = rpms_agg.aggregate(Sum("t_count"))
+    tt_count = tt_count_array["t_count__sum"]
+    tt_revenue_array = rpms_agg.aggregate(Sum("t_revenue"))
+    tt_revenue = tt_revenue_array["t_revenue__sum"]
+
+    rs_by_provider = (
+        rpms.values(
+            "ayear", "amonth", "amodality", "provider__profile__real_name", "provider"
+        )
+        .annotate(
+            total_count=Sum("total_count"),
+            total_revenue=Sum("total_revenue"),
+        )
+        .order_by("ayear", "amonth", "amodality", ko_kr.asc())
+    )
+
+    context = {
+        "rpms_agg": rpms_agg,
+        "tt_count": tt_count,
+        "tt_revenue": tt_revenue,
+        "company": company,
+        "rs_by_provider": rs_by_provider,
+    }
+
+    return render(request, "report/report_customer_detail.html", context)
+
+
 def report_customer(request):
-    buttons_customer = Company.objects.all().order_by("business_name")
+    ko_kr = Func(
+        "business_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+    buttons_customer = Company.objects.all().order_by(ko_kr.asc())
     context = {"buttons_customer": buttons_customer}
 
     return render(request, "report/report_customer.html", context)
+
+
+def partial_search_customer(request):
+    q = request.GET.get("q", "").strip()
+    ko_kr = Func(
+        "business_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+    if q:
+        buttons_customer = Company.objects.filter(business_name__icontains=q).order_by(
+            ko_kr.asc()
+        )
+    else:
+        buttons_customer = Company.objects.all().order_by(ko_kr.asc())
+
+    context = {
+        "buttons_customer": buttons_customer,
+    }
+
+    return render(request, "report/partial_search_customer.html", context)
 
 
 def partial_search_provider(request):
@@ -147,6 +218,12 @@ def report_period(request):
 
 
 def report_period_month(request, ayear, amonth):
+
+    ko_kr = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
         .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
@@ -159,7 +236,7 @@ def report_period_month(request, ayear, amonth):
             total_human=Sum("pay_to_human"),
             total_cases=Count("case_id"),
         )
-        .order_by("provider__profile__real_name")
+        .order_by(ko_kr.asc())
     )
     count_rpms = rpms.count()
 

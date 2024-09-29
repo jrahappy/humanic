@@ -1,81 +1,208 @@
 {% load custom_filters %}
 {% load humanize %}
-
-<h3 class="stats stat-value col-span-12 w-full bg-white text-gray-900 px-8 py-4 ">
-  {{syear}}. {{smonth}}
-</h3>
-<section class="stats stats-vertical col-span-12 w-full mb-4 shadow-sm xl:stats-horizontal">
-  
-  <div class="stat">
-    <div class="stat-title">의뢰고객병원</div>
-    <div class="stat-value">{{ cm_total|intcomma}}</div>
-    <div class="stat-desc"></div>
-  </div>
-
-  <div class="stat">
-    <div class="stat-title">판독의</div>
-    <div class="stat-value">{{ dr_total|intcomma}}</div>
-    <div class="stat-desc"></div>
-  </div>
-
-  <div class="stat">
-    <div class="stat-title">의뢰건수</div>
-    <div class="stat-value">{{ rp_total|intcomma }}&nbsp;<span class="badge badge-error text-white ">ER:{{rp_er_total_value|intcomma}}</span></div>
-    <div class="stat-desc"></div>
-  </div>
-
-  <div class="stat">
-    <div class="stat-title">판독료</div>
-    <div class="stat-value">{{ revenue_total|floatformat:0|intcomma }}</div>
-    <div class="stat-desc"></div>
-  </div>
-</section>
-<div class="grid grid-cols-12 gap-2">
-     
-  <section class="card col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
-    <div class="card-body grow-0">
-      <h2 class="card-title">
-        <a class="link-hover link">병원별 (Top 15)</a>
-      </h2>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
+  <section class="stats stats-vertical col-span-12 w-full mb-4 shadow-sm xl:stats-horizontal">
+    <div class="stat">
+      <div class="stat-title">현재</div>
+      <div class="stat-value">{{syear}}. {{smonth}}</div>
+      <div class="stat-desc"></div>
     </div>
-    <div class="overflow-x-auto px-4">
-      <table class="table table-zebra">
-        <tbody>
-          {% for rs in rs_cm %}
-          <tr>
-            <td>{{ rs.company__business_name }}</td>
-            <td><p class="text-end">{{ rs.company_count|floatformat:0|intcomma }}</p></td>
-            <td><p class="text-end">{{ rs.company_total|floatformat:0|intcomma }}</p></td>
-            
-          </tr>
-          {% endfor %}
-          
-        </tbody>
-      </table>
+    <div class="stat">
+      <div class="stat-title">의뢰고객병원</div>
+      <div class="stat-value">{{ cm_total|intcomma}}</div>
+      <div class="stat-desc"></div>
     </div>
+    <div class="stat">
+      <div class="stat-title">판독의</div>
+      <div class="stat-value">{{ dr_total|intcomma}}</div>
+      <div class="stat-desc"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-title">의뢰건수</div>
+      <div class="stat-value">{{ rp_total|intcomma }}&nbsp;<span class="badge badge-error text-white ">ER:{{rp_er_total_value|intcomma}}</span></div>
+      <div class="stat-desc"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-title">판독료</div>
+      <div class="stat-value">{{ revenue_total|floatformat:0|intcomma }}</div>
+      <div class="stat-desc"></div>
+    </div>  
   </section>
-  <section class="card col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
-    <div class="card-body grow-0">
-      <h2 class="card-title">
-        <a class="link-hover link">판독의 (Top 15)</a>
-      </h2>
-    </div>
-    <div class="overflow-x-auto px-4">
-      <table class="table table-zebra">
-        <tbody>
-          {% for rs in rs_dr %}
+
+  <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+      <div class="card-body grow-0">
+        <h2 class="card-title">
+          <a class="link-hover link">병원별 (Top 10)</a>
+        </h2>
+      </div>
+      <div class="overflow-x-auto px-4">
+        <table class="table table-zebra">
+          <tbody>
+            {% for rs in rs_cm %}
             <tr>
-              <td>{{ rs.provider__profile__real_name }}</td>
-              <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
-              <td><p class="text-end">{{ rs.provider_total|floatformat:0|intcomma }}</p></td>
+              <td>{{ rs.company__business_name }}</td>
+              <td><p class="text-end">{{ rs.company_count|floatformat:0|intcomma }}</p></td>
+              <td><p class="text-end">{{ rs.company_total|floatformat:0|intcomma }}</p></td>
               
             </tr>
             {% endfor %}
-          
-        </tbody>
-      </table>
+            
+          </tbody>
+        </table>
+      </div>
+      <div>
+        &nbsp;
+      </div>
+  </section>
+  <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+      <div class="card-body grow-0">
+        <h2 class="card-title">
+          <a class="link-hover link">판독의 (Top 10)</a>
+        </h2>
+      </div>
+      <div class="overflow-x-auto px-4">
+        <table class="table table-zebra">
+          <tbody>
+            {% for rs in rs_dr %}
+              <tr>
+                <td>{{ rs.provider__profile__real_name }}</td>
+                <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
+                <td><p class="text-end">{{ rs.provider_total|floatformat:0|intcomma }}</p></td>
+                
+              </tr>
+              {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <div>
+        &nbsp;
+      </div>
+  </section>
+
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">Modality</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+   
+        <table class="table table-zebra w-full">
+          {% for rs in rs_modality %}
+          <tr>
+            <td>{{ rs.amodality }}</td>
+            <td><p class="text-end">{{ rs.amodality_count|floatformat:0|intcomma }}</p></td>
+            <td><p class="text-end">{{ rs.amodality_total|floatformat:0|intcomma }}</p></td>
+          </tr>
+         
+          {% endfor %}
+        </table>
+       
     </div>
   </section>
-</div>  
- 
-</section>
+
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">휴먼외래</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+        <table class="table table-zebra w-full">
+          {% for rs in rs_human %}
+          <tr>
+            <td>{{ rs.amodality }}</td>
+            <td><p class="text-end">{{ rs.t_count|floatformat:0|intcomma }}</p></td>
+            <td><p class="text-end">{{ rs.t_revenue|floatformat:0|intcomma }}</p></td>
+          </tr>
+          {% endfor %}
+        </table>
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">요일별 의뢰</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <table class="table table-zebra w-full">
+        {% for rs in rs_weekday %}
+        <tr>
+          <td>{{ rs.weekday|weekday_name }}</td>
+          <td><p class="text-end">{{ rs.weekday_total_count|floatformat:0|intcomma }}</p></td>
+        </tr>
+        {% endfor %}
+      </table>
+         
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0 w-full flex flex-row justify-between item-base">
+      <h2 class="card-title">
+        <a class="link-hover link">판독소요시간별</a>
+      </h2>
+      <p class="text-xs text-gray-500 text-end">단위: 분, Null Data 제외  </p>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <canvas id="myChart"></canvas>
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
+</div>
+<script>
+  var ctx = document.getElementById('myChart').getContext('2d');
+
+  var datact = {{rs_time_dataset_ct|safe}};
+  var datamr = {{rs_time_dataset_mr|safe}};
+  var datacr = {{rs_time_dataset_cr|safe}};
+  
+  var labels = ['1hrs','3hrs','1day', '3days', '7days', 'Above'];
+
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [
+              {
+                  label: 'CT',
+                  data: datact,
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1
+              },
+              {
+                  label: 'MR',
+                  data: datamr,
+                  backgroundColor: 'rgba(135, 206, 235, 0.2)',
+                  borderColor: 'rgba(135, 206, 235, 1)',
+                  borderWidth: 1
+              },
+              {
+                  label: 'CR',
+                  data: datacr,
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+              }
+          ]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+</script>

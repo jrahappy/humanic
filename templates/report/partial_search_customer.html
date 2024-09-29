@@ -1,0 +1,17 @@
+{% load humanize %}
+{% load custom_filters %}
+
+
+{% for but_cm in buttons_customer %}
+    <div class="">
+        <a href="#"
+            onclick="base_modal.showModal()"
+            hx-get="{% url 'report:report_customer_detail' but_cm.id %}"
+            hx-trigger="click"
+            hx-target="#base_modal"
+            hx-swap="innerHTML"
+            class="btn btn-secondary w-64">
+            {{ but_cm.business_name}}
+        </a>
+    </div>
+{% endfor %}

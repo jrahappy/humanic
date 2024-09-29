@@ -1,0 +1,100 @@
+{% load custom_filters %}
+{% load humanize %}
+
+<div class="modal-box card-body grow-0">
+    <div class="modal-action justify-between flex flex-row gap-2">
+        <h2></h2>
+        <form method="dialog">
+            <button class="btn btn-warning">Close</button>
+        </form>
+    </div>
+</div>
+<div class="card-body grow-0 flex items-center">
+    <div class="flex flex-wrap flex-col gap-4 w-1/2 ">
+        <div class="card bg-neutral text-neutral-content w-full shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">{{ company.business_name }} 판독의뢰 현황</h2>
+                <p class="mb-2">
+                    이메일: {{ company.office_email }}<br>
+                    연락처: {{ company.office_phont }}<br>
+                    누적의뢰: {{ tt_count|intcomma }} 회<br>
+                    누적매출: {{ tt_revenue|floatformat:0|intcomma }} 원
+                </p>
+            </div>
+        </div>
+        <hr>
+        <div class="card bg-base-100  shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">Year/Month/Modality 합계</h2>
+                <p class="mb-2">
+                    <table class="table">
+                        <tr>
+                            <td>년</td>
+                            <td>월</td>
+                            <td>Modality</td>
+                            <td><p class="text-end">평균단가</p></td>
+                            <td><p class="text-end">횟수</p></td>
+                            <td><p class="text-end">매출</p></td>
+                        </tr>
+                        {% for rpm in rpms_agg %}
+                        <tr>
+                            <td>{{ rpm.ayear }}</td>
+                            <td>{{ rpm.amonth }}</td>
+                            <td>{{ rpm.amodality }}</td>
+                            <td><p class="text-end">{{ rpm.t_revenue|div_value:rpm.t_count|floatformat:0|intcomma }}</p></td>
+                            <td><p class="text-end">{{ rpm.t_count|floatformat:0|intcomma }}</p></td>
+                            <td><p class="text-end">{{ rpm.t_revenue|floatformat:0|intcomma }}</p></td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="bg-gray-200 font-semibold">
+                            <td colspan="4">합계</td>
+                            <td><p class="text-end">{{ rpms_agg|sum_values:"t_count"|floatformat:0|intcomma }}</p></td>
+                            <td><p class="text-end">{{ rpms_agg|sum_values:"t_revenue"|floatformat:0|intcomma }}</p></td>
+                            
+                        </tr>
+                    </table>
+                </p>    
+            </div>
+        </div>
+        <hr>
+        <div class="card bg-base-100  shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">판독의별 합계</h2>
+                <p class="mb-2">
+                    <table class="table table-sm table-zebra w-full">
+                        <thead>
+                            <tr class="bg-base-200">
+                                <th>판독의</th>
+                                <th>Year</th>
+                                <th>Month</th>
+                                <th>Modality</th>
+                                <th>Count</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rpm in rs_by_provider %}
+                            <tr>
+                                <td>{{ rpm.provider__profile__real_name }}</td>
+                                <td>{{ rpm.ayear }}</td>
+                                <td>{{ rpm.amonth }}</td>
+                                <td>{{ rpm.amodality }}</td>
+
+                                <td><p class="text-end">{{ rpm.total_count|floatformat:0|intcomma }}</p></td>
+                                <td><p class="text-end">{{ rpm.total_revenue|floatformat:0|intcomma }}</p></td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="bg-gray-200 font-semibold">
+                                <td colspan="4">합계</td>
+                                <td><p class="text-end">{{ rs_by_provider|sum_values:"total_count"|floatformat:0|intcomma }}</p></td>
+                                <td><p class="text-end">{{ rs_by_provider|sum_values:"total_revenue"|floatformat:0|intcomma }}</p></td>
+                                
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

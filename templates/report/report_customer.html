@@ -13,35 +13,53 @@
             <h2 class="card-title grow">
                 <a class="link-hover link">병원단위로 보기</a>
             </h2>
-            <a href="#"
-                hx-get="{% url 'report:report_period' %}"
-                hx-trigger="click"
-                hx-target="#main_area"
-                hx-swap="outerHTML"
-                class="btn btn-primary">목록으로</a>
+        </div>
+    </div>
+</section>
+<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <div class="w-1/2">
+                <label class="input input-bordered flex items-center gap-2">
+                    <input name="q" type="text" class="grow border-0" placeholder="병원 찾기..."
+                        hx-get="{% url 'report:search_company' %}" 
+                        hx-trigger="input changed delay:500ms, search" 
+                        hx-target="#search-results" 
+                    />
+                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    class="h-4 w-4 opacity-70">
+                    <path
+                        fill-rule="evenodd"
+                        d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                        clip-rule="evenodd" />
+                    </svg>
+                </label>
+            </div>
         </div>
     </div>
     <div class="card-body grow-0">
-        <div class="flex flex-column flex-wrap gap-4">
+        <div id="search-results" class="flex flex-column flex-wrap gap-4">
             {% for but_cm in buttons_customer %}
             <div class="">
                 <a href="#"
-                    hx-get="{% url 'report:report_customer' %}"
+                    onclick="base_modal.showModal()"
+                    hx-get="{% url 'report:report_customer_detail' but_cm.id %}"
                     hx-trigger="click"
-                    hx-target="#general_modal"
-                    hx-swap="outerHTML"
+                    hx-target="#base_modal"
+                    hx-swap="innerHTML"
                     class="btn btn-secondary w-64">
                     {{ but_cm.business_name}}
                 </a>
             </div>
             {% endfor %}
-           
+        
         </div>
+
     </div>
 </section>
-<div id="general_modal" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    
-</div>  
     
 {% endblock %}
 

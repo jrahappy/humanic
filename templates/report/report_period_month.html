@@ -4,10 +4,9 @@
     <div id ="general_content">
         <div class="card-body grow-0">
             <div class="flex justify-between gap-2">
-
                 <div class="w-1/2">
                     <label class="input input-bordered flex items-center gap-2">
-                        <input name="q" type="text" class="grow" placeholder="판독의 찾기..."
+                        <input name="q" type="text" class="grow border-0" placeholder="판독의 찾기..."
                             hx-get="{% url 'report:search' %}?ayear={{ ayear }}&amonth={{amonth}}" 
                             hx-trigger="input changed delay:500ms, search" 
                             hx-target="#search-results" 

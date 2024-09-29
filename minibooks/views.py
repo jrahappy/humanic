@@ -24,7 +24,7 @@ from .tasks import upload_file, update_is_onsite
 from celery.result import AsyncResult
 from import_export import resources
 from tablib import Dataset
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import tablib
 import logging
 from utils.base_func import (
@@ -759,6 +759,51 @@ def apply_rule(request, magam_id, rule_id):
     return redirect("minibooks:index")
 
 
+def apply_rule_progress_check(request, magam_id, rule_id):
+
+    magam = MagamMaster.objects.get(id=magam_id)
+    syear = magam.ayear
+    smonth = magam.amonth
+
+    rule = HumanRules.objects.get(id=rule_id)
+    selected_rule = rule.def_name
+
+    # 휴먼외래: 김성현, 이재희 원장님 모든 케이스에서 계산 제외
+    if selected_rule == "HMOFFDRS":
+        pass
+    elif selected_rule == "HMOFFUSXARF":
+        pass
+    elif selected_rule == "HMOUT":
+        pass
+    elif selected_rule == "CRLOW":
+        pass
+    elif selected_rule == "CTCHESTLOW":
+        pass
+    elif selected_rule == "GP":
+        pass
+    elif selected_rule == "GPONSITE":
+        pass
+    elif selected_rule == "RQTOAPV":
+        pass
+    elif selected_rule == "NMRISONSITE":
+        pass
+    elif selected_rule == "CONVERTDT":
+        target_rows = ReportMaster.objects.filter(
+            # Q(requestdt__isnull=True) | Q(approvedt__isnull=True)
+            Q(approvedt__isnull=True)
+        )
+        count_target_rows = target_rows.count()
+        target_i = count_target_rows
+
+    else:
+        pass
+    context = {
+        "i": target_i,
+    }
+
+    return render(request, "minibooks/apply_rule_progress_result.html", context)
+
+
 @login_required
 def apply_rule_progress(request, magam_id, rule_id):
 
@@ -1090,6 +1135,44 @@ def apply_rule_progress(request, magam_id, rule_id):
             created_at=timezone.now(),
             is_completed=True,
         )
+
+    # requestdttm, approveddttm 문자필드의 yyyy/mm/dd/ hh:mm:ss 로 되어 있는 데이터를 datatime 데이터로 변경
+    elif selected_rule == "CONVERTDT":
+        target_rows = ReportMaster.objects.filter(
+            # Q(requestdt__isnull=True) | Q(approvedt__isnull=True)
+            Q(approvedt__isnull=True)
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+        # The string you want to convert
+        # date_string = "2024/08/26 10:27:57"
+
+        # Convert the string to a datetime object
+        # datetime_object = datetime.strptime(date_string, "%Y/%m/%d %H:%M:%S")
+        from datetime import datetime
+
+        j = 0  # Initialize counter
+
+        for row in target_rows:
+            if row.approveddttm:  # Check if requestdttm exists
+                try:
+                    # Parse the string to a datetime object
+                    parsed_datetime = datetime.strptime(
+                        row.approveddttm, "%Y/%m/%d %H:%M:%S"
+                    )
+
+                    # Update the requestdt field
+                    row.approvedt = parsed_datetime
+
+                    # Save the row
+                    row.save()
+
+                    j += 1
+                    print(j)
+
+                except ValueError as e:
+                    # Handle any parsing errors (e.g., if the string doesn't match the expected format)
+                    print(f"Error{row.id}")
 
     # 초기화함(모든 마감작업에 적용되었던 Rule들 초기상태로 되돌림)
     elif selected_rule == "INIT":

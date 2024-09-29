@@ -46,3 +46,37 @@ def currency(value):
         return value
     # return "${}".format(intcomma(floatformat(value, 2)))
     return "{}".format(intcomma(floatformat(value, 0)))
+
+
+@register.filter
+def div_value(value, arg):
+    try:
+        value = float(value)
+        arg = float(arg)
+    except (ValueError, TypeError):
+        return value
+    if arg == 0:
+        return 0
+    return value / arg
+
+
+@register.filter
+def divide_by_60(value):
+    try:
+        return int(value // 60)
+    except (ValueError, TypeError):
+        return 0  # Return 0 if there's an error
+
+
+@register.filter
+def weekday_name(value):
+    WEEKDAY_MAP = {
+        1: "Sunday",
+        2: "Monday",
+        3: "Tuesday",
+        4: "Wednesday",
+        5: "Thursday",
+        6: "Friday",
+        7: "Saturday",
+    }
+    return WEEKDAY_MAP.get(value, "Unknown")

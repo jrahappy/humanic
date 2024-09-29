@@ -5,9 +5,10 @@
 <html data-theme="corporate">
 	<head>
 		<meta charset="utf-8" />
-		<title>Dashboard</title>
+		<title>Humanrad </title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link href="https://fonts.googleapis.com/css?family=Gothic+A1:100,400,700" rel="stylesheet">
+
         {% tailwind_css %}
 		
 		<!-- svg loader for icons -->
@@ -17,6 +18,7 @@
 		<script src="//unpkg.com/alpinejs" defer></script>
 		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 	</head>
     <body class="drawer min-h-screen bg-base-200 lg:drawer-open">
@@ -35,10 +37,19 @@
 			<dialog id="base_modal" class="modal w-full">
 				<div class="modal-box max-w-5xl p-2">
 					<form method="dialog">
-						<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+						<button class="btn">Close</button>
 					</form>
 				</div>
 				<div class="t-4 p-4">
+				</div>
+			</dialog>
+			<dialog id="progress_modal" class="modal w-full">
+				<div class="modal-box max-w-5xl p-2">
+					<form method="dialog">
+						<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+					</form>
+				</div>
+				<div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
 					
 				</div>
 			</dialog>
