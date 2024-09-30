@@ -84,6 +84,15 @@
                                 </td>
                             </tr>
                         {% endfor %}
+                        <tr>
+                            <td>Total</td>
+                            <td>{{ rpms|sum_values:"total_cases"|intcomma }}</td>
+                            <td>{{ rpms|sum_values:"total_price"|floatformat:0|intcomma }}</td>
+                            <td>{{ rpms|sum_values:"total_provider"|floatformat:0|intcomma }}</td>
+                            <td>{{ rpms|sum_values:"total_human"|floatformat:0|intcomma }}</td>
+                            <td>{{ rp_humans_total|floatformat:0|intcomma }}</td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

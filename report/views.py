@@ -253,12 +253,17 @@ def report_period_month(request, ayear, amonth):
         .order_by("provider__profile__real_name")
     )
 
+    human_total_provider_total = rp_humans.aggregate(
+        total=Sum("human_total_provider"),
+    )["total"]
+
     context = {
         "rpms": rpms,
         "rp_humans": rp_humans,
         "count_rpms": count_rpms,
         "ayear": ayear,
         "amonth": amonth,
+        "rp_humans_total": human_total_provider_total,
         # "companies": companies,
     }
 
@@ -266,6 +271,12 @@ def report_period_month(request, ayear, amonth):
 
 
 def report_period_month_table(request, ayear, amonth):
+    ko_kr = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
         .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
@@ -278,7 +289,7 @@ def report_period_month_table(request, ayear, amonth):
             total_human=Sum("pay_to_human"),
             total_cases=Count("case_id"),
         )
-        .order_by("provider__profile__real_name")
+        .order_by(ko_kr.asc())
     )
     count_rpms = rpms.count()
 
@@ -295,6 +306,11 @@ def report_period_month_table(request, ayear, amonth):
         .order_by("provider__profile__real_name")
     )
 
+    human_total_provider_total = rp_humans.aggregate(
+        total=Sum("human_total_provider"),
+    )["total"]
+
+    # print(human_total_provider_total)
     # print(rp_humans.count())
 
     context = {
@@ -303,6 +319,7 @@ def report_period_month_table(request, ayear, amonth):
         "count_rpms": count_rpms,
         "ayear": ayear,
         "amonth": amonth,
+        "rp_humans_total": human_total_provider_total,
         # "companies": companies,
     }
 

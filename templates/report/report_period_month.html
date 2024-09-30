@@ -93,6 +93,39 @@
                 
                     
                 {% endfor %}
+                <div class="card bg-yellow-100 w-64 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">총 합계</h2>
+                        <p class="mb-2">
+                            <div class="flex justify-between">
+                                <span>판독건수</span>
+                                <span>{{ rpms|sum_values:"total_cases"|intcomma }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>매출</span>
+                                <span>{{ rpms|sum_values:"total_price"|floatformat:0|intcomma }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>판독료</span>
+                                <span>{{ rpms|sum_values:"total_provider"|floatformat:0|intcomma }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>수수료</span>
+                                <span>{{ rpms|sum_values:"total_human"|floatformat:0|intcomma }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>휴먼외래</span>
+                                <span class="badge badge-error">
+                                    {{ rp_humans_total|floatformat:0|intcomma }}
+                                </span>
+                            </div>
+                        </p>
+                        <div class="card-actions justify-end">
+                          
+                            
+                        </div>
+                    </div>
+                </div>
             
             </div>
         </div>
