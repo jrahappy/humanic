@@ -1,4 +1,5 @@
 {% extends 'app_base.html' %}
+{% load crispy_forms_tags %}
 {% load widget_tweaks %}  
 
 {% block header %}
@@ -16,132 +17,11 @@
 			</div>
       	</div>
 		<form method="post">
-		{% csrf_token %}
-    	<div class="grid grid-cols-12 gap-2 px-6">
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">성명(ID)</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.real_name|append_attr:"disabled" class='input input-bordered w-full max-w-xs' %}
-				</div>
+			{% csrf_token %}
+			<div class="col-span-12 px-8 mb-4">
+				{{ form|crispy }}
+				<button type="	submit" class="btn btn-primary">수정</button>
 			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">이메일</span>
-				</label>
-                <div class="text-start px-2 py-3">
-					{% render_field form.email class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">휴대폰</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.cellphone class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">진료과</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.specialty1 class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">소속</span>
-				</label>
-                <div class="text-start px-2 py-6">
-					{{ provider.profile.company }}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">SystemID</span>
-				</label>
-                <div class="text-start px-2 py-6">
-					{{ provider.username }}
-				</div>
-			</div>
-		</div>
-		
-		
-		<div class="grid grid-cols-12 gap-2 px-6 mt-4">
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">ONPACS ID</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.onpacs_id class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">CV3 ID</span>
-				</label>
-                <div class="text-start px-2 py-3">
-					{% render_field form.cv3_id class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">세부전공1</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.specialty2 class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">세부전공2</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.specialty3 class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">세부전공3</span>
-				</label>
-                <div class="text-start px-2 py-3">
-					{% render_field form.specialty4 class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			<div class="form-control col-span-2">
-				<label class="label">
-					<span class="label-text">세부전공4</span>
-				</label>
-                <div class="text-start px-2 py-3">
-					{% render_field form.specialty5 class='input input-bordered w-full max-w-xs' %}
-				</div>
-			</div>
-			
-		</div>
-		<div class="px-6">
-            <div class="form-control">
-				<label class="label">
-					<span class="label-text">메모</span>
-				</label>
-				<div class="text-start px-2 py-3">
-					{% render_field form.bio rows='3' class='input input-bordered w-full ' %}
-				</div>
-			</div>
-
-        </div>
-		<div class="grid grid-cols-4 gap-2 px-6">
-            <div class="flex gap-4">
-                <div class="flex items-end py-4">
-                    <button class="btn btn-primary grow">저장하기</button>
-                </div>
-                <div class="flex items-end py-4">
-                    <a href="{% url 'provider:view_provider' provider.id %}" class="btn btn-secondary grow">취소</a>
-                </div>
-                
-			</div>
-		</div>
 		</form>
 	</section>
 {% endblock %}

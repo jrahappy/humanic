@@ -148,3 +148,6 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     
     => 모든 의사별 판독료 계산 완료
     
+## 09/29/2024 ##
+    - bodypart 의 정규화 방안 검토
+    - 병원은 사업자번호, 판독의는 면허번호 추가 검토

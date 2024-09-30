@@ -189,7 +189,7 @@ def index(request):
     report_filter = ReportFilter(request.GET, queryset=ReportMaster.objects.all())
     filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")
 
-    paginator = Paginator(filtered_qs, 100)
+    paginator = Paginator(filtered_qs, 10)
     page = request.GET.get("page")
     try:
         rmaster = paginator.page(page)
@@ -391,3 +391,118 @@ def report_period_month_radiologist_detail(
     return render(
         request, "report/report_period_month_radiologist_detail.html", context
     )
+
+
+def performance(request):
+
+    buttons_year_month = (
+        UploadHistory.objects.filter(is_deleted=False)
+        .values("ayear", "amonth")
+        .distinct()
+        .order_by("-ayear", "-amonth")
+    )
+
+    context = {"buttons_year_month": buttons_year_month}
+
+    return render(request, "report/performance.html", context)
+
+
+def partial_performance_month(request, ayear, amonth):
+
+    # ko_kr = Func(
+    #     "provider__profile__real_name",
+    #     function="ko_KR.utf8",
+    #     template='(%(expressions)s) COLLATE "%(function)s"',
+    # )
+
+    # 그래프용 데이터
+    rs_graph = ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
+    rs_ct_time = rs_graph.filter(amodality="CT")
+    rs_ct_time_1hr = rs_ct_time.filter(
+        time_to_complete__gte=1, time_to_complete__lte=60
+    ).count()
+    rs_ct_time_3hr = rs_ct_time.filter(
+        time_to_complete__gt=60, time_to_complete__lte=180
+    ).count()
+    rs_ct_time_1d = rs_ct_time.filter(
+        time_to_complete__gt=180, time_to_complete__lte=1440
+    ).count()
+    rs_ct_time_3d = rs_ct_time.filter(
+        time_to_complete__gt=1440, time_to_complete__lte=4320
+    ).count()
+    rs_ct_time_7d = rs_ct_time.filter(
+        time_to_complete__gt=4320, time_to_complete__lte=10080
+    ).count()
+    rs_ct_time_more = rs_ct_time.filter(time_to_complete__gt=10080).count()
+
+    rs_mr_time = rs_graph.filter(amodality="MR")
+    rs_mr_time_1hr = rs_mr_time.filter(
+        time_to_complete__gte=1, time_to_complete__lte=60
+    ).count()
+    rs_mr_time_3hr = rs_mr_time.filter(
+        time_to_complete__gt=60, time_to_complete__lte=180
+    ).count()
+    rs_mr_time_1d = rs_mr_time.filter(
+        time_to_complete__gt=180, time_to_complete__lte=1440
+    ).count()
+    rs_mr_time_3d = rs_mr_time.filter(
+        time_to_complete__gt=1440, time_to_complete__lte=4320
+    ).count()
+    rs_mr_time_7d = rs_mr_time.filter(
+        time_to_complete__gt=4320, time_to_complete__lte=10080
+    ).count()
+    rs_mr_time_more = rs_mr_time.filter(time_to_complete__gt=10080).count()
+
+    rs_cr_time = rs_graph.filter(amodality="CR")
+    rs_cr_time_1hr = rs_cr_time.filter(
+        time_to_complete__gte=1, time_to_complete__lte=60
+    ).count()
+    rs_cr_time_3hr = rs_cr_time.filter(
+        time_to_complete__gt=60, time_to_complete__lte=180
+    ).count()
+    rs_cr_time_1d = rs_cr_time.filter(
+        time_to_complete__gt=180, time_to_complete__lte=1440
+    ).count()
+    rs_cr_time_3d = rs_cr_time.filter(
+        time_to_complete__gt=1440, time_to_complete__lte=4320
+    ).count()
+    rs_cr_time_7d = rs_cr_time.filter(
+        time_to_complete__gt=4320, time_to_complete__lte=10080
+    ).count()
+    rs_cr_time_more = rs_cr_time.filter(time_to_complete__gt=10080).count()
+
+    rs_time_dataset_ct = [
+        rs_ct_time_1hr,
+        rs_ct_time_3hr,
+        rs_ct_time_1d,
+        rs_ct_time_3d,
+        rs_ct_time_7d,
+        rs_ct_time_more,
+    ]
+    rs_time_dataset_mr = [
+        rs_mr_time_1hr,
+        rs_mr_time_3hr,
+        rs_mr_time_1d,
+        rs_mr_time_3d,
+        rs_mr_time_7d,
+        rs_mr_time_more,
+    ]
+    rs_time_dataset_cr = [
+        rs_cr_time_1hr,
+        rs_cr_time_3hr,
+        rs_cr_time_1d,
+        rs_cr_time_3d,
+        rs_cr_time_7d,
+        rs_cr_time_more,
+    ]
+
+    context = {
+        "rs_graph": rs_graph,
+        "ayear": ayear,
+        "amonth": amonth,
+        "rs_time_dataset_ct": rs_time_dataset_ct,
+        "rs_time_dataset_mr": rs_time_dataset_mr,
+        "rs_time_dataset_cr": rs_time_dataset_cr,
+    }
+
+    return render(request, "report/partial_performance_month.html", context)

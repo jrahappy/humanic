@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Contract, ContractItem, Product, Platform
+from .models import Company, Contract
 
 
 class CompanyAdmin(admin.ModelAdmin):
@@ -35,28 +35,3 @@ class ContractAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Contract, ContractAdmin)
-
-
-class ContractItemAdmin(admin.ModelAdmin):
-    list_display = ["contract", "product", "item_price"]
-
-
-admin.site.register(ContractItem, ContractItemAdmin)
-
-
-class ProductAdmin(admin.ModelAdmin):
-    list_display = [
-        "product_name",
-        "bodypart",
-        "modality",
-        "equipment",
-        "description",
-        "emergency",
-        "onsite",
-        "product_price",
-    ]
-
-
-admin.site.register(Product, ProductAdmin)
-
-admin.site.register(Platform)

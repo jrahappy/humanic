@@ -11,7 +11,7 @@ from .models import (
     importhistory,
     cleanData,
 )
-from customer.models import Company, Contract, ContractItem, Product, Platform
+from customer.models import Company, Contract
 from .forms import importhistoryForm
 from import_export import resources
 from tablib import Dataset

@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import CustomUser
-from customer.models import Company, Contract, ContractItem, Product, Platform
+from customer.models import Company
 
 
 class EditedData(models.Model):
@@ -158,9 +158,7 @@ class cleanData(models.Model):
     approveddttm = models.CharField(max_length=100, null=True, blank=True)
 
     pacs = models.CharField(max_length=100, null=True, blank=True)
-    Platform = models.ForeignKey(
-        Platform, on_delete=models.SET_NULL, null=True, blank=True
-    )  # platform
+
     requestdttm = models.CharField(max_length=100, null=True, blank=True)
 
     ecode = models.CharField(max_length=100, null=True, blank=True)

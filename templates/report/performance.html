@@ -1,0 +1,54 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">판독 소요시간 월단위로 보기</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'report:report_period' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">목록으로</a>
+        </div>
+    </div>
+    <div class="card-body grow-0">
+        <div class="flex flex-column gap-4">
+            {% for button_ym in buttons_year_month %}
+            <div class="">
+                <a href="#"
+                    hx-get="{% url 'report:partial_performance_month' button_ym.ayear button_ym.amonth %}"
+                    hx-trigger="click"
+                    hx-target="#general_modal"
+                    hx-swap="outerHTML"
+                    class="btn btn-primary">
+                    {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
+                </a>
+            </div>
+            {% endfor %}
+           
+        </div>
+    </div>
+</section>
+<div id="general_modal" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    
+</div>  
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

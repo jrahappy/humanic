@@ -1,5 +1,6 @@
 {% extends 'app_base.html' %}
 {% load custom_filters %}
+{% load widget_tweaks %}
 {% block header %}
     {% include 'app_base_header.html' %}
 {% endblock %}
@@ -13,7 +14,8 @@
                   고객 정보
                 </h2>
                 <div>
-                  <a 
+                  <div>
+                    <a 
                       href="#" 
                       class="btn btn-sm btn-primary w-24 align-end"
                       hx-get="{% url 'customer:update' company.id %}"
@@ -21,14 +23,15 @@
                       hx-target="#main_area"
                       hx-swap="outerHTML"
                       >Edit Mode</a>
-                  <a 
-                    hx-get="{% url 'customer:index' %}" 
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                    class="btn btn-sm btn-primary w-16"
-                  >List</a>
+                    <a 
+                      hx-get="{% url 'customer:index' %}" 
+                      hx-trigger="click"
+                      hx-target="#main_area"
+                      hx-swap="outerHTML"
+                      hx-push-url="true"
+                      class="btn btn-sm btn-primary w-16"
+                    >List</a>
+                  </div>
                 </div>
             </div>
         </div>
@@ -36,114 +39,101 @@
 
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
       <div class="card-body grow-0">
+        <form method="POST" action="{% url 'customer:update' company.id%}">
+        {% csrf_token %}
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
               <span class="label-text">병원명</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.business_name}}</p>
+            {% render_field form.business_name  class='input input-bordered font-mono' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">대표자명</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.president_name}}</p>
+            {% render_field form.president_name  class='input input-bordered font-mono' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">사업자번호</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.ein|handle_none}}</p>
+            {% render_field form.ein  class='input input-bordered font-mono' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">SystemID</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.id}}</p>
+            {% render_field form.id  class='input input-bordered font-mono' %}
           </div>
         </div>
-        <div class="grid grid-cols-1 gap-2">
+        <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
               <span class="label-text">주소</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.city|handle_none}} {{ company.address|handle_none}} {{ company.suite|handle_none}} {{ company.zipcode|handle_none}}</p>
+            {% render_field form.address  class='input input-bordered font-mono' %}
           </div>
-          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">호</span>
+            </label>
+            {% render_field form.suite  class='input input-bordered font-mono' %}
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">시/도</span>
+            </label>
+            {% render_field form.city  class='input input-bordered font-mono' %}
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">우편번호</span>
+            </label>
+            {% render_field form.zipcode  class='input input-bordered font-mono' %}
+          </div>
         </div>
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
               <span class="label-text">대표전화번호</span>
             </label>
-            <p class="p-3 bg-gray-100 h-10">{{ company.office_phone|handle_none}}</p>
+            {% render_field form.office_phone  class='input input-bordered font-mono' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자</span>
             </label>
-            <p class="p-3 bg-gray-100">{{company.contact_person|handle_none}}</p>
+            {% render_field form.contact_person  class='input input-bordered font-mono' %}
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">담장자이메일</span>
+              <span class="label-text">담당자이메일</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.office_email|handle_none}}</p>
+            {% render_field form.office_email  class='input input-bordered font-mono' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자번호</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.office_fax|handle_none}}</p>
+            {% render_field form.office_fax  class='input input-bordered font-mono' %}
           </div>
         </div>
-      </div>
-		<div class="form-control">
-			
-		</div>
-		
-	  </section>
-        
-    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-      <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-          <h2 class="card-title grow">
-            사용중인 서버스업체 정보
-          </h2>
-          <a href="#"
-            hx-get="{% url 'customer:new_contract' 1205 %}"
-            hx-trigger="click"
-            hx-target="#main_area"
-            hx-swap="outerHTML"
-            hx-push-url="true"
-            class="btn btn-sm btn-primary"> 새 계약  </a>
+        <div class="grid grid-cols-12 gap-2 py-4">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary"
+              hx-get="{% url 'customer:detail' company.id %}"
+              hx-trigger="click"
+              hx-target="#main_area"
+              hx-swap="outerHTML"
+              hx-history-push-url="true"
+            >Cancel</button>
         </div>
       </div>
-      <div class="overflow-x-auto p-4">
-        <table class="table">
-          <thead>
-            <tr>
-              <td>서비스업체명</td>
-              <td>용도</td>
-              <td>방법</td>
-              <td>NUM</td>
-              <td>-</td>
-            </tr>
-          </thead>
-          <tr>
-            <td>INFINITT</td>
-            <td>ONPACS</td>
-            <td>비율</td>
-            <td>5%</td>
-            <td class="text-right">
-              <a href="#" class="btn btn-sm btn-primary"> 보기 </a>
-            </td>
-          </tr>
-          
-        </table>
-		  </div>
+	</form>
 		
-	  </section>
+	</section>
+   
 {% endblock %}
 
 {% block aside %}

@@ -46,4 +46,10 @@ urlpatterns = [
         views.report_customer_detail,
         name="report_customer_detail",
     ),
+    path("performance/", views.performance, name="performance"),
+    path(
+        "performance_month/<int:ayear>/<int:amonth>/",
+        views.partial_performance_month,
+        name="partial_performance_month",
+    ),
 ]

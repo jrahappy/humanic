@@ -7,7 +7,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.utils import timezone
 from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 from accounts.models import Profile, CustomUser
-from customer.models import Company, Contract, ContractItem
+from customer.models import Company, Contract
 from product.models import Product, Platform
 from .models import (
     UploadHistory,

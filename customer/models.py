@@ -4,7 +4,7 @@ from product.models import Product, Platform
 
 # Create your models here.
 class Company(models.Model):
-    business_name = models.CharField(max_length=100, null=True, blank=True)
+    business_name = models.CharField(max_length=100, default="Hospital name")
     president_name = models.CharField(max_length=100, null=True, blank=True)
     address = models.CharField(max_length=100, null=True, blank=True)
     suite = models.CharField(max_length=20, null=True, blank=True)
@@ -17,11 +17,9 @@ class Company(models.Model):
     office_email = models.EmailField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     ein = models.CharField(max_length=20, null=True, blank=True)
-    clinic_id = models.CharField(max_length=20, null=True, blank=True)
+    contact_person = models.CharField(max_length=20, null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
     is_public = models.BooleanField(default=False)
-    Platform = models.ForeignKey(
-        Platform, on_delete=models.CASCADE, null=True, blank=True
-    )
 
     class Meta:
         verbose_name = "Company"
@@ -29,6 +27,18 @@ class Company(models.Model):
 
     def __str__(self):
         return self.business_name
+
+    @property
+    def full_address(self):
+        address_parts = [
+            self.address or "",
+            self.suite or "",
+            self.city or "",
+            self.state or "",
+            self.zipcode or "",
+            self.country or "",
+        ]
+        return ", ".join(part for part in address_parts if part).strip(", ")
 
 
 class Contract(models.Model):
@@ -44,56 +54,3 @@ class Contract(models.Model):
 
     def __str__(self):
         return self.contract_name
-
-
-class ContractItem(models.Model):
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
-    product = models.ForeignKey("Product", on_delete=models.CASCADE)
-    item_price = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
-    )
-
-    class Meta:
-        verbose_name = "Contract Item"
-        verbose_name_plural = "Contract Items"
-
-    def __str__(self):
-        return self.product.product_name
-
-
-class Product(models.Model):
-    product_name = models.CharField(max_length=100, null=True, blank=True)
-    bodypart = models.CharField(max_length=50, null=True, blank=True)
-    modality = models.CharField(max_length=50, null=True, blank=True)
-    equipment = models.CharField(max_length=50, null=True, blank=True)
-    description = models.CharField(max_length=100, null=True, blank=True)
-    emergency = models.BooleanField(default=False)
-    onsite = models.BooleanField(default=False)
-    product_price = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
-    )
-
-    class Meta:
-        verbose_name = "Product"
-        verbose_name_plural = "Products"
-
-    def __str__(self):
-        return self.product_name
-
-
-class Platform(models.Model):
-    platform_name = models.CharField(max_length=100, null=True, blank=True)
-    platform_description = models.TextField(null=True, blank=True)
-    platform_fee = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
-    )
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Platform"
-        verbose_name_plural = "Platforms"
-
-    def __str__(self):
-        return self.platform_name

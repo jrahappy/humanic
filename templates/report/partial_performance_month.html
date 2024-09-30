@@ -1,0 +1,64 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <div class="card-body grow-0 w-full flex flex-row justify-between item-base">
+      <h2 class="card-title">
+        <a class="link-hover link">{{ ayear }}년 {{ amonth }}월 판독 소요시간별</a>
+      </h2>
+      <p class="text-xs text-gray-500 text-end">단위: 분, Null Data 제외  </p>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <canvas id="myChart"></canvas>
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
+  <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+  
+    var datact = {{rs_time_dataset_ct|safe}};
+    var datamr = {{rs_time_dataset_mr|safe}};
+    var datacr = {{rs_time_dataset_cr|safe}};
+    
+    var labels = ['1hrs','3hrs','1day', '3days', '7days', 'Above'];
+  
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'CT',
+                    data: datact,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'MR',
+                    data: datamr,
+                    backgroundColor: 'rgba(135, 206, 235, 0.2)',
+                    borderColor: 'rgba(135, 206, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'CR',
+                    data: datacr,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+  </script>

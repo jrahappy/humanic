@@ -110,7 +110,7 @@ NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-# TAILWIND_CSS_PATH = BASE_DIR / "static/css/style.css"
+TAILWIND_CSS_PATH = "css/dist/styles.css"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

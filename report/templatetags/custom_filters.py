@@ -80,3 +80,8 @@ def weekday_name(value):
         7: "Saturday",
     }
     return WEEKDAY_MAP.get(value, "Unknown")
+
+
+@register.filter
+def handle_none(value):
+    return value if value else ""

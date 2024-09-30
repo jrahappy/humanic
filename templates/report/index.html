@@ -11,22 +11,19 @@
 
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-            <h2 class="card-title grow">
-                <a class="link-hover link">리포트 목록</a>
+        <div class="grid grid-col-2 gap-2">
+            <h2 class="card-title grow ">
+                <a class="link-hover link">리포트 찾기</a>
             </h2>
-        </div>
-    </div>
-    <div class="card-body grow-0">
-        <form>
-            <div class="flex justify-start gap-2">
+            <form>
+            <div class="flex flex-row gap-2 ">
                 {{ filter.form|crispy }}
+                <button type="submit" class="btn btn-primary content-stretch mt-6 w-24">검색</button>
             </div>
-            <button type="submit" class="btn btn-primary">검색</button>
-        </form>
-    </div>
-    <div class="space-y-12">
-        <div class="mt-8 flow-root">
+            </form>
+        </div>
+   
+        <div class="mt-4 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
@@ -45,7 +42,6 @@
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Requested</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Approved</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Platform</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Verified</th>
                                 </tr>
                             </thead>
@@ -71,13 +67,6 @@
                                         {% if data.approvedt %}
                                             {{ data.approvedt|date:"Y/m/d H/i/s" }}
                                         {% else %}
-                                        {% endif %}
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        {% if data.platform == "ONSITE" %}
-                                            <span class="badge badge-secondary">{{ data.platform }}</span>
-                                        {% else %}
-                                            {{ data.platform }}
                                         {% endif %}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
