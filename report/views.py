@@ -1,11 +1,18 @@
+import pandas as pd
 from django.shortcuts import render
-from minibooks.models import UploadHistory, ReportMaster, ReportMasterStat
+from minibooks.models import (
+    UploadHistory,
+    ReportMaster,
+    ReportMasterStat,
+    ReportMasterPerformance,
+)
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .filters import ReportFilter
 from django.db.models import Count, Sum, Q, F, Func, Avg
+from django.db.models.functions import Collate
+from django.db import connection
 from accounts.models import Profile, CustomUser
 from customer.models import Company
-from django.db.models.functions import Collate
 
 
 def report_customer_detail(request, id):
@@ -523,3 +530,89 @@ def partial_performance_month(request, ayear, amonth):
     }
 
     return render(request, "report/partial_performance_month.html", context)
+
+
+def partial_pivot_table_view(request, ayear, amonth):
+    # Get query parameters (if any)
+    company_filter = request.GET.get("company_id", None)
+
+    # Fetch data from the model and ensure you only fetch the required fields
+    data = (
+        ReportMasterPerformance.objects.filter(ayear=ayear, amonth=amonth)
+        .exclude(company_id=1)
+        .values("amodality", "time_range", "frequency")
+    )
+
+    ko_kr = Func(
+        "business_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+    companies = Company.objects.all().order_by(ko_kr.asc())
+    selected_company = companies.filter(id=company_filter).first()
+
+    # Apply filtering if company_filter is specified
+    if company_filter:
+        data = data.filter(company_id=company_filter)
+
+    # Convert queryset to a list of dictionaries
+    df = pd.DataFrame.from_records(data)
+
+    if df.empty:
+        pivot_html = "<p>No data available for the selected filters.</p>"
+    else:
+        # Create the pivot table
+        pivot_df = pd.pivot_table(
+            df,
+            values="frequency",
+            index="amodality",
+            columns="time_range",
+            aggfunc="sum",
+            fill_value=0,
+        )
+
+        # Convert the pivot table to HTML
+        pivot_html = pivot_df.to_html(classes="table table-zebra table-hover")
+
+        # var datact = {{rs_time_dataset_ct|safe}};
+        # var datamr = {{rs_time_dataset_mr|safe}};
+        # var datacr = {{rs_time_dataset_cr|safe}};
+        # var labels = ['1hrs','3hrs','1day', '3days', '7days', 'Above'];
+
+        v_labels = ""
+        v_datact = ""
+        v_datamr = ""
+        v_datacr = ""
+
+        for index, row in pivot_df.iterrows():
+            print(f"Modality: {index}")
+            v_labels += f"'{index}',"
+            if index == "CT":
+                v_datact += f"{list(row)}"
+            elif index == "MR":
+                v_datamr += f"{list(row)}"
+            else:
+                v_datacr += f"{list(row)}"
+        v_labels = "['1hs','3hrs','1day', '24hrs', '7days', 'Above']"
+
+        # print(v_labels)
+        # print(v_datacr)
+        # print(v_datact)
+        # print(v_datamr)
+
+        # for time_range, frequency in row.items():
+        #     print(f"  Time Range: {time_range}, Frequency: {frequency}")
+
+    context = {
+        "pivot_table": pivot_html,
+        "ayear": ayear,
+        "amonth": amonth,
+        "companies": companies,
+        "selected_company": selected_company,
+        "v_labels": v_labels,
+        "v_datact": v_datact,
+        "v_datamr": v_datamr,
+        "v_datacr": v_datacr,
+    }
+    print(selected_company)
+    return render(request, "report/partial_pivot_template.html", context)

@@ -4,17 +4,6 @@ import os
 register = template.Library()
 
 
-# @register.filter(name="sum_values")
-# def sum_values(queryset, key):
-#     total = 0
-#     for item in queryset:
-#         value = item.get(key, 0)  # Use dictionary access method
-#         # print(f"Item: {item}, Key: {key}, Value: {value}")  # Debug statement
-#         total += value
-#     # print(f"Total: {total}")  # Debug statement
-#     return total
-
-
 @register.filter(name="sum_values")
 def sum_values(queryset, key):
     total = 0
@@ -105,3 +94,12 @@ def weekday_name(value):
 @register.filter
 def handle_none(value):
     return value if value else ""
+
+
+@register.filter
+def int(value):
+    try:
+        value = int(value)
+    except (ValueError, TypeError):
+        return value
+    return "{:,}".format(value)

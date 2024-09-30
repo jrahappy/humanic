@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db import transaction
+from django.db import transaction, connection
 from django.db.models import Count, Sum, Q
 from django.utils import timezone
 from django.contrib import messages
@@ -13,6 +13,7 @@ from .models import (
     UploadHistory,
     ReportMaster,
     ReportMasterStat,
+    ReportMasterPerformance,
     UploadHistoryTrack,
     MagamMaster,
     MagamDetail,
@@ -1049,6 +1050,56 @@ def apply_rule_progress(request, magam_id, rule_id):
             humanrule=rule,
             affected_rows=count_target_rows,
             description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    # 판독시간 계산 후에 통계테이블에 데이터 작성함
+    elif selected_rule == "CSTATPURFORMANCE":
+
+        query = """
+        SELECT
+            company_id,
+            provider_id,
+            amodality,
+            CASE
+                WHEN time_to_complete <= 1 THEN '1hr'
+                WHEN time_to_complete > 1 AND time_to_complete <= 3 THEN '3hrs'
+                WHEN time_to_complete > 3 AND time_to_complete <= 24 THEN '24hrs'
+                WHEN time_to_complete > 24 AND time_to_complete <= 72 THEN '72hrs'
+                WHEN time_to_complete > 72 AND time_to_complete <= 168 THEN '7days'
+                ELSE 'above '
+            END AS time_range,
+            COUNT(*) AS frequency
+        FROM ReportMaster
+        WHERE ayear = %s AND amonth = %s AND amodality IN ('CR', 'CT', 'MR')
+        GROUP BY time_range, amodality, company_id, provider_id
+        ORDER BY company_id, provider_id, amodality, time_range;
+        """
+
+        with connection.cursor() as cursor:
+            # cursor.execute(query)
+            cursor.execute(query, [syear, smonth])  # ayear와 amonth를 안전하게 전달
+            results = cursor.fetchall()
+            count_results = cursor.rowcount
+
+        i = count_results
+        for row in results:
+            ReportMasterPerformance.objects.update_or_create(
+                ayear=syear,
+                amonth=smonth,
+                company_id=row[0],
+                provider_id=row[1],
+                amodality=row[2],
+                time_range=row[3],
+                frequency=row[4],
+            )
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_results,
+            description=f"Total {count_results} cases are applied {rule.name} successfully.",
             created_at=timezone.now(),
             is_completed=True,
         )

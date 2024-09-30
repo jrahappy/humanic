@@ -25,8 +25,9 @@
         <div class="flex flex-column gap-4">
             {% for button_ym in buttons_year_month %}
             <div class="">
-                <a href="#"
-                    hx-get="{% url 'report:partial_performance_month' button_ym.ayear button_ym.amonth %}"
+               
+                <a  href="#"
+                    hx-get="{% url 'report:partial_pivot_table_view' button_ym.ayear button_ym.amonth %}"                    
                     hx-trigger="click"
                     hx-target="#general_modal"
                     hx-swap="outerHTML"

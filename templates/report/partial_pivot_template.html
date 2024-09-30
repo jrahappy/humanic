@@ -1,0 +1,119 @@
+{% load humanize %}
+{% load custom_filters %}
+<style>
+    .dataframe {
+        font-size: 12px;
+        line-height: 1.5;
+        font-family: 'Noto Sans KR', sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .dataframe th {
+        background-color: #f2f2f2;
+        border: 1px solid #dddddd;
+        text-align: right;
+        font-size: medium;
+        font-weight: bold;
+        padding: 8px;
+    }
+    .dataframe td {
+        border: 1px solid #dddddd;
+        text-align: right;
+        padding: 8px;
+        font-size: medium;
+    }
+</style>
+
+<section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    
+    <div class="card-body grow-0 w-full flex flex-row justify-between item-base">
+      <h2 class="card-title">
+        <a class="link-hover link">{{ ayear }}년 {{ amonth }}월 판독 소요시간별</a>
+      </h2>
+      <div>
+        <select 
+            name="company_id" 
+            class="form-select"
+            hx-get="{% url 'report:partial_pivot_table_view' ayear amonth %}"
+            hx-target="#general_modal"
+            hx-swap="outerHTML"
+           
+        >
+        {% if selected_company %}
+            
+        {% else %}
+            <option value="-1" selected>All</option>
+        {% endif %}
+
+        {% for company in companies %}
+           
+            {% if company.id == selected_company.id %}
+            <option value="{{ company.id }}" selected>{{ company.business_name }}</option>
+            {% else %}
+            <option value="{{ company.id }}">{{ company.business_name }}</option>
+            {% endif %}
+          
+        {% endfor %}
+        </select>
+    
+      </div>
+    </div>
+
+    <div class="w-auto p-4 flex justify-evenly gap-x-12  ">
+        <div class="w-full p-4 me-4 ">
+            {{ pivot_table|safe }}
+        </div>
+        <div class="min-h-80 h-full w-full p-4 ms-4">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <p class="text-xs text-gray-500 text-end">단위: 분, Null Data 제외  </p>
+    <div>&nbsp;</div>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+  
+    var datact = {{v_datact|safe}};
+    var datamr = {{v_datamr|safe}};
+    var datacr = {{v_datacr|safe}};
+    
+    var labels = {{ v_labels|safe }};
+  
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'CT',
+                    data: datact,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'MR',
+                    data: datamr,
+                    backgroundColor: 'rgba(135, 206, 235, 0.2)',
+                    borderColor: 'rgba(135, 206, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'CR',
+                    data: datacr,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+  </script>
+      
+</section>

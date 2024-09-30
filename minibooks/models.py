@@ -169,6 +169,23 @@ class ReportMasterStat(models.Model):
         verbose_name = "reportmasterstat"
 
 
+class ReportMasterPerformance(models.Model):
+    provider = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, verbose_name="의사명"
+    )
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, verbose_name="병원명"
+    )
+    ayear = models.CharField("년도", max_length=4)
+    amonth = models.CharField("월", max_length=2)
+    amodality = models.CharField(
+        "Modality", max_length=10, choices=get_amodality_choices
+    )
+    time_range = models.CharField("TimeRange", max_length=20)
+    frequency = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class MagamMaster(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, verbose_name="작업자"

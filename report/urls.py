@@ -52,4 +52,9 @@ urlpatterns = [
         views.partial_performance_month,
         name="partial_performance_month",
     ),
+    path(
+        "partial_pivot_table_view/<int:ayear>/<int:amonth>/",
+        views.partial_pivot_table_view,
+        name="partial_pivot_table_view",
+    ),
 ]
