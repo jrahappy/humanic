@@ -24,10 +24,7 @@ class ProfileForm(forms.ModelForm):
             "avatar",
             "bio",
             "cellphone",
-            "company",
-            "employee_id",
         ]
         widgets = {
             "user": forms.HiddenInput(),
-            "company": forms.HiddenInput(),
         }

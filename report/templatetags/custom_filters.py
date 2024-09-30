@@ -4,14 +4,34 @@ import os
 register = template.Library()
 
 
+# @register.filter(name="sum_values")
+# def sum_values(queryset, key):
+#     total = 0
+#     for item in queryset:
+#         value = item.get(key, 0)  # Use dictionary access method
+#         # print(f"Item: {item}, Key: {key}, Value: {value}")  # Debug statement
+#         total += value
+#     # print(f"Total: {total}")  # Debug statement
+#     return total
+
+
 @register.filter(name="sum_values")
 def sum_values(queryset, key):
     total = 0
     for item in queryset:
-        value = item.get(key, 0)  # Use dictionary access method
-        # print(f"Item: {item}, Key: {key}, Value: {value}")  # Debug statement
-        total += value
-    # print(f"Total: {total}")  # Debug statement
+        # Check if the item is a dictionary
+        if isinstance(item, dict):
+            value = item.get(key, 0)
+        else:
+            # Use getattr for model instances or objects
+            value = getattr(item, key, 0)
+
+        # Ensure value is numeric before adding
+        try:
+            total += float(value)
+        except (TypeError, ValueError):
+            pass  # Ignore non-numeric values
+
     return total
 
 

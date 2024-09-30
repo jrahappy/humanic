@@ -11,7 +11,7 @@
 		<div class="card-body grow-0">
 			<div class="flex justify-between gap-2">
 				<h2 class="card-title grow">
-					세부 정보 수정
+					판독의 정보 수정
 				</h2>
 			</div>
       	</div>
@@ -23,7 +23,7 @@
 					<span class="label-text">성명(ID)</span>
 				</label>
 				<div class="text-start px-2 py-3">
-					{% render_field form.real_name|append_attr:"disabled" class='input input-bordered w-full max-w-xs' %}
+					{% render_field form.real_name class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
 			<div class="form-control col-span-2">
@@ -52,10 +52,10 @@
 			</div>
 			<div class="form-control col-span-2">
 				<label class="label">
-					<span class="label-text">소속</span>
+					<span class="label-text">면허번호</span>
 				</label>
-                <div class="text-start px-2 py-6">
-					{{ provider.profile.company }}
+                <div class="text-start px-2 py-3">
+					{% render_field form.license_number class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
 			<div class="form-control col-span-2">
@@ -120,16 +120,29 @@
 			</div>
 			
 		</div>
-		<div class="px-6">
-            <div class="form-control">
+		<div class="grid grid-cols-12 gap-2 px-6 mt-4">
+           
+			<div class="form-control col-span-2">
+				<label class="label">
+					<span class="label-text">Fee Rate</span>
+				</label>
+                <div class="text-start px-2 py-3">
+					{% render_field form.fee_rate class='input input-bordered w-full max-w-xs' %}
+					{% if form.fee_rate.errors %}
+						<div class="text-red-500 text-sm mt-1">
+							{{ form.fee_rate.errors }}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+			<div class="form-control col-span-2">
 				<label class="label">
 					<span class="label-text">메모</span>
 				</label>
 				<div class="text-start px-2 py-3">
-					{% render_field form.bio rows='3' class='input input-bordered w-full ' %}
+					{% render_field form.bio rows='3' class='input input-bordered' %}
 				</div>
 			</div>
-
         </div>
 		<div class="grid grid-cols-4 gap-2 px-6">
             <div class="flex gap-4">

@@ -31,7 +31,6 @@ class ProfileAdmin(admin.ModelAdmin):
     model = Profile
     list_display = [
         "user",
-        "company",
         "real_name",
         "email",
         "specialty1",

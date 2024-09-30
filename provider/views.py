@@ -104,3 +104,17 @@ def edit_provider(request, id):
     return render(
         request, "provider/edit_provider.html", {"form": form, "provider": provider}
     )
+
+
+def edit(request, id):
+    provider = CustomUser.objects.select_related("profile").get(pk=id)
+    form = ProviderForm(instance=provider.profile)
+    if request.method == "POST":
+        form = ProviderForm(request.POST, instance=provider.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Provider updated successfully")
+            return redirect("provider:view_provider", provider.id)
+        else:
+            messages.error(request, "Error updating provider")
+    return render(request, "provider/edit.html", {"form": form, "provider": provider})

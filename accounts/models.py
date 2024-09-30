@@ -79,9 +79,9 @@ class Profile(models.Model):
 
     bio = models.TextField(null=True, blank=True)
     cellphone = models.CharField(max_length=30, null=True, blank=True)
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, null=True, blank=True
-    )
+    # company = models.ForeignKey(
+    #     Company, on_delete=models.CASCADE, null=True, blank=True
+    # )
     employee_id = models.CharField(max_length=30, null=True, blank=True)
     fee_rate = models.FloatField(
         null=True,
@@ -90,7 +90,7 @@ class Profile(models.Model):
         help_text="0.0~1.0",
         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
     )
-    extra_info1_str = models.CharField(max_length=20, null=True, blank=True)
+    license_number = models.CharField(max_length=20, null=True, blank=True)
     extra_info2_int = models.IntegerField(null=True, blank=True, default=0)
     extra_info3_bool = models.BooleanField("Extra info 3", default=False)
 

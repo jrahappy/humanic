@@ -8,11 +8,12 @@
 {% block content %}
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-            <h2 class="card-title">
-                고객 병원 List
+        <div class="flex justify-stretch gap-2 flex-wrap">
+            <h2 class="card-title w-1/2">
+                고객 병원들 목록
             </h2>
-            <div>
+            <div class="card-title">
+                
                 <label class="input input-bordered flex items-center gap-2">
                     <input 
                         name="q" 
@@ -35,10 +36,9 @@
                         clip-rule="evenodd" />
                     </svg>
                 </label>
+                <a href="{% url 'customer:new' %}" class="btn btn-primary text-white ">New </a> 
             </div>
-            <div>
-                <!-- <a href="{% url 'provider:new_provider' %}" class="btn btn-primary text-white ">New Doctor </a> -->
-            </div>
+            
         </div>
     </div>
     <div class="px-6">
@@ -62,11 +62,11 @@
                      {{ company.business_name }}
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900"> {{ company.president_name|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ company.ein|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ company.office_phone|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ company.office_email|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ company.full_address|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-end">
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ company.ein|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900"> {{ company.office_phone|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900"> {{ company.office_email|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900"> {{ company.full_address|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-end">
                         <a href="#"
                             hx-get="{% url 'customer:detail' company.id %}"
                             hx-trigger="click"

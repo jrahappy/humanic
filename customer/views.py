@@ -30,6 +30,17 @@ def search_company(request):
         return render(request, "customer/partial_search_company.html")
 
 
+def new(request):
+    if request.method == "POST":
+        form = CompanyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("customer:index")
+    else:
+        form = CompanyForm()
+    return render(request, "customer/new.html", {"form": form})
+
+
 def new_customer(request):
     if request.method == "POST":
         # Process the form data

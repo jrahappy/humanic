@@ -4,7 +4,7 @@ from product.models import Product, Platform
 
 # Create your models here.
 class Company(models.Model):
-    business_name = models.CharField(max_length=100, default="Hospital name")
+    business_name = models.CharField(max_length=100)
     president_name = models.CharField(max_length=100, null=True, blank=True)
     address = models.CharField(max_length=100, null=True, blank=True)
     suite = models.CharField(max_length=20, null=True, blank=True)

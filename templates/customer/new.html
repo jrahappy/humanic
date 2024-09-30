@@ -11,18 +11,10 @@
         <div class="card-body grow-0">
             <div class="flex justify-between gap-2">
                 <h2 class="card-title grow">
-                  고객 정보
+                  새 고객 추가
                 </h2>
                 <div>
                   <div>
-                    <a 
-                      href="#" 
-                      class="btn btn-sm btn-primary w-24 align-end"
-                      hx-get="{% url 'customer:update' company.id %}"
-                      hx-trigger="click"
-                      hx-target="#main_area"
-                      hx-swap="outerHTML"
-                      >Edit Mode</a>
                     <a 
                       hx-get="{% url 'customer:index' %}" 
                       hx-trigger="click"
@@ -39,18 +31,14 @@
 
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
       <div class="card-body grow-0">
-        <form method="POST" action="{% url 'customer:update' company.id%}">
+        <form method="POST" action="{% url 'customer:new'%}">
         {% csrf_token %}
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
-              <span class="label-text">병원명</span>
+              <span class="label-text">병원명(필수)</span>
             </label>
-            {% render_field form.business_name class='input input-bordered font-mono' %}
-            {% if form.business_name.errors %}
-              <p class="text-red-500 text-xs italic">{{ form.business_name.errors }}</p>
-            {% endif %}
-
+            {% render_field form.business_name  class='input input-bordered font-mono'  placeholder='병원명을 입력하세요...' %}
           </div>
           <div class="form-control">
             <label class="label">
@@ -64,12 +52,8 @@
             </label>
             {% render_field form.ein  class='input input-bordered font-mono' %}
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">SystemID</span>
-            </label>
-            {% render_field form.id  class='input input-bordered font-mono' %}
-          </div>
+          <div class="form-control"></div>
+           
         </div>
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
@@ -126,7 +110,7 @@
         <div class="grid grid-cols-12 gap-2 py-4">
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" class="btn btn-secondary"
-              hx-get="{% url 'customer:detail' company.id %}"
+              hx-get="{% url 'customer:index' %}"
               hx-trigger="click"
               hx-target="#main_area"
               hx-swap="outerHTML"

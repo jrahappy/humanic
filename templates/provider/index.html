@@ -1,4 +1,5 @@
 {% extends 'app_base.html' %}
+{% load custom_filters %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
@@ -25,31 +26,35 @@
     <div class="px-6">
         <table class="table table-zebra">
             <thead class="bg-gray-100">
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">ID 1</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider ">Email 1</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Name 1</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">RAD ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider ">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Name</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Specialty 1</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Specialty 2</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">CV3 ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">OnPACS ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Fee Rate</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">소속</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">면허</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">-</th>
                 </tr>
             </thead>
             <tbody>
             {% for data in  doctors %}
                 <tr>
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        <a href="{% url 'provider:view_provider' data.id %}" class="text-indigo-600 hover:text-indigo-900">{{ data.username }}</a>
+                        {{ data.username }}
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ data.email }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.real_name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty1 }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty2 }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.onpacs_id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.fee_rate }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.company }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty2|handle_none }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty3|handle_none }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id|handle_none }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.onpacs_id|handle_none }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.license_number|handle_none }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-end">
+                        <a href="{% url 'provider:view_provider' data.id %}" class="btn btn-primary btn-sm">Detail</a>
+                        <a href="{% url 'provider:edit' data.id %}" class="btn btn-primary btn-sm">Edit</a>
+
+                    </td>
                 </tr>
             {% empty %}
 

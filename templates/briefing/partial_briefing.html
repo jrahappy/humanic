@@ -93,11 +93,18 @@
           {% for rs in rs_modality %}
           <tr>
             <td>{{ rs.amodality }}</td>
+            <td><p class="text-end">{{ rs.amodality_total|div_value:rs.amodality_count|floatformat:0|intcomma }}</p></td>
             <td><p class="text-end">{{ rs.amodality_count|floatformat:0|intcomma }}</p></td>
             <td><p class="text-end">{{ rs.amodality_total|floatformat:0|intcomma }}</p></td>
           </tr>
-         
           {% endfor %}
+          <tr class="text-semibold font-bold">
+              <!-- Total Row -->
+              <td colspan="2">Total</td>
+              <td><p class="text-end">{{ rs_modality|sum_values:'amodality_count'|floatformat:0|intcomma }}</p></td>
+              <td><p class="text-end">{{ rs_modality|sum_values:'amodality_total'|floatformat:0|intcomma }}</p></td>
+          </tr>
+
         </table>
        
     </div>
@@ -106,7 +113,7 @@
   <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
     <div class="card-body grow-0">
       <h2 class="card-title">
-        <a class="link-hover link">휴먼외래</a>
+        <a class="link-hover link">휴먼외래, Modality</a>
       </h2>
     </div>
     <div class="overflow-x-auto px-4">
@@ -118,6 +125,11 @@
             <td><p class="text-end">{{ rs.t_revenue|floatformat:0|intcomma }}</p></td>
           </tr>
           {% endfor %}
+            <tr class="text-semibold font-bold">
+            <td>Total</td>
+            <td><p class="text-end">{{ rs_human|sum_values:'t_count'|floatformat:0|intcomma }}</p></td>
+            <td><p class="text-end">{{ rs_human|sum_values:'t_revenue'|floatformat:0|intcomma }}</p></td>
+            </tr>
         </table>
     </div>
     <div>

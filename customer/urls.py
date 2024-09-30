@@ -6,7 +6,8 @@ app_name = "customer"
 urlpatterns = [
     path("", views.index, name="index"),
     path("search_company/", views.search_company, name="search_company"),
-    path("new/", views.new_customer, name="new_customer"),
+    path("new_customer/", views.new_customer, name="new_customer"),
+    path("new/", views.new, name="new"),
     path("detail/<int:customer_id>/", views.detail, name="detail"),
     path("edit_customer/<int:customer_id>/", views.edit_customer, name="edit_customer"),
     path(

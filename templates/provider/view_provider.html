@@ -1,6 +1,6 @@
 {% extends 'app_base.html' %}
 {% load humanize %}
-{% load  %}
+{% load custom_filters %}
 {% block header %}
     {% include 'app_base_header.html' %}
 {% endblock %}
@@ -15,11 +15,11 @@
 				</h2>
 				<div class="flex gap-4">
 					<div class="flex items-end py-4">
-						<a href="{% url 'provider:edit_provider' provider.id %}" class="btn btn-primary grow">수정하기</a>
+						<a href="{% url 'provider:edit' provider.id %}" class="btn btn-primary btn-sm">Edit</a>
 						
 					</div>
 					<div class="flex items-end py-4">
-						<a href="{% url 'provider:index' %}" class="btn btn-secondary grow">목록으로</a>
+						<a href="{% url 'provider:index' %}" class="btn btn-primary btn-sm">list</a>
 					</div>
 				   
 				</div>
@@ -55,13 +55,13 @@
 			</div>
 			<div class="form-control col-span-2">
 				<label class="label">
-					<span class="label-text">소속</span>
+					<span class="label-text">면허</span>
 				</label>
-				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.company }}</div>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.license_number|handle_none }}</div>
 			</div>
 			<div class="form-control col-span-2">
 				<label class="label">
-					<span class="label-text">ID</span>
+					<span class="label-text">HumanRad ID</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.username }}</div>
 			</div>
@@ -104,12 +104,18 @@
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty5 }}</div>
 			</div>
 		</div>
-		<div class=" gap-2 px-6 mb-4">
-            <div class="form-control col-span-4">
+		<div class="grid grid-cols-12 gap-2 px-6 mb-4">
+			<div class="form-control col-span-2">
+				<label class="label">
+					<span class="label-text">Fee Rate</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.fee_rate }}</div>
+			</div>
+            <div class="form-control">
 				<label class="label">
 					<span class="label-text">메모</span>
 				</label>
-				<p class="text-start px-2 py-3 bg-base-200 rounded h-24">{{ provider.profile.bio }}</p>
+				<p class="text-start px-2 py-3 bg-base-200 rounded w-full">{{ provider.profile.bio }}</p>
 			</div>
         </div>
 		
