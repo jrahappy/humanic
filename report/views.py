@@ -541,6 +541,7 @@ def partial_pivot_table_view(request, ayear, amonth):
         ReportMasterPerformance.objects.filter(ayear=ayear, amonth=amonth)
         .exclude(company_id=1)
         .values("amodality", "time_range", "frequency")
+        .order_by("time_range", "amodality")
     )
 
     ko_kr = Func(
@@ -562,6 +563,10 @@ def partial_pivot_table_view(request, ayear, amonth):
         pivot_html = "<p>No data available for the selected filters.</p>"
     else:
         # Create the pivot table
+        # Define the desired order of columns
+        desired_order = ["2h", "1d", "2d", "7d", "7d+"]
+
+        # Create the pivot table with ordered columns
         pivot_df = pd.pivot_table(
             df,
             values="frequency",
@@ -570,6 +575,9 @@ def partial_pivot_table_view(request, ayear, amonth):
             aggfunc="sum",
             fill_value=0,
         )
+
+        # Reorder the columns
+        pivot_df = pivot_df.reindex(columns=desired_order)
 
         # Convert the pivot table to HTML
         pivot_html = pivot_df.to_html(classes="table table-zebra table-hover")
@@ -585,7 +593,7 @@ def partial_pivot_table_view(request, ayear, amonth):
         v_datacr = ""
 
         for index, row in pivot_df.iterrows():
-            print(f"Modality: {index}")
+            # print(f"Modality: {index}")
             v_labels += f"'{index}',"
             if index == "CT":
                 v_datact += f"{list(row)}"
@@ -593,7 +601,7 @@ def partial_pivot_table_view(request, ayear, amonth):
                 v_datamr += f"{list(row)}"
             else:
                 v_datacr += f"{list(row)}"
-        v_labels = "['1hs','3hrs','1day', '24hrs', '7days', 'Above']"
+        v_labels = "['2h','1d','2d', '7d', '7d+']"
 
         # print(v_labels)
         # print(v_datacr)
@@ -614,5 +622,5 @@ def partial_pivot_table_view(request, ayear, amonth):
         "v_datamr": v_datamr,
         "v_datacr": v_datacr,
     }
-    print(selected_company)
+    # print(selected_company)
     return render(request, "report/partial_pivot_template.html", context)

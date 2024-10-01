@@ -1063,16 +1063,15 @@ def apply_rule_progress(request, magam_id, rule_id):
             provider_id,
             amodality,
             CASE
-                WHEN time_to_complete <= 1 THEN '1hr'
-                WHEN time_to_complete > 1 AND time_to_complete <= 3 THEN '3hrs'
-                WHEN time_to_complete > 3 AND time_to_complete <= 24 THEN '24hrs'
-                WHEN time_to_complete > 24 AND time_to_complete <= 72 THEN '72hrs'
-                WHEN time_to_complete > 72 AND time_to_complete <= 168 THEN '7days'
-                ELSE 'above '
+                WHEN time_to_complete <= 120 THEN '2h'
+                WHEN time_to_complete > 120 AND time_to_complete <= 1440 THEN '1d'
+                WHEN time_to_complete > 1440 AND time_to_complete <= 2880 THEN '2d'
+                WHEN time_to_complete > 2880 AND time_to_complete <= 10080 THEN '7d'
+                ELSE '7d+'
             END AS time_range,
             COUNT(*) AS frequency
         FROM ReportMaster
-        WHERE ayear = %s AND amonth = %s AND amodality IN ('CR', 'CT', 'MR')
+        WHERE ayear = %s AND amonth = %s AND is_onsite=False AND amodality IN ('CR', 'CT', 'MR')
         GROUP BY time_range, amodality, company_id, provider_id
         ORDER BY company_id, provider_id, amodality, time_range;
         """

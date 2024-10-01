@@ -151,3 +151,8 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 ## 09/29/2024 ##
     - bodypart 의 정규화 방안 검토
     - 병원은 사업자번호, 판독의는 면허번호 추가 검토
+
+    - 2hrs 이내(온사이트와 원격은 나눠야함), 1d, 2d, 7d, 그 이상 
+    - Assign 은 시점이 중요하긴 함. 현재는 엑셀에는 없어서.. 추후 고민함.
+
+    

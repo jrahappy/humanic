@@ -42,11 +42,19 @@ class Company(models.Model):
 
 
 class Contract(models.Model):
+    CONTRACT_TYPES = [
+        ("Percent", "Percent"),
+        ("FlatFee", "Flat Fee"),
+    ]
+
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     contract_name = models.CharField(max_length=100, null=True, blank=True)
     contract_start = models.DateField(null=True, blank=True)
     contract_end = models.DateField(null=True, blank=True)
     contract_description = models.TextField(null=True, blank=True)
+    contract_type = models.CharField(
+        max_length=20, choices=CONTRACT_TYPES, default="Percent"
+    )
 
     class Meta:
         verbose_name = "Contract"
