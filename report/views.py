@@ -5,6 +5,7 @@ from minibooks.models import (
     ReportMaster,
     ReportMasterStat,
     ReportMasterPerformance,
+    MagamAccounting,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .filters import ReportFilter
@@ -431,107 +432,6 @@ def performance(request):
     return render(request, "report/performance.html", context)
 
 
-def partial_performance_month(request, ayear, amonth):
-
-    # ko_kr = Func(
-    #     "provider__profile__real_name",
-    #     function="ko_KR.utf8",
-    #     template='(%(expressions)s) COLLATE "%(function)s"',
-    # )
-
-    # 그래프용 데이터
-    rs_graph = ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
-    rs_ct_time = rs_graph.filter(amodality="CT")
-    rs_ct_time_1hr = rs_ct_time.filter(
-        time_to_complete__gte=1, time_to_complete__lte=60
-    ).count()
-    rs_ct_time_3hr = rs_ct_time.filter(
-        time_to_complete__gt=60, time_to_complete__lte=180
-    ).count()
-    rs_ct_time_1d = rs_ct_time.filter(
-        time_to_complete__gt=180, time_to_complete__lte=1440
-    ).count()
-    rs_ct_time_3d = rs_ct_time.filter(
-        time_to_complete__gt=1440, time_to_complete__lte=4320
-    ).count()
-    rs_ct_time_7d = rs_ct_time.filter(
-        time_to_complete__gt=4320, time_to_complete__lte=10080
-    ).count()
-    rs_ct_time_more = rs_ct_time.filter(time_to_complete__gt=10080).count()
-
-    rs_mr_time = rs_graph.filter(amodality="MR")
-    rs_mr_time_1hr = rs_mr_time.filter(
-        time_to_complete__gte=1, time_to_complete__lte=60
-    ).count()
-    rs_mr_time_3hr = rs_mr_time.filter(
-        time_to_complete__gt=60, time_to_complete__lte=180
-    ).count()
-    rs_mr_time_1d = rs_mr_time.filter(
-        time_to_complete__gt=180, time_to_complete__lte=1440
-    ).count()
-    rs_mr_time_3d = rs_mr_time.filter(
-        time_to_complete__gt=1440, time_to_complete__lte=4320
-    ).count()
-    rs_mr_time_7d = rs_mr_time.filter(
-        time_to_complete__gt=4320, time_to_complete__lte=10080
-    ).count()
-    rs_mr_time_more = rs_mr_time.filter(time_to_complete__gt=10080).count()
-
-    rs_cr_time = rs_graph.filter(amodality="CR")
-    rs_cr_time_1hr = rs_cr_time.filter(
-        time_to_complete__gte=1, time_to_complete__lte=60
-    ).count()
-    rs_cr_time_3hr = rs_cr_time.filter(
-        time_to_complete__gt=60, time_to_complete__lte=180
-    ).count()
-    rs_cr_time_1d = rs_cr_time.filter(
-        time_to_complete__gt=180, time_to_complete__lte=1440
-    ).count()
-    rs_cr_time_3d = rs_cr_time.filter(
-        time_to_complete__gt=1440, time_to_complete__lte=4320
-    ).count()
-    rs_cr_time_7d = rs_cr_time.filter(
-        time_to_complete__gt=4320, time_to_complete__lte=10080
-    ).count()
-    rs_cr_time_more = rs_cr_time.filter(time_to_complete__gt=10080).count()
-
-    rs_time_dataset_ct = [
-        rs_ct_time_1hr,
-        rs_ct_time_3hr,
-        rs_ct_time_1d,
-        rs_ct_time_3d,
-        rs_ct_time_7d,
-        rs_ct_time_more,
-    ]
-    rs_time_dataset_mr = [
-        rs_mr_time_1hr,
-        rs_mr_time_3hr,
-        rs_mr_time_1d,
-        rs_mr_time_3d,
-        rs_mr_time_7d,
-        rs_mr_time_more,
-    ]
-    rs_time_dataset_cr = [
-        rs_cr_time_1hr,
-        rs_cr_time_3hr,
-        rs_cr_time_1d,
-        rs_cr_time_3d,
-        rs_cr_time_7d,
-        rs_cr_time_more,
-    ]
-
-    context = {
-        "rs_graph": rs_graph,
-        "ayear": ayear,
-        "amonth": amonth,
-        "rs_time_dataset_ct": rs_time_dataset_ct,
-        "rs_time_dataset_mr": rs_time_dataset_mr,
-        "rs_time_dataset_cr": rs_time_dataset_cr,
-    }
-
-    return render(request, "report/partial_performance_month.html", context)
-
-
 def partial_pivot_table_view(request, ayear, amonth):
     # Get query parameters (if any)
     company_filter = request.GET.get("company_id", None)
@@ -624,3 +524,52 @@ def partial_pivot_table_view(request, ayear, amonth):
     }
     # print(selected_company)
     return render(request, "report/partial_pivot_template.html", context)
+
+
+def accounting(request):
+    buttons_year_month = (
+        UploadHistory.objects.filter(is_deleted=False)
+        .values("ayear", "amonth")
+        .distinct()
+        .order_by("-ayear", "-amonth")
+    )
+
+    context = {"buttons_year_month": buttons_year_month}
+
+    return render(request, "report/accounting.html", context)
+
+
+def accounting_month(request, ayear, amonth):
+
+    rs_ma = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth)
+
+    rs_ma_revenue = rs_ma.filter(account_code="100")
+    rs_ma_revenue_total = rs_ma_revenue.aggregate(Sum("account_total"))[
+        "account_total__sum"
+    ]
+    rs_ma_revenue_total = rs_ma_revenue_total if rs_ma_revenue_total else 0
+
+    rs_ma_expense = rs_ma.filter(account_code="200")
+    rs_ma_expense_total = rs_ma_expense.aggregate(Sum("account_total"))[
+        "account_total__sum"
+    ]
+    rs_ma_expense_total = rs_ma_expense_total if rs_ma_expense_total else 0
+
+    rs_ma_revenue_clients = rs_ma.filter(account_code="100").values(
+        "client__business_name", "account_total"
+    )
+    rs_ma_expense_providers = rs_ma.filter(account_code="200").values(
+        "provider__profile__real_name", "account_total"
+    )
+
+    context = {
+        "rs_ma_revenue_total": rs_ma_revenue_total,
+        "rs_ma_expense_total": rs_ma_expense_total,
+        "rs_ma_profit": rs_ma_revenue_total - rs_ma_expense_total,
+        "rs_ma_revenue_clients": rs_ma_revenue_clients,
+        "rs_ma_expense_providers": rs_ma_expense_providers,
+        "ayear": ayear,
+        "amonth": amonth,
+    }
+
+    return render(request, "report/accounting_month.html", context)

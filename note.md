@@ -155,4 +155,7 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     - 2hrs 이내(온사이트와 원격은 나눠야함), 1d, 2d, 7d, 그 이상 
     - Assign 은 시점이 중요하긴 함. 현재는 엑셀에는 없어서.. 추후 고민함.
 
+## 10/01/2024 ##
+    - 서비스 업체들 등록 중
+    - 김내과의원(ES, 테크하임, HH)
     

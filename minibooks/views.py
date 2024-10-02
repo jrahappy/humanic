@@ -7,7 +7,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.utils import timezone
 from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
 from accounts.models import Profile, CustomUser
-from customer.models import Company, Contract
+from customer.models import Company, Contract, ServiceFee
 from product.models import Product, Platform
 from .models import (
     UploadHistory,
@@ -18,6 +18,7 @@ from .models import (
     MagamMaster,
     MagamDetail,
     HumanRules,
+    MagamAccounting,
 )
 from .forms import UploadHistoryForm, MagamMasterForm
 from .utils import log_uploadhistory
@@ -817,6 +818,7 @@ def apply_rule_progress(request, magam_id, rule_id):
 
     # 휴먼외래: 김성현, 이재희 원장님 모든 케이스에서 계산 제외
     if selected_rule == "HMOFFDRS":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -842,6 +844,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         )
     # 휴먼외래: 판독료 계산 1번적용
     elif selected_rule == "HMOFFUSXARF":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -866,7 +869,9 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=True,
         )
 
+    # 휴먼 외래 정산
     elif selected_rule == "HMOUT":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -893,6 +898,7 @@ def apply_rule_progress(request, magam_id, rule_id):
 
     # 통합: CR 할인 계약 적용
     elif selected_rule == "CRLOW":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -921,6 +927,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         )
     # 통합: CT 할인 계약 적용
     elif selected_rule == "CTCHESTLOW":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -1031,6 +1038,7 @@ def apply_rule_progress(request, magam_id, rule_id):
 
     # 전체: 판독 시간 계산
     elif selected_rule == "RQTOAPV":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -1127,6 +1135,7 @@ def apply_rule_progress(request, magam_id, rule_id):
 
     # 전체: 응급 판독료 표시(통계를 위해서만 사용)
     elif selected_rule == "IS_EMERGENCY":
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear, amonth=smonth, stat="응급"
         )
@@ -1146,6 +1155,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         )
     # 전체: 마감 재확인을 함(휴먼, 파견, 일반 각각의 행수를 합하여 전체 목표 행합계가 일치하는지 확인)
     elif selected_rule == "RECHECK":
+
         # 작업완료된 마스터테이블의 행수를 확인함
         target_rows = ReportMaster.objects.filter(
             ayear=syear, amonth=smonth, is_completed=True
@@ -1188,6 +1198,7 @@ def apply_rule_progress(request, magam_id, rule_id):
 
     # requestdttm, approveddttm 문자필드의 yyyy/mm/dd/ hh:mm:ss 로 되어 있는 데이터를 datatime 데이터로 변경
     elif selected_rule == "CONVERTDT":
+
         target_rows = ReportMaster.objects.filter(
             # Q(requestdt__isnull=True) | Q(approvedt__isnull=True)
             Q(approvedt__isnull=True)
@@ -1226,6 +1237,9 @@ def apply_rule_progress(request, magam_id, rule_id):
 
     # 초기화함(모든 마감작업에 적용되었던 Rule들 초기상태로 되돌림)
     elif selected_rule == "INIT":
+
+        # 마감용 통계데이터 작성(손익계산서용)
+
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
@@ -1252,6 +1266,116 @@ def apply_rule_progress(request, magam_id, rule_id):
         #     created_at=timezone.now(),
         #     is_completed=True,
         # )
+    elif selected_rule == "MAGAMSTAT":
+        sales = (
+            ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
+            .values("company")
+            .annotate(
+                magam_rows=Sum("total_count"),
+                magam_revenue=Sum("total_revenue"),
+            )
+        )
+        count_target_rows = sales.count()
+        j = 0
+        for row in sales:
+            MagamAccounting.objects.update_or_create(
+                ayear=syear,
+                amonth=smonth,
+                client_id=row["company"],  # Access company as a key from the dictionary
+                account_code="100",
+                defaults={
+                    "account_name": "매출",
+                    "account_total": row[
+                        "magam_revenue"
+                    ],  # Access magam_revenue as a key
+                    "account_memo": row["magam_rows"],  # Access magam_rows as a key
+                },
+            )
+            j += 1
+            print(j)
+
+        cost = (
+            ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
+            .values("provider")
+            .annotate(
+                magam_rows=Sum("total_count"),
+                magam_revenue=Sum("total_revenue"),
+            )
+        )
+
+        # Fetch all profiles related to the providers in a single query
+        provider_ids = [row["provider"] for row in cost]
+        profiles = Profile.objects.filter(user_id__in=provider_ids).values(
+            "user_id", "fee_rate"
+        )
+        profile_dict = {profile["user_id"]: profile["fee_rate"] for profile in profiles}
+
+        j = 0
+
+        # Iterate over the cost data
+        for row in cost:
+            # Access the fee_rate from the pre-fetched profile data
+            fee_rate = profile_dict.get(
+                row["provider"], 0
+            )  # Default fee_rate to 0 if not found
+
+            # Calculate the result using magam_revenue (ensure it's properly accessed via dictionary)
+            calc_result = row["magam_revenue"] * fee_rate if row["magam_revenue"] else 0
+
+            # Update or create MagamAccounting records
+            MagamAccounting.objects.update_or_create(
+                ayear=syear,
+                amonth=smonth,
+                provider_id=row["provider"],  # Use provider as client_id
+                account_code="200",
+                defaults={
+                    "account_name": "매출원가",
+                    "account_total": calc_result,
+                    "account_memo": row["magam_rows"],  # Use magam_rows as memo
+                },
+            )
+
+            j += 1
+            print(f"Processed {j} records.")
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+        i = count_target_rows
+
+    # 함수를 하나 실행할 때 사용
+    elif selected_rule == "UTILITY":
+
+        # 해당 PACS 를 사용하는 병원들을 가져온다.
+        target_rows = ReportMaster.objects.all().values("company", "pacs").distinct()
+
+        for row in target_rows:
+            # print(row["pacs"], row["company"])
+            pacs = row["pacs"]
+            if pacs == "ZOLVUE":
+                Contract.objects.create(
+                    company_id=row["company"], service_fee_id=10, is_active=True
+                )
+            elif pacs == "HPACS":
+                Contract.objects.create(
+                    company_id=row["company"], service_fee_id=10, is_active=True
+                )
+            elif pacs == "INFINITT":
+                Contract.objects.create(
+                    company_id=row["company"], service_fee_id=2, is_active=True
+                )
+            else:
+                pass
+
+        i = target_rows.count()
+
+    else:
+        pass
 
     context = {
         "i": i,

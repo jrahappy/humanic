@@ -1,0 +1,169 @@
+{% load humanize %}
+{% load custom_filters %}
+<section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div id ="general_content">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <div class="w-1/2">
+                    
+                </div>
+                <div>
+                  
+                    <a href="#"
+                    _="on click transition opacity to 0 then remove #general_content"
+                    class="btn btn-warning"
+                    >Close</a>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 bg-base-100 w-full shadow-xl">
+            <div class="card-body col-span-4 flex items-start">
+                <h2 class="card-title">{{ ayear }}년 {{ amonth }}월 손익계산</h2>
+            </div>
+        </div>
+        <div x-data="{ detail_revenue:false }" class="grid grid-cols-2 bg-base-100 w-full">
+            <div class="card-body flex flex-row items-base">
+                <div class="flex justify-start gap-4 w-full">
+                    <div class="text-start me-4 w-1/2">
+                        매출계정
+                    </div>
+                    <div class="text-end ms-4">
+                        {{ rs_ma_revenue_total|floatformat:0|intcomma }}
+                    </div>
+                </div>
+                <button @click="detail_revenue = !detail_revenue" class="btn btn-primary">상세보기</button>
+            </div>
+            <div class="card-body flex flex-row items-base">
+                <div x-show="detail_revenue" class="mb-2 w-full">
+                    
+                    {% for client in rs_ma_revenue_clients %}
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            {{ client.client__business_name }}
+                        </div>
+                        <div class="text-end">
+                            {{ client.account_total|floatformat:0|intcomma }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div x-data="{ detail_cost:false }" class="grid grid-cols-2 bg-base-100 w-full">
+            <div class="card-body flex flex-row items-base">
+                <div class="flex justify-start gap-4 w-full">
+                    <div class="text-start me-4 w-1/2">
+                         원가계정
+                    </div>
+                    <div class="text-end ms-4">
+                        {{ rs_ma_expense_total|floatformat:0|intcomma }}
+                    </div>
+                </div>
+                <button @click="detail_cost = !detail_cost" class="btn btn-primary">상세보기</button>
+            </div> 
+            <div class="card-body flex flex-row items-base">
+                <div x-show="detail_cost" class="mb-2 w-full">
+                    {% for provider in rs_ma_expense_providers %}
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            {{ provider.provider__profile__real_name }}
+                        </div>
+                        <div class="text-end">
+                            {{ provider.account_total|floatformat:0|intcomma }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 bg-base-100 w-full">
+            <div class="card-body flex flex-row items-base">
+                <div class="flex justify-start gap-4 w-full">
+                    <div class="text-start me-4 w-1/2">
+                         영업이익
+                    </div>
+                    <div class="text-end ms-4">
+                        {{ rs_ma_profit|floatformat:0|intcomma }}
+                    </div>
+                </div>
+                <button @click="detail_cost = !detail_cost" class="btn btn-secondary">상세보기</button>
+            </div> 
+            <div class="card-body flex flex-row items-base">
+                
+            </div>
+        </div>  
+        <div x-data="{ detail_3rdparties:false}" class="grid grid-cols-2 bg-base-100 w-full">
+            <div class="card-body flex flex-row items-base">
+                <div class="flex justify-start gap-4 w-full">
+                    <div class="text-start me-4 w-1/2">
+                         협력업체 지급액
+                    </div>
+                    <div class="text-end ms-4">
+                        {{ rs_ma_expense_total|floatformat:0|intcomma }}
+                    </div>
+                </div>
+                <button @click="detail_3rdparties = !detail_3rdparties" class="btn btn-primary">상세보기</button>
+            </div> 
+            <div class="card-body flex flex-row items-base">
+                <div x-show="detail_3rdparties" class="mb-2 w-full">
+                    
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            인피니트(ONPACS)
+                        </div>
+                        <div class="text-end">
+                            12,345,678
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            인피니트(ONPACS)
+                        </div>
+                        <div class="text-end">
+                            12,345,678
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            인피니트(ONPACS)
+                        </div>
+                        <div class="text-end">
+                            12,345,678
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            인피니트(ONPACS)
+                        </div>
+                        <div class="text-end">
+                            12,345,678
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                        <div class="text-start">
+                            인피니트(ONPACS)
+                        </div>
+                        <div class="text-end">
+                            12,345,678
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div class="grid grid-cols-2 bg-base-100 w-full">
+            <div class="card-body flex flex-row items-base">
+                <div class="flex justify-start gap-4 w-full">
+                    <div class="text-start me-4 w-1/2">
+                         최종잔액
+                    </div>
+                    <div class="text-end ms-4">
+                        223,334,444
+                    </div>
+                </div>
+            </div> 
+            <div class="card-body flex flex-row items-base">
+                
+            </div>
+        </div>         
+    </div>
+</section>

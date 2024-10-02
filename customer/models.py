@@ -20,6 +20,7 @@ class Company(models.Model):
     contact_person = models.CharField(max_length=20, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     is_public = models.BooleanField(default=False)
+    is_clinic = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Company"
@@ -41,24 +42,24 @@ class Company(models.Model):
         return ", ".join(part for part in address_parts if part).strip(", ")
 
 
-class Contract(models.Model):
-    CONTRACT_TYPES = [
-        ("Percent", "Percent"),
-        ("FlatFee", "Flat Fee"),
+class ServiceFee(models.Model):
+    Fee_Type = [
+        ("P", "Percent"),
+        ("F", "Flat Fee"),
     ]
-
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    contract_name = models.CharField(max_length=100, null=True, blank=True)
-    contract_start = models.DateField(null=True, blank=True)
-    contract_end = models.DateField(null=True, blank=True)
-    contract_description = models.TextField(null=True, blank=True)
-    contract_type = models.CharField(
-        max_length=20, choices=CONTRACT_TYPES, default="Percent"
-    )
-
-    class Meta:
-        verbose_name = "Contract"
-        verbose_name_plural = "Contracts"
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=1, choices=Fee_Type, default="P")
+    rate = models.DecimalField(decimal_places=3, max_digits=5)
+    rule = models.CharField(max_length=250, null=True, blank=True)
+    is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.contract_name
+        return self.company.business_name + " - " + self.name
+
+
+class Contract(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    service_fee = models.ForeignKey(ServiceFee, on_delete=models.CASCADE, default=1)
+    is_active = models.BooleanField(default=False)

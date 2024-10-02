@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Count, Sum
-from .models import Company, Contract
+from .models import Company
 from minibooks.models import ReportMasterStat, ReportMaster
 from .forms import CompanyForm
 

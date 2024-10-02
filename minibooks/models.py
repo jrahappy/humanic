@@ -232,3 +232,29 @@ class HumanRules(models.Model):
         db_table = "rules"
         managed = True
         verbose_name = "rules"
+
+
+class MagamAccounting(models.Model):
+    ayear = models.CharField("년도", max_length=4)
+    amonth = models.CharField("월", max_length=2)
+    client = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name="client",
+        verbose_name="거래처",
+        null=True,
+        blank=True,
+    )
+    provider = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="provider",
+        verbose_name="의사",
+        null=True,
+        blank=True,
+    )
+    account_code = models.CharField(max_length=20)
+    account_name = models.CharField(max_length=50)
+    account_memo = models.CharField(max_length=200)
+    account_total = models.FloatField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)

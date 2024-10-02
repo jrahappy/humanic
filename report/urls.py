@@ -47,14 +47,20 @@ urlpatterns = [
         name="report_customer_detail",
     ),
     path("performance/", views.performance, name="performance"),
-    path(
-        "performance_month/<int:ayear>/<int:amonth>/",
-        views.partial_performance_month,
-        name="partial_performance_month",
-    ),
+    # path(
+    #     "performance_month/<int:ayear>/<int:amonth>/",
+    #     views.partial_performance_month,
+    #     name="partial_performance_month",
+    # ),
     path(
         "partial_pivot_table_view/<int:ayear>/<int:amonth>/",
         views.partial_pivot_table_view,
         name="partial_pivot_table_view",
+    ),
+    path("accounting/", views.accounting, name="accounting"),
+    path(
+        "accounting_month/<int:ayear>/<int:amonth>/",
+        views.accounting_month,
+        name="accounting_month",
     ),
 ]
