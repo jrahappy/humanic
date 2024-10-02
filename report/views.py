@@ -366,6 +366,18 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         .order_by("is_onsite")
     )
 
+    total_by_amodality = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values("amodality")
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("amodality")
+    )
+
     provider = CustomUser.objects.get(id=radio)
     companies = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
@@ -383,6 +395,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         "companies": companies,
         "provider": provider,
         "total_by_onsite": total_by_onsite,
+        "total_by_amodality": total_by_amodality,
     }
 
     return render(request, "report/report_period_month_radiologist.html", context)

@@ -96,10 +96,10 @@ def handle_none(value):
     return value if value else ""
 
 
-@register.filter
-def int(value):
-    try:
-        value = int(value)
-    except (ValueError, TypeError):
-        return value
-    return "{:,}".format(value)
+# @register.filter
+# def int(value):
+#     try:
+#         value = int(value)
+#     except (ValueError, TypeError):
+#         return value
+#     return "{:,}".format(value)
