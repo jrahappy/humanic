@@ -1,0 +1,13 @@
+{% extends "app_base.html" %}
+
+{% block content %}
+    <h1>New Post</h1>
+
+    <p>{{ post.title }}</p>
+    <p>{{ post.content }}</p>
+    <p>{{ post.author }}</p>
+    <p>{{ post.created_at }}</p>
+    <p>{{ post.updated_at }}</p>
+
+
+{% endblock %}

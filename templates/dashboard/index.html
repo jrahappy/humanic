@@ -1,29 +1,24 @@
 {% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'dashboard/header_dashboard.html' %}
+{% endblock %}
 
 {% block content %}
-<div>
-    <div class="mt-2 lg:flex lg:items-center md:justify-between">
-        <div class="min-w-0 flex-1">
-            <h2 class="text-3xl font-bold tracking-tight leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                Brief Overview
-            </h2>
-        </div>
-        <div class="mt-4 flex flex-shrink-0 md:ml-4 md:mt-0">
-            <a href="{% url 'importdata:new_upload' %}" type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Import new data</a>
-            <a href="{% url 'dashboard:daisyui' %}" type="button" class="ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">DaisyUI</a>
-        </div>
-    </div>
-    <div class="space-y-12">
-        <div class="mt-8 flow-root">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                        Brief
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
+  {% include "dashboard/include_year_month_filter_dashboard.html" %}
+</section>
+<div id="stat_panel" class="col-span-12 w-full">
+  
+  {% include "dashboard/partial_dashboard.html" %}
     
+</div>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'dashboard/aside.html' %}
+	
 {% endblock %}

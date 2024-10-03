@@ -1,4 +1,3 @@
-{% load static %}
 {% load humanize %}
 {% load static tailwind_tags %} 
 <!doctype html>
@@ -36,30 +35,14 @@
 	
 			</div>
 			<dialog id="base_modal" class="modal w-full">
-				<div class="modal-box max-w-5xl p-2">
-					<form method="dialog">
-						<button class="btn">Close</button>
-					</form>
-				</div>
-				<div class="t-4 p-4">
-				</div>
+				
 			</dialog>
-			<dialog id="progress_modal" class="modal w-full">
-				<div class="modal-box max-w-5xl p-2">
-					<form method="dialog">
-						<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-					</form>
-				</div>
-				<div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-					
-				</div>
-			</dialog>
+			
 			
 		</main>
 		<!-- You can open the modal using ID.showModal() method -->
 		
 		{% block aside %}
 		{% endblock %}
-	
     </body>
 </html>

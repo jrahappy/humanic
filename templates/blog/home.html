@@ -1,0 +1,69 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'dashboard/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">증명서 관리(개발중입니다.)</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'blog:create' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">New Post</a>
+        </div>
+    </div>
+</section>  
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="space-y-12">
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+   
+                        <table class="table">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                            {% for post in posts %}
+                                <tr>
+                                    <td>{{ post.title }}</td>
+                                    <td>{{ post.author }}</td>
+                                    <td>{{ post.afile }}</td>
+                                    <td>{{ post.created_at }}</td>
+                                    <td>
+                                        <a class="btn" href="{% url 'blog:detail' post.id %}">View</a>
+                                        <a href="{% url 'blog:update' post.id %}">Edit</a>
+                                    </td>
+                                </tr>
+                                    
+                            {% endfor %}
+                        </table>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    
+{% endblock %}
+
+
+{% block aside %}
+
+	{% include 'dashboard/aside.html' %}
+	
+{% endblock %}
+

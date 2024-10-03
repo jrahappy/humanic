@@ -5,8 +5,6 @@
  * https://unpkg.com/browse/tailwindcss@latest/stubs/defaultConfig.stub.js
  */
 
-const defaultTheme = require('tailwindcss/defaultTheme')
-
 module.exports = {
     content: [
         /**
@@ -26,7 +24,7 @@ module.exports = {
          * Templates in other django apps (BASE_DIR/<any_app_name>/templates).
          * Adjust the following line to match your project structure.
          */
-        '../../**/templates/**/*.html',
+        // '../../**/templates/**/*.html',
 
         /**
          * JS: If you use Tailwind CSS in JavaScript, uncomment the following lines and make sure
@@ -44,11 +42,7 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Roboto', ...defaultTheme.fontFamily.sans],
-            },
-        },
+        extend: {},
     },
     plugins: [
         /**
@@ -61,7 +55,4 @@ module.exports = {
         require('@tailwindcss/aspect-ratio'),
         require('daisyui'),
     ],
-    daisyui: {
-        themes: ["light", "dark", "corporate"],
-    },
 }

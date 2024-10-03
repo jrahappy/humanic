@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "importdata",
     "briefing",
     "report",
+    "blog",
 ]
 
 MIDDLEWARE = [
@@ -184,15 +185,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_ROOT = BASE_DIR / "static/"
-MEDIA_ROOT = BASE_DIR / "media/"
+STATIC_URL = "/static/"  # URL for accessing static files
+STATIC_ROOT = (
+    BASE_DIR / "static/"
+)  # Folder where 'collectstatic' will store static files
 
-STATIC_URL = "/static/"
-MEDIA_URL = "/media/"
-STATICFILES_DIRS = [
-    BASE_DIR / "staticfiles/",
-    BASE_DIR / "theme/static/css/dist/",
-]
+# Media files (user-uploaded content)
+MEDIA_URL = "/media/"  # URL for accessing media files
+MEDIA_ROOT = BASE_DIR / "media/"  # Folder where uploaded media files will be stored
+
+STATICFILES_DIRS = [BASE_DIR / "theme" / "static"]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -203,10 +205,17 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
     },
+    # "staticfiles": {
+    #     "BACKEND": "django.core.files.storage.FileSystemStorage",  # Static files stored locally in STATIC_ROOT
+    # },
+    # "staticfiles": {
+    #     "BACKEND": "storages.backends.s3.S3Storage",
+    # },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
 
 # AWS_QUERYSTRING_AUTH = False
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
@@ -233,8 +242,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CELERY_BROKER_URL = "redis://redis:6379/0"
 # CELERY_RESULT_BACKEND = "redis://localhost:6379"
 # redis://:password@hostname:port/db_number
-CELERY_BROKER_URL = "redis://default:U8MgDATfsXVcG4O1Kd4KdyXYrszN8mTS@redis-14318.c320.us-east-1-mz.ec2.redns.redis-cloud.com:14318"
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_BACKEND = "django-db"
+# CELERY_BROKER_URL = "redis://default:U8MgDATfsXVcG4O1Kd4KdyXYrszN8mTS@redis-14318.c320.us-east-1-mz.ec2.redns.redis-cloud.com:14318"
+# CELERY_ACCEPT_CONTENT = ["json"]
+# CELERY_TASK_SERIALIZER = "json"
+# CELERY_RESULT_BACKEND = "django-db"
 # CELERY_RESULT_BACKEND = "redis://default:U8MgDATfsXVcG4O1Kd4KdyXYrszN8mTS@redis-14318.c320.us-east-1-mz.ec2.redns.redis-cloud.com:14318"

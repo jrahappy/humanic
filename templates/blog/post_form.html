@@ -1,0 +1,85 @@
+{% extends 'app_base.html' %}
+{% load widget_tweaks %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">증명서 관리</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'blog:create' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">New Post</a>
+                        
+            
+        </div>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="grid grid-cols-4 gap-2">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">제목</span>
+              </label>
+              {% render_field form.title  class="input input-bordered" %}
+              {% if form.title.errors %}
+                <p class="text-red-500 text-xs italic">{{ form.title.errors }}</p>
+              {% endif %}
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+            <div class="form-control">
+                <label class="label">
+                  <span class="label-text">설명</span>
+                </label>
+                {% render_field form.content  class="textarea textarea-bordered" %}
+                {% if form.content.errors %}
+                  <p class="text-red-500 text-xs italic">{{ form.content.errors }}</p>
+                {% endif %}
+              </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+            <div class="form-control">
+                <label class="label">
+                  <span class="label-text">파일첨부</span>
+                </label>
+                {% render_field form.afile  class="file-input file-input-bordered w-full max-w-xs" %}
+                {% if form.afile.errors %}
+                  <p class="text-red-500 text-xs italic">{{ form.afile.errors }}</p>
+                {% endif %}
+              </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+            <div class="form-control">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+</section>
+  
+{% endblock %}
+
+
+{% block aside %}
+
+	{% include 'dashboard/aside.html' %}
+	
+{% endblock %}
+

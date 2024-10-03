@@ -35,17 +35,22 @@
                     <svg
                         data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
                         class="h-5 w-5"></svg>
-                    판독의뢰관리
+                    판독업무 통계
                 </a>
                 
             </li>
             <li>
-                <a href="">
-                    <svg
-                        data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
-                        class="h-5 w-5"></svg>
-                        정산관리
-                </a>
+                
+                <a 
+                    hx-get="{% url 'blog:home' %}" 
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                ><svg
+                data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
+                class="h-5 w-5"></svg>
+                증명 및 인증서 관리</a>
             </li>
             
         </ul>
