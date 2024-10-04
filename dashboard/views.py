@@ -5,6 +5,8 @@ from django.db.models import Count, Sum
 from django.db.models.functions import ExtractWeekDay
 from django.contrib.auth.decorators import login_required
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory
+from accounts.forms import ProfileForm
+from accounts.models import CustomUser, Profile
 
 
 @login_required
@@ -146,6 +148,7 @@ def index(request):
         "rs_cm": rs_cm,
         "buttons_year_month": buttons_year_month,
         "rs_weekday": rs_weekday,
+        "side_menu": "dashboard",
     }
 
     return render(request, "dashboard/index.html", context)
@@ -268,9 +271,115 @@ def partial_dashboard(request):
         "rs_cm": rs_cm,
         "buttons_year_month": buttons_year_month,
         "rs_weekday": rs_weekday,
+        "side_menu": "dashboard",
     }
 
     return render(request, "dashboard/partial_dashboard.html", context)
+
+
+def profile(request):
+    user = request.user
+
+    form = ProfileForm(instance=user.profile)
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated.")
+            return redirect("accounts:profile")
+    else:
+        form = ProfileForm(instance=user.profile)
+
+    return render(request, "dashboard/profile.html", {"form": form})
+
+
+def user_logout(request):
+    return render(request, "dashboard/logout.html")
+
+
+def stat(request):
+    user = request.user
+    buttons_year_month = (
+        UploadHistory.objects.filter(is_deleted=False)
+        .values("ayear", "amonth")
+        .distinct()
+        .order_by("-ayear", "-amonth")
+    )
+
+    context = {
+        "buttons_year_month": buttons_year_month,
+        "radio": user,
+        "side_menu": "stat",
+    }
+    return render(request, "dashboard/stat.html", context)
+
+
+def report_period_month_radiologist(request, ayear, amonth, radio):
+    rpms = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values(
+            # "platform",
+            "company__business_name",
+            "amodality",
+            "is_onsite",
+        )
+        .annotate(
+            r_total_price=Sum("readprice"),
+            r_total_provider=Sum("pay_to_provider"),
+            r_total_human=Sum("pay_to_human"),
+            r_total_cases=Count("case_id"),
+        )
+        .order_by("company__business_name", "amodality")
+    )
+    count_rpms = rpms.count()
+
+    # 일반 판독금액 합계
+    total_by_onsite = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values("is_take")
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("is_onsite")
+    )
+
+    total_by_amodality = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values("amodality")
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("amodality")
+    )
+
+    provider = CustomUser.objects.get(id=radio)
+    companies = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+        .values("company__business_name")
+        .distinct()
+    )
+
+    context = {
+        "rpms": rpms,
+        "radio": radio,
+        "count_rpms": count_rpms,
+        "ayear": ayear,
+        "amonth": amonth,
+        "radio": radio,
+        "companies": companies,
+        "provider": provider,
+        "total_by_onsite": total_by_onsite,
+        "total_by_amodality": total_by_amodality,
+    }
+
+    return render(request, "dashboard/report_period_month_radiologist.html", context)
 
 
 def daisyui(request):

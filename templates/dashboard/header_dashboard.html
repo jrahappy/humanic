@@ -95,7 +95,13 @@
 			tabindex="0"
 			class="menu dropdown-content mt-3 w-52 rounded-box bg-base-100 p-2 shadow-2xl">
 			<li>
-				<a href="{% url 'accounts:profile' %}">Profile</a>
+				<a 
+				 href="#"
+				 hx-get="{% url 'dashboard:profile' %}"
+				 hx-trigger="click"
+				 hx-target="#main_area"
+				 hx-swap="outerHTML"
+				 >Profile</a>
 			</li>
 			<!-- <li>
 				<a>
@@ -104,7 +110,15 @@
 				</a>
 			</li>
 			<li><a>Settings</a></li> -->
-			<li><a href="{% url 'account_logout' %}">Logout</a></li>
+			<li>
+				<a 
+				href="#"
+				hx-get="{% url 'dashboard:user_logout' %}"
+				hx-trigger="click"
+				hx-target="#main_area"
+				hx-swap="outerHTML"
+				>Logout</a>
+			</li>
 		</ul>
 	</div>
 	<!-- /dropdown -->

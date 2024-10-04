@@ -70,11 +70,11 @@ def update(request, customer_id):
     company = Company.objects.get(pk=customer_id)
     if request.method == "POST":
         form = CompanyForm(request.POST, instance=company)
-        print(form)
+        # print(form)
         if form.is_valid():
             # form.id = customer_id
             form.save()
-            print("form saved")
+            # print("form saved")
             return render(request, "customer/detail.html", {"company": company})
 
     else:

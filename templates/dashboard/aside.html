@@ -24,14 +24,14 @@
         </div>
         <ul class="menu">
             <li>
-                <a href="{% url 'briefing:index'%}" class="active">
+                <a href="{% url 'dashboard:index' %}" {% if side_menu == "dashboard" %}class='active'{% endif %}>
                     <svg data-src="https://unpkg.com/heroicons/20/solid/home.svg" class="h-5 w-5"></svg>
                     Dashboard
                 </a>
             </li>
             <li>
                 
-                <a href="">
+                <a href="{% url 'dashboard:stat' %}" {% if side_menu == "stat" %}class='active'{% endif %}>
                     <svg
                         data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
                         class="h-5 w-5"></svg>
@@ -40,17 +40,22 @@
                 
             </li>
             <li>
-                
-                <a 
+                <a href="{% url 'blog:home' %}" {% if side_menu == "blog" %}class='active'{% endif %}>
+                    <svg data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"class="h-5 w-5"></svg>
+                    증명 및 인증서 관리
+                </a>
+                <!-- <a 
+                    x-data="{ isActive: false }" :class="{ 'active': isActive }" @click="isActive = true"
                     hx-get="{% url 'blog:home' %}" 
                     hx-trigger="click"
                     hx-target="#main_area"
                     hx-swap="outerHTML"
                     hx-push-url="true"
+                   {% if side_menu == "blog" %}class='active'{% endif %}
                 ><svg
                 data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
                 class="h-5 w-5"></svg>
-                증명 및 인증서 관리</a>
+                증명 및 인증서 관리</a> -->
             </li>
             
         </ul>

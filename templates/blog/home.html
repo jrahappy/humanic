@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block header %}
-    {% include 'dashboard/header.html' %}
+    {% include 'dashboard/header_dashboard.html' %}
 {% endblock %}
 
 {% block content %}
@@ -11,7 +11,7 @@
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
             <h2 class="card-title grow">
-                <a class="link-hover link">증명서 관리(개발중입니다.)</a>
+                <a class="link-hover link">증명 및 인증서 관리</a>
             </h2>
             <a href="#"
                 hx-get="{% url 'blog:create' %}"
@@ -31,20 +31,27 @@
    
                         <table class="table">
                             <tr>
-                                <th>Title</th>
-                                <th>Author</th>
+                                <th>작성자</th>
+                                <th>제목</th>
+                                <th>첨부파일</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
                             {% for post in posts %}
                                 <tr>
-                                    <td>{{ post.title }}</td>
                                     <td>{{ post.author }}</td>
-                                    <td>{{ post.afile }}</td>
+                                    <td>{{ post.title }}</td>
+                                    <td>{{ post.afile.name|filename }}</td>
                                     <td>{{ post.created_at }}</td>
                                     <td>
-                                        <a class="btn" href="{% url 'blog:detail' post.id %}">View</a>
-                                        <a href="{% url 'blog:update' post.id %}">Edit</a>
+                                        <a 
+                                            class="btn" 
+                                            hx-get="{% url 'blog:update' post.id %}"
+                                            hx-trigger="click"
+                                            hx-target="#main_area"
+                                            hx-swap="outerHTML"
+                                        
+                                        >Edit</a>
                                     </td>
                                 </tr>
                                     

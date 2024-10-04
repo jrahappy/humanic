@@ -1,0 +1,140 @@
+{% load custom_filters %}
+{% load humanize %}
+
+        <div class="card-body w-11/12 max-w-5xl">
+        
+            <div class="card-body grow-0 ">
+                <div class="flex flex-wrap flex-col gap-4 ">
+                    <div class="card w-full shadow-xl">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
+                            <div class="mb-2">
+                                고객병원: 총 {{ count_rpms }} 곳
+                            </div>
+                            <div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <td>Site/Tele</td>
+                                            <td>건수</td>
+                                            <td>판독료</td>
+                                            <td>수수료</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for total in total_by_onsite %}
+                                        <tr>
+                                            <td><span class="w-24">{{ total.is_onsite|yesno:"ONSite,TELE" }}</span></td>
+                                            <td>{{ total.total_cases|intcomma }}</td>
+                                            <td>{{ total.total_provider|floatformat:0|intcomma }}</td>
+                                            <td>{{ total.total_human|floatformat:0|intcomma }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class=" font-semibold">
+                                            <td>합계</td>
+                                            <td>{{ total_by_onsite|sum_values:"total_cases"|intcomma }}</td>
+                                            <td>{{ total_by_onsite|sum_values:"total_provider"|floatformat:0|intcomma }}</td>
+                                            <td>{{ total_by_onsite|sum_values:"total_human"|floatformat:0|intcomma }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="divider"></div>
+                            <div>
+                                <table class="table">
+                                    <thead >
+                                        <tr>
+                                            <th>Modality</th>
+                                            <th>건수</th>
+                                            <th>판독료</th>
+                                            <th>수수료</th>
+                                            <th>-</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for total in total_by_amodality %}
+                                        <tr>
+                                            <td>{{ total.amodality }}</td>
+                                            <td>{{ total.total_cases|intcomma }}</td>
+                                            <td>{{ total.total_provider|floatformat:0|intcomma }}</td>
+                                            <td>{{ total.total_human|floatformat:0|intcomma }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                   
+                                        <tr>
+                                            <td>합계</td>
+                                            <td>{{ total_by_amodality|sum_values:"total_cases"|intcomma }}</td>
+                                            <td>{{ total_by_amodality|sum_values:"total_provider"|floatformat:0|intcomma }}</td>
+                                            <td>{{ total_by_amodality|sum_values:"total_human"|floatformat:0|intcomma }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% for company in companies %}
+                    <div class="card bg-base-100  shadow-xl">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ company.company__business_name }}</h2>
+                            <div class="mb-2">
+                                <table class="table table-sm table-zebra w-full">
+                                    <thead>
+                                        <tr class="bg-base-200">
+                                                
+                                            <th>Modality</th>
+                                            <th>건수</th>
+                                            <th>OnSite</th>
+                                            <th>판독료</th>
+                                            <th>수수료</th>
+                                            <th>-</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for rpm in rpms %}
+                                        {% if rpm.company__business_name == company.company__business_name %}
+                                        <tr>
+                                            
+                                            <td>{{ rpm.amodality }}</td>
+                                            <td>
+                                            {{ rpm.r_total_cases|intcomma  }}
+                                            </td>
+                                            <td>{{ rpm.is_onsite }}</td>
+                                            <td>{{ rpm.r_total_provider|floatformat:0|intcomma }}</td>
+                                            {% if rpm.is_onsite %}
+                                            <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
+                                            {% else %}
+                                            <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
+                                            {% endif %}
+                                            <td>
+                                                <!-- <a href="#"
+                                                    hx-get="{% url 'report:report_period_month_radiologist_detail' ayear amonth provider.id rpm.company__business_name rpm.amodality %}"
+                                                    hx-trigger="click"
+                                                    hx-target="#base_modal"
+                                                    hx-swap="innerHTML"
+                                                    class="btn btn-sm btn-info"
+                                                >Detail
+                                                </a> -->
+                                            </td>
+                                        </tr>
+                                        {% else %}
+                                        <!-- <tr>
+                                            <td colspan="7">{{ rpm.company__business_name }}/{{ company.company__business_name }}</td>
+                                        </tr>
+                                    -->
+                                        {% endif %}
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                </div>
+            
+            </div>
+        </div>
+       
+

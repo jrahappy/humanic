@@ -1,0 +1,49 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'dashboard/header_dashboard.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">기간(년,월)로 보기</a>
+            </h2>
+           
+        </div>
+    </div>
+    <div class="card-body grow-0">
+        <div class="flex flex-column gap-4">
+            {% for button_ym in buttons_year_month %}
+            <div class="">
+                <a href="#"
+                    hx-get="{% url 'dashboard:report_period_month_radiologist' button_ym.ayear button_ym.amonth radio.id %}"
+                    hx-trigger="click"
+                    hx-target="#general_modal"
+                    hx-swap="innerHTML"    
+                    class="btn btn-primary"
+                >
+                    {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
+                </a>
+            </div>
+            {% endfor %}
+           
+        </div>
+    </div>
+</section>
+<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+
+</section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'dashboard/aside.html' %}
+	
+{% endblock %}

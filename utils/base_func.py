@@ -47,3 +47,13 @@ def get_amonth_choices():
     for c in cho:
         choices.append((c.choice_key, c.choice_value))
     return choices
+
+
+def get_blog_category():
+    cho = ChoiceMaster.objects.filter(choice_name="BLOG_CATEGORY").order_by(
+        "choice_order"
+    )
+    choices = []
+    for c in cho:
+        choices.append((c.choice_key, c.choice_value))
+    return choices

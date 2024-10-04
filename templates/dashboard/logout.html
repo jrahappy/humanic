@@ -1,13 +1,13 @@
-{% extends 'app_base.html' %}
+{% extends 'dashboard/base.html' %}
 {% load custom_filters %}
 
 {% block header %}
-    {% include 'app_base_header.html' %}
+    {% include 'dashboard/header_dashboard.html' %}
 {% endblock %}
 
 {% block content %}
-<section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
-        <div class="w-full item-center">
+<section class="col-span-12 w-full min-h-screen shadow-sm  rounded-2xl p-4 flex justify-center ">
+        <div class="w-1/2">
             <div class="card bg-base-100 w-1/2 shadow-xl">
                 <form class="space-y-6" method="POST" action="{% url 'account_logout' %}">
                     {% csrf_token %}
@@ -31,6 +31,6 @@
 
 {% block aside %}
 
-	{% include 'app_base_aside.html' %}
+	{% include 'dashboard/aside.html' %}
 	
 {% endblock %}
