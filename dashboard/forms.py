@@ -1,5 +1,6 @@
 from django import forms
 from .models import Blog
+from allauth.account.forms import ChangePasswordForm
 
 
 class blogForm(forms.ModelForm):

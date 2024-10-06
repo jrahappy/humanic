@@ -1,0 +1,116 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_filters %}
+{% load widget_tweaks %}
+
+{% block header %}
+    {% include 'dashboard/header_dashboard.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card-body grow-0">
+      <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+              <a class="link-hover link">Edit Profile</a>
+          </h2>
+      </div>
+  </div>
+</section> 
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card m-8">
+    <form method="post" hx-post="{% url 'dashboard:edit_profile' %}" hx-target="#main_area" hx-swap="outerHTML">
+      {% csrf_token %}
+      {{ form.user }}
+    <div class="mt-6 border-t border-gray-100 px-8">
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">HumanIC ID</label></div>
+        <div class="">{{ user.username }}</div>
+    </div>
+    <div class="flex flex-row">
+      <div class="w-52"><label for="id_oldpassword" class="label">License#</label></div>
+      <div class="">
+          {{ form.license_number.errors }}
+          {{ form.license_number|add_class:"input input-bordered input-sm input-sm w-full" }}
+      </div>
+    </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Name</label></div>
+        <div class="">
+            {{ form.real_name.errors }}
+            {{ form.real_name|add_class:"input input-bordered input-sm w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Email</label></div>
+        <div class="">
+            {{ form.email.errors }}
+            {{ form.email|add_class:"input input-bordered input-sm w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Cellphone</label></div>
+        <div class="">
+            {{ form.cellphone.errors }}
+            {{ form.cellphone|add_class:"input input-bordered input-sm w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">1st 세부전공</label></div>
+        <div class="">
+            {{ form.specialty2.errors }}
+            {{ form.specialty2|add_class:"input input-bordered w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">2nd 세부전공</label></div>
+        <div class="">
+            {{ form.specialty3.errors }}
+            {{ form.specialty3|add_class:"input input-bordered  w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">3rd 세부전공</label></div>
+        <div class="">
+            {{ form.specialty4.errors }}
+            {{ form.specialty4|add_class:"input input-bordered  w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">4th 세부전공</label></div>
+        <div class="">
+            {{ form.specialty5.errors }}
+            {{ form.specialty5|add_class:"input input-bordered  w-full" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">간단소개</label></div>
+        <div class="">
+            {{ form.bio.errors }}
+            {{ form.bio|add_class:"textarea textarea-bordered textarea-sm w-full h-20" }}
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"></div>
+        <div class="flex gap-4">
+            <button class="btn btn-primary w-24" type="submit">Save</button>
+            <a 
+                class="btn w-24"
+                hx-get="{% url 'dashboard:profile' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+            >
+            Cancel</a>
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'dashboard/aside.html' %}
+	
+{% endblock %}

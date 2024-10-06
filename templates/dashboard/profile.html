@@ -6,62 +6,71 @@
 {% endblock %}
 
 {% block content %}
-
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card m-8">
-        <div class="px-4 sm:px-0">
-          <h2 class="card-title text-center my-4">User Profile</h2>
-          <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details </p>
-        </div>
-        <div class="mt-6 border-t border-gray-100 px-8">
-          <dl class="divide-y divide-gray-100">
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Full name</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.real_name }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">HumanRAD ID</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Email address</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.email }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Cellphone</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.cellphone }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.full_address }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 1st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty2 }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 2st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty3 }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 3st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty4 }}</dd>
-            </div>
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 4st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty5 }}</dd>
-            </div>
-            
-            <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Bio</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.bio }}</dd>
-            </div>
-            
-          </dl>
-        </div>
+  <div class="card-body grow-0">
+      <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+              <a class="link-hover link">Profile</a>
+          </h2>
       </div>
-    
+  </div>
+</section> 
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card m-8">
+    <div class="mt-6 border-t border-gray-100 px-8">
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">HumanIC ID</label></div>
+        <div class="">{{ user.username }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Name</label></div>
+        <div class="">{{ user.profile.real_name }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Email</label></div>
+        <div class="">{{ user.profile.email }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Cellphone</label></div>
+        <div class="">{{ user.profile.cellphone|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Address</label></div>
+        <div class="">{{ user.profile.address|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">1st 세부전공</label></div>
+        <div class="">{{ user.profile.specialty2|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">2nd 세부전공</label></div>
+        <div class="">{{ user.profile.specialty3|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">3rd 세부전공</label></div>
+        <div class="">{{ user.profile.specialty4|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">4th 세부전공</label></div>
+        <div class="">{{ user.profile.specialty5|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">Remarks</label></div>
+        <div class="">{{ user.profile.bio }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"></div>
+        <div class="">
+          <a 
+            class="btn btn-primary w-24"
+            hx-get="{% url 'dashboard:edit_profile' %}"
+            hx-trigger="click"
+            hx-target="#main_area"
+            hx-swap="outerHTML"
+          >Edit</a></div>
+      </div>
     </div>
+  </div>
 </section>
 {% endblock %}
 

@@ -107,14 +107,15 @@
                                             <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
                                             {% endif %}
                                             <td>
-                                                <!-- <a href="#"
-                                                    hx-get="{% url 'report:report_period_month_radiologist_detail' ayear amonth provider.id rpm.company__business_name rpm.amodality %}"
+                                                <a href="#"
+                                                    onclick="base_modal.showModal()"
+                                                    hx-get="{% url 'dashboard:report_period_month_radiologist_detail' ayear amonth provider.id rpm.company__business_name rpm.amodality %}"
                                                     hx-trigger="click"
                                                     hx-target="#base_modal"
                                                     hx-swap="innerHTML"
                                                     class="btn btn-sm btn-info"
                                                 >Detail
-                                                </a> -->
+                                                </a>
                                             </td>
                                         </tr>
                                         {% else %}

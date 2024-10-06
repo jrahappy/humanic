@@ -1,12 +1,70 @@
 # Create your views here.
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.db.models import Count, Sum
 from django.db.models.functions import ExtractWeekDay
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory
-from accounts.forms import ProfileForm
+from accounts.forms import ProfileForm, CustomPasswordChangeForm
 from accounts.models import CustomUser, Profile
+from allauth.account.forms import ChangePasswordForm
+from django.http import HttpResponse
+
+
+@login_required
+def password_change(request):
+    if request.method == "POST":
+        form = ChangePasswordForm(user=request.user, data=request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your password was successfully updated!")
+            update_session_auth_hash(request, form.user)
+            return HttpResponse(
+                '<script>window.location.href="%s";</script>'
+                % reverse_lazy("dashboard:password_change_done")
+            )  # Redirect to success URL using JavaScript if the form is valid
+
+        else:
+            messages.error(request, "There was an error in your password update.")
+            return render(request, "dashboard/password_change.html", {"form": form})
+    else:
+        form = ChangePasswordForm(user=request.user)
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "dashboard/password_change.html", context)
+
+
+def password_change_done(request):
+    return render(request, "dashboard/password_change_done.html")
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    form = ProfileForm(instance=user.profile)
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=user.profile)
+        # print(form)
+        if form.is_valid():
+            # user = request.user
+            form.save()
+            messages.success(request, "Profile updated.")
+            return redirect("dashboard:profile")
+        else:
+            messages.error(request, "There was an error in your profile update.")
+            print(form.errors)
+            # Display errors in the console    else:
+        form = ProfileForm(instance=user.profile)
+
+    return render(request, "dashboard/edit_profile.html", {"form": form})
 
 
 @login_required
@@ -380,6 +438,37 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     }
 
     return render(request, "dashboard/report_period_month_radiologist.html", context)
+
+
+def report_period_month_radiologist_detail(
+    request, ayear, amonth, provider, company, amodality
+):
+
+    rpms = ReportMaster.objects.filter(
+        ayear=ayear,
+        amonth=amonth,
+        provider=provider,
+        company__business_name=company,
+        amodality=amodality,
+    ).order_by("case_id")[:1000]
+    count_rpms = rpms.count()
+    # s_provider = CustomUser.objects.get(id=radio)
+    # print(provider)
+    provider = CustomUser.objects.get(id=provider)
+    # print("new provider:", provider.id)
+    context = {
+        "rpms": rpms,
+        "count_rpms": count_rpms,
+        "ayear": ayear,
+        "amonth": amonth,
+        "provider": provider,
+        "company": company,
+        "amodality": amodality,
+    }
+
+    return render(
+        request, "dashboard/report_period_month_radiologist_detail.html", context
+    )
 
 
 def daisyui(request):

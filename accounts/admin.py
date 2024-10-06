@@ -23,6 +23,37 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ["email", "username"]
     ordering = ["-username"]
 
+    # Add fieldsets to show 'is_doctor' in the user change form
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        ("Personal Info", {"fields": ("email", "first_name", "last_name")}),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "is_doctor",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+    )
+
+    # Fields to display when adding a new user
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("username", "email", "password1", "password2", "is_doctor"),
+            },
+        ),
+    )
+
 
 admin.site.register(CustomUser, CustomUserAdmin)
 
