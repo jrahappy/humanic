@@ -56,6 +56,10 @@ def edit_profile(request):
         if form.is_valid():
             # user = request.user
             form.save()
+            user.email = form.cleaned_data["email"]
+            user.first_name = form.cleaned_data["real_name"]
+            user.save()
+
             messages.success(request, "Profile updated.")
             return redirect("dashboard:profile")
         else:
@@ -337,17 +341,7 @@ def partial_dashboard(request):
 
 def profile(request):
     user = request.user
-
     form = ProfileForm(instance=user.profile)
-
-    if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=user.profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated.")
-            return redirect("accounts:profile")
-    else:
-        form = ProfileForm(instance=user.profile)
 
     return render(request, "dashboard/profile.html", {"form": form})
 

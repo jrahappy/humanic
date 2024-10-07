@@ -20,47 +20,43 @@
     <div class="mt-6 border-t border-gray-100 px-8">
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">HumanIC ID</label></div>
-        <div class="">{{ user.username }}</div>
+        <div class="p-3 w-80">{{ user.username }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">Name</label></div>
-        <div class="">{{ user.profile.real_name }}</div>
+        <div class="p-3 w-80">{{ user.profile.real_name }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">Email</label></div>
-        <div class="">{{ user.profile.email }}</div>
+        <div class="p-3 w-80">{{ user.profile.email }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">Cellphone</label></div>
-        <div class="">{{ user.profile.cellphone|handle_none }}</div>
-      </div>
-      <div class="flex flex-row">
-        <div class="w-52"><label for="id_oldpassword" class="label">Address</label></div>
-        <div class="">{{ user.profile.address|handle_none }}</div>
+        <div class="p-3 w-80">{{ user.profile.cellphone|handle_none }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">1st 세부전공</label></div>
-        <div class="">{{ user.profile.specialty2|handle_none }}</div>
+        <div class="p-3 w-80">{{ user.profile.specialty2|handle_none }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">2nd 세부전공</label></div>
-        <div class="">{{ user.profile.specialty3|handle_none }}</div>
+        <div class="p-3 w-80">{{ user.profile.specialty3|handle_none }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">3rd 세부전공</label></div>
-        <div class="">{{ user.profile.specialty4|handle_none }}</div>
+        <div class="p-3 w-80">{{ user.profile.specialty4|handle_none }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">4th 세부전공</label></div>
-        <div class="">{{ user.profile.specialty5|handle_none }}</div>
+        <div class="p-3 w-80">{{ user.profile.specialty5|handle_none }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">Remarks</label></div>
-        <div class="">{{ user.profile.bio }}</div>
+        <div class="p-3 w-80">{{ user.profile.bio }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"></div>
-        <div class="">
+        <div class="p-3 w-80">
           <a 
             class="btn btn-primary w-24"
             hx-get="{% url 'dashboard:edit_profile' %}"

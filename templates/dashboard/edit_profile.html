@@ -24,7 +24,7 @@
     <div class="mt-6 border-t border-gray-100 px-8">
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">HumanIC ID</label></div>
-        <div class="">{{ user.username }}</div>
+        <div class="p-3 w-80">{{ user.username }}</div>
     </div>
     <div class="flex flex-row">
       <div class="w-52"><label for="id_oldpassword" class="label">License#</label></div>
@@ -58,38 +58,38 @@
         <div class="w-52"><label for="id_oldpassword" class="label">1st 세부전공</label></div>
         <div class="">
             {{ form.specialty2.errors }}
-            {{ form.specialty2|add_class:"input input-bordered w-full" }}
+            {{ form.specialty2|add_class:"input input-bordered input-sm w-80" }}
         </div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">2nd 세부전공</label></div>
         <div class="">
             {{ form.specialty3.errors }}
-            {{ form.specialty3|add_class:"input input-bordered  w-full" }}
+            {{ form.specialty3|add_class:"input input-bordered input-sm w-80" }}
         </div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">3rd 세부전공</label></div>
         <div class="">
             {{ form.specialty4.errors }}
-            {{ form.specialty4|add_class:"input input-bordered  w-full" }}
+            {{ form.specialty4|add_class:"input input-bordered  input-sm w-80" }}
         </div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">4th 세부전공</label></div>
         <div class="">
             {{ form.specialty5.errors }}
-            {{ form.specialty5|add_class:"input input-bordered  w-full" }}
+            {{ form.specialty5|add_class:"input input-bordered  input-sm w-80" }}
         </div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">간단소개</label></div>
         <div class="">
             {{ form.bio.errors }}
-            {{ form.bio|add_class:"textarea textarea-bordered textarea-sm w-full h-20" }}
+            {{ form.bio|add_class:"textarea textarea-bordered textarea-sm w-80"|attr:"rows:3" }}
         </div>
       </div>
-      <div class="flex flex-row">
+      <div class="flex flex-row mt-2">
         <div class="w-52"></div>
         <div class="flex gap-4">
             <button class="btn btn-primary w-24" type="submit">Save</button>

@@ -1,38 +1,80 @@
-{% extends "account/base_entrance.html" %}
-{% load allauth i18n %}
-{% block head_title %}
-    {% trans "Signup" %}
-{% endblock head_title %}
+{% extends 'base.html' %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign Up" %}
-    {% endelement %}
-    {% setvar link %}
-        <a href="{{ login_url }}">
-        {% endsetvar %}
-        {% setvar end_link %}
-        </a>
-    {% endsetvar %}
-    {% element p %}
-        {% blocktranslate %}Already have an account? Then please {{ link }}sign in{{ end_link }}.{% endblocktranslate %}
-    {% endelement %}
-    {% if not SOCIALACCOUNT_ONLY %}
-        {% url 'account_signup' as action_url %}
-        {% element form form=form method="post" action=action_url tags="entrance,signup" %}
-            {% slot body %}
-                {% csrf_token %}
-                {% element fields form=form unlabeled=True %}
-                {% endelement %}
-                {{ redirect_field }}
-            {% endslot %}
-            {% slot actions %}
-                {% element button tags="prominent,signup" type="submit" %}
-                    {% trans "Sign Up" %}
-                {% endelement %}
-            {% endslot %}
-        {% endelement %}
-    {% endif %}
-    {% if SOCIALACCOUNT_ENABLED %}
-        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-    {% endif %}
-{% endblock content %}
+<script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">가입신청 하기</h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form method="post" action="/accounts/signup/">
+        {% csrf_token %}
+      <div class="mb-2">
+        <label for="username" class="block text-sm font-medium leading-6 text-gray-900">ID</label>
+        <div class="mt-2">
+            <input type="text" name="username" placeholder="아이디" autocomplete="username" minlength="1" maxlength="150" required id="id_username" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+      <div class="mb-2">
+        <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+        <div class="mt-2">
+            <input type="email" name="email" placeholder="이메일 주소" autocomplete="email" maxlength="320" id="id_email"class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <div class="flex items-center justify-between">
+          <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+          <div class="text-sm">
+            <!-- <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a> -->
+          </div>
+        </div>
+        <div class="mt-2">
+            <input type="password" name="password1" placeholder="비밀번호" autocomplete="new-password" required id="id_password1" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <span class="helptext" id="id_password1_helptext"><ul class="text-xs list-disc px-4 py-2"><li>다른 개인 정보와 유사한 비밀번호는 사용할 수 없습니다.</li><li>비밀번호는 최소 8자 이상이어야 합니다.</li><li>통상적으로 자주 사용되는 비밀번호는 사용할 수 없습니다.</li><li>숫자로만 이루어진 비밀번호는 사용할 수 없습니다.</li></ul></span>
+        </div>
+      </div>
+      <div class="mb-2">
+        <div class="flex items-center justify-between">
+          <label for="password2" class="block text-sm font-medium leading-6 text-gray-900">Password 확인</label>
+          <div class="text-sm">
+            <!-- <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a> -->
+          </div>
+        </div>
+        <div class="mt-2">
+            <input type="password" name="password2" placeholder="비밀번호" autocomplete="new-password" required id="id_password2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-3 text-end ">
+          <input required class="form-check-input" type="checkbox" name="is_terms" value="true"
+            id="terms_of_service" checked>
+        </div>
+        <div class="col-9 text-start">
+          <label class="form-check-label" for="terms_of_service">
+            I agree all statements in <br><a href="#">Terms of service</a>
+          </label>
+        </div>
+        <div class="g-recaptcha" data-sitekey="6LfsGVoqAAAAAJnfBtNPorl1YmAReX2BqBaMY8c-" data-action="signup"></div>
+        <!-- <div class="col-9 p-4 d-flex flex-column justify-content-center">
+            <div class="p-2" style="color:red">
+              {{ form.captcha.errors.as_text }}
+            </div>
+            <div class="p-2">
+              {{ form.captcha }}
+            </div>  
+        </div> -->
+      </div>
+     
+    </form>
+
+    <p class="mt-10 text-center text-sm text-gray-500">
+      이미 가입하셨나요?
+      <a href="{% url 'account_login' %}" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">로그인 화면으로 가기</a>
+    </p>
+  </div>
+</div>
+
+  
+{% endblock %}

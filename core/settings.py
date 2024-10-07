@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "crispy_tailwind",
     "import_export",
     "celery_progress",
+    "django_recaptcha",
     "dogfoot",
     "utils",
     "minibooks",
@@ -101,6 +102,9 @@ ACCOUNT_LOGOUT_REDIRECT = "web:index"
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_FORMS = {
+    "signup": "accounts.forms.CustomSignupForm",
+}
 
 
 AUTH_USER_MODEL = "accounts.CustomUser"
@@ -247,3 +251,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CELERY_TASK_SERIALIZER = "json"
 # CELERY_RESULT_BACKEND = "django-db"
 # CELERY_RESULT_BACKEND = "redis://default:U8MgDATfsXVcG4O1Kd4KdyXYrszN8mTS@redis-14318.c320.us-east-1-mz.ec2.redns.redis-cloud.com:14318"
+
+RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
