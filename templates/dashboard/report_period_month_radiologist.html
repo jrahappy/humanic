@@ -12,27 +12,27 @@
                                 고객병원: 총 {{ count_rpms }} 곳
                             </div>
                             <div>
-                                <table class="table">
-                                    <thead>
+                                <table class="table w-full border-1">
+                                    <thead class="bg-base-200">
                                         <tr>
-                                            <td>Site/Tele</td>
-                                            <td>건수</td>
-                                            <td>판독료</td>
-                                            <td>수수료</td>
+                                            <td class="w-24">Site/Tele</td>
+                                            <td class="w-24">건수</td>
+                                            <td class="w-24">판독료</td>
+                                            <td class="w-24">수수료</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for total in total_by_onsite %}
                                         <tr>
                                             <td><span class="w-24">{{ total.is_onsite|yesno:"ONSite,TELE" }}</span></td>
-                                            <td>{{ total.total_cases|intcomma }}</td>
+                                            <td>{{ total.total_cases|floatformat:0|intcomma }}</td>
                                             <td>{{ total.total_provider|floatformat:0|intcomma }}</td>
                                             <td>{{ total.total_human|floatformat:0|intcomma }}</td>
                                         </tr>
                                         {% endfor %}
-                                        <tr class=" font-semibold">
+                                        <tr class="font-semibold">
                                             <td>합계</td>
-                                            <td>{{ total_by_onsite|sum_values:"total_cases"|intcomma }}</td>
+                                            <td>{{ total_by_onsite|sum_values:"total_cases"|floatformat:0|intcomma }}</td>
                                             <td>{{ total_by_onsite|sum_values:"total_provider"|floatformat:0|intcomma }}</td>
                                             <td>{{ total_by_onsite|sum_values:"total_human"|floatformat:0|intcomma }}</td>
                                         </tr>
@@ -41,29 +41,28 @@
                             </div>
                             <div class="divider"></div>
                             <div>
-                                <table class="table">
-                                    <thead >
+                                <table class="table w-full">
+                                    <thead class="bg-base-200">
                                         <tr>
-                                            <th>Modality</th>
-                                            <th>건수</th>
-                                            <th>판독료</th>
-                                            <th>수수료</th>
-                                            <th>-</th>
+                                            <th class="w-24">Modality</th>
+                                            <th class="w-24">건수</th>
+                                            <th class="w-24">판독료</th>
+                                            <th class="w-24">수수료</th>
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for total in total_by_amodality %}
                                         <tr>
                                             <td>{{ total.amodality }}</td>
-                                            <td>{{ total.total_cases|intcomma }}</td>
+                                            <td>{{ total.total_cases|floatformat:0|intcomma }}</td>
                                             <td>{{ total.total_provider|floatformat:0|intcomma }}</td>
                                             <td>{{ total.total_human|floatformat:0|intcomma }}</td>
                                         </tr>
                                         {% endfor %}
-                                   
-                                        <tr>
+                                        <tr class="font-semibold">
                                             <td>합계</td>
-                                            <td>{{ total_by_amodality|sum_values:"total_cases"|intcomma }}</td>
+                                            <td>{{ total_by_amodality|sum_values:"total_cases"|floatformat:0|intcomma }}</td>
                                             <td>{{ total_by_amodality|sum_values:"total_provider"|floatformat:0|intcomma }}</td>
                                             <td>{{ total_by_amodality|sum_values:"total_human"|floatformat:0|intcomma }}</td>
                                         </tr>
@@ -76,18 +75,17 @@
                     {% for company in companies %}
                     <div class="card bg-base-100  shadow-xl">
                         <div class="card-body">
-                            <h2 class="card-title">{{ company.company__business_name }}</h2>
+                            <h2 class="card-title">{{ forloop.counter0|add:1 }}. {{ company.company__business_name }}</h2>
                             <div class="mb-2">
                                 <table class="table table-sm table-zebra w-full">
                                     <thead>
                                         <tr class="bg-base-200">
-                                                
-                                            <th>Modality</th>
-                                            <th>건수</th>
-                                            <th>OnSite</th>
-                                            <th>판독료</th>
-                                            <th>수수료</th>
-                                            <th>-</th>
+                                            <th class="w-24">Modality</th>
+                                            <th class="w-24">건수</th>
+                                            <th class="w-24">OnSite</th>
+                                            <th class="w-24">판독료</th>
+                                            <th class="w-24">수수료</th>
+                                            <th class="w-24">-</th>
                                         </tr>
                                     </thead>
                                     <tbody>

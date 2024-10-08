@@ -78,6 +78,14 @@ def index(request):
     if user.is_staff:
         return redirect("briefing:index")
 
+    # check_profile = Profile.objects.get(user=user)
+    # if not check_profile.license_number:
+    #     messages.error(request, "의사면허, 세부전공 정보 업데이트를 요청드립니다.")
+
+    # if user.last_login is None or user.last_login <= user.date_joined:
+    #     messages.error(request, "최초 로그인 시 비밀번호 변경을 요청드립니다.")
+    #     return redirect("dashboard:password_change")
+
     syear = request.GET.get("syear")
     smonth = request.GET.get("smonth")
 
@@ -216,6 +224,7 @@ def index(request):
     return render(request, "dashboard/index.html", context)
 
 
+@login_required
 def partial_dashboard(request):
     user = request.user
     syear = request.GET.get("syear")
@@ -339,6 +348,7 @@ def partial_dashboard(request):
     return render(request, "dashboard/partial_dashboard.html", context)
 
 
+@login_required
 def profile(request):
     user = request.user
     form = ProfileForm(instance=user.profile)
@@ -346,10 +356,12 @@ def profile(request):
     return render(request, "dashboard/profile.html", {"form": form})
 
 
+@login_required
 def user_logout(request):
     return render(request, "dashboard/logout.html")
 
 
+@login_required
 def stat(request):
     user = request.user
     buttons_year_month = (
@@ -367,6 +379,7 @@ def stat(request):
     return render(request, "dashboard/stat.html", context)
 
 
+@login_required
 def report_period_month_radiologist(request, ayear, amonth, radio):
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
@@ -384,7 +397,6 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         )
         .order_by("company__business_name", "amodality")
     )
-    count_rpms = rpms.count()
 
     # 일반 판독금액 합계
     total_by_onsite = (
@@ -417,7 +429,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         .values("company__business_name")
         .distinct()
     )
-
+    count_rpms = companies.count()
     context = {
         "rpms": rpms,
         "radio": radio,
@@ -434,6 +446,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     return render(request, "dashboard/report_period_month_radiologist.html", context)
 
 
+@login_required
 def report_period_month_radiologist_detail(
     request, ayear, amonth, provider, company, amodality
 ):

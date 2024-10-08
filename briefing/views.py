@@ -16,8 +16,13 @@ from datetime import date
 def index(request):
     user = request.user
     # Check if the user is a staff member
-    if not user.is_staff:
-        return redirect("dashboard:index")
+    if user.is_staff:
+        pass
+    else:
+        if user.is_doctor:
+            return redirect("dashboard:index")
+        else:
+            return redirect("cust:index")
 
     syear = request.GET.get("syear")
     smonth = request.GET.get("smonth")

@@ -351,7 +351,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         )
         .order_by("company__business_name", "amodality")
     )
-    count_rpms = rpms.count()
+    # count_rpms = rpms.count()
 
     # 일반 판독금액 합계
     total_by_onsite = (
@@ -384,6 +384,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         .values("company__business_name")
         .distinct()
     )
+    count_rpms = companies.count()
 
     context = {
         "rpms": rpms,

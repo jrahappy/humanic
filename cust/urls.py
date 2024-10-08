@@ -16,7 +16,12 @@ urlpatterns = [
         views.report_period_month_company_detail,
         name="report_period_month_company_detail",
     ),
-    path("partial_dashboard", views.partial_dashboard, name="partial_dashboard"),
+    path("partial_dashboard/", views.partial_dashboard, name="partial_dashboard"),
+    path(
+        "export_csv/<int:ayear>/<int:amonth>/<int:company_id>/",
+        views.export_csv,
+        name="export_csv",
+    ),
     #
     # path("signup/", views.signup, name="signup"),
     # path("user_update/", views.user_update, name="user_update"),

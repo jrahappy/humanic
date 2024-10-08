@@ -23,6 +23,10 @@
         <div class="p-3 w-80">{{ user.username }}</div>
       </div>
       <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">License#</label></div>
+        <div class="p-3 w-80">{{ user.profile.license_number|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">Name</label></div>
         <div class="p-3 w-80">{{ user.profile.real_name }}</div>
       </div>
@@ -52,7 +56,7 @@
       </div>
       <div class="flex flex-row">
         <div class="w-52"><label for="id_oldpassword" class="label">Remarks</label></div>
-        <div class="p-3 w-80">{{ user.profile.bio }}</div>
+        <div class="p-3 w-80">{{ user.profile.bio|handle_none }}</div>
       </div>
       <div class="flex flex-row">
         <div class="w-52"></div>

@@ -13,6 +13,7 @@ from accounts.models import CustomUser, Profile
 from customer.models import Company
 from allauth.account.forms import ChangePasswordForm
 from django.http import HttpResponse
+import csv
 
 
 @login_required
@@ -398,9 +399,11 @@ def stat(request):
 
 def report_period_month_company(request, ayear, amonth, company_id):
     company = Company.objects.filter(id=company_id).first()
-    # print(company)
-    # print(company_id)
-    # company = company_id
+    # 병원 정보가 없으면 에러 메시지 출력
+    if not company:
+        messages.error(request, "Error 301번: 연결된 병원 정보가 없습니다.")
+        return redirect("cust:index")
+
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=company)
         .values(
@@ -444,11 +447,14 @@ def report_period_month_company(request, ayear, amonth, company_id):
         .distinct()
     )
 
+    count_providers = providers.count()
+
     context = {
         "company": company,
         "company_id": company_id,
         "rpms": rpms,
         "count_rpms": count_rpms,
+        "count_providers": count_providers,
         "ayear": ayear,
         "amonth": amonth,
         "providers": providers,
@@ -487,3 +493,35 @@ def report_period_month_company_detail(
     }
 
     return render(request, "cust/report_period_month_company_detail.html", context)
+
+
+def export_csv(request, ayear, amonth, company_id):
+
+    company = Company.objects.filter(id=company_id).first()
+
+    rpms = ReportMaster.objects.filter(
+        ayear=ayear, amonth=amonth, company=company
+    ).order_by("case_id")
+    count_rpms = rpms.count()
+    file_name = f"{ayear}_{amonth}_{company.business_name}.csv"
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{file_name}"'
+
+    writer = csv.writer(response)
+    for rpm in rpms:
+        writer.writerow(
+            [
+                rpm.case_id,
+                rpm.name,
+                rpm.department,
+                rpm.bodypart,
+                rpm.amodality,
+                rpm.readprice,
+                rpm.provider.profile.real_name,
+                rpm.requestdt,
+                rpm.approvedt,
+            ]
+        )
+
+    return response
