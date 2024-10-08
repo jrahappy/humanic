@@ -1,0 +1,24 @@
+{% extends 'cust/base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'cust/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
+  {% include "cust/include_year_month_filter_dashboard.html" %}
+</section>
+<div id="stat_panel" class="col-span-12 w-full">
+  
+  {% include "cust/partial_dashboard.html" %}
+    
+</div>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'cust/aside.html' %}
+	
+{% endblock %}

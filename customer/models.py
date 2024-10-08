@@ -4,6 +4,9 @@ from product.models import Product, Platform
 
 # Create your models here.
 class Company(models.Model):
+    customuser = models.ForeignKey(
+        "accounts.CustomUser", null=True, blank=True, on_delete=models.SET_NULL
+    )
     business_name = models.CharField(max_length=100)
     president_name = models.CharField(max_length=100, null=True, blank=True)
     address = models.CharField(max_length=100, null=True, blank=True)

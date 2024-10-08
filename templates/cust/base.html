@@ -1,0 +1,48 @@
+{% load humanize %}
+{% load static tailwind_tags %} 
+<!doctype html>
+<html data-theme="corporate">
+	<head>
+		<meta charset="utf-8" />
+		<title>Humanrad </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link href="https://fonts.googleapis.com/css?family=Gothic+A1:100,400,700" rel="stylesheet">
+
+        {% tailwind_css %}
+		
+		<!-- svg loader for icons -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/external-svg-loader@1.6.10/svg-loader.min.js"
+			async></script>
+		<script src="//unpkg.com/alpinejs" defer></script>
+		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+	</head>
+    <body class="drawer min-h-screen bg-base-200 lg:drawer-open">
+		{% include 'messages.html' %}
+		<input id="my-drawer" type="checkbox" class="drawer-toggle" />
+		<main class="drawer-content" id="main_area">
+			<div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 p-4 lg:gap-x-12 lg:p-6">
+	
+				{% block header %}
+				{% endblock %}
+	
+				{% block content %}
+				{% endblock %}
+	
+			</div>
+			<dialog id="base_modal" class="modal w-full">
+				
+			</dialog>
+			
+			
+		</main>
+		<!-- You can open the modal using ID.showModal() method -->
+		
+		{% block aside %}
+		{% endblock %}
+    </body>
+</html>

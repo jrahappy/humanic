@@ -27,8 +27,8 @@
 
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
-        <h2 class="card-title">새 문서 작성</h2>
-        <form method="post" action="{% url 'blog:create' %}" enctype="multipart/form-data">
+        <h2 class="card-title">문서 수정</h2>
+        <form method="post" action="{% url 'blog:update' post.id %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="grid grid-cols-2 gap-2">
                 <div class="form-control">

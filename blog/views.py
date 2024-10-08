@@ -24,7 +24,7 @@ def create_post(request):
             print(form.errors)  # Debugging: print any validation errors to the console
     else:
         form = BlogForm()  # Instantiate an empty form for GET requests
-
+        print(form)
     return render(request, "blog/post_form.html", {"form": form})
 
 
@@ -33,19 +33,31 @@ def update_post(request, pk):
     # Safely get the post or return 404 if not found
     post = get_object_or_404(Post, id=pk)
 
-    # Handle form submissions including file uploads
     if request.method == "POST":
-        form = BlogForm(
-            request.POST, request.FILES, instance=post
-        )  # Bind form to the existing post
+        # Bind the form to the existing post
+        form = BlogForm(request.POST, request.FILES, instance=post)
+
+        # Check if the user cleared the file
+        file_clear = request.POST.get("file-clear", False)
+
+        if file_clear:
+            post.file = None  # Clear the file
+            post.save()
+
+        # Check if the form is valid
         if form.is_valid():
-            form.save()  # This will update the existing post instead of creating a new one
-            return redirect("blog:home")  # Redirect after saving
+            form.save()  # Update the post
+            return redirect("blog:home")  # Redirect to home after successful update
+        else:
+            # Handle invalid form and re-render the form with errors
+            return render(
+                request, "blog/update_post_form.html", {"form": form, "post": post}
+            )
     else:
-        # Display the form with the current instance data for editing
+        # Display the form pre-filled with the current post data
         form = BlogForm(instance=post)
 
-    return render(request, "blog/post_form.html", {"form": form, "post": post})
+    return render(request, "blog/update_post_form.html", {"form": form, "post": post})
 
 
 def delete_post(request, pk):

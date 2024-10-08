@@ -1,0 +1,64 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<div class="modal-box card-body w-11/12 max-w-5xl">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div></div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning">Close</button>
+            </form>
+        </div>
+    </div>
+    <div class="flex flex-wrap flex-col gap-4 w-full ">
+        <div class="card bg-neutral text-neutral-content w-full shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">{{ company.business_name }} {{ provider }} {{ amodality }} {{ayear}}년 {{amonth}}월 판독 세부내역</h2>
+                <h2>세부 내역 total:{{ count_rpms }} (최대 1,000개 Record까지만 표시됩니다)</h2>
+            </div>
+        </div>
+        <div class="card bg-base-100  shadow-xl">
+            <div class="card-body">
+                <p class="mb-2">
+                    <table class="table table-sm table-zebra w-1/2 ">
+                        <thead class="bg-gray-300">
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">#</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">병원명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Case ID</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">환자명</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Requested</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Approved</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">소요시간(Hour)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for data in rpms %}
+                            <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ forloop.counter0|add:1 }}</td>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.apptitle }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.case_id }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.equipment }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.requestdt|date:"Y/m/d H/i/s" }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.approvedt|date:"Y/m/d H/i/s" }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.time_to_complete|divide_by_60  }}</td>
+                                
+                            </tr>
+                        {% empty %}
+
+                        {% endfor %}
+
+                            <!-- More people... -->
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+

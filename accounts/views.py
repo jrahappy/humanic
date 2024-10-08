@@ -8,6 +8,7 @@ from allauth.account.views import PasswordChangeView
 from allauth.account.forms import ChangePasswordForm, SignupForm
 from .forms import (
     ProfileForm,
+    CustomSignupForm,
     # CustomPasswordChangeForm,
 )
 
@@ -32,13 +33,15 @@ def profile(request):
 
 def signup(request):
     if request.method == "POST":
-        form = SignupForm(request.POST)
+        # form = SignupForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "User created.")
             return redirect("account_login")
     else:
-        form = SignupForm()
+        # form = SignupForm()
+        form = CustomSignupForm()
 
     return render(request, "accounts/signup.html", {"form": form})
 

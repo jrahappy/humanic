@@ -19,6 +19,7 @@ urlpatterns = [
     path("report/", include("report.urls")),
     path("dogfoot/", include("dogfoot.urls")),
     path("blog/", include("blog.urls")),
+    path("cust/", include("cust.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
