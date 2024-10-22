@@ -194,8 +194,12 @@ def partial_search_provider_t(request):
 
 def index(request):
     # report_filter = ReportFilter(request.GET, queryset=rmaster)
-    report_filter = ReportFilter(request.GET, queryset=ReportMaster.objects.all())
-    filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")
+    report_filter = ReportFilter(
+        request.GET,
+        # queryset=ReportMaster.objects.all().select_related("provider", "company"),
+        queryset=ReportMaster.objects.prefetch_related("provider", "company"),
+    )
+    filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")[0:10]
 
     paginator = Paginator(filtered_qs, 10)
     page = request.GET.get("page")

@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from allauth.account.views import PasswordChangeView
 from allauth.account.forms import ChangePasswordForm, SignupForm
@@ -50,15 +50,45 @@ def user_update(request):
     user = request.user
 
     if request.method == "POST":
-        form = CustomUserChangeForm(request.POST, instance=user)
+        form = ChangePasswordForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, "User updated.")
             return redirect("accounts:profile")
     else:
-        form = CustomUserChangeForm(instance=user)
+        form = ChangePasswordForm(instance=user)
 
     return render(request, "accounts/user_update.html", {"form": form})
+
+
+@login_required
+def password_change(request):
+    if request.method == "POST":
+        form = ChangePasswordForm(user=request.user, data=request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your password was successfully updated!")
+            update_session_auth_hash(request, form.user)
+            return HttpResponse(
+                '<script>window.location.href="%s";</script>'
+                % reverse_lazy("accounts:password_change_done")
+            )  # Redirect to success URL using JavaScript if the form is valid
+
+        else:
+            messages.error(request, "There was an error in your password update.")
+            return render(request, "accounts/password_change.html", {"form": form})
+    else:
+        form = ChangePasswordForm(user=request.user)
+
+    context = {
+        "form": form,
+    }
+    return render(request, "accounts/password_change.html", context)
+
+
+def password_change_done(request):
+    return render(request, "accounts/password_change_done.html")
 
 
 # class CustomPasswordChangeView(PasswordChangeView):

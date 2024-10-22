@@ -1,13 +1,70 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post
-from .forms import BlogForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Sum, Q, F, Func, Avg
+from accounts.models import Profile, CustomUser
+from .models import Post, PostAttachment
+from .forms import BlogForm, PostForm
+
+
+def index(request):
+    posts = (
+        Post.objects.select_related("author")
+        .prefetch_related("postattachment_set")
+        .order_by("-created_at")
+    )
+    context = {"posts": posts}
+    return render(request, "blog/index.html", context)
+
+
+def create_post_admin(request):
+
+    if request.method == "POST":
+        data = request.POST
+
+        post = Post.objects.create(
+            author=CustomUser.objects.get(id=data.get("author")),
+            is_public=data.get("is_public"),
+            # category=data.get("category"),
+            title=data.get("title"),
+            content=data.get("content"),
+        )
+
+        files = request.FILES.getlist("files")
+        print(files)
+
+        for file in files:
+            print(file)
+            PostAttachment.objects.create(post=post, file=file)
+
+        return redirect("blog:index")
+
+    else:
+        ko_kr = Func(
+            "real_name",
+            function="ko_KR.utf8",
+            template='(%(expressions)s) COLLATE "%(function)s"',
+        )
+        authors = Profile.objects.all().order_by(ko_kr.asc())
+        post_form = PostForm()
+
+        return render(
+            request,
+            "blog/post_form_admin.html",
+            {
+                "authors": authors,
+                "user": request.user,
+            },
+        )
 
 
 @login_required
 def home(request):
     user = request.user
-    posts = Post.objects.filter(author=user)
+    posts = (
+        Post.objects.filter(author=user)
+        .select_related("author")
+        .order_by("-created_at")
+    )
     context = {"posts": posts, "user": user, "side_menu": "blog"}
     return render(request, "blog/home.html", context)
 

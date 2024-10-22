@@ -35,7 +35,7 @@
                         <svg
                             data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
                             class="h-5 w-5"></svg>
-                        Customers
+                        고객병의원
                     </summary>
                     <ul>
                         <li>
@@ -45,7 +45,7 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
-                            >List</a>
+                            >목록 보기</a>
                         </li>
                         
                     </ul>
@@ -57,7 +57,7 @@
                         <svg
                             data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
                             class="h-5 w-5"></svg>
-                         Radiologists
+                         판독의사
                     </summary>
                     <ul>
                         <li><a 
@@ -67,9 +67,30 @@
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
 
-                            >List</a></li>
-                       
+                            >목록 보기</a>
+                        </li>
                         
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
+                            class="h-5 w-5"></svg>
+                         게시판
+                    </summary>
+                    <ul>
+                        <li><a 
+                                hx-get="{% url 'blog:index' %}"
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+
+                            >보기</a>
+                        </li>
                     </ul>
                 </details>
             </li>
@@ -79,7 +100,7 @@
                         <svg
                         data-src="https://unpkg.com/heroicons/20/solid/chart-pie.svg"
                         class="h-5 w-5"></svg>
-                        Reports
+                        리포트
                     </summary>
                     <ul>
                         <li><a href="#"

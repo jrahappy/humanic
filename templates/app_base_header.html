@@ -97,7 +97,15 @@
 			<li>
 				<a href="{% url 'accounts:profile' %}">Profile</a>
 			</li>
-			<li><a href="{% url 'accounts:user-update' %}">Credential</a></li>
+			<li>
+				<a 
+				 href="#"
+				 hx-get="{% url 'accounts:password_change' %}"
+				 hx-trigger="click"
+				 hx-target="#main_area"
+				 hx-swap="outerHTML"
+				 >Change Password </a>
+			</li>
 
 			<!-- <li>
 				<a>
