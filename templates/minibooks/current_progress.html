@@ -1,0 +1,21 @@
+{% extends "app_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div hx-get="{% url 'minibooks:current_progress' id %}"
+    hx-trigger="load delay:10s"
+    hx-swap="outerHTML"
+    hx-target="#current_progress"
+    class="w-full col-span-12"
+    id="current_progress"
+>
+    <div class="w-full" >
+        <h1>Progress</h1>
+        <p>Current Progress: {{ current_progress }}</p>
+        <p>Total Rows: {{ total_rows }}</p>
+        <progress class="progress progress-primary w-full" value="{{p_value}}" max="100"></progress>
+
+    </div>
+
+</div>
+{% endblock %}

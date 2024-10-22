@@ -197,6 +197,7 @@ def clean_data(request, id):
                     requestdt = None
                     requestdt_verified = False
                 else:
+                    requestdt = None
                     requestdt_verified = True
         else:
             requestdt = None
@@ -214,6 +215,7 @@ def clean_data(request, id):
                     approvedt = None
                     approvedt_verified = False
                 else:
+                    approvedt = None
                     approvedt_verified = True
         else:
             approvedt = None
@@ -329,6 +331,22 @@ def clean_data(request, id):
 def get_progress(request, id):
     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
     return render(request, "minibooks/progress.html", {"uh": v_uploadhistory})
+
+
+def current_progress(request, id):
+    a_raw = UploadHistory.objects.get(id=id)
+    current_progress = ReportMaster.objects.filter(
+        uploadhistory=id, verified=True
+    ).count()
+    total_rows = ReportMaster.objects.filter(uploadhistory=id).count()
+    data = {
+        "current_progress": current_progress,
+        "total_rows": total_rows,
+        "id": a_raw.id,
+        "p_value": round((current_progress / total_rows) * 100, 2),
+    }
+    # return JsonResponse(data)
+    return render(request, "minibooks/current_progress.html", data)
 
 
 @login_required
@@ -1053,9 +1071,9 @@ def apply_rule_progress(request, magam_id, rule_id):
                 ayear=syear,
                 amonth=smonth,
                 provider=provider.user,
-                is_completed=False,
+                # is_completed=False,
                 is_human_outpatient=False,
-                is_take=True,  # 파견 경우(일산, 보라매병원)
+                is_take=True,  # 파견 경우(일산, 보라매병원) 368 87
             )
 
             count_target_rows = target_rows.count()

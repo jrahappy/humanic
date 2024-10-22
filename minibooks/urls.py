@@ -18,6 +18,7 @@ urlpatterns = [
     ),
     path("dry_run/<int:id>/", views.dry_run, name="dry_run"),
     path("clean_data/<int:id>/", views.clean_data, name="clean_data"),
+    path("current_progress/<int:id>/", views.current_progress, name="current_progress"),
     path("get_progress/<int:id>/", views.get_progress, name="get_progress"),
     path(
         "aggregate_data/<int:upload_history_id>/",

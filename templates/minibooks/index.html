@@ -76,7 +76,8 @@
                                     {% if data.aggregated == False %}
                                       <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화</a>
                                     {% else %}
-                                      <div class="badge badge-{{ data.aggregated|yesno:'success,error' }} text-white">{{ data.aggregated|yesno:'Done,No' }}</div>
+                                    <div class="badge badge-{{ data.aggregated|yesno:'success,error' }} text-white">{{ data.aggregated|yesno:'Done,No' }}</div>
+                                        <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">재통계화</a>
                                       <a 
                                         hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
                                         hx-target="#general_modal" 

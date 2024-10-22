@@ -7,7 +7,7 @@ from django.db.models.functions import ExtractWeekDay
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory
+from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
 from accounts.forms import ProfileForm, CustomPasswordChangeForm
 from accounts.models import CustomUser, Profile
 from customer.models import Company
@@ -88,55 +88,23 @@ def index(request):
     smonth = request.GET.get("smonth")
 
     if not syear or not smonth:
-        # Fetch the latest available record from the database
-        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
-        temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
-        # Check if any records exist in the database
-        if temp_rs:
-            if temp_rs.count() == 2:
-                syear = temp_rs[0].ayear
-                smonth = temp_rs[0].amonth
-                if smonth == "1":
-                    pre_month = "12"
-                    pre_year = temp_rs[0].ayear - 1
-                else:
-                    pre_year = temp_rs[1].ayear
-                    pre_month = temp_rs[1].amonth
-            else:
-                syear = temp_rs[0].ayear
-                smonth = temp_rs[0].amonth
-                pre_year = temp_rs[0].ayear
-                pre_month = temp_rs[0].amonth
+        recent_rs = (
+            MagamMaster.objects.filter(is_opened=True)
+            .order_by("-ayear", "-amonth")
+            .first()
+        )
+        if recent_rs:
+            syear = recent_rs.ayear
+            smonth = recent_rs.amonth
         else:
-            # If no records exist, use the current year and month as fallback
             syear = date.today().year
-            smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
-
+            smonth = str(date.today().month).zfill(2)
     else:
-        # If syear and smonth are provided, ensure proper formatting
         syear = str(syear)
         smonth = str(smonth)
-        if smonth == "1":
-            pre_month = "12"
-            pre_year = temp_rs[0].ayear - 1
-        else:
-            pre_year = temp_rs[0].ayear
-            pre_month = temp_rs[0].amonth
 
-    # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, company=company)
     rs_money = ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
-    # rs_pre = ReportMasterStat.objects.filter(
-    #     ayear=pre_year, amonth=pre_month, company=company
-    # )
-
-    # 휴먼영상만 가져오기
-    # rs_human = (
-    #     rs.filter(company=1)
-    #     .values("amodality")
-    #     .annotate(t_count=Sum("total_count"), t_revenue=Sum("total_revenue"))
-    #     .order_by("amodality")
-    # )
 
     # 병원수 구하기
     cm = (
@@ -184,8 +152,9 @@ def index(request):
         .order_by("-company_total")
     )
 
+    # 월단위 버튼 만들기
     buttons_year_month = (
-        UploadHistory.objects.filter(is_deleted=False)
+        MagamMaster.objects.filter(is_opened=True)
         .values("ayear", "amonth")
         .distinct()
         .order_by("-ayear", "-amonth")
@@ -237,34 +206,52 @@ def partial_dashboard(request):
     smonth = request.GET.get("smonth")
 
     if not syear or not smonth:
-        # Fetch the latest available record from the database
-        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
-        temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
-        # Check if any records exist in the database
-        if temp_rs:
-            if temp_rs.count() == 2:
-                syear = temp_rs[0].ayear
-                smonth = temp_rs[0].amonth
-                if smonth == "1":
-                    pre_month = "12"
-                    pre_year = temp_rs[0].ayear - 1
-                else:
-                    pre_year = temp_rs[1].ayear
-                    pre_month = temp_rs[1].amonth
-            else:
-                syear = temp_rs[0].ayear
-                smonth = temp_rs[0].amonth
-                pre_year = temp_rs[0].ayear
-                pre_month = temp_rs[0].amonth
+        recent_rs = (
+            MagamMaster.objects.filter(is_opened=True)
+            .order_by("-ayear", "-amonth")
+            .first()
+        )
+        if recent_rs:
+            syear = recent_rs.ayear
+            smonth = recent_rs.amonth
         else:
-            # If no records exist, use the current year and month as fallback
             syear = date.today().year
-            smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
-
+            smonth = str(date.today().month).zfill(2)
     else:
-        # If syear and smonth are provided, ensure proper formatting
         syear = str(syear)
         smonth = str(smonth)
+
+    # if not syear or not smonth:
+    #     # Fetch the latest available record from the database
+    #     # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
+    #     # 월단위 버튼 만들기
+
+    #     temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
+    #     # Check if any records exist in the database
+    #     if temp_rs:
+    #         if temp_rs.count() == 2:
+    #             syear = temp_rs[0].ayear
+    #             smonth = temp_rs[0].amonth
+    #             if smonth == "1":
+    #                 pre_month = "12"
+    #                 pre_year = temp_rs[0].ayear - 1
+    #             else:
+    #                 pre_year = temp_rs[1].ayear
+    #                 pre_month = temp_rs[1].amonth
+    #         else:
+    #             syear = temp_rs[0].ayear
+    #             smonth = temp_rs[0].amonth
+    #             pre_year = temp_rs[0].ayear
+    #             pre_month = temp_rs[0].amonth
+    #     else:
+    #         # If no records exist, use the current year and month as fallback
+    #         syear = date.today().year
+    #         smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
+
+    # else:
+    #     # If syear and smonth are provided, ensure proper formatting
+    #     syear = str(syear)
+    #     smonth = str(smonth)
 
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, company=company)
@@ -381,8 +368,9 @@ def stat(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
 
+    # 월단위 버튼 만들기
     buttons_year_month = (
-        UploadHistory.objects.filter(is_deleted=False)
+        MagamMaster.objects.filter(is_opened=True)
         .values("ayear", "amonth")
         .distinct()
         .order_by("-ayear", "-amonth")
