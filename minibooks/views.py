@@ -121,7 +121,7 @@ def clean_data(request, id):
     messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
     # 휴먼외래, 차감대상, 일반으로 구분하는 정산방법에 대한 구분임 (임시)
-    v_platform = v_uploadhistory.platform
+    # v_platform = v_uploadhistory.platform
     # print(v_platform)
     ayear = v_uploadhistory.ayear
     amonth = v_uploadhistory.amonth
@@ -167,16 +167,23 @@ def clean_data(request, id):
             amodality = equipment
 
         # Platform 처리
-        if v_platform == "HPACS":
-            # Platform 테이블의 ID  값을 넣음
-            is_human_outpatient = True
-            is_take = False
-            platform_verified = True
+        # if v_platform == "HPACS":
+        #     # Platform 테이블의 ID  값을 넣음
+        #     is_human_outpatient = True
+        #     is_take = False
+        #     platform_verified = True
 
-        elif v_platform == "TAKE":
+        # elif v_platform == "TAKE":
+        #     is_human_outpatient = False
+        #     is_take = True
+        #     platform_verified = True
+
+        if data.apptitle == "휴먼영상의학센터":
+            is_human_outpatient = True
+            is_take = False  # 차감대상. False면 차감대상이 아님
+        else:
             is_human_outpatient = False
-            is_take = True
-            platform_verified = True
+            is_take = False  # 차감대상. False면 차감대상이 아님
 
         # Request Date 처리
         if data.requestdttm:
@@ -216,7 +223,7 @@ def clean_data(request, id):
             [
                 company_verified,
                 radiologist_verified,
-                platform_verified,
+                # platform_verified,
                 requestdt_verified,
                 approvedt_verified,
             ]
@@ -271,11 +278,11 @@ def clean_data(request, id):
                 unverified_message += (
                     f"Radiologist verification failed for data id: {data.id}\n"
                 )
-            if not platform_verified:
-                print(f"Platform verification failed for data id: {data.id}")
-                unverified_message += (
-                    f"Platform verification failed for data id: {data.id}\n"
-                )
+            # if not platform_verified:
+            #     print(f"Platform verification failed for data id: {data.id}")
+            #     unverified_message += (
+            #         f"Platform verification failed for data id: {data.id}\n"
+            #     )
             if not requestdt_verified:
                 print(f"Request date verification failed for data id: {data.id}")
                 unverified_message += (
