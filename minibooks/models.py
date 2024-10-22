@@ -94,6 +94,8 @@ class ReportMaster(models.Model):
     ecode = models.CharField(max_length=100, null=True, blank=True)
     sid = models.CharField(max_length=100, null=True, blank=True)
     patientid = models.CharField(max_length=100, null=True, blank=True)
+    human_paid_all = models.CharField(max_length=10, null=True, blank=True)
+    is_human_paid = models.BooleanField(default=False)
 
     ayear = models.CharField(max_length=5, null=True, blank=True)
     amonth = models.CharField(max_length=2, null=True, blank=True)

@@ -63,10 +63,10 @@
                                       {% else %}
                                         <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Done,No' }}</div>
                                       {% endif %}
-
                                   </td>
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.verified == False %}
+                                        <a href="{% url 'minibooks:dry_run' data.id %}" class="btn btn-info btn-sm">Dry run</a>
                                         <a href="{% url 'minibooks:clean_data' data.id %}" class="btn btn-info btn-sm">정규화</a>
                                       {% else %}
                                         <div class="badge badge-{{ data.verified|yesno:'success,error' }} text-white">{{ data.verified|yesno:'Done,No' }}</div>

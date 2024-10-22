@@ -16,6 +16,7 @@ urlpatterns = [
         views.snippet_reportmaster,
         name="snippet_reportmaster",
     ),
+    path("dry_run/<int:id>/", views.dry_run, name="dry_run"),
     path("clean_data/<int:id>/", views.clean_data, name="clean_data"),
     path("get_progress/<int:id>/", views.get_progress, name="get_progress"),
     path(

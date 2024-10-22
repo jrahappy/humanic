@@ -362,6 +362,7 @@ def create_reportmaster(request, id):
             i += 1
         else:
             try:
+                print(i)
                 if platform == "ONPACS":
                     ReportMaster.objects.create(
                         apptitle=str(data[0]).strip() if data[0] else "",
@@ -390,6 +391,7 @@ def create_reportmaster(request, id):
                         ecode=str(data[19]).strip() if data[19] else "",
                         sid=str(data[20]).strip() if data[20] else "",
                         patientid=str(data[21]).strip() if data[21] else "",
+                        human_paid_all=str(data[22]).strip() if data[22] else "",
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
                         created_at=date.today(),
@@ -431,7 +433,7 @@ def create_reportmaster(request, id):
                         studydate=data[1],
                         approveddttm=data[2],
                         pacs="HPACS",
-                        platform=humanic_platform,
+                        # platform=humanic_platform,
                         requestdttm=data[4],
                         patientid=data[12],
                         ayear=str(ayear).strip() if ayear else "",
@@ -466,6 +468,41 @@ def create_reportmaster(request, id):
         a_raw,
     )
     return redirect("minibooks:index")
+
+
+def dry_run(request, id):
+    a_raw = UploadHistory.objects.get(id=id)
+    company_list_in_report_master = (
+        ReportMaster.objects.filter(uploadhistory=a_raw)
+        .values_list("apptitle", flat=True)
+        .distinct()
+    )
+    doctor_list_in_report_master = (
+        ReportMaster.objects.filter(uploadhistory=a_raw)
+        .values_list("radiologist", flat=True)
+        .distinct()
+    )
+    no_company_list = []
+    no_doctor_list = []
+
+    for company in company_list_in_report_master:
+        if Company.objects.filter(business_name=company).exists():
+            pass
+        else:
+            no_company_list.append(company)
+
+    for doctor in doctor_list_in_report_master:
+        if Profile.objects.filter(real_name=doctor).exists():
+            pass
+        else:
+            no_doctor_list.append(doctor)
+
+    context = {
+        "no_company_list": no_company_list,
+        "no_doctor_list": no_doctor_list,
+    }
+
+    return render(request, "minibooks/dry_run_import.html", context)
 
 
 def snippet_reportmaster(request, id):

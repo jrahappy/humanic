@@ -1,0 +1,38 @@
+{% load crispy_forms_tags %}
+
+<section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">Dry run results</a>
+            </h2>
+            <div class="modal-action">
+                <form method="dialog">
+                  <!-- if there is a button, it will close the modal -->
+                  <button class="btn">Close</button>
+                </form>
+              </div>
+        </div>
+        <div class="overflow-x-auto overflow-y-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <p>
+                아래 병원들과 판독의들이 존재하지 않습니다.계속 진행하시려면 먼저 이들을 추가하시기 바랍니다.
+            </p>
+            <p>
+                {{ no_company_list}} 
+            </p>
+            <p>
+                {{ no_doctor_list}}
+            </p>
+        
+        </div>
+    </div>
+    <div id="agg_detail_modal" class="modal">
+        <div class="modal-box">
+        </div>
+    </div>
+    <div id="bottom_point" class="modal">
+        <div class="modal-box">
+        </div>
+    </div>
+  </section>
+
