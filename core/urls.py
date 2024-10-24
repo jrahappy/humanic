@@ -21,7 +21,6 @@ urlpatterns = [
     path("dogfoot/", include("dogfoot.urls")),
     path("blog/", include("blog.urls")),
     path("cust/", include("cust.urls")),
-    path("ckeditor5/", include("django_ckeditor_5.urls")),
 ]
 
 # Debug toolbar

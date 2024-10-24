@@ -11,14 +11,14 @@
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
             <h2 class="card-title grow">
-                <a class="link-hover link">증명 및 인증서 관리</a>
+                <a class="link-hover link">공지사항 게시판</a>
             </h2>
             <a href="#"
                 hx-get="{% url 'blog:create_admin' %}"
                 hx-trigger="click"
                 hx-target="#main_area"
                 hx-swap="outerHTML"
-                class="btn btn-primary">New Post</a>
+                class="btn btn-primary">새 공지사항 작성</a>
         </div>
     </div>
 </section>  
@@ -31,31 +31,53 @@
    
                         <table class="table">
                             <tr>
-                                <th>작성자</th>
-                                <th>제목</th>
-                                <th>첨부파일</th>
-                                <th>Created At</th>
+                                <th>ID</th>
+                                <th class="w-2/3    ">제목</th>
+                                <th>게시일</th>
                                 <th>Actions</th>
                             </tr>
                             {% for post in posts %}
                                 <tr>
-                                    <td>{{ post.author }}</td>
+                                    <td>{{ post.id }}</td>
                                     <td>{{ post.title }}</td>
-                                    <td>{{ post.afile.name|filename }}</td>
-                                    <td>{{ post.created_at }}</td>
-                                    <td>
+                                    <td>{{ post.created_at|date:"Y-m-d" }}</td>
+                                    <td class="flex flex-row gap-2">
                                         <a 
-                                            class="btn" 
+                                            class="btn btn-sm w-18" 
+                                            hx-get="{% url 'blog:detail' post.id %}"
+                                            hx-trigger="click"
+                                            hx-target="#main_area"
+                                            hx-swap="outerHTML"
+                                        
+                                        >상세보기</a>
+                                        <a 
+                                            class="btn btn-sm w-18" 
                                             hx-get="{% url 'blog:update' post.id %}"
                                             hx-trigger="click"
                                             hx-target="#main_area"
                                             hx-swap="outerHTML"
                                         
-                                        >Edit</a>
+                                        >수정하기</a>
                                     </td>
                                 </tr>
-                                    
                             {% endfor %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="btn-group">
+                                        {% if posts.has_previous %}
+                                            <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.previous_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">이전</a>
+                                        {% else %}
+                                            <button class="btn" disabled>이전</button>
+                                        {% endif %}
+                                        <span class="btn">{{ posts.number }} / {{ posts.paginator.num_pages }}</span>
+                                        {% if posts.has_next %}
+                                            <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.next_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">다음</a>
+                                        {% else %}
+                                            <button class="btn" disabled>다음</button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
                         </table>
                     
                     </div>

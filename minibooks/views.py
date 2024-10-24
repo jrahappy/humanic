@@ -1098,6 +1098,33 @@ def apply_rule_progress(request, magam_id, rule_id):
                     is_completed=True,
                 )
 
+    # 일반 판독요청을 응급으로 처리한 경우
+    # 이미 판독료 계산이 완료된 경우에만 대상으로 함
+    elif selected_rule == "RGTOER":
+
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
+            is_human_paid=True,
+            is_completed=True,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+
+        # 판독의에게 50% 가산을 해주고 휴먼수수료에서 그만큼을 차감함
+        target_rows.update(
+            pay_to_provider=F("pay_to_provider") * 1.5,
+            pay_to_human=F("pay_to_human") - F("pay_to_provider") * 0.5,
+        )
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
     # 전체: 판독 시간 계산
     elif selected_rule == "RQTOAPV":
 

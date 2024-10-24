@@ -12,99 +12,76 @@
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
             <h2 class="card-title grow">
-                <a class="link-hover link">증명 및 인증서 관리</a>
+                <a class="link-hover link">공지사항 게시판  </a>
             </h2>
             <a href="#"
-                hx-get="{% url 'blog:create' %}"
+                hx-get="{% url 'blog:index' %}"
                 hx-trigger="click"
                 hx-target="#main_area"
                 hx-swap="outerHTML"
-                class="btn btn-primary">New Post</a>
+                class="btn btn-primary">목록 보기</a>
                         
             
         </div>
     </div>
 </section>
 
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0">
-        <h2 class="card-title">새 문서 작성</h2>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12 container">
+    <div class="card-body grow-0 col-span-12 max-w-4xl">
+        <h2 class="card-title">새 공지사항 작성</h2>
         <form method="post" action="{% url 'blog:create_admin' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <h2>Create Post</h2>
-            <div class="grid grid-cols-4 gap-2">
-                <div class="form-control col-span-2">
-                    <label class="label">
-                        <span class="label-text">Title</span>
-                    </label>
-                    <input class="input input-sm input-bordered" name="title">
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Author</span>
-                    </label>
-                    <select name="author" class="select select-sm select-bordered">
-                        {% for author in authors %}
-                            <option value="{{ author.id }}">{{ author }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">공개</span>
-                    </label>
-                    <input name="is_public" value="False" type="checkbox" checked="checked" class="checkbox" />
-                </div>
-                <div class="form-control col-span-4">
-                    <label class="label">
-                        <span class="label-text">내용</span>
-                    </label>
-                    <input type="input" name="content" class="input input-sm input-bordered" />
-                </div>
-                <div class="form-control col-span-4">
-                    <label class="label">
-                        <span class="label-text">Attachments</span>
-                    </label>
-                    <input type="file" name="files" multiple class="file-input file-input-sm file-input-bordered w-full max-w-xs" />
-                </div>
-            </div>
+            {{ form.media }}
             
-            <!-- Render PostAttachment formset for file uploads -->
-            <div class="flex flex-row justify-between gap-2">
-                <div class="flex gap-2">
-                  <div class="form-control w-32">
-                    <button class="btn btn-primary" type="submit">Save</button>
-                    
+            <div class="grid grid-cols-4 gap-2">
+              <!-- Title Field -->
+              <div class="col-span-3">
+                  <label class="label">
+                      <span class="label-text">제목</span>
+                  </label>
+                  {% render_field form.title class="input input-sm input-bordered w-full" %}
+                  {% if form.title.errors %}
+                      <p class="text-red-500 text-xs italic">{{ form.title.errors.0 }}</p> <!-- Display the first error -->
+                  {% endif %}
+              </div>
+              <!-- Public Checkbox -->
+              <div class="">
+                  <label class="label">
+                      <span class="label-text">공개여부</span>
+                  </label>
+                  <div class="flex items-center px-2">
+                      {% render_field form.is_public class="checkbox checkbox-sm" %}
+                      <span class="ml-2">공개</span>
                   </div>
-                  <div class="form-control w-32">
-                    <a class="btn"  hx-get="{% url 'blog:home' %}" hx-target="#main_area" hx-swap="outerHTML" type="submit">Cancel</a>
-                  </div>
-                </div>
-                  
-                {% if post %}
-                <div class="form-control">
-                    <a class="btn btn-error text-white" onclick="confirm_modal.showModal()">Delete</a>
-                </div>
-                
-                {% endif %}
+              </div>
+          </div>
+          
+          <div class="grid grid-cols-4 gap-2">
+            <div class="form-control col-span-4">
+              <label class="label">
+                <span class="label-text">내용</span>
+              </label>
+              {% render_field form.content class="textarea" %}
             </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2 mt-4">
+            <div class="form-control col-span-4">
+              <input 
+                type="file" 
+                name="attachments" 
+                id="attachments" 
+                class="file-input file-input-bordered w-full max-w-xs" multiple>
+            </div>
+          </div>
+          <div class="grid grid-cols-4 gap-2 mt-4">
+            <div class="form-control col-span-1">
+              <button type="submit" class="btn btn-primary w-40">저장</button>
+            </div>
+          </div>
         </form>
-        
     </div>
 </section>
-<dialog id="confirm_modal" class="modal">
-  {% if post %}
-    <form method="get" action="{% url 'blog:delete' post.id %}">
-  {% endif %}
-    <div class="modal-box">
-        <p>Are you sure you want to delete this post?</p>
-        <div class="modal-action">
-            <button class="btn" @click.hide.modal(#confirm_modal)>Cancel</button>
-            <button class="btn btn-error" type="submit">Delete</button>
-        </div>
-    </div>
-  </form>
-</dialog>
   
 {% endblock %}
 

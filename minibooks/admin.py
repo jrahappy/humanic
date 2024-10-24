@@ -12,9 +12,12 @@ from .models import (
 class ReportMasterAdmin(admin.ModelAdmin):
     list_display = [
         "apptitle",
+        "name",
         "radiologist",
+        "readprice",
+        "human_paid_all",
     ]
-    search_fields = ["apptitle", "radiologist"]
+    search_fields = ["apptitle", "radiologist", "name"]
 
 
 admin.site.register(ReportMaster, ReportMasterAdmin)
@@ -24,14 +27,13 @@ class UploadHistoryAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "name",
-        "platform",
         "imported",
         "verified",
         "aggregated",
         "is_deleted",
         "created_at",
     ]
-    search_fields = ["name", "platform"]
+    search_fields = ["name"]
 
 
 admin.site.register(UploadHistory, UploadHistoryAdmin)

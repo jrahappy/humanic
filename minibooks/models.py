@@ -163,7 +163,7 @@ class ReportMasterStat(models.Model):
     verified = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.ayear}-{self.amonth} {self.provider} {self.company} {self.platform} {self.amodality}"
+        return f"{self.ayear}-{self.amonth} {self.provider} {self.company} {self.amodality}"
 
     class Meta:
         db_table = "reportmasterstat"

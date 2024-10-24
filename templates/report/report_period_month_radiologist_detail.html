@@ -49,6 +49,7 @@
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">환자명</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">매출</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독료</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Requested</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Approved</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">소요시간(Hour)</th>
@@ -63,7 +64,9 @@
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.case_id }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.equipment }}</td>
+                                
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.readprice|floatformat:0|intcomma }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.pay_to_provider|floatformat:0|intcomma }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.requestdt|date:"Y/m/d H/i/s" }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.approvedt|date:"Y/m/d H/i/s" }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.time_to_complete|divide_by_60  }}</td>

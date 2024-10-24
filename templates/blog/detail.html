@@ -1,13 +1,111 @@
-{% extends "app_base.html" %}
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+{% load widget_tweaks %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
 
 {% block content %}
-    <h1>New Post</h1>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">공지사항 게시판  </a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'blog:index' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">돌아가기</a>
+                        
+            
+        </div>
+    </div>
+</section>
 
-    <p>{{ post.title }}</p>
-    <p>{{ post.content }}</p>
-    <p>{{ post.author }}</p>
-    <p>{{ post.created_at }}</p>
-    <p>{{ post.updated_at }}</p>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0 col-span-12 max-w-4xl">
+        <h2 class="card-title">공지사항 내용 보기</h2>
+        <div class="grid grid-cols-4 gap-2 mt-4">
+            <!-- Title Field -->
+            <div class="col-span-3">
+                <label class="label">
+                    <span class="label-text">제목</span>
+                </label>
+                <div class="border bg-gray-100 p-2">{{ post.title }}</div>
+            </div>
+            <div class="">
+                <label class="label">
+                    <span class="label-text">공개여부</span>
+                </label>
+                <div class="border bg-gray-100 flex items-center p-2">
+                    {% if post.is_public %}
+                        
+                        <span class="ml-2">공개 상태</span>
+                    {% else %}
+                        
+                        <span class="ml-2">비공개 상태</span>
+                    {% endif %}
 
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-4 gap-2 mt-4">
+            <div class="col-span-4">
+                <label class="label">
+                    <span class="label-text">내용</span>
+                </label>
+            </div>
+            <div class="col-span-4 border bg-gray-100 min-h-48 p-2 ">
+                {{ post.content|safe }}
+            </div>
+        </div>
 
+        <div class="grid grid-cols-4 gap-2 mt-4">
+            <div class="form-control col-span-4">
+                <label class="label">
+                    <span class="label-text">첨부파일(들)</span>
+                </label>
+                <div class="flex flex-row gap-2 ">
+                {% if post_attachments %}
+                {% for post_attachment in post_attachments %}
+
+                        <a href="{{ post_attachment.file.url }}" class="link px-2" target="_blank">
+                            {{ post_attachment.file.name|filename }}
+                        </a>
+                    
+                {% endfor %}
+                {% else %}
+                    <div class="border bg-gray-100 p-2 w-full   ">첨부파일 없음</div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mt-4">
+            <div class="form-control col-span-1">
+                <a type="link" class="btn btn-primary w-40"
+                    hx-get="{% url 'blog:update' post.id %}"
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+
+                >수정하기</a>
+            </div>
+        </div>
+    </div>
+</section>
+  
 {% endblock %}
+
+
+{% block aside %}
+
+    {% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
