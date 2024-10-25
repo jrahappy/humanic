@@ -15,10 +15,13 @@
             <h2 class="card-title grow ">
                 <a class="link-hover link">리포트 찾기</a>
             </h2>
-            <form>
+            <form method="get">
             <div class="flex flex-row gap-2 ">
-                {{ filter.form|crispy }}
-                <button type="submit" class="btn btn-primary content-stretch mt-6 w-24">검색</button>
+              <label class="input input-bordered flex items-center gap-2">
+                <input type="text" class="grow w-80" placeholder="case_id 또는 환자 성명" name="search"  value="{{ search }}" />
+               
+                <button type="submit" class="btn btn-primary">검색</button>
+              </label>
             </div>
             </form>
         </div>
@@ -40,6 +43,11 @@
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독의</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독의ID</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">readprice</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">고객부담</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">휴먼부담</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독료</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">수수료</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Requested</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Approved</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Verified</th>
@@ -57,6 +65,12 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.radiologist }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.provider %}{{ data.provider }}{% else %}{% endif %}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.amodality %}{{ data.amodality }}{% else %}{% endif %}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.readprice %}{{ data.readprice }}{% else %}{% endif %}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.readprice %}{{ data.company_paid }}{% else %}{% endif %}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.human_paid %}<span class="badge badge-error">{{ data.human_paid }}</span>{% else %}{% endif %}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.pay_to_provider %}{{ data.pay_to_provider }}{% else %}{% endif %}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.pay_to_human %}{{ data.pay_to_human }}{% else %}{% endif %}</td>
+                                    
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {% if data.requestdt %}
                                             {{ data.requestdt|date:"Y/m/d H/i/s" }}

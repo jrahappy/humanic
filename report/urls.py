@@ -64,4 +64,5 @@ urlpatterns = [
         views.accounting_month,
         name="accounting_month",
     ),
+    path("chart/", views.chart, name="chart"),
 ]

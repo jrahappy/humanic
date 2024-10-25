@@ -12,6 +12,7 @@ from .filters import ReportFilter
 from django.db.models import Count, Sum, Q, F, Func, Avg
 from django.db.models.functions import Collate
 from django.db import connection
+import plotly.express as px
 from accounts.models import Profile, CustomUser
 from customer.models import Company
 
@@ -194,14 +195,21 @@ def partial_search_provider_t(request):
 
 def index(request):
     # report_filter = ReportFilter(request.GET, queryset=rmaster)
-    report_filter = ReportFilter(
-        request.GET,
-        # queryset=ReportMaster.objects.all().select_related("provider", "company"),
-        queryset=ReportMaster.objects.prefetch_related("provider", "company"),
-    )
-    filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")[0:10]
+    # report_filter = ReportFilter(
+    #     request.GET,
+    #     # queryset=ReportMaster.objects.all().select_related("provider", "company"),
+    #     queryset=ReportMaster.objects.prefetch_related("provider", "company"),
+    # )
+    # filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")[0:10]
+    search_query = request.GET.get("search", "").strip()
+    if search_query:
+        report_qs = ReportMaster.objects.filter(
+            Q(case_id__icontains=search_query) | Q(name__icontains=search_query)
+        )
+    else:
+        report_qs = ReportMaster.objects.all()[0:10]
 
-    paginator = Paginator(filtered_qs, 10)
+    paginator = Paginator(report_qs, 10)
     page = request.GET.get("page")
     try:
         rmaster = paginator.page(page)
@@ -210,7 +218,7 @@ def index(request):
     except EmptyPage:
         rmaster = paginator.page(paginator.num_pages)
 
-    context = {"rmaster": rmaster, "filter": report_filter}
+    context = {"rmaster": rmaster, "search": search_query}
 
     return render(request, "report/index.html", context)
 
@@ -357,6 +365,30 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     )
     # count_rpms = rpms.count()
 
+    stat = ReportMasterStat.objects.filter(provider=radio)
+    x_values = [f"{entry.ayear}-{entry.amonth.zfill(2)}" for entry in stat]
+
+    # Get the modality and total_revenue
+    amodalities = stat.values_list("amodality", flat=True)  # Amodality for each bar
+    total_revenue = stat.values_list("total_revenue", flat=True)  # Y-axis values
+
+    # Create the bar chart with ayear-amonth and amodality on the x-axis
+    fig = px.bar(
+        x=x_values,
+        y=total_revenue,
+        color=amodalities,  # Group by amodality
+        labels={
+            "x": "Year-Month",
+            "y": "Total Revenue",
+            "color": "Modality",
+        },  # Axis labels
+        title="과거 3개원간의 판독매출 흐름",
+        barmode="group",  # Group bars by modality within each month
+    )
+
+    chart = fig.to_html()
+    # Convert the chart to HTML
+
     # 일반 판독금액 합계
     total_by_onsite = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
@@ -401,6 +433,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         "provider": provider,
         "total_by_onsite": total_by_onsite,
         "total_by_amodality": total_by_amodality,
+        "chart": chart,
     }
 
     return render(request, "report/report_period_month_radiologist.html", context)
@@ -591,3 +624,40 @@ def accounting_month(request, ayear, amonth):
     }
 
     return render(request, "report/accounting_month.html", context)
+
+
+def chart(request):
+    # Fetch all records
+    stat = ReportMasterStat.objects.all()
+
+    # Create a list of 'ayear-amonth' for grouping by year and month
+    x_values = [f"{entry.ayear}-{entry.amonth.zfill(2)}" for entry in stat]
+
+    # Get the modality and total_revenue
+    amodalities = stat.values_list("amodality", flat=True)  # Amodality for each bar
+    total_revenue = stat.values_list("total_revenue", flat=True)  # Y-axis values
+
+    # Create the bar chart with ayear-amonth and amodality on the x-axis
+    fig = px.bar(
+        x=x_values,
+        y=total_revenue,
+        color=amodalities,  # Group by amodality
+        labels={
+            "x": "Year-Month",
+            "y": "Total Revenue",
+            "color": "Modality",
+        },  # Axis labels
+        text_auto=True,
+        title="Monthly Revenue by Modality",
+        barmode="group",  # Group bars by modality within each month
+    )
+
+    # Convert the chart to HTML
+    chart = fig.to_html()
+
+    # Pass the chart to the template context
+    context = {
+        "chart": chart,
+    }
+
+    return render(request, "report/chart.html", context)

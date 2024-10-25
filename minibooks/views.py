@@ -1,6 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction, connection
-from django.db.models import Count, Sum, Q
+from django.db.models import (
+    Count,
+    Sum,
+    Q,
+    F,
+    DurationField,
+    ExpressionWrapper,
+    fields,
+    DecimalField,
+)
 from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import MultipleObjectsReturned
@@ -27,6 +36,7 @@ from celery.result import AsyncResult
 from import_export import resources
 from tablib import Dataset
 from datetime import date, timedelta, datetime
+from decimal import Decimal, ROUND_HALF_UP
 import tablib
 import logging
 from utils.base_func import (
@@ -37,7 +47,6 @@ from utils.base_func import (
     get_specialty_choices,
 )
 from utils.models import ChoiceMaster
-from django.db.models import F, DurationField, ExpressionWrapper, fields
 from django.contrib.auth.decorators import login_required
 
 
@@ -1105,16 +1114,74 @@ def apply_rule_progress(request, magam_id, rule_id):
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
+            stat="일응",
+            is_completed=True,
+        )
+        count_target_rows = target_rows.count()
+        i = count_target_rows
+
+        # for row in target_rows:
+        #     provider = row.provider
+        #     fee_rate = provider.profile.fee_rate
+
+        #     row.update(
+        #         human_paid=ExpressionWrapper(
+        #             F("readprice") * 0.5,
+        #             output_field=DecimalField(max_digits=10, decimal_places=0),
+        #         ),
+        #         pay_to_provider=ExpressionWrapper(
+        #             (F("pay_to_provider") + (F("readprice") * 0.5 * fee_rate)),
+        #             output_field=DecimalField(max_digits=10, decimal_places=0),
+        #         ),
+        #         pay_to_human=ExpressionWrapper(
+        #             (F("pay_to_provider") + (F("readprice") * 0.5 * (1 - fee_rate))),
+        #             output_field=DecimalField(max_digits=10, decimal_places=0),
+        #         ),
+        #     )
+        for row in target_rows:
+            provider = row.provider
+            fee_rate = provider.profile.fee_rate
+
+            # Update the row using save() method
+            row.human_paid = ExpressionWrapper(
+                F("readprice") * 0.5,
+                output_field=DecimalField(max_digits=10, decimal_places=0),
+            )
+            row.pay_to_provider = ExpressionWrapper(
+                F("pay_to_provider") + (F("readprice") * 0.5 * fee_rate),
+                output_field=DecimalField(max_digits=10, decimal_places=0),
+            )
+            row.pay_to_human = ExpressionWrapper(
+                F("pay_to_provider") + (F("readprice") * 0.5 * (1 - fee_rate)),
+                output_field=DecimalField(max_digits=10, decimal_places=0),
+            )
+            row.save()
+
+        magam_detail = MagamDetail.objects.create(
+            magammaster=magam,
+            humanrule=rule,
+            affected_rows=count_target_rows,
+            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            created_at=timezone.now(),
+            is_completed=True,
+        )
+
+    # 휴 적용하는 룰임
+    elif selected_rule == "HMPAIDALL":
+        # 이전의 모든 룰적용이 완료된 경우를 대상으로 적용함
+        target_rows = ReportMaster.objects.filter(
+            ayear=syear,
+            amonth=smonth,
             is_human_paid=True,
             is_completed=True,
         )
         count_target_rows = target_rows.count()
         i = count_target_rows
 
-        # 판독의에게 50% 가산을 해주고 휴먼수수료에서 그만큼을 차감함
+        # 고객병원에서는 부담하지 않고 휴먼에서 매출부담을 모두 떠안음.
         target_rows.update(
-            pay_to_provider=F("pay_to_provider") * 1.5,
-            pay_to_human=F("pay_to_human") - F("pay_to_provider") * 0.5,
+            company_paid=0,
+            human_paid=F("readprice"),
         )
         magam_detail = MagamDetail.objects.create(
             magammaster=magam,
@@ -1441,31 +1508,34 @@ def apply_rule_progress(request, magam_id, rule_id):
     elif selected_rule == "UTILITY":
 
         # 해당 PACS 를 사용하는 병원들을 가져온다.
-        target_rows = ReportMaster.objects.all().values("company", "pacs").distinct()
+        # target_rows = ReportMaster.objects.all().values("company", "pacs").distinct()
+        # for row in target_rows:
+        #     # print(row["pacs"], row["company"])
+        #     pacs = row["pacs"]
+        #     if pacs == "ZOLVUE":
+        #         Contract.objects.create(
+        #             company_id=row["company"], service_fee_id=10, is_active=True
+        #         )
+        #     elif pacs == "HPACS":
+        #         Contract.objects.create(
+        #             company_id=row["company"], service_fee_id=10, is_active=True
+        #         )
+        #     elif pacs == "INFINITT":
+        #         Contract.objects.create(
+        #             company_id=row["company"], service_fee_id=2, is_active=True
+        #         )
+        #     else:
+        #         pass
 
-        for row in target_rows:
-            # print(row["pacs"], row["company"])
-            pacs = row["pacs"]
-            if pacs == "ZOLVUE":
-                Contract.objects.create(
-                    company_id=row["company"], service_fee_id=10, is_active=True
-                )
-            elif pacs == "HPACS":
-                Contract.objects.create(
-                    company_id=row["company"], service_fee_id=10, is_active=True
-                )
-            elif pacs == "INFINITT":
-                Contract.objects.create(
-                    company_id=row["company"], service_fee_id=2, is_active=True
-                )
-            else:
-                pass
-
-        i = target_rows.count()
+        # target_rows = ReportMaster.objects.all()
+        # for row in target_rows:
+        #     row.company_paid = row.readprice
+        #     row.save()
+        # i = target_rows.count()
+        return HttpResponse("Utility function is executed.")
 
     else:
         pass
-
     context = {
         "i": i,
     }

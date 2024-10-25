@@ -69,12 +69,27 @@ class ReportMaster(models.Model):
     studydescription = models.CharField(max_length=100, null=True, blank=True)
     imagecount = models.IntegerField(null=True, blank=True, default=0)
     accessionnumber = models.CharField(max_length=100, null=True, blank=True)
+
+    # 응급, 일반, 일응 3가지로 구분
     stat = models.CharField(max_length=100, null=True, blank=True)  # Emergency, Routine
 
+    # 전체 판독료 매출액(병원이 지불하는 금액)
     readprice = models.FloatField(null=True, blank=True, default=0)
+
+    # 일반적인 경우에는 병원이 지불하는 금액
+    company_paid = models.FloatField(null=True, blank=True, default=0)
+
+    # 휴먼에서 부담하기로 한 금액
+    # 일반요청이 지연되어 휴먼에서 가산금을 부담하여 판독을 요청한 경우의 금액
+    # STAT 칸의 '일응', 휴먼 칸의 "휴" 표시가 있는 경우에만 해당
+    human_paid = models.FloatField(null=True, blank=True, default=0)
+
     reader = models.CharField(max_length=100, null=True, blank=True)
     approver = models.CharField(max_length=100, null=True, blank=True)
+
+    # 판독의 성명
     radiologist = models.CharField(max_length=100, null=True, blank=True)
+    # 판독의 ID(DBMS에서 자동부여)
     provider = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True
     )  # provider
@@ -85,9 +100,6 @@ class ReportMaster(models.Model):
     approvedt = models.DateTimeField(null=True, blank=True)
 
     pacs = models.CharField(max_length=100, null=True, blank=True)
-    # platform = models.ForeignKey(
-    #     Platform, on_delete=models.SET_NULL, null=True, blank=True
-    # )  # platform
     requestdttm = models.CharField(max_length=100, null=True, blank=True)
     requestdt = models.DateTimeField(null=True, blank=True)
 
@@ -99,6 +111,8 @@ class ReportMaster(models.Model):
 
     ayear = models.CharField(max_length=5, null=True, blank=True)
     amonth = models.CharField(max_length=2, null=True, blank=True)
+    # 해당월의 마지막 날짜를 저장. 통계자료를 만들때 사용함(좀 더 생각해봄)
+    # adate = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     time_to_complete = models.IntegerField(
         null=True, blank=True, default=0
@@ -130,6 +144,9 @@ class ReportMaster(models.Model):
     is_locked = models.BooleanField(default=False)  # 정산완료후 회계적으로 잠금처리
     is_human_outpatient = models.BooleanField(default=False)  # 외래여부
     is_take = models.BooleanField(default=False)  # 차감대상여부
+    is_rework = models.BooleanField(
+        default=False
+    )  # 재작업여부(고객이 요청한 경우를 표시)
 
     def __str__(self):
         return self.case_id if self.case_id else "No Case ID"
@@ -188,6 +205,13 @@ class ReportMasterPerformance(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+class ReportMasterComment(models.Model):
+    reportmaster = models.ForeignKey(ReportMaster, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class MagamMaster(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, verbose_name="작업자"
@@ -197,7 +221,12 @@ class MagamMaster(models.Model):
     target_rows = models.IntegerField(default=0)
     completed_rows = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # 정산과정을 모두 마친 상태
     is_completed = models.BooleanField(default=False)
+    # 검증이 완료된 상태로 더 이상의 수정이 불가능한 상태로 만듬
+    is_locked = models.BooleanField(default=False)
+    # 판독의/병원 고객들의 접근을 통제하기 위한 상태
     is_opened = models.BooleanField(default=False)
 
     def __str__(self):
