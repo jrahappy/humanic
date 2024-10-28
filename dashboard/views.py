@@ -500,14 +500,13 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     else:
         pivot = pd.pivot_table(
             df,
-            index=["company__business_name", "amodality"],
+            index=["company__business_name"],
+            columns=["amodality"],
             values=[
-                "r_total_human",
                 "r_total_provider",
                 "r_total_cases",
             ],
             aggfunc={
-                "r_total_human": "sum",
                 "r_total_provider": "sum",
                 "r_total_cases": "sum",
             },
@@ -515,11 +514,15 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             margins_name="Total",
         )
         # Format the values
-        pivot["r_total_human"] = pivot["r_total_human"].apply(lambda x: f"{x:,.0f}")
-        pivot["r_total_provider"] = pivot["r_total_provider"].apply(
-            lambda x: f"{x:,.0f}"
+        pivot["r_total_provider"] = (
+            pivot["r_total_provider"]
+            .fillna(0)
+            .astype(int)
+            .applymap(lambda x: f"{x:,.0f}")
         )
-        pivot["r_total_cases"] = pivot["r_total_cases"].apply(lambda x: f"{x:,.0f}")
+        pivot["r_total_cases"] = (
+            pivot["r_total_cases"].fillna(0).astype(int).applymap(lambda x: f"{x:,.0f}")
+        )
 
         pivot_html = pivot.to_html(classes="table table-zebra table-sm table-hover")
 
