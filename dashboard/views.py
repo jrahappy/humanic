@@ -494,6 +494,35 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         .order_by("company__business_name", "amodality")
     )
 
+    df = pd.DataFrame(rpms)
+    if df.empty:
+        pivot_html = None
+    else:
+        pivot = pd.pivot_table(
+            df,
+            index=["company__business_name", "amodality"],
+            values=[
+                "r_total_human",
+                "r_total_provider",
+                "r_total_cases",
+            ],
+            aggfunc={
+                "r_total_human": "sum",
+                "r_total_provider": "sum",
+                "r_total_cases": "sum",
+            },
+            margins=True,
+            margins_name="Total",
+        )
+        # Format the values
+        pivot["r_total_human"] = pivot["r_total_human"].apply(lambda x: f"{x:,.0f}")
+        pivot["r_total_provider"] = pivot["r_total_provider"].apply(
+            lambda x: f"{x:,.0f}"
+        )
+        pivot["r_total_cases"] = pivot["r_total_cases"].apply(lambda x: f"{x:,.0f}")
+
+        pivot_html = pivot.to_html(classes="table table-zebra table-sm table-hover")
+
     # 일반 판독금액 합계
     total_by_onsite = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
@@ -537,6 +566,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         "provider": provider,
         "total_by_onsite": total_by_onsite,
         "total_by_amodality": total_by_amodality,
+        "pivot_html": pivot_html,
     }
 
     return render(request, "dashboard/report_period_month_radiologist.html", context)
