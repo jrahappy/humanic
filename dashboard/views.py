@@ -12,6 +12,8 @@ from accounts.forms import ProfileForm, CustomPasswordChangeForm
 from accounts.models import CustomUser, Profile
 from allauth.account.forms import ChangePasswordForm
 from django.http import HttpResponse
+import pandas as pd
+import plotly.express as px
 
 
 @login_required
@@ -78,14 +80,6 @@ def index(request):
     if user.is_staff:
         return redirect("briefing:index")
 
-    # check_profile = Profile.objects.get(user=user)
-    # if not check_profile.license_number:
-    #     messages.error(request, "의사면허, 세부전공 정보 업데이트를 요청드립니다.")
-
-    # if user.last_login is None or user.last_login <= user.date_joined:
-    #     messages.error(request, "최초 로그인 시 비밀번호 변경을 요청드립니다.")
-    #     return redirect("dashboard:password_change")
-
     syear = request.GET.get("syear")
     smonth = request.GET.get("smonth")
 
@@ -105,48 +99,53 @@ def index(request):
         syear = str(syear)
         smonth = str(smonth)
 
-    # if not syear or not smonth:
-    #     # Fetch the latest available record from the database
-    #     # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
-    #     temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
-    #     # Check if any records exist in the database
-    #     if temp_rs:
-    #         if temp_rs.count() == 2:
-    #             syear = temp_rs[0].ayear
-    #             smonth = temp_rs[0].amonth
-    #             if smonth == "1":
-    #                 pre_month = "12"
-    #                 pre_year = temp_rs[0].ayear - 1
-    #             else:
-    #                 pre_year = temp_rs[1].ayear
-    #                 pre_month = temp_rs[1].amonth
-    #         else:
-    #             syear = temp_rs[0].ayear
-    #             smonth = temp_rs[0].amonth
-    #             pre_year = temp_rs[0].ayear
-    #             pre_month = temp_rs[0].amonth
-    #     else:
-    #         # If no records exist, use the current year and month as fallback
-    #         syear = date.today().year
-    #         smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
-
-    # else:
-    #     # If syear and smonth are provided, ensure proper formatting
-    #     syear = str(syear)
-    #     smonth = str(smonth)
-    #     if smonth == "1":
-    #         pre_month = "12"
-    #         pre_year = temp_rs[0].ayear - 1
-    #     else:
-    #         pre_year = temp_rs[0].ayear
-    #         pre_month = temp_rs[0].amonth
-
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, provider=user)
     rs_money = ReportMaster.objects.filter(ayear=syear, amonth=smonth, provider=user)
-    # rs_pre = ReportMasterStat.objects.filter(
-    #     ayear=pre_year, amonth=pre_month, provider=user
-    # )
+
+    # 2024년 그래프
+    stat = ReportMasterStat.objects.filter(provider=user)
+    stat_agg_by_amodality = (
+        stat.values("ayear", "amonth", "amodality")
+        .annotate(total_revenue=Sum("total_revenue"))
+        .order_by("amodality")
+    )
+    x_values = [
+        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+        for entry in stat_agg_by_amodality
+    ]
+
+    # Get the modality and total_revenue
+    amodalities = stat_agg_by_amodality.values_list(
+        "amodality", flat=True
+    )  # Amodality for each bar
+    total_revenue = stat_agg_by_amodality.values_list(
+        "total_revenue", flat=True
+    )  # Y-axis values
+
+    # Create the bar chart with ayear-amonth and amodality on the x-axis
+    fig = px.bar(
+        x=x_values,
+        y=total_revenue,
+        color=amodalities,  # Group by amodality
+        labels={
+            "x": "Year-Month",
+            "y": "Total Revenue",
+            "color": "Modality",
+        },
+        title="2024년",
+        barmode="group",  # Group bars by modality within each month
+    )
+
+    # Use `bargap` to adjust bar spacing, not `width`
+    fig.update_layout(
+        bargap=0.2,  # Adjust space between grouped bars
+        width=800,  # Set the overall plot width in pixels
+        height=600,  # Set the overall plot height in pixels
+    )
+
+    chart = fig.to_html()
+    # Convert the chart to HTML
 
     # 휴먼영상만 가져오기
     rs_human = (
@@ -236,6 +235,7 @@ def index(request):
         "buttons_year_month": buttons_year_month,
         "rs_weekday": rs_weekday,
         "side_menu": "dashboard",
+        "chart": chart,
     }
 
     return render(request, "dashboard/index.html", context)

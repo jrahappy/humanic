@@ -366,11 +366,23 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     # count_rpms = rpms.count()
 
     stat = ReportMasterStat.objects.filter(provider=radio)
-    x_values = [f"{entry.ayear}-{entry.amonth.zfill(2)}" for entry in stat]
+    stat_agg_by_amodality = (
+        stat.values("ayear", "amonth", "amodality")
+        .annotate(total_revenue=Sum("total_revenue"))
+        .order_by("amodality")
+    )
+    x_values = [
+        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+        for entry in stat_agg_by_amodality
+    ]
 
     # Get the modality and total_revenue
-    amodalities = stat.values_list("amodality", flat=True)  # Amodality for each bar
-    total_revenue = stat.values_list("total_revenue", flat=True)  # Y-axis values
+    amodalities = stat_agg_by_amodality.values_list(
+        "amodality", flat=True
+    )  # Amodality for each bar
+    total_revenue = stat_agg_by_amodality.values_list(
+        "total_revenue", flat=True
+    )  # Y-axis values
 
     # Create the bar chart with ayear-amonth and amodality on the x-axis
     fig = px.bar(
@@ -381,9 +393,16 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             "x": "Year-Month",
             "y": "Total Revenue",
             "color": "Modality",
-        },  # Axis labels
+        },
         title="과거 3개원간의 판독매출 흐름",
         barmode="group",  # Group bars by modality within each month
+    )
+
+    # Use `bargap` to adjust bar spacing, not `width`
+    fig.update_layout(
+        bargap=0.2,  # Adjust space between grouped bars
+        width=800,  # Set the overall plot width in pixels
+        height=600,  # Set the overall plot height in pixels
     )
 
     chart = fig.to_html()
@@ -629,13 +648,24 @@ def accounting_month(request, ayear, amonth):
 def chart(request):
     # Fetch all records
     stat = ReportMasterStat.objects.all()
-
+    stat_agg_by_amodality = (
+        stat.values("ayear", "amonth", "amodality")
+        .annotate(total_revenue=Sum("total_revenue"))
+        .order_by("amodality")
+    )
     # Create a list of 'ayear-amonth' for grouping by year and month
-    x_values = [f"{entry.ayear}-{entry.amonth.zfill(2)}" for entry in stat]
+    x_values = [
+        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+        for entry in stat_agg_by_amodality
+    ]
 
     # Get the modality and total_revenue
-    amodalities = stat.values_list("amodality", flat=True)  # Amodality for each bar
-    total_revenue = stat.values_list("total_revenue", flat=True)  # Y-axis values
+    amodalities = stat_agg_by_amodality.values_list(
+        "amodality", flat=True
+    )  # Amodality for each bar
+    total_revenue = stat_agg_by_amodality.values_list(
+        "total_revenue", flat=True
+    )  # Y-axis values
 
     # Create the bar chart with ayear-amonth and amodality on the x-axis
     fig = px.bar(
@@ -659,5 +689,5 @@ def chart(request):
     context = {
         "chart": chart,
     }
-
+    # context = {}
     return render(request, "report/chart.html", context)
