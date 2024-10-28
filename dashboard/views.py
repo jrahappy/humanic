@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponse
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Avg
 from django.db.models.functions import ExtractWeekDay
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -14,6 +14,7 @@ from allauth.account.forms import ChangePasswordForm
 from django.http import HttpResponse
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 
 @login_required
@@ -103,11 +104,11 @@ def index(request):
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, provider=user)
     rs_money = ReportMaster.objects.filter(ayear=syear, amonth=smonth, provider=user)
 
-    # 2024년 그래프
-    stat = ReportMasterStat.objects.filter(provider=user)
+    # 년도별 그래프 자료
+    stat = ReportMaster.objects.filter(ayear=syear, provider=user)
     stat_agg_by_amodality = (
         stat.values("ayear", "amonth", "amodality")
-        .annotate(total_revenue=Sum("total_revenue"))
+        .annotate(total_revenue=Sum("pay_to_provider"))
         .order_by("amodality")
     )
     x_values = [
@@ -123,6 +124,27 @@ def index(request):
         "total_revenue", flat=True
     )  # Y-axis values
 
+    # # Calculate monthly total pay_to_provider for each provider
+    # monthly_totals = (
+    #     ReportMaster.objects.filter(ayear=syear)
+    #     .values("ayear", "amonth", "provider")
+    #     .annotate(total_provider_pay=Sum("pay_to_provider"))
+    #     .order_by("ayear", "amonth", "provider")
+    # )
+
+    # # Calculate the monthly average pay_to_provider across all providers
+    # monthly_avg = (
+    #     monthly_totals.values("ayear", "amonth")
+    #     .annotate(avg_provider_pay=Avg("total_provider_pay"))
+    #     .order_by("ayear", "amonth")
+    # )
+
+    # # Extract the x-axis values (Year-Month) and average revenue values for all users
+    # avg_x_values = [
+    #     f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}" for entry in monthly_avg
+    # ]
+    # avg_values = [entry["avg_revenue"] for entry in monthly_avg]
+
     # Create the bar chart with ayear-amonth and amodality on the x-axis
     fig = px.bar(
         x=x_values,
@@ -137,8 +159,19 @@ def index(request):
         barmode="group",  # Group bars by modality within each month
     )
 
+    # Add a line for average monthly revenue
+    # fig.add_trace(
+    #     go.Scatter(
+    #         x=avg_x_values,
+    #         y=avg_values,
+    #         mode="lines+markers",
+    #         name="Monthly Average",
+    #         line=dict(color="firebrick", width=2),
+    #     )
+    # )
     # Use `bargap` to adjust bar spacing, not `width`
     fig.update_layout(
+        # barmode="stack",
         bargap=0.2,  # Adjust space between grouped bars
         width=800,  # Set the overall plot width in pixels
         height=600,  # Set the overall plot height in pixels
@@ -347,6 +380,50 @@ def partial_dashboard(request):
         .order_by("weekday")
     )
 
+    # 년도별 그래프 자료
+    stat = ReportMaster.objects.filter(ayear=syear, provider=user)
+    stat_agg_by_amodality = (
+        stat.values("ayear", "amonth", "amodality")
+        .annotate(total_revenue=Sum("pay_to_provider"))
+        .order_by("amodality")
+    )
+    x_values = [
+        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+        for entry in stat_agg_by_amodality
+    ]
+
+    # Get the modality and total_revenue
+    amodalities = stat_agg_by_amodality.values_list(
+        "amodality", flat=True
+    )  # Amodality for each bar
+    total_revenue = stat_agg_by_amodality.values_list(
+        "total_revenue", flat=True
+    )  # Y-axis values
+
+    # Create the bar chart with ayear-amonth and amodality on the x-axis
+    fig = px.bar(
+        x=x_values,
+        y=total_revenue,
+        color=amodalities,  # Group by amodality
+        labels={
+            "x": "Year-Month",
+            "y": "Total Revenue",
+            "color": "Modality",
+        },
+        title="2024년",
+        barmode="group",  # Group bars by modality within each month
+    )
+
+    # Use `bargap` to adjust bar spacing, not `width`
+    fig.update_layout(
+        bargap=0.2,  # Adjust space between grouped bars
+        width=800,  # Set the overall plot width in pixels
+        height=600,  # Set the overall plot height in pixels
+    )
+
+    chart = fig.to_html()
+    # Convert the chart to HTML
+
     context = {
         "cm_total": cm_total,
         "rp_total": rp_total_value,
@@ -360,6 +437,7 @@ def partial_dashboard(request):
         "buttons_year_month": buttons_year_month,
         "rs_weekday": rs_weekday,
         "side_menu": "dashboard",
+        "chart": chart,
     }
 
     return render(request, "dashboard/partial_dashboard.html", context)
