@@ -26,61 +26,45 @@
     <div class="space-y-12">
         <div class="mt-8 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-   
-                        <table class="table">
-                            <tr>
-                                <th>ID</th>
-                                <th class="w-2/3    ">제목</th>
-                                <th>게시일</th>
-                                <th>Actions</th>
-                            </tr>
-                            {% for post in posts %}
-                                <tr>
-                                    <td>{{ post.id }}</td>
-                                    <td>{{ post.title }}</td>
-                                    <td>{{ post.created_at|date:"Y-m-d" }}</td>
-                                    <td class="flex flex-row gap-2">
-                                        <a 
-                                            class="btn btn-sm w-18" 
-                                            hx-get="{% url 'blog:detail' post.id %}"
-                                            hx-trigger="click"
-                                            hx-target="#main_area"
-                                            hx-swap="outerHTML"
-                                        
-                                        >상세보기</a>
-                                        <a 
-                                            class="btn btn-sm w-18" 
-                                            hx-get="{% url 'blog:update' post.id %}"
-                                            hx-trigger="click"
-                                            hx-target="#main_area"
-                                            hx-swap="outerHTML"
-                                        
-                                        >수정하기</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            <tr>
-                                <td colspan="4">
-                                    <div class="btn-group">
-                                        {% if posts.has_previous %}
-                                            <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.previous_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">이전</a>
-                                        {% else %}
-                                            <button class="btn" disabled>이전</button>
-                                        {% endif %}
-                                        <span class="btn">{{ posts.number }} / {{ posts.paginator.num_pages }}</span>
-                                        {% if posts.has_next %}
-                                            <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.next_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">다음</a>
-                                        {% else %}
-                                            <button class="btn" disabled>다음</button>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
+                <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     
-                    </div>
+                    <section class="w-full md:w-2/3 flex flex-col items-start px-8">
+                        {% for post in posts %}
+                        <article class="w-full flex flex-col shadow my-4 mb-4 px-6 gap-2">
+                            <a href="#"
+                                class="text-3xl font-bold hover:text-gray-700 pb-4 cursor-pointer"
+                                hx-get="{% url 'blog:detail' post.id %}"
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                            >{{ post.title }}
+                            </a>
+                            <p class="text-sm text-gray-600">{{ post.created_at|naturaltime }}</p>
+                            <a href="#" class="pb-6">
+                                {{ post.content|safe|truncatechars:200 }}
+                            </a>
+                            <p class="my-4">
+                                <a href="#" class="link text-gray-800 hover:text-black">자세히 보기</a>
+                            </p>
+                        </article>
+                        {% endfor %}
+                    </section>
+                    <section class="w-full md:w-2/3 flex flex-col items-center px-3">
+                        <div class="btn-group">
+                            {% if posts.has_previous %}
+                                <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.previous_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">이전</a>
+                            {% else %}
+                                <button class="btn" disabled>이전</button>
+                            {% endif %}
+                            <span class="btn">{{ posts.number }} / {{ posts.paginator.num_pages }}</span>
+                            {% if posts.has_next %}
+                                <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.next_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">다음</a>
+                            {% else %}
+                                <button class="btn" disabled>다음</button>
+                            {% endif %}
+                        </div>
+                    </section>
+                      
                 </div>
             </div>
         </div>

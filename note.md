@@ -234,6 +234,9 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
             Unknown은 양지병원 원내판독 홍새롬 판독의 일반판독
 
 
+# 10/28/2024 
+    - Python Float 에러에 대해서 Rule에 CEIL 을 수행하도록 해야 함. 현재는 PostgreSQL에서 한 번에 처리했으나 추후에는 Cleaning 혹은 Import 과정에서 처리하는 것이 좋겠음
+
 
 
         

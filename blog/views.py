@@ -33,7 +33,7 @@ def create_post_admin(request):
             files = request.FILES.getlist("attachments")
             for file in files:
                 PostAttachment.objects.create(post=post, file=file)
-            return redirect("blog:index")
+            return redirect("blog:detail", pk=post.id)
         else:
             print(form.errors)
     else:
@@ -103,7 +103,9 @@ def update_post(request, pk):
                     PostAttachment.objects.create(post=post, file=file)
                 return redirect("blog:index")
 
-            return redirect("blog:index")  # Redirect to home after successful update
+            return redirect(
+                "blog:detail", pk=post.id
+            )  # Redirect to home after successful update
         else:
             # Handle invalid form and re-render the form with errors
             context = {

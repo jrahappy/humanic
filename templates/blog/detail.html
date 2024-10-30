@@ -9,6 +9,12 @@
 
 
 {% block content %}
+<style>
+    p {
+        white-space: pre-line;
+        margin-bottom: 0.8rem;
+    }
+</style>
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
@@ -28,44 +34,28 @@
 </section>
 
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0 col-span-12 max-w-4xl">
-        <h2 class="card-title">공지사항 내용 보기</h2>
+    <article class="card-body grow-0 col-span-12 max-w-4xl">
         <div class="grid grid-cols-4 gap-2 mt-4">
             <!-- Title Field -->
-            <div class="col-span-3">
-                <label class="label">
-                    <span class="label-text">제목</span>
-                </label>
-                <div class="border bg-gray-100 p-2">{{ post.title }}</div>
-            </div>
-            <div class="">
-                <label class="label">
-                    <span class="label-text">공개여부</span>
-                </label>
-                <div class="border bg-gray-100 flex items-center p-2">
+            <div class="col-span-4 flex flex-row justify-between">
+                <div class="text-3xl font-bold hover:text-gray-700 pb-4 px-6">{{ post.title }}</div>
+                <div class="flex items-end p-2">
                     {% if post.is_public %}
-                        
                         <span class="ml-2">공개 상태</span>
                     {% else %}
-                        
                         <span class="ml-2">비공개 상태</span>
                     {% endif %}
 
                 </div>
             </div>
         </div>
-        
+        <div class="divider"></div>
         <div class="grid grid-cols-4 gap-2 mt-4">
-            <div class="col-span-4">
-                <label class="label">
-                    <span class="label-text">내용</span>
-                </label>
-            </div>
-            <div class="col-span-4 border bg-gray-100 min-h-48 p-2 ">
+            <div class="col-span-4 px-6">
                 {{ post.content|safe }}
             </div>
         </div>
-
+        <div class="divider"></div>
         <div class="grid grid-cols-4 gap-2 mt-4">
             <div class="form-control col-span-4">
                 <label class="label">
@@ -86,9 +76,17 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-4 gap-2 mt-4">
-            <div class="form-control col-span-1">
+        <div class=" mt-4 ">
+            <div class=" flex flex-row justify-between">
                 <a type="link" class="btn btn-primary w-40"
+                    hx-get="{% url 'blog:index'%}"
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+
+                >목록으로</a>
+           
+                <a type="link" class="btn w-40"
                     hx-get="{% url 'blog:update' post.id %}"
                     hx-trigger="click"
                     hx-target="#main_area"
@@ -96,8 +94,9 @@
 
                 >수정하기</a>
             </div>
+           
         </div>
-    </div>
+    </article>
 </section>
   
 {% endblock %}
