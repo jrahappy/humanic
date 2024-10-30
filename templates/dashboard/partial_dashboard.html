@@ -124,7 +124,7 @@
       &nbsp;
     </div>
   </section>
-  <section class="card col-span-12 bg-base-100 shadow-sm">
+  <section class="card col-span-12 xl:col-span-6 2xl:col-span-6 lg:col-span-6  bg-base-100 shadow-sm">
     <div class="card-body grow-0">
       <h2 class="card-title">
         <a class="link-hover link">판독료 추이</a>
@@ -137,5 +137,17 @@
       &nbsp;
     </div>
   </section>
- 
+  <section class="card col-span-12 xl:col-span-6 2xl:col-span-6 lg:col-span-6  bg-base-100 shadow-sm">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">공지사항</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+     {% include "dashboard/posts.html" %}
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
 </div>

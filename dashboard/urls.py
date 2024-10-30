@@ -29,4 +29,6 @@ urlpatterns = [
         "password/change/done/", views.password_change_done, name="password_change_done"
     ),
     path("daisyui/", views.daisyui, name="daisyui"),
+    path("board/", views.board, name="board"),
+    path("detail/<int:pk>/", views.detail, name="detail"),
 ]

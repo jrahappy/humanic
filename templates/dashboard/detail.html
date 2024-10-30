@@ -1,10 +1,11 @@
-{% extends 'app_base.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% load custom_filters %}
 {% load humanize %}
-{% load widget_tweaks %}
+
 
 {% block header %}
-    {% include 'app_base_header.html' %}
+    {% include 'dashboard/header_dashboard.html' %}
 {% endblock %}
 
 
@@ -22,7 +23,7 @@
                 <a class="link-hover link">공지사항 게시판  </a>
             </h2>
             <a href="#"
-                hx-get="{% url 'blog:index' %}"
+                hx-get="{% url 'dashboard:board' %}"
                 hx-trigger="click"
                 hx-target="#main_area"
                 hx-swap="outerHTML"
@@ -41,9 +42,9 @@
                 <div class="text-3xl font-bold hover:text-gray-700 pb-4 px-6">{{ post.title }}</div>
                 <div class="flex items-end p-2">
                     {% if post.is_public %}
-                        <span class="ml-2">공개</span>
+                        <span class="ml-2">공개 상태</span>
                     {% else %}
-                        <span class="ml-2">비공개</span>
+                        <span class="ml-2">비공개 상태</span>
                     {% endif %}
 
                 </div>
@@ -79,20 +80,13 @@
         <div class=" mt-4 ">
             <div class=" flex flex-row justify-between">
                 <a type="link" class="btn btn-primary w-40"
-                    hx-get="{% url 'blog:index'%}"
+                    hx-get="{% url 'dashboard:board'%}"
                     hx-trigger="click"
                     hx-target="#main_area"
                     hx-swap="outerHTML"
 
                 >목록으로</a>
            
-                <a type="link" class="btn w-40"
-                    hx-get="{% url 'blog:update' post.id %}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-
-                >수정하기</a>
             </div>
            
         </div>
@@ -101,10 +95,8 @@
   
 {% endblock %}
 
-
 {% block aside %}
 
-    {% include 'app_base_aside.html' %}
+	{% include 'dashboard/aside.html' %}
 	
 {% endblock %}
-
