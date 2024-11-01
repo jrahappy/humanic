@@ -18,11 +18,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# import xhtml2pdf.pisa as pisa
-# from io import BytesIO
-# from datetime import date
-# from django.template.loader import get_template
-
 
 @login_required
 def password_change(request):
@@ -647,89 +642,6 @@ def detail(request, pk):
     post = Post.objects.get(pk=pk)
     context = {"post": post}
     return render(request, "dashboard/detail.html", context)
-
-
-# def pdf_report(request, ayear, amonth, radio):
-#     rpms = (
-#         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
-#         .values(
-#             # "platform",
-#             "company__business_name",
-#             "amodality",
-#             "is_onsite",
-#         )
-#         .annotate(
-#             r_total_price=Sum("readprice"),
-#             r_total_provider=Sum("pay_to_provider"),
-#             r_total_human=Sum("pay_to_human"),
-#             r_total_cases=Count("case_id"),
-#         )
-#         .order_by("company__business_name", "amodality")
-#     )
-
-#     df = pd.DataFrame(rpms)
-#     if df.empty:
-#         pivot_html = None
-#     else:
-#         pivot = pd.pivot_table(
-#             df,
-#             index=["company__business_name"],
-#             columns=["amodality"],
-#             values=[
-#                 "r_total_provider",
-#                 "r_total_cases",
-#             ],
-#             aggfunc={
-#                 "r_total_provider": "sum",
-#                 "r_total_cases": "sum",
-#             },
-#             margins=True,
-#             margins_name="Total",
-#         )
-#         # Format the values
-#         pivot["r_total_provider"] = (
-#             pivot["r_total_provider"]
-#             .fillna(0)
-#             .astype(int)
-#             .map(lambda x: f"{x:,.0f}")  # Apply formatting
-#         )
-#         pivot["r_total_cases"] = (
-#             pivot["r_total_cases"].fillna(0).astype(int).map(lambda x: f"{x:,.0f}")
-#         )
-
-#         pivot_html = pivot.to_html(classes="table table-zebra table-sm table-hover")
-
-#     provider = CustomUser.objects.get(id=radio)
-#     companies = (
-#         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
-#         .values("company__business_name")
-#         .distinct()
-#     )
-#     count_rpms = companies.count()
-#     context = {
-#         "rpms": rpms,
-#         "count_rpms": count_rpms,
-#         "ayear": ayear,
-#         "amonth": amonth,
-#         "radio": radio,
-#         "provider": provider,
-#         "pivot_html": pivot_html,
-#     }
-
-#     # Render HTML to string
-#     template = get_template("dashboard/report_template.html")
-#     html = template.render(context)
-
-#     # Convert HTML to PDF
-#     response = HttpResponse(content_type="application/pdf")
-#     response["Content-Disposition"] = 'attachment; filename="report.pdf"'
-#     pisa_status = pisa.CreatePDF(html, dest=response)
-
-#     # Check for errors
-#     if pisa_status.err:
-#         return HttpResponse("We had some errors with the PDF generation")
-
-#     return response
 
 
 def daisyui(request):
