@@ -10,11 +10,18 @@ from django.contrib.auth.decorators import login_required
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
 from accounts.forms import ProfileForm, CustomPasswordChangeForm
 from accounts.models import CustomUser, Profile
+from blog.models import Post, PostAttachment
 from allauth.account.forms import ChangePasswordForm
 from django.http import HttpResponse
+from django.core.paginator import Paginator
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+
+# import xhtml2pdf.pisa as pisa
+# from io import BytesIO
+# from datetime import date
+# from django.template.loader import get_template
 
 
 @login_required
@@ -171,10 +178,14 @@ def index(request):
     # )
     # Use `bargap` to adjust bar spacing, not `width`
     fig.update_layout(
+        autosize=True,
+        width=None,
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20),
         # barmode="stack",
-        bargap=0.2,  # Adjust space between grouped bars
-        width=800,  # Set the overall plot width in pixels
-        height=600,  # Set the overall plot height in pixels
+        # bargap=0.2,  # Adjust space between grouped bars
+        # autosize=True,  # Enable responsive sizing
+        # # height=600,  # Set the overall plot height in pixels
     )
 
     chart = fig.to_html()
@@ -255,6 +266,9 @@ def index(request):
         .order_by("weekday")
     )
 
+    # 공지사항
+    posts = Post.objects.filter(is_public=True).order_by("-created_at")[:5]
+
     context = {
         "cm_total": cm_total,
         "rp_total": rp_total_value,
@@ -269,6 +283,7 @@ def index(request):
         "rs_weekday": rs_weekday,
         "side_menu": "dashboard",
         "chart": chart,
+        "posts": posts,
     }
 
     return render(request, "dashboard/index.html", context)
@@ -416,13 +431,19 @@ def partial_dashboard(request):
 
     # Use `bargap` to adjust bar spacing, not `width`
     fig.update_layout(
-        bargap=0.2,  # Adjust space between grouped bars
-        width=800,  # Set the overall plot width in pixels
-        height=600,  # Set the overall plot height in pixels
+        autosize=True,
+        width=None,
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20),
+        # width=800,  # Set the overall plot width in pixels
+        # height=600,  # Set the overall plot height in pixels
     )
 
     chart = fig.to_html()
     # Convert the chart to HTML
+
+    # 공지사항
+    posts = Post.objects.filter(is_public=True).order_by("-created_at")[:5]
 
     context = {
         "cm_total": cm_total,
@@ -438,6 +459,7 @@ def partial_dashboard(request):
         "rs_weekday": rs_weekday,
         "side_menu": "dashboard",
         "chart": chart,
+        "posts": posts,
     }
 
     return render(request, "dashboard/partial_dashboard.html", context)
@@ -518,10 +540,10 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             pivot["r_total_provider"]
             .fillna(0)
             .astype(int)
-            .applymap(lambda x: f"{x:,.0f}")
+            .map(lambda x: f"{x:,.0f}")  # Apply formatting
         )
         pivot["r_total_cases"] = (
-            pivot["r_total_cases"].fillna(0).astype(int).applymap(lambda x: f"{x:,.0f}")
+            pivot["r_total_cases"].fillna(0).astype(int).map(lambda x: f"{x:,.0f}")
         )
 
         pivot_html = pivot.to_html(classes="table table-zebra table-sm table-hover")
@@ -560,7 +582,6 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     count_rpms = companies.count()
     context = {
         "rpms": rpms,
-        "radio": radio,
         "count_rpms": count_rpms,
         "ayear": ayear,
         "amonth": amonth,
@@ -605,6 +626,110 @@ def report_period_month_radiologist_detail(
     return render(
         request, "dashboard/report_period_month_radiologist_detail.html", context
     )
+
+
+def board(request):
+    post_list = (
+        Post.objects.filter(is_public=True)
+        .order_by("-created_at")
+        .select_related("author")
+    )
+    paginator = Paginator(post_list, 10)  # Show 10 posts per page
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {"posts": page_obj, "side_menu": "board"}
+    return render(request, "dashboard/board.html", context)
+
+
+def detail(request, pk):
+    post = Post.objects.get(pk=pk)
+    context = {"post": post}
+    return render(request, "dashboard/detail.html", context)
+
+
+# def pdf_report(request, ayear, amonth, radio):
+#     rpms = (
+#         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+#         .values(
+#             # "platform",
+#             "company__business_name",
+#             "amodality",
+#             "is_onsite",
+#         )
+#         .annotate(
+#             r_total_price=Sum("readprice"),
+#             r_total_provider=Sum("pay_to_provider"),
+#             r_total_human=Sum("pay_to_human"),
+#             r_total_cases=Count("case_id"),
+#         )
+#         .order_by("company__business_name", "amodality")
+#     )
+
+#     df = pd.DataFrame(rpms)
+#     if df.empty:
+#         pivot_html = None
+#     else:
+#         pivot = pd.pivot_table(
+#             df,
+#             index=["company__business_name"],
+#             columns=["amodality"],
+#             values=[
+#                 "r_total_provider",
+#                 "r_total_cases",
+#             ],
+#             aggfunc={
+#                 "r_total_provider": "sum",
+#                 "r_total_cases": "sum",
+#             },
+#             margins=True,
+#             margins_name="Total",
+#         )
+#         # Format the values
+#         pivot["r_total_provider"] = (
+#             pivot["r_total_provider"]
+#             .fillna(0)
+#             .astype(int)
+#             .map(lambda x: f"{x:,.0f}")  # Apply formatting
+#         )
+#         pivot["r_total_cases"] = (
+#             pivot["r_total_cases"].fillna(0).astype(int).map(lambda x: f"{x:,.0f}")
+#         )
+
+#         pivot_html = pivot.to_html(classes="table table-zebra table-sm table-hover")
+
+#     provider = CustomUser.objects.get(id=radio)
+#     companies = (
+#         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
+#         .values("company__business_name")
+#         .distinct()
+#     )
+#     count_rpms = companies.count()
+#     context = {
+#         "rpms": rpms,
+#         "count_rpms": count_rpms,
+#         "ayear": ayear,
+#         "amonth": amonth,
+#         "radio": radio,
+#         "provider": provider,
+#         "pivot_html": pivot_html,
+#     }
+
+#     # Render HTML to string
+#     template = get_template("dashboard/report_template.html")
+#     html = template.render(context)
+
+#     # Convert HTML to PDF
+#     response = HttpResponse(content_type="application/pdf")
+#     response["Content-Disposition"] = 'attachment; filename="report.pdf"'
+#     pisa_status = pisa.CreatePDF(html, dest=response)
+
+#     # Check for errors
+#     if pisa_status.err:
+#         return HttpResponse("We had some errors with the PDF generation")
+
+#     return response
 
 
 def daisyui(request):

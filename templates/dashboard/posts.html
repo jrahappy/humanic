@@ -1,0 +1,27 @@
+{% load humanize %}
+
+<div class="flex flex-column gap-4 px-6">
+    <ul class="w-full">
+    {% for post in posts %}
+        <li>
+            <a class="flex flex-row gap-4 justify-between cursor-pointer"
+                hx-get="{% url 'dashboard:detail' post.id %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                
+            >
+                <span class="text-md">
+                    {{ post.title }}
+                </span>
+                <span class="text-sm text-gray-600">
+                    
+                    {{ post.created_at|naturaltime}}>
+                </span>
+            </a>
+        </li>
+    {% endfor %}
+    
+    </ul>
+   
+</div>

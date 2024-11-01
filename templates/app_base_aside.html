@@ -131,20 +131,7 @@
                             hx-swap="outerHTML"
                             hx-push-url="true"
                             >판독의 기준 보기</a></li>
-                        <li><a href="#"
-                            hx-get="{% url 'report:performance' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            >Purformance (Draft)</a></li>
-                        <li><a href="#"
-                            hx-get="{% url 'report:accounting' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            >손익 기준 보기 (Draft)</a></li>
+                        
                         <li><a href="#"
                             hx-get="{% url 'report:index' %}"
                             hx-trigger="click"
@@ -164,7 +151,7 @@
                         
                 </details>
             </li>
-            
+            {% if user.is_superuser %}
             <li>
                 <details>
                     <summary>
@@ -192,61 +179,43 @@
                         >마감작업</a></li>
                 </ul>
             </li>
-            <!-- <li>
-                <a>
-                    <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
-                    Messages
-                    <span class="badge badge-info badge-sm">12</span>
-                </a>
-            </li> -->
-            <!-- <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/adjustments-vertical.svg"
-                            class="h-5 w-5"></svg>
-                        Settings
-                    </summary>
-                    <ul>
-                        <li>
-                            <a>Products</a>
-                            <ul>
-                                <li>
-                                    <a href="#"
-                                        hx-get="{% url 'product:index' %}"
-                                        hx-trigger="click"
-                                        hx-target="#main_area"
-                                        hx-swap="outerHTML"
-                                        hx-push-url="true"
-                                    >List</a>
-                                </li>
-                                <li><a>New Product</a></li>
-                                
-                            </ul>
-                        </li>
-                        <li>
-                            <a>Platform</a>
-                            <ul>
-                                <li>
-                                    <a href="#"
-                                        hx-get="{% url 'product:platform' %}"
-                                        hx-trigger="click"
-                                        hx-target="#main_area"
-                                        hx-swap="outerHTML"
-                                        hx-push-url="true"
-                                    >PACS</a>
-                                </li>
-                                <li><a>New Platform</a></li>
-                            </ul> 
-                        
-                        </li>
-                        
-                        <li><a>Plugins</a></li>
-                        <li><a>API</a></li>
-                        <li><a>Support</a></li>
-                    </ul>
-                </details>
-            </li> -->
+            
+                <li>
+                    <a>
+                        <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
+                        Messages
+                        <span class="badge badge-info badge-sm">12</span>
+                    </a>
+                </li>
+                <li>
+                    <details>
+                        <summary>
+                            <svg
+                                data-src="https://unpkg.com/heroicons/20/solid/adjustments-vertical.svg"
+                                class="h-5 w-5"></svg>
+                            Settings
+                        </summary>
+                        <ul>
+                            <li><a href="#"
+                                hx-get="{% url 'report:performance' %}"
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                                >Purformance (Draft)</a></li>
+                            <li><a href="#"
+                                hx-get="{% url 'report:accounting' %}"
+                                hx-trigger="click"
+                                hx-target="#main_area"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                                >손익 기준 보기 (Draft)</a>
+                            </li>
+                           
+                        </ul>
+                    </details>
+                </li>
+            {% endif %}
         </ul>
     </nav>
     <!-- /sidebar menu -->
