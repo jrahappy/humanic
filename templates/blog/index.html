@@ -44,7 +44,7 @@
                                 {{ post.content|safe|truncatechars:200 }}
                             </a>
                             <p class="my-4">
-                                <a href="#" class="link text-gray-800 hover:text-black">자세히 보기</a>
+                                <a href="{% url 'blog:detail' post.id %}" class="link text-gray-800 hover:text-black">자세히 보기</a>
                             </p>
                         </article>
                         {% endfor %}

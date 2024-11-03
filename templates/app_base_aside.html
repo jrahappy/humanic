@@ -40,7 +40,7 @@
                 <details>
                     <summary>
                         <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
+                            data-src="https://unpkg.com/heroicons/20/solid/building-library.svg"
                             class="h-5 w-5"></svg>
                         고객병의원
                     </summary>
@@ -52,6 +52,7 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
+                                class="px-5"
                             >목록 보기</a>
                         </li>
                         
@@ -62,7 +63,7 @@
                 <details>
                     <summary>
                         <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
+                            data-src="https://unpkg.com/heroicons/20/solid/users.svg"
                             class="h-5 w-5"></svg>
                          판독의사
                     </summary>
@@ -73,7 +74,7 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
-
+                                class="px-5"
                             >목록 보기</a>
                         </li>
                         
@@ -84,7 +85,7 @@
                 <details>
                     <summary>
                         <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
+                            data-src="https://unpkg.com/heroicons/20/solid/flag.svg"
                             class="h-5 w-5"></svg>
                          게시판
                     </summary>
@@ -95,8 +96,8 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
-
-                            >보기</a>
+                                class="px-5"
+                            >공지사항</a>
                         </li>
                     </ul>
                 </details>
@@ -116,6 +117,7 @@
                             hx-target="#main_area"
                             hx-swap="outerHTML"
                             hx-push-url="true"
+                            class="px-5"
                             >월 기준 보기</a></li>
                         <li><a href="#"
                             hx-get="{% url 'report:report_customer' %}"
@@ -123,6 +125,7 @@
                             hx-target="#main_area"
                             hx-swap="outerHTML"
                             hx-push-url="true"
+                            class="px-5"
                             >고객병원 기준 보기</a></li> 
                         <li><a href="#"
                             hx-get="{% url 'report:report_period' %}"
@@ -130,6 +133,7 @@
                             hx-target="#main_area"
                             hx-swap="outerHTML"
                             hx-push-url="true"
+                            class="px-5"
                             >판독의 기준 보기</a></li>
                         
                         <li><a href="#"
@@ -138,6 +142,7 @@
                             hx-target="#main_area"
                             hx-swap="outerHTML"
                             hx-push-url="true"
+                            class="px-5"
                             >상세검색</a></li>
                         <li><a href="#"
                             hx-get="{% url 'report:chart' %}"
@@ -146,12 +151,53 @@
                             hx-swap="outerHTML"
                             hx-push-url="true"
                             hx-indicator="#spinner"
+                            class="px-5"
                             >Chart로 보기</a></li>
                                                
                         
                 </details>
             </li>
             {% if user.is_superuser %}
+            <hr class="my-6">
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/cog.svg"
+                            class="h-5 w-5"></svg>
+                        관리자 메뉴(이하)
+                </details>
+            </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/funnel.svg"
+                            class="h-5 w-5"></svg>
+                        CRM
+                    </summary>
+                    <ul>
+                        <li><a href="#"
+                            hx-get="{% url 'report:performance' %}"
+                            hx-trigger="click"
+                            hx-target="#main_area"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                            class="px-5"
+                            >Clients</a></li>
+                        <li><a href="#"
+                            hx-get="{% url 'report:accounting' %}"
+                            hx-trigger="click"
+                            hx-target="#main_area"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                            class="px-5"
+                            >손익 기준 보기 (Draft)</a>
+                        </li>
+                       
+                    </ul>
+                </details>
+            </li>
             <li>
                 <details>
                     <summary>
@@ -167,6 +213,7 @@
                         hx-target="#main_area"
                         hx-swap="outerHTML"
                         hx-push-url="true"
+                        class="px-5"
                         >파일업로드/정규화</a></li>
                 </ul>
                 <ul>
@@ -176,6 +223,7 @@
                         hx-target="#main_area"
                         hx-swap="outerHTML"
                         hx-push-url="true"
+                        class="px-5"
                         >마감작업</a></li>
                 </ul>
             </li>
@@ -202,6 +250,7 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
+                                class="px-5"
                                 >Purformance (Draft)</a></li>
                             <li><a href="#"
                                 hx-get="{% url 'report:accounting' %}"
@@ -209,6 +258,7 @@
                                 hx-target="#main_area"
                                 hx-swap="outerHTML"
                                 hx-push-url="true"
+                                class="px-5"
                                 >손익 기준 보기 (Draft)</a>
                             </li>
                            

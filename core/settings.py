@@ -244,4 +244,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
 
-CKEDITOR_CONFIGS = {"default": {"versionCheck": False}}
+CKEDITOR_CONFIGS = {
+    "default": {
+        "height": 800,
+        "width": 1200,
+        "removePlugins": "exportpdf",
+    }
+}

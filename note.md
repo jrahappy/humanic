@@ -69,21 +69,7 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 일산368, 보라매87 파일로 올라온 것만 차감률 적용함
 그 외 해당 병원에 판독한 건들은 정상계산(아래는 해당 의사들 목록임)
 
-    "전우선"
-    "송용섭"
-    "이주원"
-    "김예나"
-    "이은정"
-    "정미선"
-    "전주현"
-    "김리현"
-    "유은혜"
-    "손규리"
-    "우현식"
-    "이웅재"
-    "김혜진"
-    "김희정"
-
+ 
 ## 화상회의 09/25/2024 ##
 
   손경선 kasia71@humic.co.kr
@@ -96,49 +82,8 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     4. 판독의 검색이 쉽게 함.
 
     문제점 : 
-     CR, CT 가격이 너무 낮은 경우는 휴먼외래에도 적용되는지? 
+     CR, CT 가격이 너무 낮은 경우는 휴먼외래에도 적용되는지? -> 휴먼외래는 무조건 닥터 100%
      CTROW 이슈 Chest CT(비조영) 판독단가 19,600원 이하 건 → 14,700원 조정.. 어떻게 아는지.. 
-
-        "CHEST TO PELVIS"
-        "CHEST/SPINE"
-        "CHEST\PELVIS"
-        "CHEST PA"
-        "CHEST\NECK"
-        "CHEST/NECK"
-        "CHEST LUNG"
-        "Chest Lung"
-        "CHEST LAT"
-        "CHEST/HEAD"
-        "CHEST [DIRECT]"
-        "CHEST\CT_CHEST(ENHANCEMENT)"
-        "CHEST/CSPINE"
-        "CHEST AP"
-        "CHESTABDPELVIS"
-        "CHEST\ABDOMEN"
-        "CHEST/ABDOMEN"
-        "CHEST,ABDOMEN"
-        "CHEST"
-        "Chest"
-        "chest"
-        "ABODOMEN SUPINE"
-        "abodomen"
-        "ABDOMEN  SUPINE"
-        "ABDOMEN SUPINE"
-        "ABDOMENPELVIS"
-        "Abdomen+Pelvis"
-        "Abdomen + Pelvis"
-        "Abdomen+pelvis"
-        "ABDOMEN\PANCREAS"
-        "ABDOMEN/NECK"
-        "ABDOMEN\LIVER"
-        "ABDOMEN/HEAD"
-        "ABDOMEN/EXTREMITY"
-        "ABDOMEN ERECT"
-        "ABDOMEN\CHEST"
-        "ABDOMEN/CHEST"
-        "ABDOMEN\BILEDUCT\PANCREAS\LIVER"
-        "ABDOMEN"
-        "Abdomen"
 
 ## 09/27/2024 ##
     
@@ -164,7 +109,7 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     - 계정 생성: 아이디는 이메일 이름으로 함.
         -> 김성현, 이종엽, 박종성 팀장, 송경선 팀장
     - 일응(보라매) 
-    - 판독 시간 계산
+    - 판독 시간 계산 (고민필요)
         - 주말, 공휴일 제외
         - 평일도 오후 6시 이후 접수는 익일 9시부터 계산
         - 응급:
@@ -233,12 +178,13 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 
             Unknown은 양지병원 원내판독 홍새롬 판독의 일반판독
 
-
 # 10/28/2024 
-    - Python Float 에러에 대해서 Rule에 CEIL 을 수행하도록 해야 함. 현재는 PostgreSQL에서 한 번에 처리했으나 추후에는 Cleaning 혹은 Import 과정에서 처리하는 것이 좋겠음
+    - Python Float 에러에 대해서 Rule에 CEIL 을 수행하도록 해야 함. 현재는 PostgreSQL에서 한 번에 처리했으나 추후에는 Cleaning 혹은 Import 과정에서 처리하는 것이 좋겠음(추가 검증 필요)
 
 
-
+# 11/01/2024 
+    - CRM 기능 추가 고민함
+    
         
     
 
