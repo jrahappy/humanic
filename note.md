@@ -184,7 +184,9 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 
 # 11/01/2024 
     - CRM 기능 추가 고민함
-    
+        - Company 입력/수정 부분이 더 보강되어야 함. 
+        - Comments, Trackings, 영업단계별 진행 상태에 대한 정보를 정의해야 함.
+        
         
     
 
