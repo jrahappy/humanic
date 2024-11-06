@@ -52,7 +52,14 @@
 			
 		</main>
 		<!-- You can open the modal using ID.showModal() method -->
-		
+		<script>
+			const base_modal = document.getElementById('base_modal');
+			base_modal.addEventListener('close', () => {
+				console.log('Base modal closed');
+				base_modal.innerHTML = ""
+			});
+			
+		</script>
 		{% block aside %}
 		{% endblock %}
     </body>

@@ -24,84 +24,34 @@
         </div>
         <ul class="menu">
             <li>
-                <a href="#"
-                    hx-get="{% url 'briefing:index' %}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                    hx-indicator="#spinner"
-                >
+                <a href="{% url 'briefing:index' %}">
                     <svg data-src="https://unpkg.com/heroicons/20/solid/home.svg" class="h-5 w-5"></svg>
                     Briefing
                 </a>
             </li>
             <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/building-library.svg"
-                            class="h-5 w-5"></svg>
-                        고객병의원
-                    </summary>
-                    <ul>
-                        <li>
-                            <a 
-                                hx-get="{% url 'customer:index' %}" 
-                                hx-trigger="click"
-                                hx-target="#main_area"
-                                hx-swap="outerHTML"
-                                hx-push-url="true"
-                                class="px-5"
-                            >목록 보기</a>
-                        </li>
-                        
-                    </ul>
-                </details>
+                <a href="{% url 'customer:index' %}">
+                    <svg data-src="https://unpkg.com/heroicons/20/solid/building-library.svg" class="h-5 w-5"></svg>
+                    고객병의원
+                </a>
             </li>
             <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/users.svg"
-                            class="h-5 w-5"></svg>
-                         판독의사
-                    </summary>
-                    <ul>
-                        <li><a 
-                                hx-get="{% url 'provider:index' %}"
-                                hx-trigger="click"
-                                hx-target="#main_area"
-                                hx-swap="outerHTML"
-                                hx-push-url="true"
-                                class="px-5"
-                            >목록 보기</a>
-                        </li>
-                        
-                    </ul>
-                </details>
+                <a href="{% url 'provider:index' %}">
+                    <svg 
+                    data-src="https://unpkg.com/heroicons/20/solid/users.svg"
+                    class="h-5 w-5"></svg>
+                    판독의사
+                </a>
             </li>
             <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/flag.svg"
-                            class="h-5 w-5"></svg>
-                         게시판
-                    </summary>
-                    <ul>
-                        <li><a 
-                                hx-get="{% url 'blog:index' %}"
-                                hx-trigger="click"
-                                hx-target="#main_area"
-                                hx-swap="outerHTML"
-                                hx-push-url="true"
-                                class="px-5"
-                            >공지사항</a>
-                        </li>
-                    </ul>
-                </details>
+                <a href="{% url 'blog:index' %}">
+                    <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/flag.svg"
+                    class="h-5 w-5"></svg>
+                    게시판
+                </a>
             </li>
+            
             <li>
                 <details>
                     <summary>
@@ -111,48 +61,21 @@
                         리포트
                     </summary>
                     <ul>
-                        <li><a href="#"
-                            hx-get="{% url 'report:monthly_pro_cus' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >월별 순위 보기</a></li>
-                        <li><a href="#"
-                            hx-get="{% url 'report:report_customer' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >고객병원 기준 보기</a></li> 
-                        <li><a href="#"
-                            hx-get="{% url 'report:report_period' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >판독의 기준 보기</a></li>
-                        
-                        <li><a href="#"
-                            hx-get="{% url 'report:index' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >상세검색</a></li>
-                        <li><a href="#"
-                            hx-get="{% url 'report:chart' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            hx-indicator="#spinner"
-                            class="px-5"
-                            >Chart로 보기</a></li>
+                        <li active>
+                            <a href="{% url 'report:monthly_pro_cus' %}" class="px-5">월별 순위 보기</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'report:report_customer' %}" class="px-5">고객병원별 통계</a>
+                        </li> 
+                        <li>
+                            <a href="{% url 'report:report_period' %}" class="px-5">판독의별 통계</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'report:index' %}" class="px-5">상세검색</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'report:chart' %}" class="px-5">Chart로 보기</a>
+                        </li>
                                                
                         
                 </details>
