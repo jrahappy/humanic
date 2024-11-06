@@ -65,4 +65,25 @@ urlpatterns = [
         name="accounting_month",
     ),
     path("chart/", views.chart, name="chart"),
+    path("monthly_pro_cus/", views.monthly_pro_cus, name="monthly_pro_cus"),
+    path(
+        "report_pro_cus/<int:ayear>/<int:amonth>/",
+        views.report_pro_cus,
+        name="report_pro_cus",
+    ),
+    path(
+        "partial_customer_by_month/<int:ayear>/<int:company>/",
+        views.partial_customer_by_month,
+        name="partial_customer_by_month",
+    ),
+    path(
+        "partial_provider_by_month/<int:ayear>/<int:provider>/",
+        views.partial_provider_by_month,
+        name="partial_provider_by_month",
+    ),
+    path(
+        "partial_provider_by_month_pivot/<int:ayear>/<int:amonth>/<int:provider>/",
+        views.partial_provider_by_month_pivot,
+        name="partial_provider_by_month_pivot",
+    ),
 ]

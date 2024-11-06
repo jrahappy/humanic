@@ -1,0 +1,86 @@
+{% load custom_filters %}
+{% load humanize %}
+
+<div class="flex flex-row flex-wrap gap-2">
+
+    <div class="card overflow-hidden  shadow-sm ms-4">
+        <div class="card-body">
+            <h2 class="card-title">
+                <a class="link-hover link">병원별 매출순위</a>
+            </h2>
+        </div>
+        <div class="glow-0 overflow-x-auto px-4">
+            <table class="table table-zebra">
+                <tbody>
+                {% for rs in rs_cm %}
+                <tr>
+                    <td>{{ forloop.counter0|add:1 }}</td>
+                    <td>{{ rs.company__business_name }}</td>
+                    <td><p class="text-end">{{ rs.company_count|floatformat:0|intcomma }}</p></td>
+                    <td><p class="text-end">{{ rs.company_total|floatformat:0|intcomma }}</p></td>
+                    <td><p class="text-end">{{ rs.company_total|div:revenue_total_value|floatformat:2 }}%</p></td>
+                    <td>
+                        <a href="#"
+                            onclick=base_modal.showModal()
+                            hx-get="{% url 'report:partial_customer_by_month' ayear rs.company %}"
+                            hx-trigger="click"
+                            hx-target="#base_modal"
+                            hx-swap="innerHTML"
+                            hx-indicator="#spinner"
+                            class="btn btn-sm btn-neutral">추이</a>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="devider-y"></div>
+    <div class="card overflow-hidden  shadow-sm ms-4">
+        <div class="card-body grow-0">
+            <h2 class="card-title">
+            <a class="link-hover link">판독의 매출순위</a>
+            </h2>
+        </div>
+        <div class="overflow-x-auto px-4">
+            <table class="table table-zebra">
+            <tbody>
+                {% for rs in rs_dr %}
+                <tr>
+                    <td>{{ forloop.counter0|add:1 }}</td>
+                    <td>{{ rs.provider__profile__real_name }}</td>
+                    <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
+                    <td><p class="text-end">{{ rs.provider_total|floatformat:0|intcomma }}</p></td>
+                    <td><p class="text-end">{{ rs.provider_total|div:revenue_total_value|floatformat:2 }}%</p></td>
+                    <td>
+                        <a href="#"
+                            onclick=base_modal.showModal()
+                            hx-get="{% url 'report:partial_provider_by_month' ayear rs.provider %}"
+                            hx-trigger="click"
+                            hx-target="#base_modal"
+                            hx-swap="innerHTML"
+                            hx-indicator="#spinner"
+                            class="btn btn-sm btn-neutral">추이</a>
+                        <a href="#"
+                            onclick=base_modal.showModal()
+                            hx-get="{% url 'report:partial_provider_by_month_pivot' ayear amonth rs.provider %}"
+                            hx-trigger="click"
+                            hx-target="#base_modal"
+                            hx-swap="innerHTML"
+                            hx-indicator="#spinner"
+                            class="btn btn-sm btn-neutral">Pivot</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+            </table>
+        </div>
+        <div>
+            &nbsp;
+        </div>
+    </section>
+
+</div>

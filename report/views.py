@@ -17,6 +17,251 @@ from accounts.models import Profile, CustomUser
 from customer.models import Company
 
 
+def monthly_pro_cus(request):
+
+    buttons_year_month = (
+        UploadHistory.objects.filter(is_deleted=False)
+        .values("ayear", "amonth")
+        .distinct()
+        .order_by("-ayear", "-amonth")
+    )
+
+    context = {"buttons_year_month": buttons_year_month}
+
+    return render(request, "report/report_monthly_pro_cus.html", context)
+
+
+def report_pro_cus(request, ayear, amonth):
+
+    # rs = ReportMasterStat.objects.all()
+    rs = ReportMasterStat.objects.filter(ayear=ayear, amonth=amonth)
+
+    # 매출 구하기
+    revenue_total = rs.aggregate(revenue_sum=Sum("total_revenue"))
+    revenue_total_value = revenue_total["revenue_sum"] or 0
+
+    # 병원별 통계
+    rs_cm = (
+        rs.values("company__business_name", "company")
+        .annotate(
+            company_count=Sum("total_count"),  # Summing total_count per modality
+            company_total=Sum("total_revenue"),
+        )
+        .order_by("-company_total")
+    )
+    # 판독의별 통계
+    rs_dr = (
+        rs.values("provider__profile__real_name", "provider")
+        .annotate(
+            provider_count=Sum("total_count"),  # Summing total_count per modality
+            provider_total=Sum("total_revenue"),
+        )
+        .order_by("-provider_total")
+    )
+
+    buttons_year_month = (
+        UploadHistory.objects.filter(is_deleted=False)
+        .values("ayear", "amonth")
+        .distinct()
+        .order_by("-ayear", "-amonth")
+    )
+
+    context = {
+        "ayear": ayear,
+        "amonth": amonth,
+        "revenue_total_value": revenue_total_value,
+        "rs_cm": rs_cm,
+        "rs_dr": rs_dr,
+        "buttons_year_month": buttons_year_month,
+    }
+
+    return render(request, "report/partial_pro_cus.html", context)
+
+
+def partial_customer_by_month(request, ayear, company):
+
+    # 년도별 그래프 자료
+    stat = ReportMaster.objects.filter(ayear=ayear, company=company)
+    business_name = stat.first().apptitle
+
+    stat_agg_by_amodality = (
+        stat.values("ayear", "amonth", "amodality")
+        .annotate(total_revenue=Sum("readprice"))
+        .order_by("amodality")
+    )
+    x_values = [
+        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+        for entry in stat_agg_by_amodality
+    ]
+
+    # Get the modality and total_revenue
+    amodalities = stat_agg_by_amodality.values_list(
+        "amodality", flat=True
+    )  # Amodality for each bar
+    total_revenue = stat_agg_by_amodality.values_list(
+        "total_revenue", flat=True
+    )  # Y-axis values
+
+    # Create the bar chart with ayear-amonth and amodality on the x-axis
+    fig = px.bar(
+        x=x_values,
+        y=total_revenue,
+        color=amodalities,  # Group by amodality
+        labels={
+            "x": "Year-Month",
+            "y": "Total Revenue",
+            "color": "Modality",
+        },
+        title="2024년",
+        barmode="group",  # Group bars by modality within each month
+    )
+
+    # Use `bargap` to adjust bar spacing, not `width`
+    fig.update_layout(
+        autosize=True,
+        width=None,
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20),
+        barmode="stack",
+        # bargap=0.2,  # Adjust space between grouped bars
+        # autosize=True,  # Enable responsive sizing
+        # # height=600,  # Set the overall plot height in pixels
+    )
+
+    chart = fig.to_html()
+    # Convert the chart to HTML
+    context = {
+        "ayear": ayear,
+        "business_name": business_name,
+        "chart": chart,
+    }
+
+    return render(request, "report/partial_customer_by_month.html", context)
+
+
+def partial_provider_by_month(request, ayear, provider):
+
+    # 년도별 그래프 자료
+    stat = ReportMaster.objects.filter(ayear=ayear, provider=provider)
+    radiologist = stat.first().radiologist
+
+    stat_agg_by_amodality = (
+        stat.values("ayear", "amonth", "amodality")
+        .annotate(total_revenue=Sum("readprice"))
+        .order_by("amodality")
+    )
+    x_values = [
+        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+        for entry in stat_agg_by_amodality
+    ]
+
+    # Get the modality and total_revenue
+    amodalities = stat_agg_by_amodality.values_list(
+        "amodality", flat=True
+    )  # Amodality for each bar
+    total_revenue = stat_agg_by_amodality.values_list(
+        "total_revenue", flat=True
+    )  # Y-axis values
+
+    # Create the bar chart with ayear-amonth and amodality on the x-axis
+    fig = px.bar(
+        x=x_values,
+        y=total_revenue,
+        color=amodalities,  # Group by amodality
+        labels={
+            "x": "Year-Month",
+            "y": "Total Revenue",
+            "color": "Modality",
+        },
+        title="2024년",
+        barmode="group",  # Group bars by modality within each month
+    )
+
+    # Use `bargap` to adjust bar spacing, not `width`
+    fig.update_layout(
+        autosize=True,
+        width=None,
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20),
+        barmode="stack",
+        # bargap=0.2,  # Adjust space between grouped bars
+        # autosize=True,  # Enable responsive sizing
+        # # height=600,  # Set the overall plot height in pixels
+    )
+
+    chart = fig.to_html()
+    # Convert the chart to HTML
+    context = {
+        "ayear": ayear,
+        "radiologist": radiologist,
+        "chart": chart,
+    }
+
+    return render(request, "report/partial_provider_by_month.html", context)
+
+
+def partial_provider_by_month_pivot(request, ayear, amonth, provider):
+
+    rpms = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=provider)
+        .values(
+            # "platform",
+            "company__business_name",
+            "amodality",
+            "is_onsite",
+        )
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("company__business_name", "amodality")
+    )
+    provider = CustomUser.objects.get(id=provider)
+    real_name = provider.profile.real_name
+    df = pd.DataFrame(rpms)
+    if df.empty:
+        pivot_html = None
+    else:
+        pivot = pd.pivot_table(
+            df,
+            index=["company__business_name"],
+            columns=["amodality"],
+            values=[
+                "total_price",
+                "total_cases",
+            ],
+            aggfunc={
+                "total_price": "sum",
+                "total_cases": "sum",
+            },
+            margins=True,
+            margins_name="Total",
+        )
+        # Format the values
+        pivot["total_price"] = (
+            pivot["total_price"]
+            .fillna(0)
+            .astype(int)
+            .map(lambda x: f"{x:,.0f}")  # Apply formatting
+        )
+        pivot["total_cases"] = (
+            pivot["total_cases"].fillna(0).astype(int).map(lambda x: f"{x:,.0f}")
+        )
+
+        pivot_html = pivot.to_html(classes="table table-zebra table-sm table-hover")
+    # Convert the chart to HTML
+    context = {
+        "ayear": ayear,
+        "amonth": amonth,
+        "radiologist": real_name,
+        "pivot_html": pivot_html,
+    }
+
+    return render(request, "report/partial_provider_by_month_pivot.html", context)
+
+
 def report_customer_detail(request, id):
     ko_kr = Func(
         "provider__profile__real_name",

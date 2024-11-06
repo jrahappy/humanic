@@ -97,6 +97,14 @@ def handle_none(value):
     return value if value else ""
 
 
+@register.filter(name="div")
+def div(value, arg):
+    try:
+        return float(value) / float(arg) * 100
+    except (ValueError, ZeroDivisionError):
+        return None
+
+
 # @register.filter
 # def int(value):
 #     try:
