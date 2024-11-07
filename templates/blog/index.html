@@ -32,7 +32,7 @@
                         {% for post in posts %}
                         <article class="w-full flex flex-col shadow my-4 mb-4 px-6 gap-2">
                             <a href="#"
-                                class="text-3xl font-bold hover:text-gray-700 pb-4 cursor-pointer"
+                                class="text-2xl font-bold hover:text-gray-700 pb-4 cursor-pointer"
                                 hx-get="{% url 'blog:detail' post.id %}"
                                 hx-trigger="click"
                                 hx-target="#main_area"
@@ -40,9 +40,7 @@
                             >{{ post.title }}
                             </a>
                             <p class="text-sm text-gray-600">{{ post.created_at|naturaltime }}</p>
-                            <a href="#" class="pb-6">
-                                {{ post.content|safe|truncatechars:200 }}
-                            </a>
+                                                      
                             <p class="my-4">
                                 <a href="{% url 'blog:detail' post.id %}" class="link text-gray-800 hover:text-black">자세히 보기</a>
                             </p>
@@ -72,7 +70,6 @@
 </section>
     
 {% endblock %}
-
 
 {% block aside %}
 
