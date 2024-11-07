@@ -26,7 +26,7 @@
                         {% for post in posts %}
                         <article class="w-full flex flex-col shadow my-4 mb-4 px-6 gap-2">
                             <a href="#"
-                                class="text-3xl font-bold hover:text-gray-700 pb-4 cursor-pointer"
+                                class="text-2xl font-bold hover:text-gray-700 pb-4 cursor-pointer"
                                 hx-get="{% url 'dashboard:detail' post.id %}"
                                 hx-trigger="click"
                                 hx-target="#main_area"
@@ -34,9 +34,6 @@
                             >{{ post.title }}
                             </a>
                             <p class="text-sm text-gray-600">{{ post.created_at|naturaltime }}</p>
-                            <a href="#" class="pb-6 mt-4">
-                                {{ post.content|safe|truncatechars:200 }}
-                            </a>
                             <p class="my-4">
                                 <a href="#"
                                 hx-get="{% url 'dashboard:detail' post.id %}"
