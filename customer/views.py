@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Count, Sum
 from .models import Company
-from minibooks.models import ReportMasterStat, ReportMaster
+from minibooks.models import ReportMasterStat
 from .forms import CompanyForm
 
 # from importData.models import cleanData

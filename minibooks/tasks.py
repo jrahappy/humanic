@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from .models import ReportMaster, UploadHistory
+from .models import ReportMaster
 
 
 @shared_task

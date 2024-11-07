@@ -1,5 +1,4 @@
 from django.db import models
-from product.models import Product, Platform
 
 
 # Create your models here.

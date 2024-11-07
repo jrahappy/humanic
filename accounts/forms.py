@@ -1,8 +1,6 @@
-from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from allauth.account.forms import SignupForm, LoginForm, ChangePasswordForm
-from allauth.account.views import PasswordChangeView
+from allauth.account.forms import SignupForm, ChangePasswordForm
 from django import forms
 from .models import *
 from accounts.models import CustomUser, Profile

@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Sum, Q, F, Func, Avg
 from django.http import HttpResponse, Http404
-from accounts.models import Profile, CustomUser
 from .models import Post, PostAttachment
-from .forms import BlogForm, PostForm
+from .forms import BlogForm
 from django.core.paginator import Paginator
 import json
 

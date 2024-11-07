@@ -2,21 +2,19 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponse
-from django.db.models import Count, Sum, Avg
+from django.db.models import Count, Sum
 from django.db.models.functions import ExtractWeekDay
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
-from accounts.forms import ProfileForm, CustomPasswordChangeForm
-from accounts.models import CustomUser, Profile
+from accounts.forms import ProfileForm
+from accounts.models import CustomUser
 from blog.models import Post, PostAttachment
 from allauth.account.forms import ChangePasswordForm
-from django.http import HttpResponse
 from django.core.paginator import Paginator
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
 
 @login_required

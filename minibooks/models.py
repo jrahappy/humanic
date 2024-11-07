@@ -1,7 +1,6 @@
 from django.db import models
 from customer.models import Company
-from product.models import Platform
-from accounts.models import CustomUser, Profile
+from accounts.models import CustomUser
 from utils.base_func import (
     get_platform_choices,
     get_ayear_choices,

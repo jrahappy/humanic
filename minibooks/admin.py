@@ -4,7 +4,6 @@ from .models import (
     UploadHistory,
     ReportMasterStat,
     MagamMaster,
-    MagamDetail,
     HumanRules,
 )
 

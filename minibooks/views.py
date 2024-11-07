@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db import transaction, connection
+from django.db import connection
 from django.db.models import (
     Count,
     Sum,
@@ -7,17 +7,14 @@ from django.db.models import (
     F,
     DurationField,
     ExpressionWrapper,
-    fields,
     DecimalField,
 )
 from django.utils import timezone
 from django.contrib import messages
-from django.core.exceptions import MultipleObjectsReturned
-from django.utils import timezone
-from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from accounts.models import Profile, CustomUser
-from customer.models import Company, Contract, ServiceFee
-from product.models import Product, Platform
+from customer.models import Company
+from product.models import Platform
 from .models import (
     UploadHistory,
     ReportMaster,
@@ -31,22 +28,8 @@ from .models import (
 )
 from .forms import UploadHistoryForm, MagamMasterForm
 from .utils import log_uploadhistory
-from .tasks import upload_file, update_is_onsite
-from celery.result import AsyncResult
-from import_export import resources
 from tablib import Dataset
-from datetime import date, timedelta, datetime
-from decimal import Decimal, ROUND_HALF_UP
-import tablib
-import logging
-from utils.base_func import (
-    get_amonth_choices,
-    get_ayear_choices,
-    get_platform_choices,
-    get_amodality_choices,
-    get_specialty_choices,
-)
-from utils.models import ChoiceMaster
+from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 
 
@@ -1387,7 +1370,7 @@ def apply_rule_progress(request, magam_id, rule_id):
                     j += 1
                     print(j)
 
-                except ValueError as e:
+                except ValueError:
                     # Handle any parsing errors (e.g., if the string doesn't match the expected format)
                     print(f"Error{row.id}")
 

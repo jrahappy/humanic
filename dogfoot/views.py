@@ -3,17 +3,14 @@ from django.apps import apps
 from django.db import connection
 from django.forms import modelformset_factory
 from .models import MegaChoices, MegaChoiceNames
-from .forms import MegaChoicesForm
 from .utils import (
     get_dj_code_generate,
     get_table_app,
-    get_choices,
     get_all_url_patterns,
 )
 
 # from icases.models import ICaseImage, ICase
 from django.urls import get_resolver
-from django.conf import settings
 import json
 from django.contrib.auth.decorators import login_required
 from accounts.models import CustomUser as User

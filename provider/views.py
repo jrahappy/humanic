@@ -1,11 +1,9 @@
 # Create your views here.
-from django.contrib.auth.models import User
-from accounts.models import CustomUser, Profile
-from customer.models import Company
-from minibooks.models import ReportMaster, ReportMasterStat
+from accounts.models import CustomUser
+from minibooks.models import ReportMasterStat
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.db.models import Sum, Count
+from django.db.models import Sum
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from .forms import ProviderForm

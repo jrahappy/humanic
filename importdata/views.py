@@ -13,15 +13,11 @@ from .models import (
 )
 from customer.models import Company
 from .forms import importhistoryForm
-from import_export import resources
 from tablib import Dataset
-from importdata.resources import rawdataResource, doctorResource, customerResource
 from datetime import date
-import tablib
 import logging
 from django.core.exceptions import MultipleObjectsReturned
-from django.utils import timezone
-from django.core.paginator import Paginator, PageNotAnInteger, Page, EmptyPage
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 def clean_data(request, id):

@@ -1,5 +1,5 @@
 from import_export import resources
-from .models import rawdata, importhistory, temp_doctor_table, temp_customer_table
+from .models import rawdata, temp_doctor_table, temp_customer_table
 
 
 class rawdataResource(resources.ModelResource):

@@ -1,6 +1,5 @@
-from django.contrib.auth import get_user_model
 from django.forms import ModelForm, forms
-from accounts.models import Profile, CustomUser
+from accounts.models import Profile
 
 
 class ProviderForm(ModelForm):

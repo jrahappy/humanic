@@ -1,11 +1,8 @@
 from django.db import connection
-from django.db.models import Prefetch
-from .models import MegaChoices, MegaMenu, MegaMenuSub
+from .models import MegaChoices, MegaMenuSub
 from django.urls import URLPattern, URLResolver
 from collections import defaultdict
-import json
 from inspect import signature, Parameter
-from django.http import HttpRequest
 import secrets
 import string
 
@@ -29,8 +26,8 @@ def get_menu(menu_id, clinic_id=None, sm_id=None):
     else:
         sm_id = "0"
 
-    menu_html = f'<div class="d-flex flex-column flex-shrink-0 p-3 bg-body-light vh-100 border-end" style="width: 280px;">'
-    menu_html += f'<ul class="nav nav-pills flex-column mb-auto">'
+    menu_html = '<div class="d-flex flex-column flex-shrink-0 p-3 bg-body-light vh-100 border-end" style="width: 280px;">'
+    menu_html += '<ul class="nav nav-pills flex-column mb-auto">'
 
     flag = True
     for sub in mega_menu_sub:
@@ -42,7 +39,7 @@ def get_menu(menu_id, clinic_id=None, sm_id=None):
 
         if sub.orderx == 0:
             if flag == False:
-                menu_html += f"</ul>"
+                menu_html += "</ul>"
                 flag = True
             if sub.id == int(sm_id):
                 menu_html += f'<li class="nav-item" id={sub.id}">'
@@ -58,7 +55,7 @@ def get_menu(menu_id, clinic_id=None, sm_id=None):
                 menu_html += f"{sub.sub_name}</a></li>"
         else:
             if flag == True:
-                menu_html += f'<ul class="nav nav-pills ms-4 flex-column mb-auto">'
+                menu_html += '<ul class="nav nav-pills ms-4 flex-column mb-auto">'
                 flag = False
 
             if sub.id == int(sm_id):
@@ -73,7 +70,7 @@ def get_menu(menu_id, clinic_id=None, sm_id=None):
                 menu_html += f"{sub.sub_name}</a></li>"
 
     if flag == False:
-        menu_html += f"</ul>"
+        menu_html += "</ul>"
 
     menu_html += "</ul></div>"
 
@@ -264,14 +261,14 @@ def get_dj_code_generate(app_name, model_name):
 
     # for forms.py
     forms_gen = f"class {model_name}Form(forms.ModelForm):"
-    forms_gen += f"\n    class Meta:"
+    forms_gen += "\n    class Meta:"
     forms_gen += f"\n        model = {model_name}"
-    forms_gen += f"\n        fields = '__all__'"
+    forms_gen += "\n        fields = '__all__'"
     forms_gen = html_escape(forms_gen)
 
     # for html
     html_gen = f"<h1>{model_name} </h1>"
-    html_gen += f"\n<p>Hello world!</p>"
+    html_gen += "\n<p>Hello world!</p>"
     html_gen = html_escape(html_gen)
 
     context_gen = {

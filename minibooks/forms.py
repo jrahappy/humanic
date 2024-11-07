@@ -1,5 +1,5 @@
 from django import forms
-from .models import UploadHistory, MagamMaster, MagamDetail, ReportMasterStat
+from .models import UploadHistory, MagamMaster
 
 
 class UploadHistoryForm(forms.ModelForm):

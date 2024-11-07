@@ -2,10 +2,9 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
-from allauth.account.views import PasswordChangeView
-from allauth.account.forms import ChangePasswordForm, SignupForm
+from allauth.account.forms import ChangePasswordForm
 from .forms import (
     ProfileForm,
     CustomSignupForm,

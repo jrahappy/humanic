@@ -1,8 +1,8 @@
 from django import forms
-from django.forms import ModelForm, modelformset_factory
+from django.forms import ModelForm
 
 # from django_ckeditor_5.widgets import CKEditor5Widget
-from .models import Post, PostAttachment
+from .models import Post
 from django.core.exceptions import ValidationError
 
 

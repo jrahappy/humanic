@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import CustomUser, Profile
+from accounts.models import CustomUser
 from utils.base_func import get_blog_category
 from ckeditor.fields import RichTextField
 

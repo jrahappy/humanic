@@ -8,12 +8,9 @@ from minibooks.models import (
     MagamAccounting,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .filters import ReportFilter
-from django.db.models import Count, Sum, Q, F, Func, Avg
-from django.db.models.functions import Collate
-from django.db import connection
+from django.db.models import Count, Sum, Q, Func
 import plotly.express as px
-from accounts.models import Profile, CustomUser
+from accounts.models import CustomUser
 from customer.models import Company
 
 

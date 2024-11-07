@@ -1,14 +1,10 @@
 from django.shortcuts import render, redirect
-from django.db.models import Count, Sum, Avg
+from django.db.models import Count, Sum
 from django.db.models.functions import ExtractWeekDay
-from django_pivot.pivot import pivot
-from django_pivot.histogram import histogram
 
 # from importdata.models import rawdata, UploadHistory
 from minibooks.models import UploadHistory, ReportMaster, ReportMasterStat
-from utils.models import ChoiceMaster
 from django.contrib.auth.decorators import login_required
-from accounts.models import CustomUser, Profile
 from datetime import date
 
 

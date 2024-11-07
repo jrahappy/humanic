@@ -8,11 +8,9 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
-from accounts.forms import ProfileForm, CustomPasswordChangeForm
-from accounts.models import CustomUser, Profile
+from accounts.forms import ProfileForm
 from customer.models import Company
 from allauth.account.forms import ChangePasswordForm
-from django.http import HttpResponse
 import csv
 
 

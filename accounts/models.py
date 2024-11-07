@@ -3,7 +3,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from customer.models import Company
 from django.core.validators import MinValueValidator, MaxValueValidator
 from utils.base_func import get_specialty_choices
 
