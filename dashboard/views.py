@@ -106,85 +106,60 @@ def index(request):
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, provider=user)
     rs_money = ReportMaster.objects.filter(ayear=syear, amonth=smonth, provider=user)
 
+    # Check if any records exist in the database
+    rs_existed = rs.exists()
+
     # 년도별 그래프 자료
-    stat = ReportMaster.objects.filter(ayear=syear, provider=user)
-    stat_agg_by_amodality = (
-        stat.values("ayear", "amonth", "amodality")
-        .annotate(total_revenue=Sum("pay_to_provider"))
-        .order_by("amodality")
-    )
-    x_values = [
-        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
-        for entry in stat_agg_by_amodality
-    ]
+    if rs_existed:
+        stat = ReportMaster.objects.filter(ayear=syear, provider=user)
+        stat_agg_by_amodality = (
+            stat.values("ayear", "amonth", "amodality")
+            .annotate(total_revenue=Sum("pay_to_provider"))
+            .order_by("amodality")
+        )
+        x_values = [
+            f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+            for entry in stat_agg_by_amodality
+        ]
 
-    # Get the modality and total_revenue
-    amodalities = stat_agg_by_amodality.values_list(
-        "amodality", flat=True
-    )  # Amodality for each bar
-    total_revenue = stat_agg_by_amodality.values_list(
-        "total_revenue", flat=True
-    )  # Y-axis values
+        # Get the modality and total_revenue
+        amodalities = stat_agg_by_amodality.values_list(
+            "amodality", flat=True
+        )  # Amodality for each bar
+        total_revenue = stat_agg_by_amodality.values_list(
+            "total_revenue", flat=True
+        )  # Y-axis values
 
-    # # Calculate monthly total pay_to_provider for each provider
-    # monthly_totals = (
-    #     ReportMaster.objects.filter(ayear=syear)
-    #     .values("ayear", "amonth", "provider")
-    #     .annotate(total_provider_pay=Sum("pay_to_provider"))
-    #     .order_by("ayear", "amonth", "provider")
-    # )
+        # Create the bar chart with ayear-amonth and amodality on the x-axis
+        fig = px.bar(
+            x=x_values,
+            y=total_revenue,
+            color=amodalities,  # Group by amodality
+            labels={
+                "x": "Year-Month",
+                "y": "Total Revenue",
+                "color": "Modality",
+            },
+            title="2024년",
+            barmode="group",  # Group bars by modality within each month
+        )
 
-    # # Calculate the monthly average pay_to_provider across all providers
-    # monthly_avg = (
-    #     monthly_totals.values("ayear", "amonth")
-    #     .annotate(avg_provider_pay=Avg("total_provider_pay"))
-    #     .order_by("ayear", "amonth")
-    # )
+        # Use `bargap` to adjust bar spacing, not `width`
+        fig.update_layout(
+            autosize=True,
+            width=None,
+            height=400,
+            margin=dict(l=20, r=20, t=40, b=20),
+            barmode="stack",
+            # bargap=0.2,  # Adjust space between grouped bars
+            # autosize=True,  # Enable responsive sizing
+            # # height=600,  # Set the overall plot height in pixels
+        )
 
-    # # Extract the x-axis values (Year-Month) and average revenue values for all users
-    # avg_x_values = [
-    #     f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}" for entry in monthly_avg
-    # ]
-    # avg_values = [entry["avg_revenue"] for entry in monthly_avg]
-
-    # Create the bar chart with ayear-amonth and amodality on the x-axis
-    fig = px.bar(
-        x=x_values,
-        y=total_revenue,
-        color=amodalities,  # Group by amodality
-        labels={
-            "x": "Year-Month",
-            "y": "Total Revenue",
-            "color": "Modality",
-        },
-        title="2024년",
-        barmode="group",  # Group bars by modality within each month
-    )
-
-    # Add a line for average monthly revenue
-    # fig.add_trace(
-    #     go.Scatter(
-    #         x=avg_x_values,
-    #         y=avg_values,
-    #         mode="lines+markers",
-    #         name="Monthly Average",
-    #         line=dict(color="firebrick", width=2),
-    #     )
-    # )
-    # Use `bargap` to adjust bar spacing, not `width`
-    fig.update_layout(
-        autosize=True,
-        width=None,
-        height=400,
-        margin=dict(l=20, r=20, t=40, b=20),
-        # barmode="stack",
-        # bargap=0.2,  # Adjust space between grouped bars
-        # autosize=True,  # Enable responsive sizing
-        # # height=600,  # Set the overall plot height in pixels
-    )
-
-    chart = fig.to_html()
-    # Convert the chart to HTML
+        chart = fig.to_html()
+        # Convert the chart to HTML
+    else:
+        chart = None
 
     # 휴먼영상만 가져오기
     rs_human = (
@@ -312,9 +287,8 @@ def partial_dashboard(request):
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, provider=user)
     rs_money = ReportMaster.objects.filter(ayear=syear, amonth=smonth, provider=user)
-    # rs_pre = ReportMasterStat.objects.filter(
-    #     ayear=pre_year, amonth=pre_month, provider=user
-    # )
+
+    rs_existed = rs.exists()
 
     # 휴먼영상만 가져오기
     rs_human = (
@@ -391,51 +365,55 @@ def partial_dashboard(request):
     )
 
     # 년도별 그래프 자료
-    stat = ReportMaster.objects.filter(ayear=syear, provider=user)
-    stat_agg_by_amodality = (
-        stat.values("ayear", "amonth", "amodality")
-        .annotate(total_revenue=Sum("pay_to_provider"))
-        .order_by("amodality")
-    )
-    x_values = [
-        f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
-        for entry in stat_agg_by_amodality
-    ]
+    if rs_existed:
 
-    # Get the modality and total_revenue
-    amodalities = stat_agg_by_amodality.values_list(
-        "amodality", flat=True
-    )  # Amodality for each bar
-    total_revenue = stat_agg_by_amodality.values_list(
-        "total_revenue", flat=True
-    )  # Y-axis values
+        stat = ReportMaster.objects.filter(ayear=syear, provider=user)
+        stat_agg_by_amodality = (
+            stat.values("ayear", "amonth", "amodality")
+            .annotate(total_revenue=Sum("pay_to_provider"))
+            .order_by("amodality")
+        )
+        x_values = [
+            f"{entry['ayear']}-{str(entry['amonth']).zfill(2)}"
+            for entry in stat_agg_by_amodality
+        ]
 
-    # Create the bar chart with ayear-amonth and amodality on the x-axis
-    fig = px.bar(
-        x=x_values,
-        y=total_revenue,
-        color=amodalities,  # Group by amodality
-        labels={
-            "x": "Year-Month",
-            "y": "Total Revenue",
-            "color": "Modality",
-        },
-        title="2024년",
-        barmode="group",  # Group bars by modality within each month
-    )
+        # Get the modality and total_revenue
+        amodalities = stat_agg_by_amodality.values_list(
+            "amodality", flat=True
+        )  # Amodality for each bar
+        total_revenue = stat_agg_by_amodality.values_list(
+            "total_revenue", flat=True
+        )  # Y-axis values
 
-    # Use `bargap` to adjust bar spacing, not `width`
-    fig.update_layout(
-        autosize=True,
-        width=None,
-        height=400,
-        margin=dict(l=20, r=20, t=40, b=20),
-        # width=800,  # Set the overall plot width in pixels
-        # height=600,  # Set the overall plot height in pixels
-    )
+        # Create the bar chart with ayear-amonth and amodality on the x-axis
+        fig = px.bar(
+            x=x_values,
+            y=total_revenue,
+            color=amodalities,  # Group by amodality
+            labels={
+                "x": "Year-Month",
+                "y": "Total Revenue",
+                "color": "Modality",
+            },
+            title="2024년",
+            barmode="group",  # Group bars by modality within each month
+        )
 
-    chart = fig.to_html()
-    # Convert the chart to HTML
+        # Use `bargap` to adjust bar spacing, not `width`
+        fig.update_layout(
+            autosize=True,
+            width=None,
+            height=400,
+            margin=dict(l=20, r=20, t=40, b=20),
+            # width=800,  # Set the overall plot width in pixels
+            # height=600,  # Set the overall plot height in pixels
+        )
+
+        # Convert the chart to HTML
+        chart = fig.to_html()
+    else:
+        chart = None
 
     # 공지사항
     posts = Post.objects.filter(is_public=True).order_by("-created_at")[:5]
