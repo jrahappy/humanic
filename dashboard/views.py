@@ -618,7 +618,12 @@ def board(request):
 
 def detail(request, pk):
     post = Post.objects.get(pk=pk)
-    context = {"post": post}
+    post_attachments = PostAttachment.objects.filter(post=post)
+    context = {
+        "post": post,
+        "post_attachments": post_attachments,
+        "side_menu": "blog",
+    }
     return render(request, "dashboard/detail.html", context)
 
 
