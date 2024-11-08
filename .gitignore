@@ -6,7 +6,7 @@ logs
 *.log
 npm-debug.log*
 
-humunic/
+# humunic/
 
 # Dependency directories
 pids
