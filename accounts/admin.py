@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Profile
+from .models import CustomUser, Profile, WorkHours, Holidays, ProductionTarget
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 CustomUser = get_user_model()
@@ -73,3 +73,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Profile, ProfileAdmin)
+
+admin.site.register(WorkHours)
+admin.site.register(Holidays)
+admin.site.register(ProductionTarget)

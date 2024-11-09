@@ -4,7 +4,14 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
-from utils.base_func import get_specialty_choices
+from utils.base_func import (
+    get_specialty_choices,
+    get_amodality_choices,
+    APPT_DAYS,
+    HOLIDAY_CATEGORY,
+    TERM_CATEGORY,
+)
+from customer.models import Company
 
 
 class CustomUser(AbstractUser):
@@ -106,3 +113,49 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=CustomUser)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class WorkHours(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True, blank=True
+    )
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, null=True, blank=True
+    )
+    work_weekday = models.CharField(
+        choices=APPT_DAYS, max_length=1, null=True, blank=True
+    )
+    # work_hour = models.CharField(max_length=250, null=True, blank=True)
+    work_hour = models.JSONField(default=list)
+
+    def __str__(self):
+        return self.work_weekday
+
+
+class Holidays(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True, blank=True
+    )
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, null=True, blank=True
+    )
+    holiday_category = models.CharField(choices=HOLIDAY_CATEGORY, max_length=1)
+    holiday_name = models.CharField(max_length=30)
+    holidays = models.JSONField(default=list)
+    holiday_date_from = models.DateField(null=True, blank=True)
+    holiday_date_to = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.holiday_name
+
+
+class ProductionTarget(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True, blank=True
+    )
+    term_category = models.CharField(choices=TERM_CATEGORY, max_length=30)
+    modality = models.CharField(choices=get_amodality_choices, max_length=30)
+    target_value = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.term_category + " " + self.modality + " " + self.target_value

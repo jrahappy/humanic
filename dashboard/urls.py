@@ -31,4 +31,9 @@ urlpatterns = [
     path("daisyui/", views.daisyui, name="daisyui"),
     path("board/", views.board, name="board"),
     path("detail/<int:pk>/", views.detail, name="detail"),
+    path("wh/", views.workhours, name="workhours"),
+    path("wh/create/", views.workhour_create, name="workhour_create"),
+    path("wh/remove/", views.workhour_remove, name="workhour_remove"),
+    path("holy/create/", views.holiday_create, name="holiday_create"),
+    path("holy/remove/", views.holiday_remove, name="holiday_remove"),
 ]

@@ -1,15 +1,14 @@
 {% load custom_filters %}
 {% load humanize %}
 
-<div class="flex flex-row flex-wrap gap-2">
-
-    <div class="card overflow-hidden  shadow-sm ms-4">
+<div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
+    <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-6">
         <div class="card-body">
             <h2 class="card-title">
-                <a class="link-hover link">병원별 매출순위</a>
+                <a class="link-hover link">{{ ayear }}년 {{amonth }}월 병원별 매출순위</a>
             </h2>
         </div>
-        <div class="glow-0 overflow-x-auto px-4">
+        <div class="glow-0 overflow-y-auto px-4 align-top" style="height:800px;">
             <table class="table table-zebra">
                 <tbody>
                 {% for rs in rs_cm %}
@@ -36,15 +35,14 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="devider-y"></div>
-    <div class="card overflow-hidden  shadow-sm ms-4">
+    </section>
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
         <div class="card-body grow-0">
             <h2 class="card-title">
-            <a class="link-hover link">판독의 매출순위</a>
+            <a class="link-hover link">{{ ayear }}년 {{amonth }}월 판독의 매출순위</a>
             </h2>
         </div>
-        <div class="overflow-x-auto px-4">
+        <div class="glow-0 overflow-y-auto px-4 align-top" style="height:800px;">
             <table class="table table-zebra">
             <tbody>
                 {% for rs in rs_dr %}

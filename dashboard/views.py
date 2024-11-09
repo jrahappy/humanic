@@ -9,12 +9,255 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
 from accounts.forms import ProfileForm
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Profile, WorkHours, Holidays, ProductionTarget
 from blog.models import Post, PostAttachment
 from allauth.account.forms import ChangePasswordForm
 from django.core.paginator import Paginator
 import pandas as pd
 import plotly.express as px
+import calendar
+from datetime import datetime, timedelta, date
+from django.utils import timezone
+from utils.base_func import APPT_DAYS, HOLIDAY_CATEGORY, TERM_CATEGORY, WORKHOURS
+
+
+def get_year_calendar(year):
+    months = []
+    today = timezone.now().date()
+    current_month = int(today.month)
+    current_12_months = range(current_month, current_month + 6)
+    print(current_12_months)
+    flag_year = False
+    for month in current_12_months:
+        if month > 12:
+            month -= 12
+            if not flag_year:
+                year += 1
+                flag_year = True
+
+        month_days = []
+        _, num_days = calendar.monthrange(year, month)
+        start_day = calendar.monthrange(year, month)[0]
+
+        # Create padding for the start of the month
+        start_day_padding = [""] * start_day
+
+        for day in range(1, num_days + 1):
+            date = datetime(year, month, day).date()
+            month_days.append({"day": day, "date": date, "is_today": date == today})
+
+        months.append(
+            {
+                "name": calendar.month_name[month],
+                "start_day_padding": start_day_padding,
+                "days": month_days,
+            }
+        )
+    return months
+
+
+# 한달 달력 만들기 (해당 월만 업데이트하기 위해서 만듬)
+def get_month_calendar(year, month):
+    # Get today's date
+    today = timezone.now().date()
+
+    # Initialize the list for the current month
+    amonth = []
+
+    # Get the number of days and the starting weekday for the month
+    _, num_days = calendar.monthrange(year, month)
+    start_day = calendar.monthrange(year, month)[0]
+
+    # Create padding for the start of the month
+    start_day_padding = [""] * start_day
+
+    # Collect day information
+    month_days = []
+    for day in range(1, num_days + 1):
+        date = datetime(year, month, day).date()
+        month_days.append(
+            {
+                "day": day,
+                "date": date,
+                "is_today": date == today,
+                "is_past": date < today,
+            }
+        )
+
+    # Create the month structure with name and padding
+    amonth.append(
+        {
+            "name": calendar.month_name[month],
+            "start_day_padding": start_day_padding,
+            "days": month_days,
+        }
+    )
+
+    return amonth
+
+
+def workhours(request):
+    user = request.user
+    selected_workhours = WorkHours.objects.filter(user=user).order_by("work_weekday")
+    selected_holidays = Holidays.objects.filter(user=user)
+    selected_holidays_dict = {
+        item["holiday_category"]: item["holidays"]
+        for item in selected_holidays.values("holiday_category", "holidays")
+    }
+    # print(selected_holidays_dict)
+    week_days = APPT_DAYS
+    workhours = WORKHOURS
+
+    selected_workhours_dict = {
+        item["work_weekday"]: item["work_hour"]
+        for item in selected_workhours.values("work_weekday", "work_hour")
+    }
+    year = datetime.now().year
+    months = get_year_calendar(year)
+
+    context = {
+        "user": user,
+        "week_days": week_days,
+        "workhours": workhours,
+        "selected_workhours_dict": selected_workhours_dict,
+        "months": months,
+        "today_date": date.today(),
+        "selected_holidays_dict": selected_holidays_dict,
+    }
+
+    return render(request, "dashboard/wh.html", context)
+
+
+def holiday_create(request):
+    user = request.user
+    holiday_category = request.GET.get("category")
+    holiday_category = "p"
+    holiday_name = request.GET.get("name")
+    holiday_name = "Personal"
+    month_name = request.GET.get("month_name")
+    # 선택된 날짜
+    hdate = request.GET.get("hdate")
+    month_number = hdate.split("-")[1]
+    year_number = hdate.split("-")[0]
+    week_days = APPT_DAYS
+
+    is_holiday = Holidays.objects.filter(user=user).exists()
+
+    if is_holiday:
+        holiday = Holidays.objects.get(user=user)
+        holidays = holiday.holidays if isinstance(holiday.holidays, list) else []
+        if hdate not in holidays:
+            holidays.append(hdate)
+        holiday.holidays = holidays
+        holiday.save()
+    else:
+        holiday = Holidays()
+        holiday.user = user
+        holiday.holiday_category = holiday_category
+        holiday.holiday_name = holiday_name
+        hdate_list = [hdate]
+        holiday.holidays = hdate_list
+        holiday.save()
+
+    selected_holidays = holiday.holidays
+    amonth = get_month_calendar(int(year_number), int(month_number))
+    print(selected_holidays)
+    # print(amonth)
+
+    context = {
+        "amonth": amonth,
+        "week_days": week_days,
+        "selected_holidays": selected_holidays,
+        "today_date": date.today(),
+    }
+
+    return render(request, "dashboard/partial/month_calendar.html", context)
+
+
+def holiday_remove(request):
+    user = request.user
+    month_name = request.GET.get("month_name")
+    # 선택된 날짜
+    hdate = request.GET.get("hdate")
+    month_number = hdate.split("-")[1]
+    year_number = hdate.split("-")[0]
+    week_days = APPT_DAYS
+
+    holiday = Holidays.objects.get(user=user)
+    holidays = holiday.holidays if isinstance(holiday.holidays, list) else []
+    if hdate in holidays:
+        holidays.remove(hdate)
+    holiday.holidays = holidays
+    holiday.save()
+
+    selected_holidays = holiday.holidays
+    amonth = get_month_calendar(int(year_number), int(month_number))
+
+    context = {
+        "amonth": amonth,
+        "week_days": week_days,
+        "selected_holidays": selected_holidays,
+        "today_date": date.today(),
+    }
+
+    return render(request, "dashboard/partial/month_calendar.html", context)
+
+
+def workhour_create(request):
+    user = request.user
+    week_day = request.GET.get("day")
+    work_hour = request.GET.get("hour")
+
+    is_workhour = WorkHours.objects.filter(user=user, work_weekday=week_day).exists()
+
+    if is_workhour:
+        workhour = WorkHours.objects.get(user=user, work_weekday=week_day)
+        wh_list = workhour.work_hour if isinstance(workhour.work_hour, list) else []
+        wh_list.append(work_hour)
+        workhour.work_hour = wh_list
+        workhour.save()
+        # print("old")
+    else:
+        workhour = WorkHours()
+        workhour.user = user
+        workhour.work_weekday = week_day
+        wh_list = [work_hour]
+        workhour.work_hour = wh_list
+        workhour.save()
+    # print(wh_list)
+    selected_workhours = wh_list
+
+    context = {
+        "week_day": week_day,
+        "week_days": APPT_DAYS,
+        "workhours": WORKHOURS,
+        "selected_workhours": selected_workhours,
+    }
+
+    return render(request, "dashboard/partial/week_day_hours.html", context)
+
+
+def workhour_remove(request):
+    user = request.user
+    week_day = request.GET.get("day")
+    work_hour = request.GET.get("hour")
+
+    workhour = WorkHours.objects.get(user=user, work_weekday=week_day)
+    wh_list = workhour.work_hour
+    wh_list.remove(work_hour)
+    workhour.work_hour = wh_list
+    workhour.save()
+    # print("removed")
+    selected_workhours = wh_list
+
+    context = {
+        "week_day": week_day,
+        "week_days": APPT_DAYS,
+        "workhours": WORKHOURS,
+        "selected_workhours": selected_workhours,
+    }
+
+    return render(request, "dashboard/partial/week_day_hours.html", context)
 
 
 @login_required

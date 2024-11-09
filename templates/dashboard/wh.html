@@ -1,0 +1,56 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'dashboard/header_dashboard.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">Weekly Work Hours</a>
+            </h2>
+            <a href="{% url 'dashboard:workhours' %}" class="btn btn-sm btn-primary">Add</a>
+        </div>
+    </div>
+    <div class="">
+        <div class="mt-4 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    {% include 'dashboard/partial/work_hours.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">Holidays, Vacations</a>
+            </h2>
+            <a href="{% url 'dashboard:workhours' %}" class="btn btn-sm btn-primary">Add</a>
+        </div>
+    </div>
+    <div class="space-y-12">
+        <div class="card-body grow-0">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    {% include 'dashboard/partial/year_calendar.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    
+{% endblock %}
+
+
+{% block aside %}
+
+	{% include 'dashboard/aside.html' %}
+	
+{% endblock %}

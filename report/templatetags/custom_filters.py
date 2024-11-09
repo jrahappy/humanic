@@ -104,6 +104,36 @@ def div(value, arg):
         return None
 
 
+@register.filter(name="get_dict")
+def get_dict(dictionary, key):
+    """Retrieve a value from a dictionary using a key, or return an empty list if key is missing."""
+    if isinstance(dictionary, dict):
+        return dictionary.get(key, [])
+    return None
+
+
+@register.filter
+def get(dictionary, key):
+    try:
+        return dictionary.get(key)
+    except (TypeError, AttributeError):
+        return None
+
+
+@register.filter
+def get_item(dictionary, key):
+    """Fetches the value from a dictionary with a dynamic key."""
+    return dictionary.get(str(key), [])
+
+
+@register.filter
+def keys(dictionary):
+    """Returns the keys of a dictionary as a list."""
+    if isinstance(dictionary, dict):
+        return list(dictionary.keys())
+    return []
+
+
 # @register.filter
 # def int(value):
 #     try:

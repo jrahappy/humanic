@@ -57,3 +57,41 @@ def get_blog_category():
     for c in cho:
         choices.append((c.choice_key, c.choice_value))
     return choices
+
+
+APPT_DAYS = [
+    (0, "Sunday"),
+    (1, "Monday"),
+    (2, "Tuesday"),
+    (3, "Wednesday"),
+    (4, "Thursday"),
+    (5, "Friday"),
+    (6, "Saturday"),
+]
+
+HOLIDAY_CATEGORY = [
+    ("N", "National"),
+    ("C", "Company"),
+    ("P", "Personal"),
+]
+
+TERM_CATEGORY = [
+    ("D", "Daily"),
+    ("W", "Weekly"),
+    ("M", "Monthly"),
+    ("Y", "Yearly"),
+]
+WORKHOURS = [
+    (7, "7"),
+    (8, "8"),
+    (9, "9"),
+    (10, "10"),
+    (11, "11"),
+    (12, "12PM"),
+    (13, "1"),
+    (14, "2"),
+    (15, "3"),
+    (16, "4"),
+    (17, "5"),
+    (18, "6"),
+]

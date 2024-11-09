@@ -1,0 +1,54 @@
+{% load humanize %}
+{% load custom_filters %}
+<div class="pb-4 px-8">
+<table class="table table-sm" style="width:960px;">
+    <tr style="border-bottom:2px solid;">
+        <th style="width:150px;">Weekday</th>
+        <th style="width:650px;">Work hours </th>
+    </tr>
+    {% for day, name in week_days %}
+
+    {% if day == 0 %}
+        <tr class="bg-red-100">
+    {% elif day == 6 %}
+        <tr class="bg-sky-200">
+    {% else %}
+        <tr>
+    {% endif %}
+            <td>{{ name }} </td>
+            <td>
+                <div id="workhours_{{ day }}">
+                    {% if day|stringformat:"s" in selected_workhours_dict|keys %}
+                        
+                        {% for x, y in workhours %}
+                            {% if x|stringformat:"s" in selected_workhours_dict|get_item:day %}
+                                <a class="btn btn-sm btn-primary"
+                                hx-get="{% url 'dashboard:workhour_remove' %}?day={{ day }}&hour={{ x }}"
+                                hx-trigger="click"
+                                hx-target="#workhours_{{ day }}"
+                                hx-swap="outerHTML">{{ y}}</a>
+                            {% else %}
+                                
+                                <a class="btn btn-sm"
+                                hx-get="{% url 'dashboard:workhour_create' %}?day={{ day }}&hour={{ x }}"
+                                hx-trigger="click"
+                                hx-target="#workhours_{{ day }}"
+                                hx-swap="outerHTML">{{ y }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for x, y in workhours %}
+                            <a class="btn btn-sm"
+                               hx-get="{% url 'dashboard:workhour_create' %}?day={{ day }}&hour={{ x }}"
+                               hx-trigger="click"
+                               hx-target="#workhours_{{ day }}"
+                               hx-swap="outerHTML">{{ y }}</a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    
+</table>
+</div>
