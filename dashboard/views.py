@@ -26,7 +26,7 @@ def get_year_calendar(year):
     today = timezone.now().date()
     current_month = int(today.month)
     current_12_months = range(current_month, current_month + 6)
-    print(current_12_months)
+    # print(current_12_months)
     flag_year = False
     for month in current_12_months:
         if month > 12:
@@ -96,6 +96,7 @@ def get_month_calendar(year, month):
     return amonth
 
 
+# workhours 초기 화면 구성
 def workhours(request):
     user = request.user
     selected_workhours = WorkHours.objects.filter(user=user).order_by("work_weekday")
@@ -128,6 +129,7 @@ def workhours(request):
     return render(request, "dashboard/wh.html", context)
 
 
+# 휴무일 추가(사용자별)
 def holiday_create(request):
     user = request.user
     holiday_category = request.GET.get("category")
@@ -149,6 +151,7 @@ def holiday_create(request):
         if hdate not in holidays:
             holidays.append(hdate)
         holiday.holidays = holidays
+        # print("max", max(holidays))
         holiday.save()
     else:
         holiday = Holidays()
@@ -161,7 +164,7 @@ def holiday_create(request):
 
     selected_holidays = holiday.holidays
     amonth = get_month_calendar(int(year_number), int(month_number))
-    print(selected_holidays)
+    # print(selected_holidays)
     # print(amonth)
 
     context = {

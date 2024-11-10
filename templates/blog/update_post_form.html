@@ -13,14 +13,7 @@
           <h2 class="card-title grow">
               <a class="link-hover link">공지사항 게시판  </a>
           </h2>
-          <a href="#"
-              hx-get="{% url 'blog:index' %}"
-              hx-trigger="click"
-              hx-target="#main_area"
-              hx-swap="outerHTML"
-              class="btn btn-primary">목록 보기</a>
-                      
-          
+          <a href="{% url 'blog:index' %}" class="btn btn-primary">목록 보기</a>
       </div>
   </div>
 </section>
@@ -66,13 +59,13 @@
                 {% for file in post_attachments %}
                   <div class="flex flex-row gap-2" id="file-{{ file.id }}">
                     <span class="text-gray-500">{{ file.file.name }}</span>
-                    <a href="{% url 'blog:delete_file' file.id %}" 
-                       hx-delete="{% url 'blog:delete_file' file.id %}" 
-                       hx-target="#file-{{ file.id }}" 
-                       hx-swap="outerHTML"
-                       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                       hx-confirm="Are you sure you want to delete this file?"
-                       class="btn btn-error btn-sm">
+                    <a href="#" 
+                      hx-delete="{% url 'blog:delete_file' file.id %}" 
+                      hx-target="#file-{{ file.id }}" 
+                      hx-swap="outerHTML"
+                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      hx-confirm="Are you sure you want to delete this file?"
+                      class="btn btn-error btn-sm">
                       Delete
                     </a>
                   </div>
@@ -95,7 +88,7 @@
                     <button class="btn btn-primary" type="submit">Save</button>
                   </div>
                   <div class="form-control w-32">
-                    <a class="btn"  hx-get="{% url 'blog:index' %}" hx-target="#main_area" hx-swap="outerHTML" type="submit">Cancel</a>
+                    <a class="btn" href="{% url 'blog:detail' post.id %}">Cancel</a>
                   </div>
                 </div>
                   
@@ -124,6 +117,7 @@
   </form>
 </dialog>
 <script>
+  
   document.body.addEventListener("fileDeleted", function(event) {
     console.log(event.detail);
     const fileId = event.detail.value;
@@ -133,6 +127,8 @@
       fileDiv.remove();  // Remove the div with the file ID
     }
   });
+
+ 
 </script>
   
 {% endblock %}
@@ -141,7 +137,7 @@
 
 {% block aside %}
 
-	{% include 'dashboard/aside.html' %}
-	
+	{% include 'app_base_aside.html' %}
+app_base_aside
 {% endblock %}
 

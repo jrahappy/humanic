@@ -54,7 +54,7 @@ def delete_file(request, file_id):
         return HttpResponse(
             status=204, headers={"HX-Trigger": json.dumps({"fileDeleted": file_id})}
         )
-    raise Http404("File not found")
+    return HttpResponse(status=405)
 
 
 @login_required

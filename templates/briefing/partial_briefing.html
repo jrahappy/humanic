@@ -14,7 +14,7 @@
       <div class="stat-desc"></div>
     </div>
     <div class="stat">
-      <div class="stat-title">판독의</div>
+      <div class="stat-title">참여 판독의</div>
       <div class="stat-value">{{ dr_total|intcomma}}</div>
       <div class="stat-desc"></div>
     </div>
@@ -150,6 +150,30 @@
           <td><p class="text-end">{{ rs.weekday_total_count|floatformat:0|intcomma }}</p></td>
         </tr>
         {% endfor %}
+      </table>
+         
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">세부전공별 전체 판독의 등록현황(현재)</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <table class="table table-zebra w-full">
+        {% for rs in dr_by_specialty %}
+        <tr>
+          <td>{{ rs.specialty2}}</td>
+          <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
+        </tr>
+        {% endfor %}
+        <tr class="text-semibold font-bold">
+          <td>Total</td>
+          <td><p class="text-end">{{ dr_by_specialty|sum_values:'provider_count'|floatformat:0|intcomma }}</p></td>
       </table>
          
     </div>

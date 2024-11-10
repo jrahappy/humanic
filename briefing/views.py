@@ -4,6 +4,7 @@ from django.db.models.functions import ExtractWeekDay
 
 # from importdata.models import rawdata, UploadHistory
 from minibooks.models import UploadHistory, ReportMaster, ReportMasterStat
+from accounts.models import Profile, CustomUser
 from django.contrib.auth.decorators import login_required
 from datetime import date
 
@@ -133,87 +134,8 @@ def index(request):
         .order_by("-ayear", "-amonth")
     )
 
-    # 그래프용 데이터
+    # 전체 통계
     rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
-    # rs_ct_time = rs_graph.filter(amodality="CT")
-    # rs_ct_time_1hr = rs_ct_time.filter(
-    #     time_to_complete__gte=1, time_to_complete__lte=60
-    # ).count()
-    # rs_ct_time_3hr = rs_ct_time.filter(
-    #     time_to_complete__gt=60, time_to_complete__lte=180
-    # ).count()
-    # rs_ct_time_1d = rs_ct_time.filter(
-    #     time_to_complete__gt=180, time_to_complete__lte=1440
-    # ).count()
-    # rs_ct_time_3d = rs_ct_time.filter(
-    #     time_to_complete__gt=1440, time_to_complete__lte=4320
-    # ).count()
-    # rs_ct_time_7d = rs_ct_time.filter(
-    #     time_to_complete__gt=4320, time_to_complete__lte=10080
-    # ).count()
-    # rs_ct_time_more = rs_ct_time.filter(time_to_complete__gt=10080).count()
-
-    # rs_mr_time = rs_graph.filter(amodality="MR")
-    # rs_mr_time_1hr = rs_mr_time.filter(
-    #     time_to_complete__gte=1, time_to_complete__lte=60
-    # ).count()
-    # rs_mr_time_3hr = rs_mr_time.filter(
-    #     time_to_complete__gt=60, time_to_complete__lte=180
-    # ).count()
-    # rs_mr_time_1d = rs_mr_time.filter(
-    #     time_to_complete__gt=180, time_to_complete__lte=1440
-    # ).count()
-    # rs_mr_time_3d = rs_mr_time.filter(
-    #     time_to_complete__gt=1440, time_to_complete__lte=4320
-    # ).count()
-    # rs_mr_time_7d = rs_mr_time.filter(
-    #     time_to_complete__gt=4320, time_to_complete__lte=10080
-    # ).count()
-    # rs_mr_time_more = rs_mr_time.filter(time_to_complete__gt=10080).count()
-
-    # rs_cr_time = rs_graph.filter(amodality="CR")
-    # rs_cr_time_1hr = rs_cr_time.filter(
-    #     time_to_complete__gte=1, time_to_complete__lte=60
-    # ).count()
-    # rs_cr_time_3hr = rs_cr_time.filter(
-    #     time_to_complete__gt=60, time_to_complete__lte=180
-    # ).count()
-    # rs_cr_time_1d = rs_cr_time.filter(
-    #     time_to_complete__gt=180, time_to_complete__lte=1440
-    # ).count()
-    # rs_cr_time_3d = rs_cr_time.filter(
-    #     time_to_complete__gt=1440, time_to_complete__lte=4320
-    # ).count()
-    # rs_cr_time_7d = rs_cr_time.filter(
-    #     time_to_complete__gt=4320, time_to_complete__lte=10080
-    # ).count()
-    # rs_cr_time_more = rs_cr_time.filter(time_to_complete__gt=10080).count()
-
-    # rs_time_dataset_ct = [
-    #     rs_ct_time_1hr,
-    #     rs_ct_time_3hr,
-    #     rs_ct_time_1d,
-    #     rs_ct_time_3d,
-    #     rs_ct_time_7d,
-    #     rs_ct_time_more,
-    # ]
-    # rs_time_dataset_mr = [
-    #     rs_mr_time_1hr,
-    #     rs_mr_time_3hr,
-    #     rs_mr_time_1d,
-    #     rs_mr_time_3d,
-    #     rs_mr_time_7d,
-    #     rs_mr_time_more,
-    # ]
-    # rs_time_dataset_cr = [
-    #     rs_cr_time_1hr,
-    #     rs_cr_time_3hr,
-    #     rs_cr_time_1d,
-    #     rs_cr_time_3d,
-    #     rs_cr_time_7d,
-    #     rs_cr_time_more,
-    # ]
-
     # 요일별 통계
     rs_weekday = (
         rs_graph.annotate(
@@ -225,6 +147,18 @@ def index(request):
         .annotate(weekday_total_count=Count("id"))  # Counts rows for each weekday
         .order_by("weekday")
     )
+
+    # rs_fixtures = CustomUser.objects.filter(is_doctor=True)
+    rs_fixtures = Profile.objects.filter(
+        user__is_doctor=True, user__is_active=True
+    ).exclude(specialty2=None)
+    dr_by_specialty = (
+        rs_fixtures.values("specialty2")
+        .annotate(provider_count=Count("specialty2"))
+        .order_by("-provider_count")
+    )
+
+    # print(dr_by_specialty)
 
     context = {
         "cm_total": cm_total,
@@ -239,10 +173,8 @@ def index(request):
         "rs_cm": rs_cm,
         "rs_dr": rs_dr,
         "buttons_year_month": buttons_year_month,
-        # "rs_time_dataset_ct": rs_time_dataset_ct,
-        # "rs_time_dataset_mr": rs_time_dataset_mr,
-        # "rs_time_dataset_cr": rs_time_dataset_cr,
         "rs_weekday": rs_weekday,
+        "dr_by_specialty": dr_by_specialty,
     }
 
     return render(request, "briefing/index.html", context)

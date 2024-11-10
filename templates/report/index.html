@@ -39,10 +39,10 @@
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">병원ID</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">CaseID</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">환자명</th>
-
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독의</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">판독의ID</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Modality</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Bodypart</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">readprice</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">고객부담</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">휴먼부담</th>
@@ -65,6 +65,7 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.radiologist }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.provider %}{{ data.provider }}{% else %}{% endif %}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.amodality %}{{ data.amodality }}{% else %}{% endif %}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.bodypart %}{{ data.bodypart }}{% else %}{% endif %}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.readprice %}{{ data.readprice }}{% else %}{% endif %}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.readprice %}{{ data.company_paid }}{% else %}{% endif %}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{% if data.human_paid %}<span class="badge badge-error">{{ data.human_paid }}</span>{% else %}{% endif %}</td>

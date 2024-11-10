@@ -63,13 +63,13 @@
                 </label>
                 <div class="flex flex-col gap-2 ">
                 {% if post_attachments %}
-                {% for post_attachment in post_attachments %}
+                    {% for post_attachment in post_attachments %}
 
-                        <a href="{{ post_attachment.file.url }}" class="link px-2" target="_blank">
-                            {{ post_attachment.file.name|filename }}
-                        </a>
-                    
-                {% endfor %}
+                            <a href="{{ post_attachment.file.url }}" class="link px-2" target="_blank">
+                                {{ post_attachment.file.name|filename }}
+                            </a>
+                        
+                    {% endfor %}
                 {% else %}
                     <div class="border bg-gray-100 p-2 w-full   ">첨부파일 없음</div>
                 {% endif %}
@@ -78,20 +78,13 @@
         </div>
         <div class=" mt-4 ">
             <div class=" flex flex-row justify-between">
-                <a type="link" class="btn btn-primary w-40"
-                    hx-get="{% url 'blog:index'%}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-
+                <a href="{% url 'blog:index'%}"
+                    type="link" 
+                    class="btn btn-primary w-40"
                 >목록으로</a>
-           
-                <a type="link" class="btn w-40"
-                    hx-get="{% url 'blog:update' post.id %}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-
+                <a href="{% url 'blog:update' post.id %}"
+                    type="link" 
+                    class="btn w-40"
                 >수정하기</a>
             </div>
            

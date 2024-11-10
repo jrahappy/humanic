@@ -18,11 +18,10 @@ class CustomUser(AbstractUser):
     # Admin or not
     is_admin = models.BooleanField("Is admin", default=False)
     # doctor or not
-    is_doctor = models.BooleanField("Is Provider", default=False)
+    is_doctor = models.BooleanField("Is Doctor", default=False)
     # CBCT/False, SAVVY/True
     is_terms = models.BooleanField("Is Terms", default=False)
     is_privacy = models.BooleanField("Is Privacy", default=False)
-
     is_staff = models.BooleanField("Is Staff", default=False)
     is_superuser = models.BooleanField("Is Superuser", default=False)
     is_active = models.BooleanField("Is Active", default=True)
@@ -101,7 +100,7 @@ class Profile(models.Model):
     extra_info3_bool = models.BooleanField("Extra info 3", default=False)
 
     def __str__(self):
-        return self.user.username
+        return self.real_name
 
 
 @receiver(post_save, sender=CustomUser)
