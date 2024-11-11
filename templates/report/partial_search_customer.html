@@ -3,15 +3,30 @@
 
 
 {% for but_cm in buttons_customer %}
-    <div class="">
-        <a href="#"
-            onclick="base_modal.showModal()"
-            hx-get="{% url 'report:report_customer_detail' but_cm.id %}"
-            hx-trigger="click"
-            hx-target="#base_modal"
-            hx-swap="innerHTML"
-            class="btn w-64">
-            {{ but_cm.business_name}}
-        </a>
-    </div>
+<div class="card bg-base-100 w-64 shadow-xl">
+    <div class="card-body">
+        <h2 class="card-title">{{ but_cm.company__business_name}}</h2>
+        <p class="mb-2">
+            <div class="flex justify-between">
+                <span>누적매출</span>
+                <span>{{ but_cm.total_revenue|floatformat:0|intcomma }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>누적의뢰건수</span>
+                <span>{{ but_cm.total_count|floatformat:0|intcomma }}</span>
+            </div>
+        </p>
+        <div class="card-actions justify-end">
+            <button 
+                onclick="base_modal.showModal()"
+                hx-get="{% url 'report:report_customer_detail' but_cm.company_id %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                hx-swap="innerHTML"
+                hx-indicator="#spinner"                                             
+                class="btn"
+            >Detail</button>
+        </div>
+    </div>                
+</div>
 {% endfor %}

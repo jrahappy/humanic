@@ -309,12 +309,23 @@ def report_customer_detail(request, id):
 
 def report_customer(request):
     ko_kr = Func(
-        "business_name",
+        "company__business_name",
         function="ko_KR.utf8",
         template='(%(expressions)s) COLLATE "%(function)s"',
     )
-    buttons_customer = Company.objects.all().order_by(ko_kr.asc())
-    context = {"buttons_customer": buttons_customer}
+    # buttons_customer = Company.objects.filter(is_clinic=True).order_by(ko_kr.asc())
+
+    rs = (
+        ReportMasterStat.objects.filter(company__is_clinic=True)
+        .values("company", "company__business_name", "company_id")
+        .annotate(
+            total_revenue=Sum("total_revenue"),
+            total_count=Sum("total_count"),
+        )
+        .order_by(ko_kr.asc())
+    )
+
+    context = {"rs": rs}
 
     return render(request, "report/report_customer.html", context)
 
@@ -322,17 +333,33 @@ def report_customer(request):
 def partial_search_customer(request):
     q = request.GET.get("q", "").strip()
     ko_kr = Func(
-        "business_name",
+        "company__business_name",
         function="ko_KR.utf8",
         template='(%(expressions)s) COLLATE "%(function)s"',
     )
+
     if q:
-        buttons_customer = Company.objects.filter(business_name__icontains=q).order_by(
-            ko_kr.asc()
+        buttons_customer = (
+            ReportMasterStat.objects.filter(
+                company__is_clinic=True, company__business_name__icontains=q
+            )
+            .values("company", "company__business_name", "company_id")
+            .annotate(
+                total_revenue=Sum("total_revenue"),
+                total_count=Sum("total_count"),
+            )
+            .order_by(ko_kr.asc())
         )
     else:
-        buttons_customer = Company.objects.all().order_by(ko_kr.asc())
-
+        buttons_customer = (
+            ReportMasterStat.objects.filter(company__is_clinic=True)
+            .values("company", "company__business_name", "company_id")
+            .annotate(
+                total_revenue=Sum("total_revenue"),
+                total_count=Sum("total_count"),
+            )
+            .order_by(ko_kr.asc())
+        )
     context = {
         "buttons_customer": buttons_customer,
     }
