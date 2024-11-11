@@ -73,6 +73,22 @@
                             </div>
                         </div>
                         {% endfor %}
+                        <div class="card bg-yellow-100 w-48 shadow-xl">
+                            <div class="card-body">
+                                <h2 class="card-title">{{ specialty }} 합계</h2>
+                                <p class="mb-2">
+                                    <div class="col-span-12">
+                                        <p class="text-xs text-end">총 판독매출</p>
+                                        <p class="text-lg  text-end">{{ users|sum_values:"total_readprice"|floatformat:0|intcomma }}</p>
+                                    </div>
+                                    <div class="col-span-12">
+                                        <p class="text-xs text-end">{{ latest_year }}/{{ latest_month }} 매출</p>
+                                        <p class="text-lg  text-end">{{ users|sum_values:"latest_month_total_revenue"|floatformat:0|intcomma }}</p>
+                                    </div>
+
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
