@@ -6,12 +6,15 @@ from minibooks.models import (
     ReportMasterStat,
     ReportMasterPerformance,
     MagamAccounting,
+    MagamMaster,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count, Sum, Q, Func
 import plotly.express as px
 from accounts.models import CustomUser
 from customer.models import Company
+from utils.base_func import get_specialty_choices
+from collections import defaultdict
 
 
 def monthly_pro_cus(request):
@@ -933,3 +936,78 @@ def chart(request):
     }
     # context = {}
     return render(request, "report/chart.html", context)
+
+
+def rad_by_subspecialty(request):
+    # Prefetch profile with related specialties and pre-compute `total_readprice` for each user
+    latest_magam = MagamMaster.objects.latest("created_at")
+    latest_year = latest_magam.ayear
+    latest_month = latest_magam.amonth
+    latest_year_magam_count = MagamMaster.objects.filter(ayear=latest_year).count()
+
+    rads = (
+        CustomUser.objects.filter(is_doctor=True, is_active=True)
+        .exclude(profile__specialty2__isnull=True)
+        .select_related("profile")  # Ensure profile is loaded to avoid extra queries
+        .annotate(
+            total_readprice=Sum("reportmasterstat__total_revenue"),
+            latest_month_total_revenue=Sum(
+                "reportmasterstat__total_revenue",
+                filter=Q(reportmasterstat__amonth=latest_month)
+                & Q(reportmasterstat__ayear=latest_year),
+            ),  # Calculate total revenue for September for each doctor
+        )
+    )
+
+    # Dictionary to store doctors grouped by subspecialty
+    grouped_by_subspecialty = defaultdict(list)
+
+    # Populate the dictionary with subspecialties as keys and doctors as values
+    for rad in rads:
+
+        latest_month_total = rad.latest_month_total_revenue or 0
+        total_readprice = rad.total_readprice or 0
+
+        # Avoid division by zero
+        if latest_year_magam_count != 0:
+            average_revenue = total_readprice / latest_year_magam_count
+        else:
+            average_revenue = 0
+
+        # Determine the trend
+        if latest_month_total != 0:
+            if (average_revenue / latest_month_total) > 1.1:
+                trend = "down"
+            elif (average_revenue / latest_month_total) < 0.9:
+                trend = "up"
+            else:
+                trend = "equal"
+        else:
+            trend = "equal"
+
+        specialty_name = rad.profile.specialty2
+        grouped_by_subspecialty[specialty_name].append(
+            {
+                "user": rad,
+                "real_name": rad.profile.real_name,
+                "total_readprice": rad.total_readprice or 0,  # Default to 0 if null
+                "latest_month_total_revenue": rad.latest_month_total_revenue or 0,
+                "trend": trend,
+            }
+        )
+
+    # Convert defaultdict to a regular dictionary
+    grouped_by_subspecialty = dict(grouped_by_subspecialty)
+
+    # Count doctors for each subspecialty
+    counts_by_subspecialty = {
+        key: len(value) for key, value in grouped_by_subspecialty.items()
+    }
+
+    context = {
+        "grouped_by_subspecialty": grouped_by_subspecialty,
+        "counts_by_subspecialty": counts_by_subspecialty,
+        "latest_year": latest_year,
+        "latest_month": latest_month,
+    }
+    return render(request, "report/rad_by_subspecialty.html", context)

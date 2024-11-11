@@ -86,4 +86,5 @@ urlpatterns = [
         views.partial_provider_by_month_pivot,
         name="partial_provider_by_month_pivot",
     ),
+    path("rads/", views.rad_by_subspecialty, name="rad_by_subspecialty"),
 ]

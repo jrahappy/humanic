@@ -189,4 +189,6 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         
         
     
-
+# 11/9/204 
+    - 의사별(사용자) 업무시간, 휴일 등록 기능 완료
+    

@@ -111,11 +111,11 @@
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.fee_rate }}</div>
 			</div>
-            <div class="form-control">
+            <div class="form-control col-span-8 ">
 				<label class="label">
 					<span class="label-text">메모</span>
 				</label>
-				<p class="text-start px-2 py-3 bg-base-200 rounded w-full">{{ provider.profile.bio }}</p>
+				<div class="text-start px-2 py-3 bg-base-200 h-24 rounded">{{ provider.profile.bio }}</div>
 			</div>
         </div>
 		
@@ -157,15 +157,16 @@
                                     hx-swap="innerHTML"                                      
                                 >Detail</button>
 							</td>
+
 							<td>
-								<button 
+								<!-- <button 
                                     onclick="base_modal.showModal()"
                                     class="btn btn-sm btn-info" 
                                     hx-get="{% url 'minibooks:re_calc_share' rs.ayear rs.amonth provider.id %}"
                                     hx-trigger="click"
                                     hx-target="#base_modal"
                                     hx-swap="innerHTML"                                      
-                                >재계산</button>
+                                >재계산</button> -->
 							</td>
 						</tr>
 					{% endfor %}
