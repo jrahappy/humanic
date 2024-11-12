@@ -974,10 +974,14 @@ def rad_by_subspecialty(request):
 
     rads = (
         CustomUser.objects.filter(is_doctor=True, is_active=True)
-        .exclude(profile__specialty2__isnull=True)
-        .select_related("profile")  # Ensure profile is loaded to avoid extra queries
-        .annotate(
-            total_readprice=Sum("reportmasterstat__total_revenue"),
+        # .exclude(profile__specialty2__isnull=True)
+        .select_related(
+            "profile"
+        ).annotate(  # Ensure profile is loaded to avoid extra queries
+            total_readprice=Sum(
+                "reportmasterstat__total_revenue",
+                filter=Q(reportmasterstat__ayear=latest_year),
+            ),
             latest_month_total_revenue=Sum(
                 "reportmasterstat__total_revenue",
                 filter=Q(reportmasterstat__amonth=latest_month)
@@ -1017,6 +1021,7 @@ def rad_by_subspecialty(request):
             {
                 "user": rad,
                 "real_name": rad.profile.real_name,
+                "contract_status": rad.profile.contract_status,
                 "total_readprice": rad.total_readprice or 0,  # Default to 0 if null
                 "latest_month_total_revenue": rad.latest_month_total_revenue or 0,
                 "trend": trend,

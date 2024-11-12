@@ -7,97 +7,106 @@
 
 {% block content %}
    
-    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-		<div class="card-body grow-0">
-			<div class="flex justify-between gap-2">
-				<h2 class="card-title grow">
-					세부 정보 보기
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex flex-row justify-between gap-2">
+			<div class="flex flex-row">
+				<h2 class="card-title me-6">
+					Radiologist Detail 
 				</h2>
-				<div class="flex gap-4">
-					<div class="flex items-end py-4">
-						<a href="{% url 'provider:edit' provider.id %}" class="btn btn-primary btn-sm">Edit</a>
-						
-					</div>
-					<div class="flex items-end py-4">
-						<a href="{% url 'provider:index' %}" class="btn btn-primary btn-sm">list</a>
-					</div>
-				   
+				<div class="card-title">
+					<form action="{% url 'provider:index' %}" method="GET">
+						<input type="text" name="q" class="input input-bordered" placeholder="Search..." value="{{ request.GET.q }}">
+						<button type="submit" class="btn btn-primary">Search</button>
+					</form>
 				</div>
 			</div>
-
-      	</div>
+           
+			<div class="flex gap-4">
+				<div class="flex items-end py-4">
+					<a href="{% url 'provider:edit' provider.id %}" class="btn btn-primary w-20">Edit</a>
+				</div>
+				<div class="flex items-end py-4">
+					<a href="{% url 'provider:index' %}" class="btn btn-primary w-20	">list</a>
+				</div>
+			</div>
+        </div>
+    </div>
+</section>
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+		
     	<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">성명(ID)</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.real_name }}/{{provider.id}}</div>
-				
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">이메일</span>
 				</label>
                 <div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.email }}</div>
-				
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">휴대폰</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.cellphone }}</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">진료과</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty1 }}</div>
 			</div>
-			<div class="form-control col-span-2">
+		</div>
+		<div class="grid grid-cols-12 gap-2 px-6 mb-4">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">면허</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.license_number|handle_none }}</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">HumanRad ID</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.username }}</div>
 			</div>
-		</div>
-		<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">ONPACS ID</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.onpacs_id }}</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">CV3 ID</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.cv3_id }}</div>
 			</div>
-			<div class="form-control col-span-2">
+		</div>
+		<div class="grid grid-cols-12 gap-2 px-6 mb-4">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공1</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty2 }}</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공2</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty3 }}</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공3</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty4 }}</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공4</span>
 				</label>
@@ -105,13 +114,27 @@
 			</div>
 		</div>
 		<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">Fee Rate</span>
 				</label>
 				<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.fee_rate }}</div>
 			</div>
-            <div class="form-control col-span-8 ">
+			<div class="form-control col-span-3">
+				<label class="label">
+					<span class="label-text">계약상태</span>
+				</label>
+				<div class="text-start px-2 py-3 bg-base-200 rounded">
+					{% if provider.profile.contract_status == 'I' %}
+						Inactive
+					{% elif provider.profile.contract_status == 'A' %}
+						Active
+					{% else %}
+						{{ provider.profile.contract_status }}
+					{% endif %}
+				</div>
+			</div>
+            <div class="form-control col-span-6">
 				<label class="label">
 					<span class="label-text">메모</span>
 				</label>
@@ -120,7 +143,7 @@
         </div>
 		
 	</section>
-	<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+	<section class="card col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
 		<div class="card-body grow-0">
 			<div class="flex justify-between gap-2">
 				<h2 class="card-title grow">
@@ -176,6 +199,19 @@
 		</div>
 
 	</section>
+	<!-- <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+		<div class="card-body grow-0">
+			<div class="flex justify-between gap-2">
+				<h2 class="card-title grow">
+					파일 업로드 ()
+				</h2>
+			</div>
+	  	</div>
+		<div class="grid grid-cols-2 gap-2 px-6 mb-4">
+			
+			
+		</div>
+	</section> -->
 {% endblock %}
 
 {% block aside %}

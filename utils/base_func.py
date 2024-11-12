@@ -95,3 +95,9 @@ WORKHOURS = [
     (17, "5"),
     (18, "6"),
 ]
+
+CONTRACT_STATUS = [
+    ("A", "Active"),
+    ("I", "Inactive"),
+    ("T", "Terminated"),
+]

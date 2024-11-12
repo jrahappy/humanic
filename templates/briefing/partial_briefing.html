@@ -160,20 +160,23 @@
   <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
     <div class="card-body grow-0">
       <h2 class="card-title">
-        <a class="link-hover link">세부전공별 전체 판독의 등록현황(현재)  </a>
+        <a class="link-hover link">세부전공별     </a>
       </h2>
     </div>
     <div class="overflow-x-auto px-4">
       <table class="table table-zebra w-full">
         {% for rs in dr_by_specialty %}
         <tr>
-          <td>{{ rs.specialty2}}</td>
+          <td>{{ rs.provider__profile__specialty2}}</td>
+          <td><p class="text-end">{{ rs.avg_total_revenue|floatformat:0|intcomma }}</p></td>
           <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
+          <td><p class="text-end">{{ rs.sum_total_revenue|floatformat:0|intcomma }}</p></td>
         </tr>
         {% endfor %}
         <tr class="text-semibold font-bold">
-          <td>Total</td>
+          <td colspan="2">Total</td>
           <td><p class="text-end">{{ dr_by_specialty|sum_values:'provider_count'|floatformat:0|intcomma }}</p></td>
+          <td><p class="text-end">{{ dr_by_specialty|sum_values:'sum_total_revenue'|floatformat:0|intcomma }}</p></td>
       </table>
          
     </div>

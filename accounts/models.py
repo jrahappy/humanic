@@ -10,6 +10,7 @@ from utils.base_func import (
     APPT_DAYS,
     HOLIDAY_CATEGORY,
     TERM_CATEGORY,
+    CONTRACT_STATUS,
 )
 from customer.models import Company
 
@@ -50,17 +51,6 @@ class CustomUser(AbstractUser):
 
 
 class Profile(models.Model):
-    # SPECIALTY_CHOICES = {
-    #     "복부비뇨": "복부/비뇨생식기",
-    #     "신경두경": "신경두경부",
-    #     "흉부심장": "흉부심장",
-    #     "심잘혈관": "심장혈관",
-    #     "근골격": "근골격",
-    #     "유방갑상": "유방/갑상선",
-    #     "소아": "소아",
-    #     "인터벤션": "인터벤션",
-    #     "정형외과": "정형외과",
-    # }
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     real_name = models.CharField(max_length=30, null=True, blank=True)
@@ -96,6 +86,9 @@ class Profile(models.Model):
         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
     )
     license_number = models.CharField(max_length=20, null=True, blank=True)
+    contract_status = models.CharField(
+        max_length=1, choices=CONTRACT_STATUS, default="A"
+    )
     extra_info2_int = models.IntegerField(null=True, blank=True, default=0)
     extra_info3_bool = models.BooleanField("Extra info 3", default=False)
 
@@ -152,9 +145,28 @@ class ProductionTarget(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, null=True, blank=True
     )
-    term_category = models.CharField(choices=TERM_CATEGORY, max_length=30)
+    work_weekday = models.CharField(
+        choices=APPT_DAYS, max_length=1, null=True, blank=True
+    )
     modality = models.CharField(choices=get_amodality_choices, max_length=30)
-    target_value = models.IntegerField(default=0)
+    target_value = models.SmallIntegerField(default=0)
+    max_value = models.SmallIntegerField(default=0)
 
     def __str__(self):
         return self.term_category + " " + self.modality + " " + self.target_value
+
+
+def upload_location(instance, filename):
+    return f"hrfiles/{instance.user.username}/{filename}"
+
+
+class HRFiles(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True, blank=True
+    )
+    name = models.CharField(max_length=30)
+    file_name = models.CharField(max_length=30)
+    file = models.FileField(upload_to=upload_location, null=True, blank=True)
+
+    def __str__(self):
+        return self.file_name

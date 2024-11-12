@@ -6,19 +6,34 @@
 {% endblock %}
 
 {% block content %}
-   
-    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-		<div class="card-body grow-0">
-			<div class="flex justify-between gap-2">
-				<h2 class="card-title grow">
-					판독의 정보 수정
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex flex-row justify-between gap-2">
+			<div class="flex flex-row">
+				<h2 class="card-title me-6">
+					Radiologist Edit 
 				</h2>
+				<div class="card-title">
+					<form action="{% url 'provider:index' %}" method="GET">
+						<input type="text" name="q" class="input input-bordered" placeholder="Search..." value="{{ request.GET.q }}">
+						<button type="submit" class="btn btn-primary">Search</button>
+					</form>
+				</div>
 			</div>
-      	</div>
+           
+			<div class="flex gap-4">
+				
+			</div>
+        </div>
+    </div>
+</section>
+
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+		
 		<form method="post">
 		{% csrf_token %}
     	<div class="grid grid-cols-12 gap-2 px-6">
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">성명(ID)</span>
 				</label>
@@ -26,7 +41,7 @@
 					{% render_field form.real_name class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">이메일</span>
 				</label>
@@ -34,7 +49,7 @@
 					{% render_field form.email class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">휴대폰</span>
 				</label>
@@ -42,7 +57,7 @@
 					{% render_field form.cellphone class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">진료과</span>
 				</label>
@@ -50,7 +65,9 @@
 					{% render_field form.specialty1 class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+		</div>
+		<div class="grid grid-cols-12 gap-2 px-6 mt-4">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">면허번호</span>
 				</label>
@@ -58,7 +75,7 @@
 					{% render_field form.license_number class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">SystemID</span>
 				</label>
@@ -66,11 +83,7 @@
 					{{ provider.username }}
 				</div>
 			</div>
-		</div>
-		
-		
-		<div class="grid grid-cols-12 gap-2 px-6 mt-4">
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">ONPACS ID</span>
 				</label>
@@ -78,7 +91,7 @@
 					{% render_field form.onpacs_id class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">CV3 ID</span>
 				</label>
@@ -86,7 +99,9 @@
 					{% render_field form.cv3_id class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+		</div>
+		<div class="grid grid-cols-12 gap-2 px-6 mt-4">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공1</span>
 				</label>
@@ -94,7 +109,7 @@
 					{% render_field form.specialty2 class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공2</span>
 				</label>
@@ -102,7 +117,7 @@
 					{% render_field form.specialty3 class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공3</span>
 				</label>
@@ -110,7 +125,7 @@
 					{% render_field form.specialty4 class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">세부전공4</span>
 				</label>
@@ -118,11 +133,9 @@
 					{% render_field form.specialty5 class='input input-bordered w-full max-w-xs' %}
 				</div>
 			</div>
-			
 		</div>
 		<div class="grid grid-cols-12 gap-2 px-6 mt-4">
-           
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
 				<label class="label">
 					<span class="label-text">Fee Rate</span>
 				</label>
@@ -135,14 +148,23 @@
 					{% endif %}
 				</div>
 			</div>
-			<div class="form-control col-span-2">
+			<div class="form-control col-span-3">
+				<label class="label">
+					<span class="label-text">계약상태</span>
+				</label>
+				<div class="text-start px-2 py-3">
+					{% render_field form.contract_status class='input input-bordered' %}
+				</div>
+			</div>
+			<div class="form-control col-span-6">
 				<label class="label">
 					<span class="label-text">메모</span>
 				</label>
 				<div class="text-start px-2 py-3">
-					{% render_field form.bio rows='3' class='input input-bordered' %}
+					{% render_field form.bio rows='3' class='textarea input-bordered' %}
 				</div>
 			</div>
+			
         </div>
 		<div class="grid grid-cols-4 gap-2 px-6">
             <div class="flex gap-4">
@@ -150,7 +172,7 @@
                     <button class="btn btn-primary grow">저장하기</button>
                 </div>
                 <div class="flex items-end py-4">
-                    <a href="{% url 'provider:view_provider' provider.id %}" class="btn btn-secondary grow">취소</a>
+                    <a href="{% url 'provider:view_provider' provider.id %}" class="btn grow">취소</a>
                 </div>
                 
 			</div>

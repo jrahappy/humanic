@@ -23,6 +23,7 @@ class ProviderForm(ModelForm):
             "license_number",
             "employee_id",
             "fee_rate",
+            "contract_status",
         ]
 
     def clean_fee_rate(self):
