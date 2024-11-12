@@ -1,0 +1,66 @@
+
+{% load widget_tweaks %}
+<section id="hr_files_section" class="card bg-base-100 w-96 overflow-hidden shadow-sm xl:col-span-6 ">
+    <div class="card-body">
+        <h2 class="card-title mb-4"> Upload HR Files ({{ provider.id }})</h2>
+       
+        <div class="flex flex-col gap-2">
+            <form hx-post="{% url 'provider:hr_file_upload' id=provider.id %}" 
+                hx-target="#hr_files_section"  
+                hx-swap="outerHTML"    
+                hx-trigger="submit"
+                hx-indicator="#spinner"
+                id="hr_file_upload_form"
+                enctype="multipart/form-data"
+                class = "flex flex-col gap-2"
+            >
+                {% csrf_token %}
+                <input type="hidden" name="provider" value="{{ provider.id }}">
+                <div>
+                    {% render_field form.name class="input input-sm input-bordered w-full" placeholder="제목" %}
+                    {% if form.name.errors %}
+                        <div class="text-red-500 text-sm mt-1">
+                            {{ form.name.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <input 
+                    type="file" 
+                    name="file" 
+                    id="file" 
+                    class="file-input file-input-bordered w-full max-w-xs" multiple>
+
+                    
+                    {% if form.name.errors %}
+                        <div class="text-red-500 text-sm mt-1">
+                            {{ form.file.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-control">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('hr_files_section').addEventListener('htmx:beforeSwap', function(event) {
+            if (event.detail.elt.id === 'hr_files_section') {
+                // Check if the form submission was successful
+                if (event.detail.xhr.status === 204) {
+                    const form = document.querySelector('#hr_file_upload_form');
+                    if (form) {
+                        form.reset();  // Reset the form fields
+                    }
+                    // If successful, close the modal
+                    base_modal.close();
+                    console.log("Form submission successful");
+                } else {
+                    // Handle other status codes or failed submission
+                    console.log("Form submission failed or other status");
+                }
+            }
+        });
+    </script>
+</section>

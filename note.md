@@ -191,4 +191,45 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     
 # 11/9/204 
     - 의사별(사용자) 업무시간, 휴일 등록 기능 완료
+# 11/10/2024
+    - 리퍼체크 리스트 검토
+    - 예
+        "강미진 월-금 일7건(추가X)
+        21/11/04→리퍼건이 없을 떄는 없다고 메일안내 요청주심 //동산의료원XX
+        23-06-19 부터 월-수 10건
+        23-08-02 부터 월-수 12건
+        2023-11월 1달간 리퍼중지
+        2024-01-02부터 월-수 15건
+        2024-02-26 월-금 10건
+        2024-04-25 월-금 일7건"
+
+        "선혜영 화-금 10건 (추가X) 
+        칠곡O 
+        경북대, 인하대, 중앙대, 계명대, 대전성모 XX esophagus CT XX 
+        고대안산은 5건만! 
+        2024-03-07부터 화-금 10건
+        2024-03-07부터 고려대병원입사_고대안산리퍼X"
+
+    - 필요한 정보들
+        1. 판독의 계약유효 여부   -> Profile in_contract='Yes'/'No'/'Suspended'
+        2. 판독의 기본 요일별 근무시간  -> 완료
+           판독의 휴무일 등록 -> 완료
+        3. 판독의 요일별 모달리티별 희망 리퍼수 -> 별도 테이블 필요 / dr, modality, target, maximum 
+        4. 판독의 기피 병원, 기피 병원 모달러티 -> 별도 테이블 필요 / dr, customer, created_at
+        5. 판독의별 리퍼 세팅 정보 변경 이력  -> 별도 로그테이블 필요 / created_at, dr, agent, description
+
+    - Availability 함수
+        1. 인자: dr, date, customer, modality, 
+        2. return : 가능, 불가능
+
+    - AvaliableQty 함수
+        1. 인자: dr, date/time, modality 
+        2. return: int() 개
+
+
+
+
+
+
+
     

@@ -1,0 +1,41 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<div class="card-body">
+    <div class="flex justify-between gap-2">
+        <h2 class="card-title grow">
+            HR Files
+        </h2>
+        <div>
+            <a 
+                href="#" 
+                class="btn btn-primary"
+                onclick=base_modal.showModal()
+                hx-get="{% url 'provider:hr_file_upload' id=provider.id %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                >Upload HR File</a>
+        </div>
+    </div>
+
+    <div class="py-6 mb-4 align-top ">
+        <ul class="align-top">
+        {% for hr in hr_files %}
+            <form 
+                hx-delete="{% url 'provider:delete_hr_file' provider_id=provider.id file_id=hr.id %}" 
+                hx-trigger="submit"
+                hx-confirm="Are you sure you want to delete this file?"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                >
+            {% csrf_token %}
+            <li class=" flex flex-row justify-between mb-1">
+                <a href="{{ hr.file.url }}" target="_blank">{{ hr.file_name|truncatechars:30 }}</a>
+                <button type="submit" class="btn btn-sm btn-error">X</button>
+            </li>
+            </form> 
+        {% empty %}
+            <li>No HR Files</li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>

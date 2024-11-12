@@ -36,11 +36,11 @@
                                         {{ user.real_name }} 
                                     </h2>
                                     {% if user.contract_status == 'T' %}
-                                    <span class="badge badge-error text-sm">{{ user.contract_status }}</span>
+                                    <span class="badge badge-error badge-md">   </span>
                                     {% elif user.contract_status == 'I' %}
-                                    <span class="badge badge-warning text-sm">{{ user.contract_status }}</span>
+                                    <span class="badge badge-warning  badge-md"></span>
                                     {% else %}
-                                    <span class="badge badge-success text-sm">{{ user.contract_status }}</span>
+                                    <span class="badge badge-success badge-md"></span>
                                     {% endif %}
                                 </div>
                                 <div class="grid grid-cols-12 gap-2">

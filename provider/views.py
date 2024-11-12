@@ -1,12 +1,22 @@
 # Create your views here.
-from accounts.models import CustomUser
+from accounts.models import (
+    CustomUser,
+    Profile,
+    WorkHours,
+    Holidays,
+    ProductionTarget,
+    HRFiles,
+)
+from accounts.forms import HRFilesForm
 from minibooks.models import ReportMasterStat
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
+from django.http import HttpResponse
 from .forms import ProviderForm
+import json
 
 
 def index(request):
@@ -25,6 +35,8 @@ def index(request):
             .select_related("profile")
             .order_by("profile__real_name")
         )
+        if doctors.count() == 1:
+            return redirect("provider:view_provider", doctors[0].id)
     else:
         doctors = (
             CustomUser.objects.filter(is_staff=False)
@@ -73,6 +85,7 @@ def new_provider(request):
 def view_provider(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
     rs = ReportMasterStat.objects.filter(provider=provider)
+    hr_files = HRFiles.objects.filter(user=provider)
 
     rs_monthly = (
         rs.values("ayear", "amonth")
@@ -83,7 +96,7 @@ def view_provider(request, id):
         .order_by("-ayear", "-amonth")
     )
     # print(rs_monthly)
-    context = {"provider": provider, "rs_monthly": rs_monthly}
+    context = {"provider": provider, "rs_monthly": rs_monthly, "hr_files": hr_files}
 
     return render(request, "provider/view_provider.html", context)
 
@@ -116,3 +129,62 @@ def edit(request, id):
         else:
             messages.error(request, "Error updating provider")
     return render(request, "provider/edit.html", {"form": form, "provider": provider})
+
+
+def partial_hr_files(request, id):
+    provider = get_object_or_404(CustomUser, pk=id)
+    hr_files = HRFiles.objects.filter(user=provider)
+    context = {"hr_files": hr_files, "provider": provider}
+    return render(request, "provider/hr_files.html", context)
+
+
+def hr_file_upload(request, id):
+    provider = get_object_or_404(CustomUser, pk=id)
+    if request.method == "POST":
+        form = HRFilesForm(request.POST, request.FILES)
+        # print(form)
+        if form.is_valid():
+            files = request.FILES.getlist("file")
+            for file in files:
+                file_name = file.name
+                HRFiles.objects.create(user=provider, file_name=file_name, file=file)
+                print(file_name)
+
+            # messages.success(request, "HR File uploaded successfully")
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "HRfilesChanged": None,
+                            "showMessage": "File(s) Added.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            messages.error(request, "Error uploading HR File")
+    else:
+        form = HRFilesForm()
+
+    return render(
+        request, "provider/hr_file_upload.html", {"provider": provider, "form": form}
+    )
+
+
+def delete_hr_file(request, provider_id, file_id):
+    provider = get_object_or_404(CustomUser, pk=provider_id)
+    hr_file = get_object_or_404(HRFiles, pk=file_id)
+    hr_file.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "HRfilesChanged": None,
+                    "showMessage": "File Deleted.",
+                }
+            )
+        },
+    )

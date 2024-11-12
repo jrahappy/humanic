@@ -14,7 +14,7 @@
             </h2>
             <div class="card-title">
                 <form action="{% url 'provider:index' %}" method="GET">
-                    <input type="text" name="q" class="input input-bordered" placeholder="Search..." value="{{ request.GET.q }}">
+                    <input type="text" name="q" class="input input-bordered w-96" placeholder="성명, 이메일, 전공 또는 PACS id....." value="{{ request.GET.q }}">
                     <button type="submit" class="btn btn-primary">Search</button>
                 </form>
             </div>
@@ -39,17 +39,26 @@
             <tbody>
             {% for data in  doctors %}
                 <tr>
-                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                         {{ data.username }}
                     </td>
-                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ data.email }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.real_name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty2|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty3|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.onpacs_id|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ data.profile.contract_status|handle_none }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-end">
+                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ data.email }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.real_name }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty2|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty3|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.onpacs_id|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
+                        {% if data.profile.contract_status == 'T' %}
+                        <span class="badge badge-error badge-md">{{ data.profile.contract_status|handle_none }}</span>
+                        {% elif data.profile.contract_status == 'I' %}
+                        <span class="badge badge-warning  badge-md">{{ data.profile.contract_status|handle_none }}</span>
+                        {% else %}
+                        <span class="badge badge-success badge-md">{{ data.profile.contract_status|handle_none }}</span>
+                        {% endif %}
+                       
+                    </td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-end">
                         <a href="{% url 'provider:view_provider' data.id %}" class="btn btn-primary btn-sm">Detail</a>
                         <a href="{% url 'provider:edit' data.id %}" class="btn btn-primary btn-sm">Edit</a>
 

@@ -78,3 +78,12 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             "user": forms.HiddenInput(),
         }
+
+
+class HRFilesForm(forms.ModelForm):
+    class Meta:
+        model = HRFiles
+        fields = ["file"]
+        # widgets = {
+        #     "user": forms.HiddenInput(),
+        # }

@@ -164,9 +164,11 @@ class HRFiles(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, null=True, blank=True
     )
-    name = models.CharField(max_length=30)
-    file_name = models.CharField(max_length=30)
-    file = models.FileField(upload_to=upload_location, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    file_name = models.CharField(max_length=250, null=True, blank=True)
+    file = models.FileField(
+        upload_to=upload_location, max_length=250, null=True, blank=True
+    )
 
     def __str__(self):
-        return self.file_name
+        return self.user.username + " " + self.name
