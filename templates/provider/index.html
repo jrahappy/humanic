@@ -32,6 +32,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Specialty 2</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">CV3 ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">OnPACS ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Files</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider text-center">Action</th>
                 </tr>
@@ -49,26 +50,32 @@
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id|handle_none }}</td>
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.onpacs_id|handle_none }}</td>
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {% if data.profile.contract_status == 'T' %}
-                        <span class="badge badge-error badge-md">{{ data.profile.contract_status|handle_none }}</span>
-                        {% elif data.profile.contract_status == 'I' %}
-                        <span class="badge badge-warning  badge-md">{{ data.profile.contract_status|handle_none }}</span>
+                        {% if data.hr_files_count > 0 %}
+                            <a href="#" class="btn btn-outline btn-xs">
+                                {{ data.hr_files_count }}
+                            </a> 
                         {% else %}
-                        <span class="badge badge-success badge-md">{{ data.profile.contract_status|handle_none }}</span>
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
+                        {% if data.profile.contract_status == 'T' %}
+                        <span class="badge badge-error">{{ data.profile.contract_status|handle_none }}</span>
+                        {% elif data.profile.contract_status == 'I' %}
+                        <span class="badge badge-warning">{{ data.profile.contract_status|handle_none }}</span>
+                        {% else %}
+                        <span class="badge badge-success">{{ data.profile.contract_status|handle_none }}</span>
                         {% endif %}
                        
                     </td>
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-end">
                         <a href="{% url 'provider:view_provider' data.id %}" class="btn btn-primary btn-sm">Detail</a>
-                        <a href="{% url 'provider:edit' data.id %}" class="btn btn-primary btn-sm">Edit</a>
-
                     </td>
                 </tr>
             {% empty %}
 
             {% endfor %}
 
-                
             </tbody>
             <tfoot>
                 <tr>

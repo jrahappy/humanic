@@ -11,7 +11,7 @@ from accounts.forms import HRFilesForm
 from minibooks.models import ReportMasterStat
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import HttpResponse
@@ -33,6 +33,7 @@ def index(request):
             )
             .filter(is_staff=False)
             .select_related("profile")
+            .annotate(hr_files_count=Count("hrfiles__id"))
             .order_by("profile__real_name")
         )
         if doctors.count() == 1:
@@ -41,6 +42,7 @@ def index(request):
         doctors = (
             CustomUser.objects.filter(is_staff=False)
             .select_related("profile")
+            .annotate(hr_files_count=Count("hrfiles__id"))
             .order_by("-username")
         )
         # update_profile = Profile.objects.filter(specialty2="신경두경부").update(
