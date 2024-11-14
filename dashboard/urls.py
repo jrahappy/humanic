@@ -36,4 +36,14 @@ urlpatterns = [
     path("wh/remove/", views.workhour_remove, name="workhour_remove"),
     path("holy/create/", views.holiday_create, name="holiday_create"),
     path("holy/remove/", views.holiday_remove, name="holiday_remove"),
+    path(
+        "wh/modality/target/create/",
+        views.create_weekday_modality_target,
+        name="create_weekday_modality_target",
+    ),
+    path(
+        "wh/modality/target/list/<int:id>/",
+        views.weekday_modality_targets,
+        name="weekday_modality_targets",
+    ),
 ]

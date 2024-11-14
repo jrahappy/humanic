@@ -226,6 +226,11 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         1. 인자: dr, date/time, modality 
         2. return: int() 개
 
+# 11/11/2024 #
+    - Referify
+        1. 실시간으로 Radio의 처리 완료에 따라서 Case를 배정해주는 로직 필요
+        
+
 
 
 

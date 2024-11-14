@@ -1,0 +1,27 @@
+{% load humanize %}
+{% load custom_filters %}
+<div class="pb-4 px-8">
+<table class="table table-sm" style="width:960px;">
+    <tr style="border-bottom:2px solid;">
+        <th style="width:150px;">Weekday</th>
+        <th style="width:650px;">Modality </th>
+    </tr>
+    {% for wm in selected_w_modalities %}
+
+    {% if wm.work_weekday == 0 %}
+        <tr class="bg-red-100">
+    {% elif wm.work_weekday == 6 %}
+        <tr class="bg-sky-200">
+    {% else %}
+        <tr>
+    {% endif %}
+            <td>{{ wm.work_weekday }} </td>
+            <td>{{ wm.modality }} </td>
+            <td>{{ wm.target_value }} </td>
+            <td>{{ wm.max_value }} </td>
+            
+        </tr>
+    {% endfor %}
+    
+</table>
+</div>

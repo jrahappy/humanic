@@ -1,9 +1,9 @@
 from django import forms
-from .models import Blog
+from accounts.models import ProductionTarget
 
 
-class blogForm(forms.ModelForm):
+class ProductionTargetForm(forms.ModelForm):
     class Meta:
-        model = Blog
+        model = ProductionTarget
         fields = "__all__"
-        exclude = ["author", "created_at", "updated_at"]
+        exclude = ["user"]

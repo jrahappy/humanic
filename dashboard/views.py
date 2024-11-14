@@ -18,14 +18,83 @@ import plotly.express as px
 import calendar
 from datetime import datetime, timedelta, date
 from django.utils import timezone
-from utils.base_func import APPT_DAYS, HOLIDAY_CATEGORY, TERM_CATEGORY, WORKHOURS
+from utils.base_func import (
+    get_amodality_choices,
+    APPT_DAYS,
+    HOLIDAY_CATEGORY,
+    TERM_CATEGORY,
+    WORKHOURS,
+)
+from .forms import ProductionTargetForm
+import json
+
+
+def create_weekday_modality_target(request):
+    user = request.user
+    real_name = user.profile.real_name
+    week_days = APPT_DAYS
+    amodality = get_amodality_choices()
+    if request.method == "POST":
+        form = ProductionTargetForm(request.POST)
+        work_weekday = form.data.get("work_weekday")
+        print(work_weekday)
+
+        if form.is_valid():
+            tg = form.save(commit=False)
+            tg.user = user
+            tg.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "targetListChanged": None,
+                            "showMessage": "Target created successfully.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return render(
+                request,
+                "dashboard/partial/work_weekday_modality.html",
+                {
+                    "form": form,
+                    "real_name": real_name,
+                },
+            )
+    else:
+        form = ProductionTargetForm()
+
+    context = {
+        "real_name": real_name,
+        "form": form,
+    }
+
+    return render(request, "dashboard/week_day_modality.html", context)
+
+
+def weekday_modality_targets(request, id):
+
+    wm_targets = ProductionTarget.objects.filter(user=id).order_by(
+        "work_weekday", "modality"
+    )
+    print(wm_targets.count())
+
+    context = {
+        "targets": wm_targets,
+    }
+
+    return render(request, "dashboard/partial/weekday_modality_targets.html", context)
 
 
 def get_year_calendar(year):
     months = []
     today = timezone.now().date()
     current_month = int(today.month)
-    current_12_months = range(current_month, current_month + 6)
+    # 향후 3개월 달력만 보여주기
+    current_12_months = range(current_month, current_month + 3)
     # print(current_12_months)
     flag_year = False
     for month in current_12_months:
@@ -108,11 +177,16 @@ def workhours(request):
     # print(selected_holidays_dict)
     week_days = APPT_DAYS
     workhours = WORKHOURS
+    amodality = get_amodality_choices()
+    # print(amodality)
 
     selected_workhours_dict = {
         item["work_weekday"]: item["work_hour"]
         for item in selected_workhours.values("work_weekday", "work_hour")
     }
+
+    targets = ProductionTarget.objects.filter(user=user).order_by("work_weekday")
+
     year = datetime.now().year
     months = get_year_calendar(year)
 
@@ -124,6 +198,7 @@ def workhours(request):
         "months": months,
         "today_date": date.today(),
         "selected_holidays_dict": selected_holidays_dict,
+        "targets": targets,
     }
 
     return render(request, "dashboard/wh.html", context)

@@ -1,0 +1,16 @@
+
+    <p>
+        {% for target in targets %}
+   
+        <li>
+            {{ target.work_weekday }} / {{ target.modality }} / {{ target.target_value }}
+            {{ target.max_value }} / 
+            {{ target.id }}
+            <a class="btn btn-xs"
+                onclick="base_modal.showModal()"
+            
+            >수정</a>
+        </li>
+        {% endfor %}
+    </p>                                  
+

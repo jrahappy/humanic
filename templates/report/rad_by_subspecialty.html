@@ -65,7 +65,10 @@
                                         <p class="text-xs text-end">{{ user.latest_month_total_revenue|div:user.total_readprice|floatformat:2 }}%</p>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="flex flex-row justify-between">
+                                    <a href="{% url 'provider:view_provider' user.user.id %}" 
+                                        class="btn btn-sm btn-neutral">Detail</a>
+                                    {% if user.total_readprice > 0 %}
                                     <a href="#"
                                         onclick=base_modal.showModal()
                                         hx-get="{% url 'report:partial_provider_by_month' latest_year user.user.id %}"
@@ -73,9 +76,9 @@
                                         hx-target="#base_modal"
                                         hx-swap="innerHTML"
                                         hx-indicator="#spinner"
-                                        class="btn btn-sm btn-neutral">추이</a>
-                                    <a href="{% url 'provider:view_provider' user.user.id %}" 
-                                        class="btn btn-sm btn-neutral">정보</a>
+                                        class="btn btn-sm btn-neutral">Trend</a>
+                                    {% endif %}
+                                    
                                 </div>
                             </div>
                         </div>
