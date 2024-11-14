@@ -1,0 +1,64 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <h2 class="card-title grow">
+                    상황판 
+                </h2>
+            </div>
+        </div>
+    </section>
+    {% for specialty, providers in grouped_by_specialty.items %}
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="card-body">
+            <h2 class="card-title">{{ specialty }}</h2>
+            <div class="grid grid-cols-6 gap-4 md:grid-cols-12 lg:grid-cols-6">
+                {% for provider in providers %}
+                <div class="card bg-base-200 shadow-md">
+                    <div class="card-body">
+                        <div class="flex justify-between gap-2">
+                            <h2 class="card-title">{{ provider.real_name }}</h2>
+                            <span class="badge badge-accent">{{ provider.status }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex flex-row flex-wrap gap-1 mb-2">
+                                {% for target in provider.production_targets %}
+                                <span class="badge badge-neutral">
+                                    {{ target.modality|upper }} 
+                                    {{ target.target_value }}/
+                                    max {{ target.max_value }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            <div class="flex flex-row flex-wrap gap-1">
+                                {% for hour in provider.workhours %}
+                                    {{ hour.work_hour|get_workhour_short|safe}}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>    
+        </div>
+    </section>
+    {% endfor %}  
+
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

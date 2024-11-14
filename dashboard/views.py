@@ -29,41 +29,74 @@ from .forms import ProductionTargetForm
 import json
 
 
-def create_weekday_modality_target(request):
+def create_weekday_modality_target(request, id):
     user = request.user
-    real_name = user.profile.real_name
+    provider = CustomUser.objects.get(id=id)
+    real_name = provider.profile.real_name
     week_days = APPT_DAYS
     amodality = get_amodality_choices()
     if request.method == "POST":
         form = ProductionTargetForm(request.POST)
-        work_weekday = form.data.get("work_weekday")
-        print(work_weekday)
 
-        if form.is_valid():
-            tg = form.save(commit=False)
-            tg.user = user
-            tg.save()
+        # 기존 타겟이 있는지 확인
+        work_weekday = form.data.get("work_weekday")
+        modality = form.data.get("modality")
+        is_exist = ProductionTarget.objects.filter(
+            user=provider, work_weekday=work_weekday, modality=modality
+        ).exists()
+
+        # 타겟이 있으면 업데이트
+        if is_exist:
+
+            target_v = form.data.get("target_value")
+            max_v = form.data.get("max_value")
+
+            target = ProductionTarget.objects.get(
+                user=provider, work_weekday=work_weekday, modality=modality
+            )
+            target.target_value = target_v
+            target.max_value = max_v
+            target.save()
             return HttpResponse(
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
                         {
                             "targetListChanged": None,
-                            "showMessage": "Target created successfully.",
+                            "showMessage": "Target updated successfully.",
                         }
                     )
                 },
             )
+
+        # 타겟이 없으면 생성
         else:
-            print(form.errors)
-            return render(
-                request,
-                "dashboard/partial/work_weekday_modality.html",
-                {
-                    "form": form,
-                    "real_name": real_name,
-                },
-            )
+
+            if form.is_valid():
+                tg = form.save(commit=False)
+                tg.user = provider
+                tg.save()
+                return HttpResponse(
+                    status=204,
+                    headers={
+                        "HX-Trigger": json.dumps(
+                            {
+                                "targetListChanged": None,
+                                "showMessage": "Target created successfully.",
+                            }
+                        )
+                    },
+                )
+            else:
+                print(form.errors)
+                return render(
+                    request,
+                    "dashboard/partial/work_weekday_modality.html",
+                    {
+                        "form": form,
+                        "real_name": real_name,
+                    },
+                )
     else:
         form = ProductionTargetForm()
 
@@ -75,18 +108,37 @@ def create_weekday_modality_target(request):
     return render(request, "dashboard/week_day_modality.html", context)
 
 
+# 타겟 목록 보여주기(Partial)
 def weekday_modality_targets(request, id):
-
+    provider = CustomUser.objects.get(id=id)
     wm_targets = ProductionTarget.objects.filter(user=id).order_by(
         "work_weekday", "modality"
     )
-    print(wm_targets.count())
+    # print(wm_targets.count())
 
     context = {
+        "provider": provider,
+        "week_days": APPT_DAYS,
         "targets": wm_targets,
     }
 
     return render(request, "dashboard/partial/weekday_modality_targets.html", context)
+
+
+def delete_weekday_modality_target(request, id):
+    target = ProductionTarget.objects.get(id=id)
+    target.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "targetListChanged": None,
+                    "showMessage": "Target deleted successfully.",
+                }
+            )
+        },
+    )
 
 
 def get_year_calendar(year):
@@ -168,7 +220,13 @@ def get_month_calendar(year, month):
 # workhours 초기 화면 구성
 def workhours(request):
     user = request.user
+    # 요일별 근무시간
     selected_workhours = WorkHours.objects.filter(user=user).order_by("work_weekday")
+    selected_workhours_dict = {
+        item["work_weekday"]: item["work_hour"]
+        for item in selected_workhours.values("work_weekday", "work_hour")
+    }
+    # 휴일 OFF 등록
     selected_holidays = Holidays.objects.filter(user=user)
     selected_holidays_dict = {
         item["holiday_category"]: item["holidays"]
@@ -180,18 +238,16 @@ def workhours(request):
     amodality = get_amodality_choices()
     # print(amodality)
 
-    selected_workhours_dict = {
-        item["work_weekday"]: item["work_hour"]
-        for item in selected_workhours.values("work_weekday", "work_hour")
-    }
-
-    targets = ProductionTarget.objects.filter(user=user).order_by("work_weekday")
+    targets = ProductionTarget.objects.filter(user=user).order_by(
+        "work_weekday", "modality"
+    )
 
     year = datetime.now().year
     months = get_year_calendar(year)
 
     context = {
         "user": user,
+        "provider": user,
         "week_days": week_days,
         "workhours": workhours,
         "selected_workhours_dict": selected_workhours_dict,
@@ -281,23 +337,33 @@ def holiday_remove(request):
     return render(request, "dashboard/partial/month_calendar.html", context)
 
 
-def workhour_create(request):
+def workhour_create(request, id):
     user = request.user
+    provider = CustomUser.objects.get(id=id)
     week_day = request.GET.get("day")
     work_hour = request.GET.get("hour")
 
-    is_workhour = WorkHours.objects.filter(user=user, work_weekday=week_day).exists()
+    is_workhour = WorkHours.objects.filter(
+        user=provider, work_weekday=week_day
+    ).exists()
 
     if is_workhour:
-        workhour = WorkHours.objects.get(user=user, work_weekday=week_day)
+        workhour = WorkHours.objects.get(user=provider, work_weekday=week_day)
         wh_list = workhour.work_hour if isinstance(workhour.work_hour, list) else []
-        wh_list.append(work_hour)
+        # All day 처리
+        if work_hour == "99":
+            wh_list = [work_hour]
+        else:
+            if "99" in wh_list:
+                wh_list.remove("99")
+            wh_list.append(work_hour)
+
         workhour.work_hour = wh_list
         workhour.save()
         # print("old")
     else:
         workhour = WorkHours()
-        workhour.user = user
+        workhour.user = provider
         workhour.work_weekday = week_day
         wh_list = [work_hour]
         workhour.work_hour = wh_list
@@ -306,6 +372,7 @@ def workhour_create(request):
     selected_workhours = wh_list
 
     context = {
+        "provider": provider,
         "week_day": week_day,
         "week_days": APPT_DAYS,
         "workhours": WORKHOURS,
@@ -315,12 +382,13 @@ def workhour_create(request):
     return render(request, "dashboard/partial/week_day_hours.html", context)
 
 
-def workhour_remove(request):
+def workhour_remove(request, id):
     user = request.user
+    provider = CustomUser.objects.get(id=id)
     week_day = request.GET.get("day")
     work_hour = request.GET.get("hour")
 
-    workhour = WorkHours.objects.get(user=user, work_weekday=week_day)
+    workhour = WorkHours.objects.get(user=provider, work_weekday=week_day)
     wh_list = workhour.work_hour
     wh_list.remove(work_hour)
     workhour.work_hour = wh_list
@@ -329,6 +397,7 @@ def workhour_remove(request):
     selected_workhours = wh_list
 
     context = {
+        "provider": provider,
         "week_day": week_day,
         "week_days": APPT_DAYS,
         "workhours": WORKHOURS,

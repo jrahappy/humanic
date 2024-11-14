@@ -13,7 +13,7 @@
             <h2 class="card-title grow">
                 <a class="link-hover link">Weekly Work Hours</a>
             </h2>
-            <a href="{% url 'dashboard:workhours' %}" class="btn btn-sm btn-primary">Add</a>
+            
         </div>
     </div>
     <div class="">
@@ -27,42 +27,7 @@
     </div>
 </section>
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-            <h2 class="card-title grow">
-                <a class="link-hover link">Targets</a>
-            </h2>
-            <a 
-                href="#"
-                onclick=base_modal.showModal()
-                class="btn btn-sm btn-primary"
-                hx-get="{% url 'dashboard:create_weekday_modality_target' %}"
-                hx-trigger="click"
-                hx-swap="innerHTML"
-                hx-target="#base_modal"
-                >Add</a>
-        </div>
-    </div>
-    <div class="space-y-12">
-        <div class="card-body grow-0">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
-  
-                    <div 
-                        class=" min-w-full py-2 align-middle sm:px-6 lg:px-8"
-                        id="weekday_modal_target_list" 
-                        
-                        hx-trigger="targetListChanged from:body"
-                        hx-get="{% url 'dashboard:weekday_modality_targets' user.id %}" 
-                        hx-target="this"
-                        hx-swap="outerHTML"
-                    >
-                    {% include 'dashboard/partial/weekday_modality_targets.html' %}    
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'dashboard/partial/weekday_modality_targets.html' %}    
 </section>
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">

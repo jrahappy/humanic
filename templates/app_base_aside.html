@@ -83,6 +83,24 @@
                         
                 </details>
             </li>
+            {% if user.username == "albert" or user.username == "william" %}
+            
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/bolt.svg"
+                            class="h-5 w-5"></svg>
+                        ReferDex
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="{% url 'referdex:index' %}" class="px-5">상황판</a>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+            {% endif %}
             {% if user.username == "william" %}
             <hr class="my-6">
             <li>

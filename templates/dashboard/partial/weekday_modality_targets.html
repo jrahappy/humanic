@@ -1,16 +1,73 @@
+{% load custom_filters %}
 
-    <p>
-        {% for target in targets %}
-   
-        <li>
-            {{ target.work_weekday }} / {{ target.modality }} / {{ target.target_value }}
-            {{ target.max_value }} / 
-            {{ target.id }}
-            <a class="btn btn-xs"
-                onclick="base_modal.showModal()"
-            
-            >수정</a>
-        </li>
-        {% endfor %}
-    </p>                                  
+<div class="card-body grow-0"
+    id="weekday_modal_target_list" 
+    hx-trigger="targetListChanged from:body"
+    hx-get="{% url 'dashboard:weekday_modality_targets' provider.id %}" 
+    hx-target="this"
+    hx-swap="outerHTML"
+>
+    <div class="flex justify-between gap-2">
+        <h2 class="card-title grow">
+            판독 희망건수
+        </h2>
+        <a 
+            href="#"
+            onclick=base_modal.showModal()
+            class="btn btn-sm btn-primary"
+            hx-get="{% url 'dashboard:create_weekday_modality_target' provider.id %}"
+            hx-trigger="click"
+            hx-swap="innerHTML"
+            hx-target="#base_modal"
+            >Add
+        </a>
+    </div>
 
+    <div class="mt-4 flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <table class="table table-sm w-full" >
+                    <tr style="border-bottom:2px solid;">
+                        <th style="width:150px;">Weekday</th>
+                        <th style="width:650px;">Targets by modality </th>
+                    </tr>
+                {% for week_day in week_days %}
+                {% if week_day.0 == "0" %}
+                    <tr class="bg-red-100">
+                {% elif week_day.0 == "6" %}
+                    <tr class="bg-sky-200">
+                {% else %}
+                    <tr>
+                {% endif %}
+                        <td >{{ week_day.1 }} </td>
+                        <td>
+                            <div class="flex flex-row" style="height:32px;">
+                                {% for target in targets %}
+                                    {% if target.work_weekday == week_day.0 %}
+                                    <div class="flex flex-row me-2 btn btn-sm">
+                                        <div class="w-24 bordered-1">
+                                            {{ target.modality|upper }}:                  
+                                            {{ target.target_value }}  +{{ target.max_value }}
+                                        </div>
+                                        <div class="">
+                                            <a class="btn btn-xs btn-warning"
+                                                hx-delete="{% url 'dashboard:delete_weekday_modality_target' target.id %}"
+                                                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                                hx-target="#weekday_modal_target_list"
+                                                hx-swap="outerHTML"
+                                                hx-confirm="Are you sure you want to delete this target?"
+                                            >X</a>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </table>
+            </div>
+        </div>
+    </div>  
+</div>

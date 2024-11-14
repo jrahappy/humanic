@@ -1,54 +1,65 @@
 {% load humanize %}
 {% load custom_filters %}
-<div class="pb-4 px-8">
-<table class="table table-sm" style="width:960px;">
-    <tr style="border-bottom:2px solid;">
-        <th style="width:150px;">Weekday</th>
-        <th style="width:650px;">Work hours </th>
-    </tr>
-    {% for day, name in week_days %}
+<div class="card-body grow-0">
+    <div class="flex justify-between gap-2">
+        <h2 class="card-title grow">
+            <a class="link-hover link">요일별 근무시간</a>
+        </h2>
+    </div>
+    <div class="mt-4 flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <table class="table table-sm w-full" >
+                    <tr style="border-bottom:2px solid;">
+                        <th style="width:150px;">Weekday</th>
+                        <th style="width:650px;">Work hours </th>
+                    </tr>
+                    {% for day, name in week_days %}
 
-    {% if day == 0 %}
-        <tr class="bg-red-100">
-    {% elif day == 6 %}
-        <tr class="bg-sky-200">
-    {% else %}
-        <tr>
-    {% endif %}
-            <td>{{ name }} </td>
-            <td>
-                <div id="workhours_{{ day }}">
-                    {% if day|stringformat:"s" in selected_workhours_dict|keys %}
-                        
-                        {% for x, y in workhours %}
-                            {% if x|stringformat:"s" in selected_workhours_dict|get_item:day %}
-                                <a class="btn btn-sm btn-primary"
-                                hx-get="{% url 'dashboard:workhour_remove' %}?day={{ day }}&hour={{ x }}"
-                                hx-trigger="click"
-                                hx-target="#workhours_{{ day }}"
-                                hx-swap="outerHTML">{{ y}}</a>
-                            {% else %}
-                                
-                                <a class="btn btn-sm"
-                                hx-get="{% url 'dashboard:workhour_create' %}?day={{ day }}&hour={{ x }}"
-                                hx-trigger="click"
-                                hx-target="#workhours_{{ day }}"
-                                hx-swap="outerHTML">{{ y }}</a>
-                            {% endif %}
-                        {% endfor %}
+                    {% if day == "0" %}
+                        <tr class="bg-red-100">
+                    {% elif day == "6" %}
+                        <tr class="bg-sky-200">
                     {% else %}
-                        {% for x, y in workhours %}
-                            <a class="btn btn-sm"
-                               hx-get="{% url 'dashboard:workhour_create' %}?day={{ day }}&hour={{ x }}"
-                               hx-trigger="click"
-                               hx-target="#workhours_{{ day }}"
-                               hx-swap="outerHTML">{{ y }}</a>
-                        {% endfor %}
+                        <tr>
                     {% endif %}
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
-    
-</table>
+                            <td>{{ name }} </td>
+                            <td>
+                                <div id="workhours_{{ day }}">
+                                    {% if day|stringformat:"s" in selected_workhours_dict|keys %}
+                                        
+                                        {% for x, y in workhours %}
+                                            {% if x|stringformat:"s" in selected_workhours_dict|get_item:day %}
+                                                <a class="btn btn-sm btn-primary"
+                                                hx-get="{% url 'dashboard:workhour_remove' provider.id %}?day={{ day }}&hour={{ x }}"
+                                                hx-trigger="click"
+                                                hx-target="#workhours_{{ day }}"
+                                                hx-swap="outerHTML">{{ y}}</a>
+                                            {% else %}
+                                                
+                                                <a class="btn btn-sm"
+                                                hx-get="{% url 'dashboard:workhour_create' provider.id %}?day={{ day }}&hour={{ x }}"
+                                                hx-trigger="click"
+                                                hx-target="#workhours_{{ day }}"
+                                                hx-swap="outerHTML">{{ y }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for x, y in workhours %}
+                                            <a class="btn btn-sm"
+                                            hx-get="{% url 'dashboard:workhour_create' provider.id %}?day={{ day }}&hour={{ x }}"
+                                            hx-trigger="click"
+                                            hx-target="#workhours_{{ day }}"
+                                            hx-swap="outerHTML">{{ y }}</a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

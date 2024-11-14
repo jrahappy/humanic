@@ -87,3 +87,10 @@ class HRFilesForm(forms.ModelForm):
         # widgets = {
         #     "user": forms.HiddenInput(),
         # }
+
+
+class ProductionTargetForm(forms.ModelForm):
+    class Meta:
+        model = ProductionTarget
+        fields = "__all__"
+        exclude = ["user"]

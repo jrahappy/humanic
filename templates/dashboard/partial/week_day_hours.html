@@ -1,8 +1,10 @@
+
+
 <div id="workhours_{{ week_day }}">
     {% for x, y in workhours %}
         {% if x|stringformat:"s" in selected_workhours %}
             <a  class="btn btn-sm btn-primary"
-                hx-get="{% url 'dashboard:workhour_remove' %}?day={{ week_day }}&hour={{ x }}"
+                hx-get="{% url 'dashboard:workhour_remove' provider.id %}?day={{ week_day }}&hour={{ x }}"
                 hx-trigger="click"
                 hx-target="#workhours_{{ week_day }}"
                 hx-swap="outerHTML"
@@ -10,7 +12,7 @@
         {% else %}
 
             <a  class="btn btn-sm"
-                hx-get="{% url 'dashboard:workhour_create' %}?day={{ week_day }}&hour={{ x }}"
+                hx-get="{% url 'dashboard:workhour_create' provider.id %}?day={{ week_day }}&hour={{ x }}"
                 hx-trigger="click"
                 hx-target="#workhours_{{ week_day }}"
                 hx-swap="outerHTML"

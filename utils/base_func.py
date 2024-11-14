@@ -59,6 +59,35 @@ def get_blog_category():
     return choices
 
 
+def get_workhour_html(arr):
+    html_arr = ""
+
+    if arr is not None:
+        if isinstance(arr, str):
+            arr = [int(i) for i in ast.literal_eval(arr)]
+            # arr = [int(i) if i.isdigit() else 99 for i in ast.literal_eval(arr)]
+        else:
+            arr = [int(i) for i in arr]
+
+        start = end = arr[0]
+
+        html_arr = ""
+        for tooth in arr[1:] + [None]:
+            if tooth == end + 1:
+                end = tooth
+            else:
+                if start == end:
+                    if start == 99:
+                        html_arr += f"<span class='badge badge-info' style='margin-right:3px;' id='tooth-99'>Other</span>"
+                    else:
+                        html_arr += f"<span class='badge badge-info' style='margin-right:3px;' id='tooth-{start}'>{start}</span>"
+                else:
+                    html_arr += f"<span class='badge badge-info' style='margin-right:3px;' id='tooth-{start}-{end}'>{start}-{end}</span>"
+                start = end = tooth
+
+    return html_arr
+
+
 APPT_DAYS = [
     ("0", "Sunday"),
     ("1", "Monday"),
@@ -82,8 +111,8 @@ TERM_CATEGORY = [
     ("Y", "Yearly"),
 ]
 WORKHOURS = [
-    (7, "7"),
-    (8, "8"),
+    # (7, "7"),
+    # (8, "8"),
     (9, "9"),
     (10, "10"),
     (11, "11"),
@@ -93,11 +122,12 @@ WORKHOURS = [
     (15, "3"),
     (16, "4"),
     (17, "5"),
-    (18, "6"),
+    (99, "All Day"),
 ]
 
 CONTRACT_STATUS = [
     ("A", "Active"),
+    ("P", "PartTime"),
     ("I", "Inactive"),
     ("T", "Terminated"),
 ]

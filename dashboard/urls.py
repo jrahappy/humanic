@@ -32,12 +32,12 @@ urlpatterns = [
     path("board/", views.board, name="board"),
     path("detail/<int:pk>/", views.detail, name="detail"),
     path("wh/", views.workhours, name="workhours"),
-    path("wh/create/", views.workhour_create, name="workhour_create"),
-    path("wh/remove/", views.workhour_remove, name="workhour_remove"),
+    path("wh/create/<int:id>/", views.workhour_create, name="workhour_create"),
+    path("wh/remove/<int:id>/", views.workhour_remove, name="workhour_remove"),
     path("holy/create/", views.holiday_create, name="holiday_create"),
     path("holy/remove/", views.holiday_remove, name="holiday_remove"),
     path(
-        "wh/modality/target/create/",
+        "wh/modality/target/create/<int:id>/",
         views.create_weekday_modality_target,
         name="create_weekday_modality_target",
     ),
@@ -45,5 +45,10 @@ urlpatterns = [
         "wh/modality/target/list/<int:id>/",
         views.weekday_modality_targets,
         name="weekday_modality_targets",
+    ),
+    path(
+        "wh/modality/target/remove/<int:id>/",
+        views.delete_weekday_modality_target,
+        name="delete_weekday_modality_target",
     ),
 ]

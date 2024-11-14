@@ -198,6 +198,7 @@
 	</div>
 
 </section>
+
 <section 
 	id="hr_files_section" 
 	class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6"
@@ -207,6 +208,17 @@
 	>
 	
 	{% include 'provider/hr_files.html' %}
+	
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+	
+	{% include 'dashboard/partial/weekday_modality_targets.html' %}   
+	
+</section>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+	{% include 'dashboard/partial/work_hours.html' %}
+	
 	
 </section>
 {% endblock %}

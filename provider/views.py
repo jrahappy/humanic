@@ -7,7 +7,10 @@ from accounts.models import (
     ProductionTarget,
     HRFiles,
 )
-from accounts.forms import HRFilesForm
+from accounts.forms import (
+    HRFilesForm,
+    ProductionTargetForm,
+)
 from minibooks.models import ReportMasterStat
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -16,6 +19,14 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import HttpResponse
 from .forms import ProviderForm
+
+from utils.base_func import (
+    get_amodality_choices,
+    APPT_DAYS,
+    HOLIDAY_CATEGORY,
+    TERM_CATEGORY,
+    WORKHOURS,
+)
 import json
 
 
@@ -89,6 +100,21 @@ def view_provider(request, id):
     rs = ReportMasterStat.objects.filter(provider=provider)
     hr_files = HRFiles.objects.filter(user=provider)
 
+    week_days = APPT_DAYS
+    workhours = WORKHOURS
+
+    selected_workhours = WorkHours.objects.filter(user=provider).order_by(
+        "work_weekday"
+    )
+    selected_workhours_dict = {
+        item["work_weekday"]: item["work_hour"]
+        for item in selected_workhours.values("work_weekday", "work_hour")
+    }
+
+    targets = ProductionTarget.objects.filter(user=provider).order_by(
+        "work_weekday", "modality"
+    )
+
     rs_monthly = (
         rs.values("ayear", "amonth")
         .annotate(
@@ -98,7 +124,15 @@ def view_provider(request, id):
         .order_by("-ayear", "-amonth")
     )
     # print(rs_monthly)
-    context = {"provider": provider, "rs_monthly": rs_monthly, "hr_files": hr_files}
+    context = {
+        "provider": provider,
+        "rs_monthly": rs_monthly,
+        "hr_files": hr_files,
+        "week_days": week_days,
+        "workhours": workhours,
+        "selected_workhours_dict": selected_workhours_dict,
+        "targets": targets,
+    }
 
     return render(request, "provider/view_provider.html", context)
 

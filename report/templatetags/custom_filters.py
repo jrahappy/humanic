@@ -1,3 +1,4 @@
+import ast
 from django import template
 
 register = template.Library()
@@ -80,14 +81,23 @@ def divide_by_60(value):
 @register.filter
 def weekday_name(value):
     WEEKDAY_MAP = {
-        1: "Sunday",
-        2: "Monday",
-        3: "Tuesday",
-        4: "Wednesday",
-        5: "Thursday",
-        6: "Friday",
-        7: "Saturday",
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
     }
+    # WEEKDAY_MAP = {
+    #     1: "Sunday",
+    #     2: "Monday",
+    #     3: "Tuesday",
+    #     4: "Wednesday",
+    #     5: "Thursday",
+    #     6: "Friday",
+    #     7: "Saturday",
+    # }
     return WEEKDAY_MAP.get(value, "Unknown")
 
 
@@ -132,6 +142,59 @@ def keys(dictionary):
     if isinstance(dictionary, dict):
         return list(dictionary.keys())
     return []
+
+
+@register.filter
+def get_key_from_value(choices, value):
+    """Fetches the key from a choices tuple based on the value."""
+    for key, val in choices:
+        if val == value:
+            return key
+    return None
+
+
+@register.filter
+def get_val_from_value(choices, value):
+    """Fetches the key from a choices tuple based on the value."""
+    for key, val in choices:
+        if val == value:
+            return val
+    return None
+
+
+@register.filter
+def get_workhour_short(arr):
+    html_arr = ""
+    if arr is not None:
+        if isinstance(arr, str):
+            arr = [int(i) for i in ast.literal_eval(arr)]
+            # arr = [int(i) if i.isdigit() else 99 for i in ast.literal_eval(arr)]
+        else:
+            arr = [int(i) for i in arr]
+
+        if not arr:  # Check if the list is empty
+            return html_arr
+
+        start = end = arr[0]
+
+        for hr in arr[1:] + [None]:
+            if hr == end + 1:
+                end = hr
+            else:
+                if start == end:
+                    if start == 99:
+                        html_arr += "<span class='badge badge-info'>All Day</span>"
+                    else:
+                        html_arr += (
+                            f"<span class='badge badge-info'>Hrs: {str(start)}</span>"
+                        )
+                else:
+                    html_arr += (
+                        f"<span class='badge badge-info'>Hrs: {start}-{end}</span>"
+                    )
+                start = end = hr
+
+    return html_arr
 
 
 # @register.filter

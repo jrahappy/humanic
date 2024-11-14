@@ -20,6 +20,7 @@ urlpatterns = [
     path("dogfoot/", include("dogfoot.urls")),
     path("blog/", include("blog.urls")),
     path("cust/", include("cust.urls")),
+    path("referdex/", include("referdex.urls")),
 ]
 
 # Debug toolbar
