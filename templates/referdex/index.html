@@ -7,18 +7,72 @@
 {% endblock %}
 
 {% block content %}
-
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-        <div class="card-body grow-0">
-            <div class="flex justify-between gap-2">
-                <h2 class="card-title grow">
-                    상황판 
-                </h2>
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="text-2xl text-start font-bold">
+                    {{ today|date:"Y, F j, l" }} 
+                    <span id="current-time"></span>
+                    <script>
+                        function updateTime() {
+                            const now = new Date();
+                            const hours = now.getHours();
+                            const minutes = String(now.getMinutes()).padStart(2, '0');
+                            const seconds = String(now.getSeconds()).padStart(2, '0');
+                            const ampm = hours >= 12 ? 'PM' : 'AM';
+                            const displayHours = String(hours % 12 || 12).padStart(2, '0');
+                            document.getElementById('current-time').textContent = `${displayHours}:${minutes}:${seconds} ${ampm}`;
+                        }
+                        setInterval(updateTime, 1000);
+                        updateTime();
+                    </script>
+                </div>
+
+            </div>
+            <div class="stat">
+                <div class="text-2xl text-start font-bold">
+                    전임<span class="badge badge-success badge-md"></span> {{ total_provider_a|intcomma }}명, 비전임<span class="badge badge-warning badge-md"></span> {{ total_provider_p|intcomma }}명 
+                </div>
             </div>
         </div>
     </section>
-    {% for specialty, providers in grouped_by_specialty.items %}
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="stats shadow">
+            {% for specialty, stat in stat_values.items %}
+            <div class="stat">
+                <div class="text-2xl text-center font-bold">{{ specialty }}</div>
+                <div class="badge badge-primary mt-2 mb-2 font-bold w-full">
+                    전:{{ stat.count_provider_a }}, 비:{{ stat.count_provider_p }}
+                </div>
+                <div class="border-2">
+                    <div class="stat-title px-2 flex flex-row">
+                        <div class="w-1/3 text-secondary font-bold font-bold">CT</div>
+                        <div class="w-1/3 font-bold text-end">{{ stat.sum_ct_target }}</div>
+                        <div class="w-1/3 font-bold text-end">0</div>
+                    </div>
+                    <div class="stat-title font-bold px-2 flex flex-row bg-gray-100">
+                        <div class="w-1/3 font-bold">MR</div>
+                        <div class="w-1/3 font-bold text-end">{{ stat.sum_mr_target }}</div>
+                        <div class="w-1/3 font-bold text-end">0</div>
+                    </div>
+                    <div class="stat-title px-2 flex flex-row">
+                        <div class="w-1/3 font-bold">CR</div>
+                        <div class="w-1/3 font-bold text-end">{{ stat.sum_cr_target }}</div>
+                        <div class="w-1/3 font-bold text-end">0</div>
+                    </div>
+                    <div class="stat-title px-2 flex flex-row bg-gray-100">
+                        <div class="w-1/3 font-bold">MG</div>
+                        <div class="w-1/3 font-bold text-end">{{ stat.sum_mg_target }}</div>
+                        <div class="w-1/3 font-bold text-end">0</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+        </div>
+    </section>
+    {% for specialty, providers in grouped_by_specialty.items %}
+    <section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
         <div class="card-body">
             <h2 class="card-title">{{ specialty }}</h2>
             <div class="grid grid-cols-6 gap-4 md:grid-cols-12 lg:grid-cols-6">
@@ -26,8 +80,16 @@
                 <div class="card bg-base-200 shadow-md">
                     <div class="card-body">
                         <div class="flex justify-between gap-2">
-                            <h2 class="card-title">{{ provider.real_name }}</h2>
-                            <span class="badge badge-accent">{{ provider.status }}</span>
+                            <a href="{% url 'provider:view_provider' provider.iid %}" class="link-hover link">
+                                <h2 class="card-title">{{ provider.real_name }}</h2>
+                            </a>
+                            <div>
+                                {% if provider.contract_status == 'P' %}
+                                <span class="badge badge-warning badge-md"></span>
+                                {% else %}
+                                <span class="badge badge-success badge-md"></span>
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="flex flex-col">
                             <div class="flex flex-row flex-wrap gap-1 mb-2">
@@ -45,9 +107,12 @@
                                 {% endfor %}
                             </div>
                         </div>
+                        
                     </div>
+                    
                 </div>
                 {% endfor %}
+                
             </div>    
         </div>
     </section>
