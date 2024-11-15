@@ -49,7 +49,7 @@ def index(request):
     )
 
     stat_values = defaultdict(dict)
-    specialties = get_specialty_choices()
+    specialties = sorted(get_specialty_choices())
 
     total_provider_a = CustomUser.objects.filter(
         is_doctor=True,
