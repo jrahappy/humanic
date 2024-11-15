@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Sum, Q, Prefetch, OuterRef
+from django.db.models import Sum, Q, Prefetch, Func
 from collections import defaultdict
 from minibooks.models import MagamMaster, ReportMasterStat, ReportMaster
 from accounts.models import CustomUser, ProductionTarget, Profile, WorkHours, Holidays
@@ -7,45 +7,23 @@ from datetime import date, datetime
 from utils.base_func import get_specialty_choices
 
 
-# Create your views here.
-# def index(request):
-#     # Dictionary to store doctors grouped by subspecialty
-#     selected_date = date.today()
-#     selected_weekday = selected_date.weekday() + 1
-#     current_hour = datetime.now().hour
-
-#     print("오늘 요일", selected_weekday)
-
-#     selected_providers = CustomUser.objects.filter(
-#         is_doctor=True,
-#         is_active=True,
-#         profile__contract_status="A",
-#     ).select_related("profile")
-
-#     selected_providers = selected_providers.prefetch_related(
-#         Prefetch(
-#             "productiontarget_set",
-#             queryset=ProductionTarget.objects.filter(
-#                 work_weekday=selected_weekday,
-#             ),
-#         )
-#     )
-
-#     print("오늘 일하는 분들", selected_providers.count())
-
-#     context = {
-#         "selected_date": selected_date,
-#         "selected_providers": selected_providers,
-#     }
-#     return render(request, "referdex/index.html", context)
-
-
 def index(request):
-    selected_date = date.today()
+    selected_date = request.GET.get("date-picker")
+    if selected_date:
+        selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
+    else:
+        selected_date = date.today()
+    print("Selected Date: ", selected_date)
     selected_weekday = (
         selected_date.weekday() + 1
     )  # Weekday for filtering ProductionTarget and WorkHours
     current_hour = datetime.now().hour
+
+    ko_kr = Func(
+        "profile__specialty2",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
 
     # Filter doctors who are active and contracted
     selected_providers = (
@@ -67,16 +45,23 @@ def index(request):
                 to_attr="filtered_workhours",
             ),
         )
+        .order_by(ko_kr.asc())
     )
 
     stat_values = defaultdict(dict)
     specialties = get_specialty_choices()
 
     total_provider_a = CustomUser.objects.filter(
-        is_doctor=True, is_active=True, profile__contract_status="A"
+        is_doctor=True,
+        is_active=True,
+        profile__contract_status="A",
+        workhours__work_weekday=selected_weekday,
     ).count()
     total_provider_p = CustomUser.objects.filter(
-        is_doctor=True, is_active=True, profile__contract_status="P"
+        is_doctor=True,
+        is_active=True,
+        profile__contract_status="P",
+        workhours__work_weekday=selected_weekday,
     ).count()
 
     for spct in specialties:
@@ -167,7 +152,7 @@ def index(request):
         )
 
     context = {
-        "today": date.today(),
+        "today": selected_date,
         "total_provider_a": total_provider_a,
         "total_provider_p": total_provider_p,
         "selected_date": selected_date,

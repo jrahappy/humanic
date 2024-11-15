@@ -12,22 +12,30 @@
             <div class="stat">
                 <div class="text-2xl text-start font-bold">
                     {{ today|date:"Y, F j, l" }} 
-                    <span id="current-time"></span>
-                    <script>
-                        function updateTime() {
-                            const now = new Date();
-                            const hours = now.getHours();
-                            const minutes = String(now.getMinutes()).padStart(2, '0');
-                            const seconds = String(now.getSeconds()).padStart(2, '0');
-                            const ampm = hours >= 12 ? 'PM' : 'AM';
-                            const displayHours = String(hours % 12 || 12).padStart(2, '0');
-                            document.getElementById('current-time').textContent = `${displayHours}:${minutes}:${seconds} ${ampm}`;
-                        }
-                        setInterval(updateTime, 1000);
-                        updateTime();
-                    </script>
+                    
                 </div>
 
+            </div>
+            <div class="stat">
+                <div class="text-2xl text-start font-bold">
+                    <input type="date" name="date-picker" id="date-picker" 
+                        class="input input-bordered" 
+                        value="{{ today|date:'Y-m-d' }}"
+                        hx-get="{% url 'referdex:index' %}?date={{ today|date:'Y-m-d' }}&date-picker={{ today|date:'Y-m-d' }}"
+                        hx-trigger="change" 
+                        hx-target="#main_area" 
+                        hx-swap="innerHTML"
+                        hx-indicator="#spinner"
+                    >
+                    <script>
+                        function updateDate() {
+                            const selectedDate = document.getElementById('date-picker').value;
+                            document.getElementById('selected-date').textContent = selectedDate;
+                        }
+                    </script>
+                    <span id="selected-date"></span>
+                    
+                </div>
             </div>
             <div class="stat">
                 <div class="text-2xl text-start font-bold">
@@ -77,11 +85,15 @@
             <h2 class="card-title">{{ specialty }}</h2>
             <div class="grid grid-cols-6 gap-4 md:grid-cols-12 lg:grid-cols-6">
                 {% for provider in providers %}
+                <!-- 선택된 요일에 근무시간이 입력되어 있는 경우에만 표시됩니다. -->
+                {% if provider.workhours %}
                 <div class="card bg-base-200 shadow-md">
                     <div class="card-body">
                         <div class="flex justify-between gap-2">
                             <a href="{% url 'provider:view_provider' provider.iid %}" class="link-hover link">
-                                <h2 class="card-title">{{ provider.real_name }}</h2>
+                                <h2 class="card-title">
+                                    {{ provider.real_name }}
+                                </h2>
                             </a>
                             <div>
                                 {% if provider.contract_status == 'P' %}
@@ -111,6 +123,9 @@
                     </div>
                     
                 </div>
+                {% else %}
+                {% endif %}
+
                 {% endfor %}
                 
             </div>    

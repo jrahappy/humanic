@@ -391,8 +391,11 @@ def workhour_remove(request, id):
     workhour = WorkHours.objects.get(user=provider, work_weekday=week_day)
     wh_list = workhour.work_hour
     wh_list.remove(work_hour)
-    workhour.work_hour = wh_list
-    workhour.save()
+    if wh_list == []:
+        workhour.delete()
+    else:
+        workhour.work_hour = wh_list
+        workhour.save()
     # print("removed")
     selected_workhours = wh_list
 
