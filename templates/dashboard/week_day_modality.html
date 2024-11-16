@@ -21,7 +21,7 @@
         >
             <div class="form-control py-4">
                 <label for="id_modality" class="label">요일</label>
-                {{ form.work_weekday|add_class:"input input-bordered" }}
+                {{ form.work_weekday|add_class:"select select-bordered"|attr:"multiple" }} 
                 {{ form.work_weekday.errors }}
             </div>
             <div class="form-control py-4">

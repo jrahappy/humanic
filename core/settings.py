@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "briefing",
     "report",
     "blog",
+    "referdex",
 ]
 
 MIDDLEWARE = [

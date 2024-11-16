@@ -7,3 +7,9 @@ class ProductionTargetForm(forms.ModelForm):
         model = ProductionTarget
         fields = "__all__"
         exclude = ["user"]
+
+    # def cleaned_data(self):
+    #     data = self.cleaned_data.get("data")
+    #     if not data:
+    #         raise forms.ValidationError("This field is required.")
+    #     return data

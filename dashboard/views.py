@@ -1,5 +1,5 @@
 # Create your views here.
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.db.models import Count, Sum
@@ -7,6 +7,8 @@ from django.db.models.functions import ExtractWeekDay
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
 from accounts.forms import ProfileForm
 from accounts.models import CustomUser, Profile, WorkHours, Holidays, ProductionTarget
@@ -17,7 +19,6 @@ import pandas as pd
 import plotly.express as px
 import calendar
 from datetime import datetime, timedelta, date
-from django.utils import timezone
 from utils.base_func import (
     get_amodality_choices,
     APPT_DAYS,
@@ -33,70 +34,100 @@ def create_weekday_modality_target(request, id):
     user = request.user
     provider = CustomUser.objects.get(id=id)
     real_name = provider.profile.real_name
-    week_days = APPT_DAYS
-    amodality = get_amodality_choices()
+    # week_days = APPT_DAYS
+    # amodality = get_amodality_choices()
     if request.method == "POST":
         form = ProductionTargetForm(request.POST)
-
-        # 기존 타겟이 있는지 확인
-        work_weekday = form.data.get("work_weekday")
+        # 요일 정보를 리스트로 받기
+        work_weekdays = request.POST.getlist("work_weekday")
+        # .get("work_weekday")
+        # print(work_weekdays)
         modality = form.data.get("modality")
-        is_exist = ProductionTarget.objects.filter(
-            user=provider, work_weekday=work_weekday, modality=modality
-        ).exists()
 
-        # 타겟이 있으면 업데이트
-        if is_exist:
+        i = 0
+        for ww in work_weekdays:
+            # print("weekday", i, ":", ww)
+            # 기존 타겟이 있는지 확인
 
-            target_v = form.data.get("target_value")
-            max_v = form.data.get("max_value")
+            is_exist = ProductionTarget.objects.filter(
+                user=provider, work_weekday=ww, modality=modality
+            ).exists()
 
-            target = ProductionTarget.objects.get(
-                user=provider, work_weekday=work_weekday, modality=modality
-            )
-            target.target_value = target_v
-            target.max_value = max_v
-            target.save()
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "targetListChanged": None,
-                            "showMessage": "Target updated successfully.",
-                        }
+            # 타겟이 있으면 업데이트
+            if is_exist:
+
+                if form.is_valid():
+                    target_v = form.cleaned_data.get("target_value")
+                    max_v = form.cleaned_data.get("max_value")
+
+                    target = ProductionTarget.objects.get(
+                        user=provider, work_weekday=ww, modality=modality
                     )
-                },
-            )
+                    target.target_value = target_v
+                    target.max_value = max_v
+                    target.save()
+                # return HttpResponse(
+                #     status=204,
+                #     headers={
+                #         "HX-Trigger": json.dumps(
+                #             {
+                #                 "targetListChanged": None,
+                #                 "showMessage": "Target updated successfully.",
+                #             }
+                #         )
+                #     },
+                # )
 
-        # 타겟이 없으면 생성
-        else:
-
-            if form.is_valid():
-                tg = form.save(commit=False)
-                tg.user = provider
-                tg.save()
-                return HttpResponse(
-                    status=204,
-                    headers={
-                        "HX-Trigger": json.dumps(
-                            {
-                                "targetListChanged": None,
-                                "showMessage": "Target created successfully.",
-                            }
-                        )
-                    },
-                )
+            # 타겟이 없으면 생성
             else:
-                print(form.errors)
-                return render(
-                    request,
-                    "dashboard/partial/work_weekday_modality.html",
+
+                if form.is_valid():
+                    target = ProductionTarget.objects.create(
+                        user=provider,
+                        work_weekday=ww,
+                        modality=modality,
+                        target_value=form.cleaned_data["target_value"],
+                        max_value=form.cleaned_data["max_value"],
+                    )
+
+                    # tg = form.save(commit=False)
+                    # tg.user = provider
+                    # tg.work_weekday = ww
+                    # tg.modality = modality
+                    # tg.save()
+                    # return HttpResponse(
+                    #     status=204,
+                    #     headers={
+                    #         "HX-Trigger": json.dumps(
+                    #             {
+                    #                 "targetListChanged": None,
+                    #                 "showMessage": "Target created successfully.",
+                    #             }
+                    #         )
+                    #     },
+                    # )
+                else:
+                    print(form.errors)
+                    return render(
+                        request,
+                        "dashboard/partial/work_weekday_modality.html",
+                        {
+                            "form": form,
+                            "real_name": real_name,
+                        },
+                    )
+
+        return HttpResponse(
+            status=204,
+            headers={
+                "HX-Trigger": json.dumps(
                     {
-                        "form": form,
-                        "real_name": real_name,
-                    },
+                        "targetListChanged": None,
+                        "showMessage": "Target updated successfully.",
+                    }
                 )
+            },
+        )
     else:
         form = ProductionTargetForm()
 
@@ -106,6 +137,81 @@ def create_weekday_modality_target(request, id):
     }
 
     return render(request, "dashboard/week_day_modality.html", context)
+
+
+# def create_weekday_modality_target(request, id):
+#     provider = get_object_or_404(CustomUser, id=id)
+#     real_name = provider.profile.real_name
+
+#     if request.method == "POST":
+#         form = ProductionTargetForm(request.POST)
+#         if form.is_valid():
+#             work_weekdays = form.cleaned_data.get("work_weekday")
+#             modality = form.cleaned_data.get("modality")
+#             target_value = form.cleaned_data.get("target_value")
+#             max_value = form.cleaned_data.get("max_value")
+
+#             # Retrieve existing targets for the provider and modality
+#             existing_targets = ProductionTarget.objects.filter(
+#                 user=provider, modality=modality, work_weekday__in=work_weekdays
+#             )
+
+#             existing_weekdays = set(
+#                 existing_targets.values_list("work_weekday", flat=True)
+#             )
+
+#             # Update existing targets
+#             for target in existing_targets:
+#                 target.target_value = target_value
+#                 target.max_value = max_value
+#                 target.save()
+
+#             # Create new targets for weekdays without existing entries
+#             new_weekdays = set(work_weekdays) - existing_weekdays
+#             ProductionTarget.objects.bulk_create(
+#                 [
+#                     ProductionTarget(
+#                         user=provider,
+#                         work_weekday=weekday,
+#                         modality=modality,
+#                         target_value=target_value,
+#                         max_value=max_value,
+#                     )
+#                     for weekday in new_weekdays
+#                 ]
+#             )
+
+#             return HttpResponse(
+#                 status=204,
+#                 headers={
+#                     "HX-Trigger": json.dumps(
+#                         {
+#                             "targetListChanged": None,
+#                             "showMessage": "Targets updated successfully.",
+#                         }
+#                     )
+#                 },
+#             )
+#         else:
+#             # If the form is invalid, render the form with errors
+#             return render(
+#                 request,
+#                 "dashboard/partial/work_weekday_modality.html",
+#                 {
+#                     "form": form,
+#                     "real_name": real_name,
+#                 },
+#             )
+#     else:
+#         form = ProductionTargetForm(request.POST)
+#         return render(
+#             request,
+#             "dashboard/partial/work_weekday_modality.html",
+#             {
+#                 "form": form,
+#                 "real_name": real_name,
+#             },
+#         )
 
 
 # 타겟 목록 보여주기(Partial)
