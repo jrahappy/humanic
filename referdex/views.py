@@ -73,6 +73,7 @@ def index(request):
             is_doctor=True,
             is_active=True,
             profile__contract_status="A",
+            workhours__work_weekday=selected_weekday,
         ).count()
         # PartTime providers by specialty
         count_provider_p = CustomUser.objects.filter(
@@ -80,6 +81,7 @@ def index(request):
             is_doctor=True,
             is_active=True,
             profile__contract_status="P",
+            workhours__work_weekday=selected_weekday,
         ).count()
 
         # Total CT 희망 갯수 합계

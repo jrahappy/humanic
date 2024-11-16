@@ -145,10 +145,8 @@ class ProductionTarget(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, null=True, blank=True
     )
-    work_weekday = models.CharField(
-        choices=APPT_DAYS, max_length=1, null=True, blank=True
-    )
-    modality = models.CharField(choices=get_amodality_choices, max_length=30)
+    work_weekday = models.CharField(choices=APPT_DAYS, max_length=1, default="1")
+    modality = models.CharField(choices=get_amodality_choices, max_length=10)
     target_value = models.SmallIntegerField(default=0)
     max_value = models.SmallIntegerField(default=0)
 

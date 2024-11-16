@@ -38,8 +38,10 @@
                 </div>
             </div>
             <div class="stat">
-                <div class="text-2xl text-start font-bold">
-                    전임<span class="badge badge-success badge-md"></span> {{ total_provider_a|intcomma }}명, 비전임<span class="badge badge-warning badge-md"></span> {{ total_provider_p|intcomma }}명 
+                <div class="flex flex-row">
+                    <div class="bg-success text-lg w-8 h-8 text-white text-center font-semibold rounded-full me-4">{{ total_provider_a|intcomma }}</div>
+                    <div class="bg-warning text-lg w-8 h-8 text-center font-semibold rounded-full">{{ total_provider_p|intcomma }}</div>
+                    
                 </div>
             </div>
         </div>
@@ -48,9 +50,14 @@
         <div class="stats shadow">
             {% for specialty, stat in stat_values.items %}
             <div class="stat">
-                <div class="text-2xl text-center font-bold">{{ specialty }}</div>
-                <div class="badge badge-primary mt-2 mb-2 font-bold w-full">
-                    전:{{ stat.count_provider_a }}, 비:{{ stat.count_provider_p }}
+                <div class="text-xl text-center font-bold">{{ specialty }}</div>
+                <div class="flex flex-row justify-center gap-4 bg-gray-100 p-2 mt-2 mb-2 w-full">
+                    <div class="bg-success text-md w-6 h-6 text-white text-center font-semibold rounded-full">
+                        {{ stat.count_provider_a }} 
+                    </div>
+                    <div class="bg-warning text-md w-6 h-6 text-center font-semibold rounded-full">
+                        {{ stat.count_provider_p }} 
+                    </div>
                 </div>
                 <div class="border-2">
                     <div class="stat-title px-2 flex flex-row">
