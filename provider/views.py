@@ -11,6 +11,8 @@ from accounts.forms import (
     HRFilesForm,
     ProductionTargetForm,
 )
+from referdex.forms import MatchRulesForm
+from referdex.models import MatchRules
 from minibooks.models import ReportMasterStat
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -99,6 +101,7 @@ def view_provider(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
     rs = ReportMasterStat.objects.filter(provider=provider)
     hr_files = HRFiles.objects.filter(user=provider)
+    match_rules = MatchRules.objects.filter(provider=provider)
 
     week_days = APPT_DAYS
     workhours = WORKHOURS
@@ -132,6 +135,7 @@ def view_provider(request, id):
         "workhours": workhours,
         "selected_workhours_dict": selected_workhours_dict,
         "targets": targets,
+        "match_rules": match_rules,
     }
 
     return render(request, "provider/view_provider.html", context)
@@ -224,3 +228,32 @@ def delete_hr_file(request, provider_id, file_id):
             )
         },
     )
+
+
+def match_rule_create(request, provider_id):
+    provider = get_object_or_404(CustomUser, pk=provider_id)
+
+    if request.method == "POST":
+        form = MatchRulesForm(request.POST)
+        if form.is_valid():
+            match_rule = form.save(commit=False)
+            match_rule.provider = provider
+            match_rule.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "MatchRulesChanged": None,
+                            "showMessage": "Match Rule Added.",
+                        }
+                    )
+                },
+            )
+
+    else:
+        form = MatchRulesForm()
+        context = {"provider": provider, "form": form}
+        return render(request, "provider/match_rule_create.html", context)
+    return redirect("provider:view_provider", provider.id)
+    # return render(request, "provider/match_rule_create.html", {"provider": provider})

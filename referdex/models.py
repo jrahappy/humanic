@@ -55,23 +55,31 @@ class ReferralComment(models.Model):
 
 
 class MatchRules(models.Model):
+    MATCH_CHOICES = [
+        ("1", "전담"),
+        ("-1", "거부"),
+        ("0", "기본값"),
+    ]
+
     provider = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, null=True, blank=True
     )
     # all, not, default 값으로 구분 (all: 전담, not: 거부, default: 기본값)
-    match_operator = models.CharField(max_length=10, null=True, blank=True)
-    specialty2 = models.CharField(max_length=30, null=True, blank=True)
-    amodality = models.CharField(max_length=10, null=True, blank=True)
+    match_operator = models.CharField(
+        choices=MATCH_CHOICES, max_length=10, null=True, blank=True, default="0"
+    )
+    modality = models.CharField(
+        choices=get_amodality_choices, max_length=10, null=True, blank=True
+    )
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, null=True, blank=True
     )
     bodypart = models.CharField(max_length=50, null=True, blank=True)
     memo = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.modality
+        return self.company.business_name
 
 
 class ProductionMade(models.Model):

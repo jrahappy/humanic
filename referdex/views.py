@@ -7,8 +7,8 @@ from datetime import timedelta, date, datetime
 from minibooks.models import MagamMaster, ReportMasterStat, ReportMaster
 from accounts.models import CustomUser, ProductionTarget, Profile, WorkHours, Holidays
 from utils.base_func import get_specialty_choices
-from .models import ProductionMade, ProductionMadeDetail
-from .forms import ProductionMadeForm, ProductionMadeDetailForm
+from .models import ProductionMade, ProductionMadeDetail, MatchRules
+from .forms import ProductionMadeForm, ProductionMadeDetailForm, MatchRulesForm
 from django.http import HttpResponse
 from django.utils import timezone
 import json
@@ -262,6 +262,11 @@ def pm_delete(request, pm_id):
 def pm_detail(request, pm_id):
     # Retrieve the ProductionMade instance
     pm = get_object_or_404(ProductionMade, id=pm_id)
+    selected_company = pm.company
+    # # Check if Matching Rule exists
+    # match_rules = MatchRules.objects.filter(company=selected_company)
+    # is_rule_exist = match_rules.exists()
+
     # 요청된 갯수
     requested_qty = pm.requested_qty
 
@@ -312,6 +317,11 @@ def pm_detail(request, pm_id):
             queryset=WorkHours.objects.filter(work_weekday=selected_weekday),
             to_attr="filtered_workhours",
         ),
+        Prefetch(
+            "matchrules_set",
+            queryset=MatchRules.objects.filter(company=selected_company),
+            to_attr="filtered_match_rules",
+        ),
     )
 
     # Aggregate assigned quantities for each provider on the selected date
@@ -342,6 +352,7 @@ def pm_detail(request, pm_id):
                 "production_targets": provider.filtered_production_targets,
                 "production_made": assigned_qty_map.get(provider.id, 0),
                 "workhours": provider.filtered_workhours,
+                "match_rules": provider.filtered_match_rules,
             }
         )
 
@@ -504,3 +515,98 @@ def pm_edit(request, pm_id):
     }
     print("pm_id: ", pm_id)
     return render(request, "referdex/pm_edit.html", context)
+
+
+def match_rule_create(request, provider_id):
+    provider = get_object_or_404(CustomUser, pk=provider_id)
+    real_name = provider.profile.real_name
+
+    if request.method == "POST":
+        form = MatchRulesForm(request.POST)
+        if form.is_valid():
+            match_rule = form.save(commit=False)
+            match_rule.provider = provider
+            match_rule.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "MatchRuleChanged": None,
+                            "showMessage": "Match Rule Added.",
+                        }
+                    )
+                },
+            )
+
+    else:
+        form = MatchRulesForm()
+        context = {"provider": provider, "form": form, "real_name": real_name}
+        return render(request, "referdex/match_rule_create.html", context)
+
+    # return render(request, "provider/match_rule_create.html", {"provider": provider})
+
+
+def partial_match_rules(request, provider_id):
+    provider = get_object_or_404(CustomUser, pk=provider_id)
+    real_name = provider.profile.real_name
+    match_rules = MatchRules.objects.filter(provider=provider).order_by("-created_at")
+
+    context = {
+        "provider": provider,
+        "real_name": real_name,
+        "match_rules": match_rules,
+    }
+    return render(request, "referdex/match_rules.html", context)
+
+
+def match_rule_delete(request, match_rule_id):
+    match_rule = MatchRules.objects.get(id=match_rule_id)
+    provider = match_rule.provider
+    match_rule.delete()
+
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "MatchRuleChanged": None,
+                    "showMessage": "Match Rule Deleted.",
+                }
+            )
+        },
+    )
+
+
+def match_rule_detail(request, match_rule_id):
+    match_rule = MatchRules.objects.get(id=match_rule_id)
+    provider = match_rule.provider
+    real_name = provider.profile.real_name
+
+    if request.method == "POST":
+        form = MatchRulesForm(request.POST, instance=match_rule)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "MatchRuleChanged": None,
+                            "showMessage": "Match Rule Updated.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+    else:
+        form = MatchRulesForm(instance=match_rule)
+
+        context = {
+            "provider": provider,
+            "real_name": real_name,
+            "match_rule": match_rule,
+            "form": form,
+        }
+        return render(request, "referdex/match_rule_detail.html", context)

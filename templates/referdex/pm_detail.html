@@ -54,9 +54,11 @@
                         <div class="flex flex-col gap-2 px-4 w-full">
                             {% for provider in providers %}
                             <div class="card flex flex-row flex-wrap justify-start g2 bg-base-100">
-                                <div class="py-2 px-4 w-33">
+                                <div class="py-2 px-4 w-36">
                                     <div class="p-2">
-                                        {{ provider.real_name }} 
+                                        <a href="{% url 'provider:view_provider' provider.iid %}" class="link-hover link">
+                                            {{ provider.real_name }}
+                                        </a>
                                         {% if provider.contract_status == 'P' %}
                                         <span class="badge badge-warning badge-md ms-4"></span>
                                         {% else %}
@@ -66,6 +68,30 @@
                                     <div class="p-2">
                                         {% for hour in provider.workhours %}
                                             {{ hour.work_hour|get_workhour_short|safe}}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="p-2">
+                                        {% for rule in provider.match_rules %}
+                                        {% if rule.match_operator == '-1' %}
+                                        <span class="badge badge-error badge-md text-white cursor-pointer hover:bg-error-900"
+                                            onclick=base_modal.showModal()
+                                            hx-get="{% url 'referdex:match_rule_detail' rule.id %}"
+                                            hx-trigger="click"
+                                            hx-target="#base_modal"
+                                            
+                                        >
+                                        {{ rule.modality|handle_none|upper }} {{ rule.get_match_operator_display}} 
+                                        </span>
+                                        {% else %}
+                                        <span class="badge badge-success badge-md text-white cursor-pointer hover:bg-success-900"
+                                            onclick=base_modal.showModal()
+                                            hx-get="{% url 'referdex:match_rule_detail' rule.id %}"
+                                            hx-trigger="click"
+                                            hx-target="#base_modal"
+                                        >
+                                        {{ rule.modality|handle_none|upper }} {{ rule.get_match_operator_display}} 
+                                        </span>
+                                        {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>

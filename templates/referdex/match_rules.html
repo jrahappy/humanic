@@ -1,0 +1,68 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<div class="card-body">
+    <div class="flex justify-between gap-2">
+        <h2 class="card-title grow">
+            판독의뢰 관련 요청사항들
+        </h2>
+        <div>
+            <a 
+                href="#" 
+                class="btn btn-primary btn-sm"
+                onclick=base_modal.showModal()
+                hx-get="{% url 'referdex:match_rule_create' provider.id %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                >New Rule</a>
+        </div>
+    </div>
+
+    <div class="py-6 mb-4 align-top ">
+        <table class="table table-sm w-full" >
+            
+            <thead style="border-bottom:2px solid;">
+                <tr>
+                    <th>고객명</th>
+                    <th>Modality</th>
+                    <th>Operator</th>
+                    <th>적용일</th>
+                    <th>-</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in match_rules %}
+                    <tr>
+                        <td>
+                            <span 
+                                onclick=base_modal.showModal()
+                                hx-get="{% url 'referdex:match_rule_detail' rule.id %}"
+                                hx-trigger="click"
+                                hx-target="#base_modal"
+                                class="cursor-pointer"
+                            >
+                                {{ rule.company }}
+                            </span>
+                        </td>
+                        <td>{{ rule.modality|handle_none|upper }}</td>
+                        <td>{{ rule.get_match_operator_display }}</td>
+                        <td>{{ rule.created_at }}</td>
+                        <td>
+                            <a 
+                                href="#" 
+                                class="btn btn-xs btn-error"
+                                hx-delete="{% url 'referdex:match_rule_delete' rule.id %}"
+                                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                hx-confirm="Are you sure you want to delete this record?"
+                                hx-trigger="click"
+                                hx-target="#match_rules_box">X
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No rules</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

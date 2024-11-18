@@ -22,4 +22,24 @@ urlpatterns = [
     ),
     path("pmds/<int:pm_id>/", views.pmds, name="pmds"),
     path("pmd_delete/<int:pmd_id>/", views.pmd_delete, name="pmd_delete"),
+    path(
+        "match_rule_create/<int:provider_id>/",
+        views.match_rule_create,
+        name="match_rule_create",
+    ),
+    path(
+        "partial_match_rules/<int:provider_id>/",
+        views.partial_match_rules,
+        name="partial_match_rules",
+    ),
+    path(
+        "match_rule_delete/<int:match_rule_id>/",
+        views.match_rule_delete,
+        name="match_rule_delete",
+    ),
+    path(
+        "match_rule_detail/<int:match_rule_id>/",
+        views.match_rule_detail,
+        name="match_rule_detail",
+    ),
 ]

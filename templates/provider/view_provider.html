@@ -219,8 +219,19 @@
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
 	{% include 'dashboard/partial/work_hours.html' %}
 	
+</section>
+
+<section 
+	id="match_rules_box" 
+	class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6"
+	hx-trigger="MatchRuleChanged from:body"
+	hx-get="{% url 'referdex:partial_match_rules' provider.id %}" 
+	hx-target="this"
+	>
+	{% include 'referdex/match_rules.html' %}
 	
 </section>
+
 {% endblock %}
 
 {% block aside %}

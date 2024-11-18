@@ -1,9 +1,29 @@
 from django.forms import ModelForm
 from django import forms
-from .models import ProductionMade, ProductionMadeDetail
+from .models import ProductionMade, ProductionMadeDetail, MatchRules
 from django.core.validators import MinValueValidator
 from customer.models import Company
 from django.db.models import Func
+
+
+class MatchRulesForm(ModelForm):
+
+    ko_kr = Func(
+        "business_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+    company = forms.ModelChoiceField(
+        required=True,
+        label="Company",
+        queryset=Company.objects.filter(is_clinic=True).order_by(ko_kr),
+        widget=forms.Select(attrs={"readonly": "readonly"}),
+    )
+
+    class Meta:
+        model = MatchRules
+        fields = "__all__"
+        exclude = ["created_at", "updated_at", "provider"]
 
 
 class ProductionMadeForm(ModelForm):

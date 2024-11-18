@@ -1,0 +1,68 @@
+{% load widget_tweaks %}
+<div id="rule_create_box" class="modal-box card-body w-92">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="w-92">
+            {{ real_name }}님 관련 요청사항 수정
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning">Close</button>
+            </form>
+        </div>
+    </div>
+    <div class="card-body grow-0">
+        <form 
+            hx-post="{% url 'referdex:match_rule_create' provider.id %}" 
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            hx-swap="outerHTML" 
+            hx-trigger="submit"
+            hx-target="#rule_create_box"
+            id="rule_create_form"
+        >
+        <input type="hidden" name="created_by" value="{{ user }}">
+            <div class="form-control py-4">
+                <label for="id_modality" class="label">병원</label>
+                {{ form.company|add_class:"select select-bordered" }} 
+            </div>
+            <div class="form-control py-4">
+                <label for="id_modality" class="label">Modality</label>
+                {{ form.modality|add_class:"input input-bordered" }}
+                {{ form.modality.errors }}
+            </div>
+            <div class="form-control py-4">
+                <label for="id_target_value" class="label">Rule</label>
+                {{ form.match_operator|add_class:"input input-bordered" }}
+            </div>
+            <div class="form-control py-4">
+                <label for="id_target_value" class="label">Bodypart</label>
+                {{ form.bodypart|add_class:"input input-bordered" }}
+            </div>
+            <div class="form-control py-4">
+                <label for="id_target_value" class="label">Memo</label>
+                {{ form.memo|add_class:"input input-bordered" }}
+            </div>
+            <div class="flex justify-end gap-2">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <button type="button" class="btn btn-secondary" onclick="base_modal.close()">취소</button>
+            </div>
+        </form>
+        <script>
+            document.getElementById('rule_create_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'rule_create_box') {
+                    // Check if the form submission was successful
+                    console.log("Status:", event.detail.xhr.status);
+                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+                    if (event.detail.xhr.status === 204) {
+                        // If successful, close the modal
+                        base_modal.close();
+                        console.log("Form submission successful");
+                    } else {
+                        // If there are validation errors, keep the modal open
+                        console.log("Form submission failed with validation errors");
+                    }
+                }
+            });
+
+        </script>
+    </div>  
+</div>
