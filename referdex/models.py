@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import CustomUser, Profile
 from customer.models import Company
+from utils.base_func import get_specialty_choices, get_amodality_choices
 
 
 class Referral(models.Model):
@@ -71,3 +72,43 @@ class MatchRules(models.Model):
 
     def __str__(self):
         return self.modality
+
+
+class ProductionMade(models.Model):
+    # referral = models.ForeignKey(Referral, on_delete=models.CASCADE)
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, null=True, blank=True
+    )
+    specialty2 = models.CharField(
+        choices=get_specialty_choices, max_length=30, null=True, blank=True
+    )
+    modality = models.CharField(
+        choices=get_amodality_choices, max_length=10, null=True, blank=True
+    )
+    requested_qty = models.IntegerField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
+    referrals = models.CharField(
+        max_length=250, null=True, blank=True
+    )  # comma separated referral ids
+    created_by = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.company.business_name
+
+
+class ProductionMadeDetail(models.Model):
+    production = models.ForeignKey(
+        ProductionMade, on_delete=models.CASCADE, related_name="details"
+    )
+    provider = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True, blank=True
+    )
+    modality = models.CharField(
+        choices=get_amodality_choices, max_length=10, null=True, blank=True
+    )
+    assigned_qty = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.provider.first_name

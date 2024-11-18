@@ -1,0 +1,27 @@
+<div id="production_made_detail_box"  class="card card-compact bg-base-200 w-1/2 shadow-xl ">
+    <div class="flex flex-col">
+        <div class="pt-4 text-center font-bold w-full">Assign Logs for this request </div>
+        <div class="divider"></div>
+    </div>
+    {% for pmd in pmds %}
+    <div class="flex flex-row mb-2 justify-evenly bg-base-100">
+        <div class="py-4">{{ pmd.provider.profile.real_name }} </div>
+        <div class="py-4">{{ pmd.modality|upper }} </div>
+        <div class="py-4">{{ pmd.assigned_qty }} </div>
+        <div class="py-4">{{ pmd.created_at }} </div>
+        <div class="py-4">
+            <a href="#" class="btn btn-sm btn-error"
+                hx-delete="{% url 'referdex:pmd_delete' pmd.id %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-confirm="Are you sure you want to delete this record?"
+                hx-trigger="click"
+                hx-target="#main_area"
+            >X</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="flex flex-row justify-evenly">
+        <div class="py-4">No data.</div>
+    </div>
+    {% endfor %}
+</div>    

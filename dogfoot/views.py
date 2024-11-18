@@ -58,6 +58,8 @@ def app_names():
         if "crispy" not in app_config.name
         if "debug" not in app_config.name
         if "server" not in app_config.name
+        if "ckeditor" not in app_config.name
+        if "celery_progress" not in app_config.name
     ]
     return app_names
 
@@ -138,6 +140,8 @@ def schema(request):
             or "tailwind" in app_name
             or "theme" in app_name
             or "import_export" in app_name
+            or "ckeditor" in app_name
+            or "celery_progress" in app_name
         ):
             pass
         else:

@@ -1,0 +1,170 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+{% load widget_tweaks %}
+
+{% block title %}PM Detail{% endblock %}
+
+{% block head %}
+    <style>
+        .divider {
+            border-bottom: 1px solid #e2e8f0;
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        <div class="px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-row justify-between sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-base font-semibold text-gray-900">판독의뢰 세부</h1>
+                    <p class="mt-2 text-sm text-gray-700">해당 판독의뢰수량을 각 세부전공의에게 배분합니다.</p>
+                </div>
+                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                    <a class="btn btn-primary btn-sm"
+                        href="{% url 'referdex:pm' %}"
+                    >List</a>
+                </div>
+            </div>
+            <div class="mt-8 flow-root">
+                <div class="card card-compact bg-base-200 w-full shadow-xl ">
+                    <div class="flex flex-row justify-evenly">
+                        <div class="py-4">{{ pm.created_at }} </div>
+                        <div class="py-4">{{ pm.company }} </div>
+                        <div class="py-4">{{ pm.specialty2 }} </div>
+                        <div class="py-4">{{ pm.modality|upper }} </div>
+                        <div class="py-4 bg-sky-200 w-12  text-center rounded-md font-bold">{{ pm.requested_qty }} </div>
+                        <div class="py-4 bg-orange-200 w-12  text-center rounded-md font-bold">{{ pmds_total }} </div>
+                        <div class="py-4 bg-primary-200 w-12  text-center rounded-md font-bold">{{ pm.is_completed }} </div>
+                    </div>
+                </div>  
+            </div>
+            <div class="mt-8 flex flex-row gap-8 justify-between">
+            
+                <div class="card card-compact bg-base-200 w-1/2 shadow-xl ">
+                    {% for specialty, providers in grouped_by_specialty_for_request.items %}
+                    <div class="flex flex-col">
+                        <div class="pt-4 text-center font-bold w-full">{{ specialty }} ({{ providers|length }}) {{available_qty}} </div>
+                        <div class="divider"></div>
+                        <div class="flex flex-col gap-2 px-4 w-full">
+                            {% for provider in providers %}
+                            <div class="card flex flex-row justify-start g-4 bg-base-100">
+                                <div class="py-2 px-4 w-64">
+                                    <div class="p-2">
+                                        {{ provider.real_name }} 
+                                        {% if provider.contract_status == 'P' %}
+                                        <span class="badge badge-warning badge-md ms-4"></span>
+                                        {% else %}
+                                        <span class="badge badge-success badge-md ms-4"></span>
+                                        {% endif %} 
+                                    </div>
+                                    <div class="p-2">
+                                        {% for hour in provider.workhours %}
+                                            {{ hour.work_hour|get_workhour_short|safe}}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="py-2 px-4 flex-1">
+                                    <div class="align-top w-92">
+                                        <table class="table table-sm w-full" >
+                                            <tr style="border-bottom:1px solid;">
+                                                <th style="width:20px;">Modality</th>
+                                                <th style="width:20px;">Target</th>
+                                                <th style="width:20px;">Action</th>
+                                            </tr>
+                                          
+                                        {% for target in provider.production_targets %}
+                                        {% if target.modality == selected_modality %}
+                                            <tr class="bg-green-100">
+                                                <td>{{ target.modality|upper }}</td>
+                                                <td>{{ target.target_value }}/{{ target.max_value }}</td>
+                                                <td class="flex flex-row" style="width:160px;">
+                                                    {% if available_qty > 0 %}
+                                                    <form method="post" action="{% url 'referdex:pm_assign' pm.id provider.iid pm.modality %}">
+                                                        {% csrf_token %}
+                                                        {% render_field pmd_form.assigned_qty class="input input-sm w-16 py-0" value=available_qty min=1 max=available_qty %}
+                                                        <span class="text-error">{{pms_form.assigned_qty.error}}</span>
+                                                        <button type="submit" class="btn btn-xs">Assign</button>
+                                                    </form>
+                                                    {% else %}
+                                                    <span class="btn btn-xs">No available</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <!-- <tr>
+                                                <td>{{ target.modality|upper }}</td>
+                                                <td>{{ target.target_value }}/{{ target.max_value }}</td>
+                                                <td class="flex flex-row" style="width:140px;">
+                                                    <input type="text" class="input input-sm w-12"  name="assigned_qty" value="0">
+                                                    <span class="btn btn-sm">Assign</span>
+                                                </td>
+                                            </tr> -->
+                                        {% endif %}
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="3">No data.</td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="py-2 px-4 flex-1">
+                                    <div class="w-full">
+                                        <table class="table table-sm w-full" >
+                                            <tr style="border-bottom:1px solid;">
+                                                <th >Today Assigned Total</th>
+                                                <th style="width:20px;">Action</th>
+                                            </tr>
+                                            <tr class="bg-red-100">
+                                                <td class="py-4">{{ provider.production_made }}</td>
+                                                <td>
+                                                    <a class="btn btn-xs" href="#"
+                                                        onclick=base_modal.showModal()
+                                                        hx-get="{% url 'referdex:pmd_list_by_provider' pm.id provider.iid %}"
+                                                        hx-target="#base_modal"
+                                                        hx-swap="innerHTML"
+                                                        hx-trigger="click"
+
+                                                    >Detail</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="flex flex-row justify-evenly">
+                                <div class="py-4">No data</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="flex flex-row justify-evenly">
+                        <div class="py-4">No data</div>
+                    </div>  
+                    {% endfor %}
+                </div>
+                {% include 'referdex/partial_pmds.html' %}
+            </div>
+        </div>
+    </section>
+   
+
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

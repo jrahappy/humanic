@@ -1,0 +1,23 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+        {% include 'referdex/partial_pm.html' %}
+    </section>
+   
+
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

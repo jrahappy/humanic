@@ -1,0 +1,36 @@
+{% load widget_tweaks %}
+<div id="pmd_list_box" class="modal-box card-body">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="w-92">
+            {{selected_date }}<br> {{ real_name }} 님의 판독의뢰 현황
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning">Close</button>
+            </form>
+        </div>
+    </div>
+    <div class="p-0 mt-4">
+        <table class="table table-sm w-full" >
+            <tr style="border-bottom:1px solid;">
+                <th style="width:200px;">병원명</th>
+                <th style="width:60px;">Modality</th>
+                <th style="width:60px;">수량</th>
+                <th style="width:180px;">등록일</th>
+            </tr>
+        {% for pmd in pmds %}
+        <tr>
+            <td>{{ pmd.production.company.business_name }} </td>
+            <td>{{ pmd.modality|upper }} </td>
+            <td>{{ pmd.assigned_qty }} </td>
+            <td>{{ pmd.created_at }} </td>
+        </tr>
+        
+        {% empty %}
+        <tr>
+            <td colspan="4">No data.</td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>  
+</div>
