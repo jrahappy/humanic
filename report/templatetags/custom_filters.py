@@ -183,15 +183,11 @@ def get_workhour_short(arr):
             else:
                 if start == end:
                     if start == 99:
-                        html_arr += "<span class='badge badge-info'>All Day</span>"
+                        html_arr += "<span class='badge badge-info text-white font-semibold'>All Day</span>"
                     else:
-                        html_arr += (
-                            f"<span class='badge badge-info'>Hrs: {str(start)}</span>"
-                        )
+                        html_arr += f"<span class='badge badge-info text-white font-semibold'>Hrs: {str(start)}</span>"
                 else:
-                    html_arr += (
-                        f"<span class='badge badge-info'>Hrs: {start}-{end}</span>"
-                    )
+                    html_arr += f"<span class='badge badge-info text-white font-semibold'>Hrs: {start}-{end}</span>"
                 start = end = hr
 
     return html_arr
