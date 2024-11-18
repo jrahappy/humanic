@@ -189,7 +189,7 @@ def pm(request):
     )
 
     # Add pagination
-    paginator = Paginator(pms_annotated, 10)  # Show 10 items per page
+    paginator = Paginator(pms_annotated, 20)  # Show 10 items per page
     page = request.GET.get("page")
     try:
         pm_list = paginator.page(page)
@@ -225,7 +225,7 @@ def partial_pm(request):
     )
 
     # Add pagination
-    paginator = Paginator(pms_annotated, 10)  # Show 10 items per page
+    paginator = Paginator(pms_annotated, 20)  # Show 10 items per page
     page = request.GET.get("page")
     try:
         pm_list = paginator.page(page)
