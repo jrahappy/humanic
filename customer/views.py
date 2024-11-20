@@ -1,12 +1,80 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, Sum, Func, F, Q
-from .models import Company, ServiceFee, CustomerLog, CustomerContact
+from .models import Company, ServiceFee, CustomerLog, CustomerContact, CustomerFiles
 from minibooks.models import ReportMasterStat
-from .forms import CompanyForm, ServiceFeeForm, CustomerLogForm, CustomerContactForm
+from .forms import (
+    CompanyForm,
+    ServiceFeeForm,
+    CustomerLogForm,
+    CustomerContactForm,
+    CustomerFilesForm,
+)
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 import json
+
+
+def cfiles(request, company_id):
+    company = get_object_or_404(Company, pk=company_id)
+    cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
+    context = {"cfiles": cfiles, "company": company}
+    return render(request, "customer/cfiles.html", context)
+
+
+def cfile_upload(request, company_id):
+    company = get_object_or_404(Company, pk=company_id)
+    if request.method == "POST":
+        form = CustomerFilesForm(request.POST, request.FILES)
+        # print(form)
+        if form.is_valid():
+            files = request.FILES.getlist("file")
+            name = request.POST.get("name")
+            for file in files:
+                file_name = file.name
+                CustomerFiles.objects.create(
+                    company=company, name=name, file_name=file_name, file=file
+                )
+                print(file_name)
+
+            # messages.success(request, "HR File uploaded successfully")
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "CustomerfilesChanged": None,
+                            "showMessage": "File(s) Added.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            messages.error(request, "Error uploading HR File")
+    else:
+        form = CustomerFilesForm()
+
+    return render(
+        request, "customer/cfile_upload.html", {"company": company, "form": form}
+    )
+
+
+def cfile_delete(request, company_id, cfile_id):
+    company = get_object_or_404(Company, pk=company_id)
+    cfile = get_object_or_404(CustomerFiles, pk=cfile_id)
+    cfile.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "CustomerfilesChanged": None,
+                    "showMessage": "File Deleted.",
+                }
+            )
+        },
+    )
 
 
 def contacts(request, company_id):
@@ -121,8 +189,8 @@ def delete_clog(request, company_id, clog_id):
     )
 
 
-# Create your views here.
 def index(request):
+
     ko_kr = Func(
         "business_name",
         function="ko_KR.utf8",
@@ -130,18 +198,9 @@ def index(request):
     )
     q = request.GET.get("q")
     if q:
-        companies = (
-            Company.objects.filter(
-                Q(business_name__icontains=q)
-                | Q(contact_person__icontains=q)
-                # | Q(office_phone__icontains=q)
-                # | Q(office_email__icontains=q)
-            )
-            # .filter(is_staff=False)
-            # .select_related("profile")
-            # .annotate(hr_files_count=Count("hrfiles__id"))
-            .order_by(ko_kr.asc())
-        )
+        companies = Company.objects.filter(
+            Q(business_name__icontains=q) | Q(contact_person__icontains=q)
+        ).order_by(ko_kr.asc())
         if companies.count() == 1:
             return redirect("customer:detail", companies[0].id)
     else:
@@ -226,12 +285,14 @@ def detail(request, customer_id):
         company=company, deleted_at__isnull=True
     ).order_by("-created_at")
     contacts = CustomerContact.objects.filter(company=company).order_by("name")
+    cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
     context = {
         "company": company,
         "cm_refers": cm_refers,
         "contracts": contracts,
         "clogs": clogs,
         "contacts": contacts,
+        "cfiles": cfiles,
     }
 
     return render(request, "customer/detail.html", context)

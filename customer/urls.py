@@ -45,6 +45,13 @@ urlpatterns = [
         views.delete_contact,
         name="delete_contact",
     ),
+    path("cfiles/<int:company_id>/", views.cfiles, name="cfiles"),
+    path("cfile_upload/<int:company_id>/", views.cfile_upload, name="cfile_upload"),
+    path(
+        "cfile_delete/<int:company_id>/<int:cfile_id>/",
+        views.cfile_delete,
+        name="cfile_delete",
+    ),
     # path(
     #     "validate_business_name/",
     #     views.validate_business_name,

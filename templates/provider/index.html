@@ -44,7 +44,11 @@
                         {{ data.username }}
                     </td>
                     <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ data.email }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.real_name }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 hover:bg-sky-200">
+                        <a href="{% url 'provider:view_provider' data.id %}" class="">
+                            {{ data.profile.real_name }}
+                        </a>
+                    </td>
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty2|handle_none }}</td>
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty3|handle_none }}</td>
                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id|handle_none }}</td>

@@ -115,3 +115,19 @@ class CustomerContact(models.Model):
 
     def __str__(self):
         return self.name
+
+
+def upload_customer_files_location(instance, filename):
+    return f"customerfiles/{instance.company.id}/{filename}"
+
+
+class CustomerFiles(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    file_name = models.CharField(max_length=250, null=True, blank=True)
+    file = models.FileField(
+        upload_to=upload_customer_files_location, max_length=250, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.user.username + " " + self.name
