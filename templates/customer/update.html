@@ -8,33 +8,35 @@
 {% block content %}
 
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-        <div class="card-body grow-0">
-            <div class="flex justify-between gap-2">
-                <h2 class="card-title grow">
-                  고객 정보
-                </h2>
-                <div>
-                  <div>
-                    <a 
-                      href="#" 
-                      class="btn btn-sm btn-primary w-24 align-end"
-                      hx-get="{% url 'customer:update' company.id %}"
-                      hx-trigger="click"
-                      hx-target="#main_area"
-                      hx-swap="outerHTML"
-                      >Edit Mode</a>
-                    <a 
-                      hx-get="{% url 'customer:index' %}" 
-                      hx-trigger="click"
-                      hx-target="#main_area"
-                      hx-swap="outerHTML"
-                      hx-push-url="true"
-                      class="btn btn-sm btn-primary w-16"
-                    >List</a>
-                  </div>
-                </div>
+      <div class="card-body grow-0">
+        <div class="flex justify-between gap-2 w-full">
+          <div class="flex flex-row justify-between w-2/3">
+            <h2 class="card-title ">
+                고객 병원들 목록
+            </h2>
+            <div class="flex flex-col">
+                <form method="get" action="{% url 'customer:index' %}">
+                    <label class="input input-bordered flex items-center gap-2">
+                        <input type="text" class="grow" placeholder="Search" name="q" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="h-4 w-4 opacity-70">
+                          <path
+                            fill-rule="evenodd"
+                            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </label>
+                </form>
             </div>
         </div>
+        <div class="text-end me-4 w-1/3">
+              <a href="{% url 'customer:index' %}" class="btn btn-sm btn-primary text-white w-16">List</a>
+          </div>
+        </div>  
+      </div>  
     </section>
 
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
@@ -66,10 +68,11 @@
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">SystemID</span>
+              <span class="label-text">의료기관이면 Checked</span>
             </label>
-            {% render_field form.id  class='input input-bordered font-mono' %}
+            {% render_field form.is_clinic  class='checkbox checkbox-bordered ms-4 mt-2' %}
           </div>
+           
         </div>
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">

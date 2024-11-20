@@ -1,0 +1,48 @@
+{% load humanize %}
+<div class="card-body grow-0">
+    <div class="flex justify-between gap-2">
+      <h2 class="card-title grow">
+        월별 매출현황 
+      </h2>
+    </div>
+  </div>
+  <div class="overflow-y-auto px-4">
+    <table class="table table-sm mb-8">
+      <thead class="border-b-2 border-t-2 ">
+        <tr>
+          <th>년도</th>
+          <th>월</th>
+          <th>판독건수</th>
+          <th>판독료</th>
+          <th>-</th>
+          
+        </tr>
+      </thead>
+      <tbody class="border-b-2">
+        {% for rs in cm_refers %}
+          <tr>
+            <td>{{ rs.ayear }}</td>
+            <td>{{ rs.amonth }}</td>
+            <td>{{ rs.total|floatformat:0|intcomma }}</td>
+            <td>{{ rs.total_amount|floatformat:0|intcomma }}</td>
+            <td>
+              <button 
+                onclick="base_modal.showModal()"
+                class="btn btn-xs btn-info" 
+                hx-get="{% url 'report:report_customer_detail' company.id %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                hx-swap="innerHTML"                                      
+              >Detail</button>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5">No data</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  </div>
+</div>

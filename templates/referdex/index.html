@@ -125,6 +125,11 @@
                                     {{ hour.work_hour|get_workhour_short|safe}}
                                 {% endfor %}
                             </div>
+                            <!-- <div class="flex flex-row flex-wrap gap-1">
+                                {% for pmd in provider.aggregated_pmds %}
+                                    {{ pmd.modality|upper }}: {{ pmd.sum_assigned_qty }}
+                                {% endfor %}
+                            </div> -->
                         </div>
                         
                     </div>

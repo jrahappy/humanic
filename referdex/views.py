@@ -26,6 +26,12 @@ def index(request):
     )  # Weekday for filtering ProductionTarget and WorkHours
     current_hour = datetime.now().hour
 
+    pmds = ProductionMadeDetail.objects.filter(created_at__date=selected_date)
+    aggregated_pmds = pmds.values("provider", "modality").annotate(
+        sum_assigned_qty=Sum("assigned_qty")
+    )
+    print("Aggregated PMDs: ", aggregated_pmds)
+
     ko_kr = Func(
         "profile__specialty2",
         function="ko_KR.utf8",
@@ -157,6 +163,7 @@ def index(request):
                 "contract_status": provider.profile.contract_status,
                 "production_targets": provider.filtered_production_targets,
                 "workhours": provider.filtered_workhours,
+                # "aggregated_pmds": provider.filtered_pmds,
             }
         )
 
