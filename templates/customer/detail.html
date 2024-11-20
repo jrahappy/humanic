@@ -43,33 +43,33 @@
 <div id="stat_panel" class="col-span-12 w-full">
   <div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
 
-    <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <section class="card card-compact col-span-8 px-4 overflow-hidden bg-base-100 shadow-sm xl:col-span-8">
       <div class="card-body grow-0">
         <div class="grid grid-cols-4 gap-2">
-          <div class="form-control">
+          <div class="">
             <label class="label">
               <span class="label-text">병원명</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.business_name}}({{ company.id}})</p>
+            <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.business_name}}  ({{ company.id}})</p>
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">대표자명</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.president_name}}</p>
+            <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.president_name|handle_none}}</p>
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">사업자번호</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.ein|handle_none}}</p>
+            <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.ein|handle_none}}</p>
           </div>
           <div class="grid grid-cols-1 gap-2">
             <div class="form-control">
               <label class="label">
                 <span class="label-text">의료기관이면 True</span>
               </label>
-              <p class="p-3 bg-gray-100">{{ company.is_clinic}}</p>
+              <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.is_clinic}}</p>
               
             </div>
           </div>
@@ -86,24 +86,27 @@
             <label class="label">
               <span class="label-text">담당자</span>
             </label>
-            <p class="p-3 bg-gray-100">{{company.contact_person|handle_none}}</p>
+            <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{company.contact_person|handle_none}}</p>
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담장자이메일</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.office_email|handle_none}}</p>
+            <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.office_email|handle_none}}</p>
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자번호</span>
             </label>
-            <p class="p-3 bg-gray-100">{{ company.office_fax|handle_none}}</p>
+            <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.office_fax|handle_none}}</p>
           </div>
         </div>
       </div>
 		</section>
-    <section class="card col-span-12 overflow-hidden shadow-sm xl:col-span-12">
+    <section class="card card-compact col-span-4 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+      {% include "customer/contacts.html" %}
+    </section>  
+    <section class="card card-compact col-span-12 overflow-hidden shadow-sm xl:col-span-12">
       <div role="tablist" class="tabs tabs-lifted min-h-96">
         <input type="radio" name="customer_tab" role="tab" class="tab w-16" checked="checked" aria-label="상당기록" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 min-h-96">

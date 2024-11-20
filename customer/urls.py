@@ -38,6 +38,13 @@ urlpatterns = [
         views.delete_clog,
         name="delete_clog",
     ),
+    path("contacts/<int:company_id>/", views.contacts, name="contacts"),
+    path("new_contact/<int:company_id>/", views.new_contact, name="new_contact"),
+    path(
+        "delete_contact/<int:company_id>/<int:contact_id>/",
+        views.delete_contact,
+        name="delete_contact",
+    ),
     # path("edit/<int:customer_id>/", views.edit_customer, name="edit_customer"),
     # path("delete/<int:customer_id>/", views.delete_customer, name="delete_customer"),
 ]

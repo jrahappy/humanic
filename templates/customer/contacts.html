@@ -1,0 +1,55 @@
+<div class="card-body grow-0"
+    id="contacts_box"  
+    hx-trigger="CustomerContactChanged from:body"
+    hx-get="{% url 'customer:contacts' company.id %}" 
+    hx-target="this"
+    hx-swap="outerHTML"
+    >
+    <div class="grid grid-cols-1">
+        <div class="flex flex-row justify-between">
+            <label class="label">
+                <span class="label-text">Contacts </span>
+            </label>
+            <a href="#"
+                onclick="base_modal.showModal()"
+                hx-get="{% url 'customer:new_contact' company.id %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                hx-swap="innerHTML" 
+                class="btn btn-primary btn-xs text-white me-6"
+            >x</a>
+        </div>
+        <div class="overflow-y-auto max-h-36 bg-base-100">
+            <ul class="max-h-64">
+            {% for contact in contacts %}
+                <li class="flex flex-row px-1 py-1 mb-1 border-b-2 rounded-md">
+                    <div class="flex flex-col gap-1 px-1 w-32 mb-1">
+                        <span class="text-gray-500 font-semibold">{{ contact.name}}</span>                  
+                        <span class="text-gray-500 text-xs">{{ contact.title}}</span>                 
+                    </div>
+                    <div class="flex flex-col flex-grow gap-1">
+                        <span class="text-gray-900 text-sm">E: {{ contact.email }}</span>
+                        <span class="text-gray-900 text-sm">M: {{ contact.mobile }}</span>
+                        {% if contact.office_phone %}
+                        <span class="text-gray-900 text-sm">P: {{ contact.office_phone }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="w-12 text-center px-2 py-2 me-2 ">
+                        <span href="#" class="btn btn-error btn-xs w-6 h-6 "
+                            hx-delete="{% url 'customer:delete_contact' company.id contact.id %}"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                            hx-confirm="Are you sure?"
+                            hx-target="#contacts_box"
+                            hx-trigger="click"
+                        >x</span>
+                    </div>
+                </li>
+                {% empty %}
+                <li>
+                  <div class="ms-2">No data</div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

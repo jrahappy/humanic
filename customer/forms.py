@@ -1,8 +1,15 @@
 from django.forms import ModelForm
 from django import forms
 from django.db.models import Func
-from .models import Company, ServiceFee, CustomerLog
+from .models import Company, ServiceFee, CustomerLog, CustomerContact
 from django.core.exceptions import ValidationError
+
+
+class CustomerContactForm(ModelForm):
+    class Meta:
+        model = CustomerContact
+        fields = "__all__"
+        exclude = ["company"]
 
 
 class CustomerLogForm(ModelForm):

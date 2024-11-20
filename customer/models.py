@@ -102,3 +102,16 @@ class CustomerLog(models.Model):
             + " - "
             + self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         )
+
+
+class CustomerContact(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=50, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    office_phone = models.CharField(max_length=20, null=True, blank=True)
+    mobile = models.CharField(max_length=20, null=True, blank=True)
+    is_primary = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name

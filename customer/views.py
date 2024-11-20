@@ -1,12 +1,60 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, Sum, Func, F, Q
-from .models import Company, ServiceFee, CustomerLog
+from .models import Company, ServiceFee, CustomerLog, CustomerContact
 from minibooks.models import ReportMasterStat
-from .forms import CompanyForm, ServiceFeeForm, CustomerLogForm
+from .forms import CompanyForm, ServiceFeeForm, CustomerLogForm, CustomerContactForm
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.utils import timezone
 import json
+
+
+def contacts(request, company_id):
+    company = get_object_or_404(Company, pk=company_id)
+    contacts = CustomerContact.objects.filter(company=company).order_by("name")
+    context = {"company": company, "contacts": contacts}
+    return render(request, "customer/contacts.html", context)
+
+
+def new_contact(request, company_id):
+    company = get_object_or_404(Company, pk=company_id)
+    if request.method == "POST":
+        form = CustomerContactForm(request.POST)
+        if form.is_valid():
+            contact = form.save(commit=False)
+            contact.company = company
+            contact.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "CustomerContactChanged": None,
+                            "showMessage": "Contact created.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+    else:
+        form = CustomerContactForm()
+        context = {"company": company, "form": form}
+    return render(request, "customer/new_contact.html", context)
+
+
+def delete_contact(request, company_id, contact_id):
+    company = get_object_or_404(Company, pk=company_id)
+    contact = get_object_or_404(CustomerContact, pk=contact_id)
+    contact.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {"CustomerContactChanged": None, "showMessage": "Contact deleted."}
+            )
+        },
+    )
 
 
 def clogs(request, company_id):
@@ -156,11 +204,13 @@ def detail(request, customer_id):
     clogs = CustomerLog.objects.filter(
         company=company, deleted_at__isnull=True
     ).order_by("-created_at")
+    contacts = CustomerContact.objects.filter(company=company).order_by("name")
     context = {
         "company": company,
         "cm_refers": cm_refers,
         "contracts": contracts,
         "clogs": clogs,
+        "contacts": contacts,
     }
 
     return render(request, "customer/detail.html", context)

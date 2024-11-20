@@ -62,7 +62,7 @@
                     <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ company.ein|handle_none }}</td>
                     <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.office_phone|handle_none }}</td>
                     <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.office_email|handle_none }}</td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.contact|handle_none }}</td>
+                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.contact_person|handle_none }}</td>
                     <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900 text-end">
                         <a href="{% url 'customer:detail' company.id %}" class="btn btn-sm btn-primary text-white w-16"> Detail </a>
                         <a href="{% url 'customer:update' company.id %}" class="btn btn-primary btn-sm text-white w-16">Edit</a> 
