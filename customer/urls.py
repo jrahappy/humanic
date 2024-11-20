@@ -45,6 +45,11 @@ urlpatterns = [
         views.delete_contact,
         name="delete_contact",
     ),
+    # path(
+    #     "validate_business_name/",
+    #     views.validate_business_name,
+    #     name="validate_business_name",
+    # ),
     # path("edit/<int:customer_id>/", views.edit_customer, name="edit_customer"),
     # path("delete/<int:customer_id>/", views.delete_customer, name="delete_customer"),
 ]

@@ -4,7 +4,7 @@ from .models import Company, ServiceFee, CustomerLog, CustomerContact
 from minibooks.models import ReportMasterStat
 from .forms import CompanyForm, ServiceFeeForm, CustomerLogForm, CustomerContactForm
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 import json
 
@@ -171,11 +171,32 @@ def new(request):
     if request.method == "POST":
         form = CompanyForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("customer:index")
+            bn = request.POST.get("business_name")
+            bn = bn.strip()
+            is_exist = Company.objects.filter(business_name=bn).exists()
+            if is_exist:
+                form.add_error("business_name", "이미 존재하는 병원명입니다.")
+                return render(request, "customer/new.html", {"form": form})
+            else:
+                form.save()
+                return redirect("customer:index")
+        else:
+            print(form.errors)
     else:
         form = CompanyForm()
     return render(request, "customer/new.html", {"form": form})
+
+
+# def validate_business_name(request):
+#     bn = request.GET.get("business_name", None)
+#     is_taken = Company.objects.filter(business_name=bn).exists()
+#     if is_taken:
+#         # data["error_message"] = "이미 존재하는 병원명입니다."
+#         error_message = "이미 존재하는 병원명입니다."
+#     else:
+#         error_message = ""
+#     # return JsonResponse(data)
+#     return error_message
 
 
 def new_customer(request):

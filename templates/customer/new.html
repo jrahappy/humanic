@@ -49,7 +49,10 @@
             <label class="label">
               <span class="label-text">병원명(필수)</span>
             </label>
-            {% render_field form.business_name  class='input input-bordered font-mono'  placeholder='병원명을 입력하세요...' %}
+            {% render_field form.business_name  class='input input-bordered font-mono' %}
+            {% for error in form.business_name.errors %}
+              <span class="text-red-500">{{ error }}</span>
+            {% endfor %}
           </div>
           <div class="form-control">
             <label class="label">
@@ -118,7 +121,7 @@
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">담당자번호</span>
+              <span class="label-text">담��자번호</span>
             </label>
             {% render_field form.office_fax  class='input input-bordered font-mono' %}
           </div>

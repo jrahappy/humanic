@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <div class="card-body grow-0"
     id="clogs_box"  
     hx-trigger="CustomerLogChanged from:body"
@@ -34,9 +36,9 @@
                 {% for clog in clogs %}
                 <tr>
                     <td>{{ clog.updated_by}}</td>
-                    <td>{{ clog.created_at}}</td>
+                    <td>{{ clog.created_at|naturaltime }}</td>
                     <td>{{ clog.level}}</td>
-                    <td>{{ clog.Log}}</td>
+                    <td class=""><div class="w-96">{{ clog.log}}</div></td>
                     <td class="text-right">
                         <a href="#" class="btn btn-xs btn-error"
                             hx-delete="{% url 'customer:delete_clog' company.id clog.id %}"
