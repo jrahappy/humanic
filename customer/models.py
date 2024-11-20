@@ -1,4 +1,5 @@
 from django.db import models
+from taggit.managers import TaggableManager
 
 
 # Create your models here.
@@ -23,6 +24,8 @@ class Company(models.Model):
     bio = models.TextField(null=True, blank=True)
     is_public = models.BooleanField(default=False)
     is_clinic = models.BooleanField(default=False)
+    # taggit
+    tags = TaggableManager()
 
     class Meta:
         verbose_name = "Company"
@@ -34,14 +37,14 @@ class Company(models.Model):
     @property
     def full_address(self):
         address_parts = [
-            self.address or "",
-            self.suite or "",
             self.city or "",
             self.state or "",
+            self.address or "",
+            self.suite or "",
             self.zipcode or "",
             self.country or "",
         ]
-        return ", ".join(part for part in address_parts if part).strip(", ")
+        return " ".join(part for part in address_parts if part).strip(" ")
 
 
 class ServiceFee(models.Model):

@@ -2,28 +2,6 @@ from django.contrib import admin
 from .models import Company, ServiceFee, Contract
 
 
-# class CompanyAdmin(admin.ModelAdmin):
-#     list_display = [
-#         "business_name",
-#         "is_public",
-#         "president_name",
-#         "address",
-#         "suite",
-#         "city",
-#         "state",
-#         "country",
-#         "zipcode",
-#         "office_phone",
-#         "office_fax",
-#         "office_email",
-#         "website",
-#     ]
-#     search_fields = ["business_name", "president_name"]
-
-
-# admin.site.register(Company, CompanyAdmin)
-
-
 class ContractInline(admin.TabularInline):
     model = Contract
     extra = 1
@@ -34,13 +12,18 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = [
         "business_name",
         "is_clinic",
-        "address",
-        "suite",
         "city",
         "office_email",
+        "tag_list",
     ]
-    search_fields = ["business_name", "president_name"]
+    search_fields = ["business_name"]
     list_filter = ["is_clinic"]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("tags")
+
+    def tag_list(self, obj):
+        return ", ".join(o.name for o in obj.tags.all())
 
 
 admin.site.register(Company, CompanyAdmin)

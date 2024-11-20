@@ -95,6 +95,14 @@ class Profile(models.Model):
     def __str__(self):
         return self.real_name
 
+    def save(self, *args, **kwargs):
+        if self.real_name:
+            self.real_name = self.real_name.strip()
+        CustomUser.objects.filter(pk=self.user.pk).update(
+            first_name=self.real_name, email=self.email
+        )
+        super(Profile, self).save(*args, **kwargs)
+
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):

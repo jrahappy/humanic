@@ -48,7 +48,7 @@
             <label class="label">
               <span class="label-text">병원명</span>
             </label>
-            {% render_field form.business_name class='input input-bordered font-mono' %}
+            {% render_field form.business_name class='input input-bordered font-mono input-sm' %}
             {% if form.business_name.errors %}
               <p class="text-red-500 text-xs italic">{{ form.business_name.errors }}</p>
             {% endif %}
@@ -58,13 +58,13 @@
             <label class="label">
               <span class="label-text">대표자명</span>
             </label>
-            {% render_field form.president_name  class='input input-bordered font-mono' %}
+            {% render_field form.president_name  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">사업자번호</span>
             </label>
-            {% render_field form.ein  class='input input-bordered font-mono' %}
+            {% render_field form.ein  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
@@ -79,25 +79,25 @@
             <label class="label">
               <span class="label-text">주소</span>
             </label>
-            {% render_field form.address  class='input input-bordered font-mono' %}
+            {% render_field form.address  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">호</span>
             </label>
-            {% render_field form.suite  class='input input-bordered font-mono' %}
+            {% render_field form.suite  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">시/도</span>
             </label>
-            {% render_field form.city  class='input input-bordered font-mono' %}
+            {% render_field form.city  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">우편번호</span>
             </label>
-            {% render_field form.zipcode  class='input input-bordered font-mono' %}
+            {% render_field form.zipcode  class='input input-bordered font-mono input-sm' %}
           </div>
         </div>
         <div class="grid grid-cols-4 gap-2">
@@ -105,30 +105,38 @@
             <label class="label">
               <span class="label-text">대표전화번호</span>
             </label>
-            {% render_field form.office_phone  class='input input-bordered font-mono' %}
+            {% render_field form.office_phone  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자</span>
             </label>
-            {% render_field form.contact_person  class='input input-bordered font-mono' %}
+            {% render_field form.contact_person  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자이메일</span>
             </label>
-            {% render_field form.office_email  class='input input-bordered font-mono' %}
+            {% render_field form.office_email  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자번호</span>
             </label>
-            {% render_field form.office_fax  class='input input-bordered font-mono' %}
+            {% render_field form.office_fax  class='input input-bordered font-mono input-sm' %}
           </div>
         </div>
-        <div class="grid grid-cols-12 gap-2 py-4">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary"
+        <div class="grid grid-cols-2 gap-2">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Tags</span>
+            </label>
+            {% render_field form.tags  class='input input-bordered font-mono input-sm' %}
+          </div>
+        </div>
+        <div class="grid grid-cols-12 gap-2 py-4 mt-4">
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            <button type="button" class="btn btn-sm"
               hx-get="{% url 'customer:detail' company.id %}"
               hx-trigger="click"
               hx-target="#main_area"

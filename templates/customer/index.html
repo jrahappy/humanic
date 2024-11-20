@@ -38,37 +38,42 @@
         </div>
     </div>
 </section>
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+<section class="card col-span-9 overflow-hidden bg-base-100 shadow-sm xl:col-span-9">
     <div class="card-body grow-0">
+
         <table class="min-w-full divide-y divide-gray-500">
             <thead >
                 <tr>
-                    <th scope="col" class="py-3.5 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">#</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">병원명</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">사업자번호</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">전화</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">Email</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">담당자</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">-</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">연락처</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">Email</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">시/도</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">Tags</th>
+                    
                 </tr>
             </thead>
             <tbody id="company_list" class="divide-y divide-gray-300 bg-white">
             {% for company in page_obj %}
-                <tr>
-                    <td class="whitespace-nowrap py-2 text-sm text-gray-500 text-center"> {{ company.id }}</td>
-                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:bg-sky-100">
+                <tr data-company-id="{{company.id}}">
+                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:bg-sky-100" >
                         <a href="{% url 'customer:detail' company.id %}">
                             {{ company.business_name }}                             
                         </a>
                     </td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ company.ein|handle_none }}</td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.office_phone|handle_none }}</td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.office_email|handle_none }}</td>
                     <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.contact_person|handle_none }}</td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900 text-end">
-                        <a href="{% url 'customer:detail' company.id %}" class="btn btn-sm btn-primary text-white w-16"> Detail </a>
-                        <a href="{% url 'customer:update' company.id %}" class="btn btn-primary btn-sm text-white w-16">Edit</a> 
+                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.office_fax|handle_none }}</td>
+                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900"> {{ company.office_email|handle_none }}</td>
+                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ company.city|handle_none }}</td>
+                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">
+                        <div class="flex flex-row flex-wrap gap-2">
+                            {% for tag in company.tags.all %}
+                            {{ tag.name }}&nbsp;
+                            {% endfor %}
+                            
+                        </div>
                     </td>
+                    
                 </tr>
             {% empty %}
 
@@ -100,6 +105,24 @@
             </tfoot>
         </table>
       
+    </div>
+</section>
+<section class="card col-span-3 overflow-hidden bg-base-100 shadow-sm xl:col-span-3">
+    <div class="card-body grow-0">
+        <div class="grid grid-cols-1 gap-2">
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">병원명</span>
+                </label>
+            </div>
+            <div class="">
+                <div class="flex flex-row flex-wrap gap-2">
+                    {% for tag in tags %}
+                    <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral text-white cursor-pointer ">{{ tag.name }} ({{tag.num_times}})</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 </section>
     

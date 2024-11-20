@@ -190,26 +190,43 @@ def delete_clog(request, company_id, clog_id):
 
 
 def index(request):
-
     ko_kr = Func(
         "business_name",
         function="ko_KR.utf8",
         template='(%(expressions)s) COLLATE "%(function)s"',
     )
-    q = request.GET.get("q")
-    if q:
-        companies = Company.objects.filter(
-            Q(business_name__icontains=q) | Q(contact_person__icontains=q)
-        ).order_by(ko_kr.asc())
-        if companies.count() == 1:
-            return redirect("customer:detail", companies[0].id)
+    tag_slug = request.GET.get("tag_slug")
+    if tag_slug:
+        companies = Company.objects.filter(tags__slug=tag_slug).order_by(
+            "business_name"
+        )
     else:
-        companies = Company.objects.all().order_by(ko_kr.asc())
+        q = request.GET.get("q")
+        if q:
+            companies = Company.objects.filter(
+                Q(business_name__icontains=q) | Q(contact_person__icontains=q)
+            ).order_by(ko_kr.asc())
+            if companies.count() == 1:
+                return redirect("customer:detail", companies[0].id)
+        else:
+            companies = Company.objects.all().order_by(ko_kr.asc())
 
     paginator = Paginator(companies, 10)  # Show 10 companies per page
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    context = {"page_obj": page_obj, "title": "Customer List"}
+    tags = Company.tags.all()
+    tags = Company.tags.annotate(num_times=Count("company")).order_by("-num_times")
+    context = {"page_obj": page_obj, "title": "Customer List", "tags": tags}
+    return render(request, "customer/index.html", context)
+
+
+def filter_by_tag(request, tag_slug):
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    companies = Company.objects.filter(tags__contains=[tag]).order_by("business_name")
+    paginator = Paginator(companies, 10)  # Show 10 companies per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {"page_obj": page_obj, "title": "Customer List", "tag": tag}
     return render(request, "customer/index.html", context)
 
 

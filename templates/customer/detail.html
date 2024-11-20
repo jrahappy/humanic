@@ -74,11 +74,18 @@
             </div>
           </div>
         </div>
-       
+        <div class="grid grid-cols-1 gap-2">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">주소</span>
+            </label>
+            <p class="p-3 bg-gray-100 h-10">{{ company.full_address|handle_none}}</p>
+          </div>
+        </div>
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
-              <span class="label-text">대표전화번호</span>
+              <span class="label-text">대표번호</span>
             </label>
             <p class="p-3 bg-gray-100 h-10">{{ company.office_phone|handle_none}}</p>
           </div>
@@ -90,17 +97,33 @@
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">담장자이메일</span>
+              <span class="label-text">담당자 이메일</span>
             </label>
             <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.office_email|handle_none}}</p>
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">담당자번호</span>
+              <span class="label-text">담당자 전화번호</span>
             </label>
             <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.office_fax|handle_none}}</p>
           </div>
         </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="form-control mb-4">
+            <label class="label">
+              <span class="label-text">Tags</span>
+            </label>
+            <div class="flex flex-row gap-2 ">
+              {% for tag in company.tags.all %}
+              <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral text-white cursor-pointer ">{{ tag.name }}</a>
+              {% empty %}
+              <span class="px-2">No Tags</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="flex flex-row justify-end p-4">
+            <a href="{% url 'customer:update' company.id %}" class="self-align-bottom btn btn-primary btn-sm text-white w-16">Edit</a> 
+          </div>
       </div>
 		</section>
     <section class="card card-compact col-span-4 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">

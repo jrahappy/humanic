@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "celery_progress",
     "django_recaptcha",
     "ckeditor",
+    "taggit",
     # "ckeditor_uploader",
     "dogfoot",
     "utils",
@@ -252,3 +253,5 @@ CKEDITOR_CONFIGS = {
         "removePlugins": "exportpdf",
     }
 }
+
+TAGGIT_CASE_INSENSITIVE = True
