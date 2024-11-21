@@ -25,7 +25,7 @@ class Company(models.Model):
     is_public = models.BooleanField(default=False)
     is_clinic = models.BooleanField(default=False)
     # taggit
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     class Meta:
         verbose_name = "Company"

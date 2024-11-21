@@ -15,6 +15,19 @@ from django.utils import timezone
 import json
 
 
+def tag_delete(request, company_id, tag_id):
+    company = get_object_or_404(Company, pk=company_id)
+    print(tag_id)
+    tag = company.tags.get(id=tag_id)
+    company.tags.remove(tag)
+    print(company.tags.all())
+    return redirect("customer:detail", company_id)
+    # return HttpResponse(
+    #     status=204,
+    #     headers={"HX-Trigger": json.dumps({"CustomerTagsChanged": None})},
+    # )
+
+
 def cfiles(request, company_id):
     company = get_object_or_404(Company, pk=company_id)
     cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
@@ -320,11 +333,27 @@ def update(request, customer_id):
     if request.method == "POST":
         form = CompanyForm(request.POST, instance=company)
         # print(form)
+        # tag validation
+
+        # tag = request.POST.get("tag")
+        # if tag == None:
+        #     form.tag = ""
+        # if tag:
+        #     print("there is a tag")
+        # else:
+        #     form.add_error(
+        #         "tag", "태그를 입력하세요. 삭제하려면 보기메뉴에서 x를 입력하세요."
+        #     )
+
         if form.is_valid():
             # form.id = customer_id
             form.save()
             # print("form saved")
             return render(request, "customer/detail.html", {"company": company})
+        else:
+            print(form.errors)
+            context = {"form": form, "company": company}
+            return render(request, "customer/update.html", context)
 
     else:
         form = CompanyForm(instance=company)

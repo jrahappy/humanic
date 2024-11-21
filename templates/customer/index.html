@@ -110,16 +110,22 @@
 <section class="card col-span-3 overflow-hidden bg-base-100 shadow-sm xl:col-span-3">
     <div class="card-body grow-0">
         <div class="grid grid-cols-1 gap-2">
-            <div class="form-control">
+            <div class="flex flex-row justify-between">
                 <label class="label">
                     <span class="label-text">Tags</span>
                 </label>
+                <label class="label">
+                    <a class="label-text">Manage</a>
+                </label>
             </div>
-            <div class="">
-                <div class="flex flex-row flex-wrap gap-2">
+            <div class="flex flex-col">
+                <div class="flex flex-row flex-wrap gap-2 grow">
                     {% for tag in tags %}
                     <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral text-white cursor-pointer ">{{ tag.name }} ({{tag.num_times}})</a>
                     {% endfor %}
+                </div>
+                <div class="">
+                    <a href="{% url 'customer:index' %}" class="badge badge-neutral text-white cursor-pointer ">Manage</a>
                 </div>
             </div>
         </div>

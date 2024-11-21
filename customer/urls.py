@@ -52,11 +52,9 @@ urlpatterns = [
         views.cfile_delete,
         name="cfile_delete",
     ),
-    # path(
-    #     "validate_business_name/",
-    #     views.validate_business_name,
-    #     name="validate_business_name",
-    # ),
-    # path("edit/<int:customer_id>/", views.edit_customer, name="edit_customer"),
-    # path("delete/<int:customer_id>/", views.delete_customer, name="delete_customer"),
+    path(
+        "tag_delete/<int:company_id>/<int:tag_id>/",
+        views.tag_delete,
+        name="tag_delete",
+    ),
 ]

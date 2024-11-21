@@ -132,17 +132,14 @@
               <span class="label-text">Tags</span>
             </label>
             {% render_field form.tags  class='input input-bordered font-mono input-sm' %}
+            {% if form.tags.errors %}
+              <p class="text-red-500 text-xs italic">{{ form.tags.errors }}</p>
+            {% endif %}
           </div>
         </div>
         <div class="grid grid-cols-12 gap-2 py-4 mt-4">
             <button type="submit" class="btn btn-primary btn-sm">Save</button>
-            <button type="button" class="btn btn-sm"
-              hx-get="{% url 'customer:detail' company.id %}"
-              hx-trigger="click"
-              hx-target="#main_area"
-              hx-swap="outerHTML"
-              hx-history-push-url="true"
-            >Cancel</button>
+            <a class="btn btn-sm" href="{% url 'customer:detail' company.id %}">Cancel</a>
         </div>
       </div>
 	</form>

@@ -115,7 +115,10 @@
             </label>
             <div class="flex flex-row gap-2 ">
               {% for tag in company.tags.all %}
-              <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral text-white cursor-pointer ">{{ tag.name }}</a>
+              <span class="me-2">
+                <span>{{ tag.name }}</span>
+                <a href="{% url 'customer:tag_delete' company.id tag.id %}?tag_slug={{ tag.slug }}" class="btn btn-xs">x</a>
+              </span>
               {% empty %}
               <span class="px-2">No Tags</span>
               {% endfor %}
