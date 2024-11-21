@@ -16,6 +16,8 @@ from customer.models import Company
 
 
 class CustomUser(AbstractUser):
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    email = models.CharField(max_length=254, null=True, blank=True)
     # Admin or not
     is_admin = models.BooleanField("Is admin", default=False)
     # doctor or not
@@ -47,7 +49,8 @@ class CustomUser(AbstractUser):
 
     @property
     def full_name(self):
-        return self.first_name + " " + self.last_name
+        # return self.first_name + " " + self.last_name
+        return self.last_name
 
 
 class Profile(models.Model):
@@ -92,16 +95,16 @@ class Profile(models.Model):
     extra_info2_int = models.IntegerField(null=True, blank=True, default=0)
     extra_info3_bool = models.BooleanField("Extra info 3", default=False)
 
-    def __str__(self):
-        return self.real_name
+    # def __str__(self):
+    #     return self.real_name
 
-    def save(self, *args, **kwargs):
-        if self.real_name:
-            self.real_name = self.real_name.strip()
-        CustomUser.objects.filter(pk=self.user.pk).update(
-            first_name=self.real_name, email=self.email
-        )
-        super(Profile, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.real_name:
+    #         self.real_name = self.real_name.strip()
+    #     CustomUser.objects.filter(pk=self.user.pk).update(
+    #         first_name=self.real_name, email=self.email
+    #     )
+    #     super(Profile, self).save(*args, **kwargs)
 
 
 @receiver(post_save, sender=CustomUser)

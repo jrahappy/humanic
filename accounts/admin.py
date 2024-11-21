@@ -13,15 +13,16 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = CustomUser
     list_display = [
-        "email",
         "username",
+        "email",
         "full_name",
         "is_staff",
         "is_doctor",
         "is_active",
+        "date_joined",
     ]
     search_fields = ["email", "username"]
-    list_filter = ["last_login", "is_doctor"]
+    list_filter = ["last_login", "is_doctor", "date_joined"]
     ordering = ["-username"]
 
     # Add fieldsets to show 'is_doctor' in the user change form
@@ -50,7 +51,15 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("username", "email", "password1", "password2", "is_doctor"),
+                "fields": (
+                    "username",
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password1",
+                    "password2",
+                    "is_doctor",
+                ),
             },
         ),
     )
