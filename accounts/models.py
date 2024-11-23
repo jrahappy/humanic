@@ -107,6 +107,24 @@ class Profile(models.Model):
     #     super(Profile, self).save(*args, **kwargs)
 
 
+class FeeHistory(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, null=True, blank=True
+    )
+    fee_rate = models.FloatField(
+        null=True,
+        blank=True,
+        default=0.7,
+        help_text="0.0~1.0",
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+    )
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username + " " + self.fee_rate + " " + self.start_date
+
+
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

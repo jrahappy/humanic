@@ -25,6 +25,11 @@ def monthly_pro_cus(request):
         .distinct()
         .order_by("-ayear", "-amonth")
     )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
 
     context = {"buttons_year_month": buttons_year_month}
 
@@ -64,6 +69,11 @@ def report_pro_cus(request, ayear, amonth):
         .values("ayear", "amonth")
         .distinct()
         .order_by("-ayear", "-amonth")
+    )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
     )
 
     context = {
@@ -503,6 +513,11 @@ def report_period(request):
         .distinct()
         .order_by("-ayear", "-amonth")
     )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
 
     context = {"buttons_year_month": buttons_year_month}
 
@@ -636,8 +651,8 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
         .order_by("company__business_name", "amodality")
     )
     # count_rpms = rpms.count()
-
-    stat = ReportMasterStat.objects.filter(provider=radio)
+    # 해당 년도의 판독매출 통계
+    stat = ReportMasterStat.objects.filter(provider=radio, ayear=ayear)
     stat_agg_by_amodality = (
         stat.values("ayear", "amonth", "amodality")
         .annotate(total_revenue=Sum("total_revenue"))
@@ -666,7 +681,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             "y": "Total Revenue",
             "color": "Modality",
         },
-        title="과거 3개원간의 판독매출 흐름",
+        title="판독매출 흐름",
         barmode="group",  # Group bars by modality within each month
     )
 
@@ -767,6 +782,11 @@ def performance(request):
         .values("ayear", "amonth")
         .distinct()
         .order_by("-ayear", "-amonth")
+    )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
     )
 
     context = {"buttons_year_month": buttons_year_month}
@@ -875,6 +895,11 @@ def accounting(request):
         .distinct()
         .order_by("-ayear", "-amonth")
     )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
 
     context = {"buttons_year_month": buttons_year_month}
 
@@ -883,14 +908,30 @@ def accounting(request):
 
 def accounting_month(request, ayear, amonth):
 
-    rs_ma = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth)
+    ko_kr_provider = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
 
-    rs_ma_revenue = rs_ma.filter(account_code="100")
+    ko_kr_comapny = Func(
+        "client__business_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+
+    rs_ma_compony = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth).order_by(
+        ko_kr_comapny.asc()
+    )
+    rs_ma_revenue = rs_ma_compony.filter(account_code="100")
     rs_ma_revenue_total = rs_ma_revenue.aggregate(Sum("account_total"))[
         "account_total__sum"
     ]
     rs_ma_revenue_total = rs_ma_revenue_total if rs_ma_revenue_total else 0
 
+    rs_ma = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth).order_by(
+        ko_kr_provider.asc()
+    )
     rs_ma_expense = rs_ma.filter(account_code="200")
     rs_ma_expense_total = rs_ma_expense.aggregate(Sum("account_total"))[
         "account_total__sum"
@@ -898,10 +939,10 @@ def accounting_month(request, ayear, amonth):
     rs_ma_expense_total = rs_ma_expense_total if rs_ma_expense_total else 0
 
     rs_ma_revenue_clients = rs_ma.filter(account_code="100").values(
-        "client__business_name", "account_total"
+        "client__business_name", "account_total", "client_id"
     )
     rs_ma_expense_providers = rs_ma.filter(account_code="200").values(
-        "provider__profile__real_name", "account_total"
+        "provider__profile__real_name", "account_total", "provider_id"
     )
 
     context = {
@@ -967,7 +1008,7 @@ def chart(request):
 
 def rad_by_subspecialty(request):
     # Prefetch profile with related specialties and pre-compute `total_readprice` for each user
-    latest_magam = MagamMaster.objects.latest("created_at")
+    latest_magam = MagamMaster.objects.filter(is_completed=True).latest("created_at")
     latest_year = latest_magam.ayear
     latest_month = latest_magam.amonth
     latest_year_magam_count = MagamMaster.objects.filter(ayear=latest_year).count()

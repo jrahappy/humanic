@@ -80,24 +80,24 @@ def divide_by_60(value):
 
 @register.filter
 def weekday_name(value):
-    WEEKDAY_MAP = {
-        "0": "Sunday",
-        "1": "Monday",
-        "2": "Tuesday",
-        "3": "Wednesday",
-        "4": "Thursday",
-        "5": "Friday",
-        "6": "Saturday",
-    }
     # WEEKDAY_MAP = {
-    #     1: "Sunday",
-    #     2: "Monday",
-    #     3: "Tuesday",
-    #     4: "Wednesday",
-    #     5: "Thursday",
-    #     6: "Friday",
-    #     7: "Saturday",
+    #     "0": "Sunday",
+    #     "1": "Monday",
+    #     "2": "Tuesday",
+    #     "3": "Wednesday",
+    #     "4": "Thursday",
+    #     "5": "Friday",
+    #     "6": "Saturday",
     # }
+    WEEKDAY_MAP = {
+        1: "Sunday",
+        2: "Monday",
+        3: "Tuesday",
+        4: "Wednesday",
+        5: "Thursday",
+        6: "Friday",
+        7: "Saturday",
+    }
     return WEEKDAY_MAP.get(value, "Unknown")
 
 

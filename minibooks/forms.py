@@ -1,8 +1,15 @@
 from django import forms
 from .models import UploadHistory, MagamMaster
+from utils.base_func import get_platform_choices
 
 
 class UploadHistoryForm(forms.ModelForm):
+    platform = forms.ChoiceField(
+        label="정상방식 구분",
+        choices=get_platform_choices(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
     class Meta:
         model = UploadHistory
         fields = [

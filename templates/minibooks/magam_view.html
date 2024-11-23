@@ -14,12 +14,7 @@
             <h2 class="card-title grow">
                 <a class="link-hover link">마감작업 세부이력</a>
             </h2>
-            <a href="#"
-                hx-get="{% url 'minibooks:magam_new' %}"
-                hx-trigger="click"
-                hx-target="#main_area"
-                hx-swap="outerHTML"
-                class="btn btn-primary">되돌아가기</a>
+            <a href="{% url 'minibooks:magam_list' %}" class="btn btn-sm btn-primary">되돌아가기</a>
         </div>
     </div>
     <div class="space-y-12">
@@ -76,7 +71,7 @@
                 <tr>
                     <td>ID</td>
                     <td>제목</td>
-                    <td>설명</td>
+                    <td style="width:500px;">설명</td>
                     <td>적용</td>
                 </tr>
             </thead>
@@ -85,7 +80,7 @@
                 <tr>
                     <td>{{ rule.def_name }}</td>
                     <td>{{ rule.name }}</td>
-                    <td>{{ rule.description }}</td>
+                    <td style="width:500px;">{{ rule.description }}</td>
                     <td>
                         <button 
                             onclick="base_modal.showModal()"

@@ -34,6 +34,7 @@ urlpatterns = [
     path("partial_tracking/<int:id>/", views.partial_tracking, name="partial_tracking"),
     path("magam/", views.magam_list, name="magam_list"),
     path("magam/new/", views.magam_new, name="magam_new"),
+    path("re_cal_magam/<int:id>/", views.re_cal_magam, name="re_cal_magam"),
     path("magam/view/<int:id>/", views.magam_view, name="magam_view"),
     path(
         "magam/apply_rule/<int:magam_id>/<int:rule_id>/",
@@ -55,4 +56,5 @@ urlpatterns = [
         views.re_calc_share,
         name="re_calc_share",
     ),
+    path("get_open/<int:id>/<str:is_opened>/", views.get_open, name="get_open"),
 ]

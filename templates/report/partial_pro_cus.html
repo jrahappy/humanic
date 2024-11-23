@@ -14,7 +14,11 @@
                 {% for rs in rs_cm %}
                 <tr>
                     <td>{{ forloop.counter0|add:1 }}</td>
-                    <td>{{ rs.company__business_name }}</td>
+                    <td>
+                        <a href="{% url 'customer:detail' rs.company %}" class="link">
+                            {{ rs.company__business_name }}
+                        </a>
+                    </td>
                     <td><p class="text-end">{{ rs.company_count|floatformat:0|intcomma }}</p></td>
                     <td><p class="text-end">{{ rs.company_total|floatformat:0|intcomma }}</p></td>
                     <td><p class="text-end">{{ rs.company_total|div:revenue_total_value|floatformat:2 }}%</p></td>
@@ -39,7 +43,7 @@
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
         <div class="card-body grow-0">
             <h2 class="card-title">
-            <a class="link-hover link">{{ ayear }}년 {{amonth }}월 판독의 매출순위</a>
+                <a class="link-hover link">{{ ayear }}년 {{amonth }}월 판독의 매출순위</a>
             </h2>
         </div>
         <div class="glow-0 overflow-y-auto px-4 align-top" style="height:800px;">
@@ -48,7 +52,10 @@
                 {% for rs in rs_dr %}
                 <tr>
                     <td>{{ forloop.counter0|add:1 }}</td>
-                    <td>{{ rs.provider__profile__real_name }}</td>
+                    <td>
+                        <a href="{% url 'provider:view_provider' rs.provider %}" class="link">
+                            {{ rs.provider__profile__real_name }}
+                        </a>    
                     <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
                     <td><p class="text-end">{{ rs.provider_total|floatformat:0|intcomma }}</p></td>
                     <td><p class="text-end">{{ rs.provider_total|div:revenue_total_value|floatformat:2 }}%</p></td>
@@ -76,9 +83,7 @@
             </tbody>
             </table>
         </div>
-        <div>
-            &nbsp;
-        </div>
+      
     </section>
 
 </div>

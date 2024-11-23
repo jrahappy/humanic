@@ -31,6 +31,8 @@ from .utils import log_uploadhistory
 from tablib import Dataset
 from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
+from calendar import monthrange
+from django.http import HttpResponse
 
 
 @login_required
@@ -106,216 +108,220 @@ def new_upload(request):
 @login_required
 def clean_data(request, id):
     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
-    v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False).order_by(
-        "id"
-    )
-    v_rawdata_count = v_rawdata.count()
-    messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
-    # 휴먼외래, 차감대상, 일반으로 구분하는 정산방법에 대한 구분임 (임시)
-    # v_platform = v_uploadhistory.platform
-    # print(v_platform)
-    ayear = v_uploadhistory.ayear
-    amonth = v_uploadhistory.amonth
+    v_rawdata = ReportMaster.objects.filter(uploadhistory=id).order_by("id")
+    # 1. 병원명 정리
 
-    # if v_platform == "ETC":
-    #     studydate = date(int(ayear), int(amonth), 1)
-    #     requestdt = studydate
-    #     approvedt = studydate
-    #     requestdt_verified = True
-    #     approvedt_verified = True
+    temp_list = v_rawdata.values_list("apptitle", flat=True).distinct()
+    for temp in temp_list:
+        company = Company.objects.filter(business_name=temp).first()
+        temp_list2 = v_rawdate.filter(apptitle=temp)
+        temp_list2.update(company=company)
 
-    def get_verified_object(model, field, value):
-        obj = model.objects.filter(**{field: value}).first()
-        return obj, obj is not None
+    # 2. 의사명 정리
+    temp_list = v_rawdata.values_list("radiologist", flat=True).distinct()
+    for temp in temp_list:
+        profile = Profile.objects.filter(real_name=temp).first()
+        temp_list2 = v_rawdate.filter(radiologist=temp)
+        temp_list2.update(provider=profile)
 
-    i = 0
-    for data in v_rawdata:
-        print(data.id)
-        company, company_verified = get_verified_object(
-            Company, "business_name", data.apptitle
-        )
-
-        ## 동명이인 처리(임시)
-        radiologist = data.radiologist
-        radiologist = radiologist.replace(" ", "").replace("\n", "").replace("\t", "")
-        if radiologist == "김수진(유방)":
-            radiologist = "김수진"
-        elif radiologist == "김수진(신경두경부)":
-            radiologist = "김수진B"
-
-        radiologist_profile, radiologist_verified = get_verified_object(
-            Profile, "real_name", radiologist
-        )
-        radiologist = radiologist_profile.user if radiologist_verified else None
-
-        # Modality 처리
-        equipment = data.equipment
-        if equipment == "DR":
-            amodality = "CR"
-        elif equipment == "DT":
-            amodality = "CR"
+    # 3. Modality 정리
+    temp_list = v_rawdata.values_list("equipment", flat=True).distinct()
+    for temp in temp_list:
+        temp_list2 = v_rawdate.filter(equipment=temp)
+        if temp == "DR":
+            temp_list2.update(amodality="CR")
+        elif temp == "DT":
+            temp_list2.update(amodality="CR")
         else:
-            amodality = equipment
+            temp_list2.update(amodality=temp)
+    # 4. 휴먼영상의핛센터 처리
+    temp_list2 = v_rawdate.filter(apptitle="휴먼영상의학센터")
+    temp_list2.update(is_human_outpatient=True, is_take=False)
 
-        # Platform 처리
-        # if v_platform == "HPACS":
-        #     # Platform 테이블의 ID  값을 넣음
-        #     is_human_outpatient = True
-        #     is_take = False
-        #     platform_verified = True
+    # 5. is_take 처리
+    temp_list2 = v_rawdata.filter(UploadHistory__platform="TAKE")
+    temp_list2.update(is_take=True)
 
-        # elif v_platform == "TAKE":
-        #     is_human_outpatient = False
-        #     is_take = True
-        #     platform_verified = True
+    # 6. 일응처리
+    temp_list2 = v_rawdata.filter(stat="일응")
+    temp_list2.update(is_emergency=True)
 
-        if data.apptitle == "휴먼영상의학센터":
-            is_human_outpatient = True
-            is_take = False  # 차감대상. False면 차감대상이 아님
-        else:
-            is_human_outpatient = False
-            is_take = False  # 차감대상. False면 차감대상이 아님
+    # v_rawdata = (
+    #     ReportMaster.objects.filter(uploadhistory=id, verified=False)
+    #     .filter(Q(company=None) | Q(provider=None))
+    #     .order_by("id")
+    # )
 
-        # Request Date 처리
-        if data.requestdttm:
-            try:
-                requestdt = timezone.make_aware(
-                    timezone.datetime.strptime(data.requestdttm, "%Y-%m-%d %H:%M:%S")
-                )
-                requestdt_verified = True
-            except (ValueError, TypeError):
-                if data.pacs != "ONSITE":
-                    requestdt = None
-                    requestdt_verified = False
-                else:
-                    requestdt = None
-                    requestdt_verified = True
-        else:
-            requestdt = None
-            requestdt_verified = True
+    # v_rawdata_count = v_rawdata.count()
+    # messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
-        # Request Date 처리
-        if data.approveddttm:
-            try:
-                approvedt = timezone.make_aware(
-                    timezone.datetime.strptime(data.approveddttm, "%Y-%m-%d %H:%M:%S")
-                )
-                approvedt_verified = True
-            except (ValueError, TypeError):
-                if data.pacs != "ONSITE":
-                    approvedt = None
-                    approvedt_verified = False
-                else:
-                    approvedt = None
-                    approvedt_verified = True
-        else:
-            approvedt = None
-            approvedt_verified = True
+    # ayear = v_uploadhistory.ayear
+    # amonth = v_uploadhistory.amonth
+    # adate = v_uploadhistory.adate
 
-        verified = all(
-            [
-                company_verified,
-                radiologist_verified,
-                # platform_verified,
-                requestdt_verified,
-                approvedt_verified,
-            ]
-        )
-        # 디버그용
-        if verified:
-            # if i < 10:
-            #     print(f"valid ID for data: {data.id}")
-            # else:
-            #     break
+    # def get_verified_object(model, field, value):
+    #     obj = model.objects.filter(**{field: value}).first()
+    #     return obj, obj is not None
 
-            if isinstance(data.id, int):  # Validate that data.id is a numeric value
-                v_count = ReportMaster.objects.filter(id=data.id).count()
-                # print(f"Count: {v_count}")
-                # print(
-                #     f"Company: {company} / Radiologist: {radiologist} / Platform: {platform} / Request Date: {requestdt} / Approval Date: {approvedt}"
-                # )
-                ReportMaster.objects.filter(id=data.id).update(
-                    company=company,
-                    provider=radiologist,
-                    amodality=amodality,
-                    # 9/26 추가
-                    is_human_outpatient=is_human_outpatient,
-                    is_take=is_take,
-                    requestdt=requestdt,
-                    approvedt=approvedt,
-                    verified=True,
-                )
-                # ReportMaster.objects.filter(id=data.id).update(
-                #     company=company,
-                #     provider=radiologist,
-                #     amodality=amodality,
-                #     platform=platform,
-                #     requestdt=requestdt,
-                #     approvedt=approvedt,
-                #     verified=True,
-                # )
-                print(f"Data for {data.id} / {i} verified.")
-                i += 1
-            else:
-                print(f"Invalid ID for data: {data.id}")
+    # i = 0
+    # for data in v_rawdata:
+    #     print(data.id)
+    #     company, company_verified = get_verified_object(
+    #         Company, "business_name", data.apptitle
+    #     )
 
-        else:
-            unverified_message = ""
-            if not company_verified:
-                print(f"Company verification failed for data id: {data.id}")
-                unverified_message += (
-                    f"Company verification failed for data id: {data.id}\n"
-                )
-            if not radiologist_verified:
-                print(f"Radiologist verification failed for data id: {data.id}")
-                unverified_message += (
-                    f"Radiologist verification failed for data id: {data.id}\n"
-                )
-            # if not platform_verified:
-            #     print(f"Platform verification failed for data id: {data.id}")
-            #     unverified_message += (
-            #         f"Platform verification failed for data id: {data.id}\n"
-            #     )
-            if not requestdt_verified:
-                print(f"Request date verification failed for data id: {data.id}")
-                unverified_message += (
-                    f"Request date verification failed for data id: {data.id}\n"
-                )
-            if not approvedt_verified:
-                print(f"Approval date verification failed for data id: {data.id}")
-                unverified_message += (
-                    f"Approval date verification failed for data id: {data.id}\n"
-                )
+    #     ## 동명이인 처리(임시)
+    #     radiologist = data.radiologist
+    #     radiologist = radiologist.replace(" ", "").replace("\n", "").replace("\t", "")
+    #     if radiologist == "김수진(유방)":
+    #         radiologist = "김수진"
+    #     elif radiologist == "김수진(신경두경부)":
+    #         radiologist = "김수진B"
 
-            ReportMaster.objects.filter(id=data.id).update(
-                verified=False,
-                unverified_message=unverified_message,
-            )
-            break
-            # messages.error(request, f"Data for {data.id} not verified.")
+    #     radiologist_profile, radiologist_verified = get_verified_object(
+    #         Profile, "real_name", radiologist
+    #     )
+    #     radiologist = radiologist_profile.user if radiologist_verified else None
 
-    v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False)
-    total_rows = v_rawdata.count()
-    if total_rows == 0:
-        v_uploadhistory.verified = True
-        v_uploadhistory.save(update_fields=["verified"])
-        messages.success(request, "Data cleaned successfully.")
-        # tracking the upload history
-        log_uploadhistory(
-            request.user,
-            "Data Cleanning",
-            "Data cleanned successfully.",
-            v_uploadhistory,
-        )
-    else:
-        messages.error(request, "Fail:Please check the log.")
-        log_uploadhistory(
-            request.user,
-            "Data Cleanning",
-            f"Failed: Data for {data.id} not verified.",
-            v_uploadhistory,
-        )
+    #     # Modality 처리
+    #     equipment = data.equipment
+    #     if equipment == "DR":
+    #         amodality = "CR"
+    #     elif equipment == "DT":
+    #         amodality = "CR"
+    #     else:
+    #         amodality = equipment
+
+    #     if data.apptitle == "휴먼영상의학센터":
+    #         is_human_outpatient = True
+    #         is_take = False  # 차감대상. False면 차감대상이 아님
+    #     else:
+    #         is_human_outpatient = False
+    #         is_take = False  # 차감대상. False면 차감대상이 아님
+
+    #     # Request Date 처리
+    #     if data.requestdttm:
+    #         try:
+    #             requestdt = timezone.make_aware(
+    #                 timezone.datetime.strptime(data.requestdttm, "%Y-%m-%d %H:%M:%S")
+    #             )
+    #             requestdt_verified = True
+    #         except (ValueError, TypeError):
+    #             if data.pacs != "ONSITE":
+    #                 requestdt = None
+    #                 requestdt_verified = False
+    #             else:
+    #                 requestdt = None
+    #                 requestdt_verified = True
+    #     else:
+    #         requestdt = None
+    #         requestdt_verified = True
+
+    #     # Request Date 처리
+    #     if data.approveddttm:
+    #         try:
+    #             approvedt = timezone.make_aware(
+    #                 timezone.datetime.strptime(data.approveddttm, "%Y-%m-%d %H:%M:%S")
+    #             )
+    #             approvedt_verified = True
+    #         except (ValueError, TypeError):
+    #             if data.pacs != "ONSITE":
+    #                 approvedt = None
+    #                 approvedt_verified = False
+    #             else:
+    #                 approvedt = None
+    #                 approvedt_verified = True
+    #     else:
+    #         approvedt = None
+    #         approvedt_verified = True
+
+    #     verified = all(
+    #         [
+    #             company_verified,
+    #             radiologist_verified,
+    #             # platform_verified,
+    #             requestdt_verified,
+    #             approvedt_verified,
+    #         ]
+    #     )
+    #     # 디버그용
+    #     if verified:
+    #         # if i < 10:
+    #         #     print(f"valid ID for data: {data.id}")
+    #         # else:
+    #         #     break
+
+    #         if isinstance(data.id, int):  # Validate that data.id is a numeric value
+    #             v_count = ReportMaster.objects.filter(id=data.id).count()
+    #             ReportMaster.objects.filter(id=data.id).update(
+    #                 company=company,
+    #                 provider=radiologist,
+    #                 amodality=amodality,
+    #                 # 9/26 추가
+    #                 is_human_outpatient=is_human_outpatient,
+    #                 is_take=is_take,
+    #                 requestdt=requestdt,
+    #                 approvedt=approvedt,
+    #                 verified=True,
+    #             )
+
+    #             print(f"Data for {data.id} / {i} verified.")
+    #             i += 1
+    #         else:
+    #             print(f"Invalid ID for data: {data.id}")
+
+    #     else:
+    #         unverified_message = ""
+    #         if not company_verified:
+    #             # print(f"Company verification failed for data id: {data.id}")
+    #             unverified_message += (
+    #                 f"Company verification failed for data id: {data.id}\n"
+    #             )
+    #         if not radiologist_verified:
+    #             # print(f"Radiologist verification failed for data id: {data.id}")
+    #             unverified_message += (
+    #                 f"Radiologist verification failed for data id: {data.id}\n"
+    #             )
+
+    #         if not requestdt_verified:
+    #             print(f"Request date verification failed for data id: {data.id}")
+    #             unverified_message += (
+    #                 f"Request date verification failed for data id: {data.id}\n"
+    #             )
+    #         if not approvedt_verified:
+    #             print(f"Approval date verification failed for data id: {data.id}")
+    #             unverified_message += (
+    #                 f"Approval date verification failed for data id: {data.id}\n"
+    #             )
+
+    #         ReportMaster.objects.filter(id=data.id).update(
+    #             verified=False,
+    #             unverified_message=unverified_message,
+    #         )
+    #         break
+
+    # v_rawdata = ReportMaster.objects.filter(uploadhistory=id, verified=False)
+    # total_rows = v_rawdata.count()
+    # if total_rows == 0:
+    #     v_uploadhistory.verified = True
+    #     v_uploadhistory.save(update_fields=["verified"])
+    #     messages.success(request, "Data cleaned successfully.")
+    #     # tracking the upload history
+    #     log_uploadhistory(
+    #         request.user,
+    #         "Data Cleanning",
+    #         "Data cleanned successfully.",
+    #         v_uploadhistory,
+    #     )
+    # else:
+    #     messages.error(request, "Fail:Please check the log.")
+    #     log_uploadhistory(
+    #         request.user,
+    #         "Data Cleanning",
+    #         f"Failed: Data for {data.id} not verified.",
+    #         v_uploadhistory,
+    #     )
 
     return redirect("minibooks:index")
 
@@ -383,32 +389,36 @@ def create_reportmaster(request, id):
                 if platform == "ONPACS":
                     ReportMaster.objects.create(
                         apptitle=str(data[0]).strip() if data[0] else "",
-                        case_id=str(data[1]).strip() if data[1] else "",
-                        name=str(data[2]).strip() if data[2] else "",
-                        department=str(data[3]).strip() if data[3] else "",
-                        bodypart=str(data[4]).strip() if data[4] else "",
-                        modality=str(data[5]).strip() if data[5] else "",
-                        equipment=str(data[6]).strip() if data[6] else "",
-                        studydescription=str(data[7]).strip() if data[7] else "",
-                        imagecount=data[8],
-                        accessionnumber=str(data[9]).strip() if data[9] else "",
-                        readprice=data[10],
-                        reader=str(data[11]).strip() if data[11] else "",
-                        approver=str(data[12]).strip() if data[12] else "",
+                        ein=str(data[1]).strip() if data[1] else "",
+                        case_id=str(data[2]).strip() if data[2] else "",
+                        name=str(data[3]).strip() if data[3] else "",
+                        department=str(data[4]).strip() if data[4] else "",
+                        bodypart=str(data[5]).strip() if data[5] else "",
+                        modality=str(data[6]).strip() if data[6] else "",
+                        equipment=str(data[7]).strip() if data[7] else "",
+                        studydescription=str(data[8]).strip() if data[8] else "",
+                        imagecount=data[9],
+                        accessionnumber=str(data[10]).strip() if data[10] else "",
+                        readprice=data[11],
+                        reader=str(data[12]).strip() if data[12] else "",
+                        approver=str(data[13]).strip() if data[13] else "",
                         radiologist=(
-                            str(data[13]).strip().replace("\n", "").replace("\t", "")
-                            if data[13]
+                            str(data[14]).strip().replace("\n", "").replace("\t", "")
+                            if data[14]
                             else ""
                         ),
-                        studydate=str(data[14]).strip() if data[14] else "",
-                        approveddttm=str(data[15]).strip() if data[15] else "",
-                        stat=str(data[16]).strip() if data[16] else "",
-                        pacs=str(data[17]).strip() if data[17] else "",
-                        requestdttm=str(data[18]).strip() if data[18] else "",
-                        ecode=str(data[19]).strip() if data[19] else "",
-                        sid=str(data[20]).strip() if data[20] else "",
-                        patientid=str(data[21]).strip() if data[21] else "",
-                        human_paid_all=str(data[22]).strip() if data[22] else "",
+                        radiologist_license=str(data[15]).strip() if data[15] else "",
+                        studydate=str(data[16]).strip() if data[16] else "",
+                        approveddttm=str(data[17]).strip() if data[17] else "",
+                        stat=str(data[18]).strip() if data[18] else "",
+                        pacs=str(data[19]).strip() if data[19] else "",
+                        requestdttm=str(data[20]).strip() if data[20] else "",
+                        ecode=str(data[21]).strip() if data[21] else "",
+                        sid=str(data[22]).strip() if data[22] else "",
+                        # X column
+                        patientid=str(data[23]).strip() if data[23] else "",
+                        # Y 휴먼결제하기로 함
+                        human_paid_all=str(data[24]).strip() if data[24] else "",
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
                         created_at=date.today(),
@@ -437,22 +447,23 @@ def create_reportmaster(request, id):
                     ReportMaster.objects.create(
                         apptitle="휴먼영상의학센터",
                         company=humanic,
-                        case_id=data[7],
-                        name=data[13],
-                        bodypart=data[14],
-                        equipment=data[8],
-                        studydescription=data[10],
-                        imagecount=data[16],
-                        accessionnumber=data[11],
-                        readprice=data[15] if data[15] else 0,
-                        approver=data[6],
+                        case_id=data[8],
+                        name=data[14],
+                        bodypart=data[11],
+                        equipment=data[9],
+                        studydescription=data[15],
+                        imagecount=data[17],
+                        accessionnumber=data[12],
+                        readprice=data[16] if data[16] else 0,
+                        approver=data[7],
                         radiologist=data[5],
+                        radiologist_license=data[6],
                         studydate=data[1],
                         approveddttm=data[2],
                         pacs="HPACS",
                         # platform=humanic_platform,
                         requestdttm=data[4],
-                        patientid=data[12],
+                        patientid=data[13],
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
                         created_at=date.today(),
@@ -608,6 +619,11 @@ def initial_customer_data(request):
 
 @login_required
 def aggregate_data(request, upload_history_id):
+    uh = get_object_or_404(UploadHistory, id=upload_history_id)
+    temp_year = int(uh.ayear)
+    temp_month = int(uh.amonth)
+    last_date = date(temp_year, temp_month, monthrange(temp_year, temp_month)[1])
+
     try:
         # Aggregate data from ReportMaster
         aggregation = (
@@ -622,7 +638,11 @@ def aggregate_data(request, upload_history_id):
                 "is_emergency",
             )
             .filter(uploadhistory=upload_history_id)
-            .annotate(total_count=Count("id"), total_revenue=Sum("readprice"))
+            .annotate(
+                total_count=Count("id"),
+                total_revenue=Sum("readprice"),
+                total_expense=Sum("pay_to_provider"),
+            )
         )
 
         # Insert aggregated data into ReportMasterStat
@@ -631,6 +651,7 @@ def aggregate_data(request, upload_history_id):
             company = Company.objects.get(id=entry["company"])
             year = entry["ayear"]
             month = entry["amonth"]
+            adate = last_date
             # platform = Platform.objects.get(id=entry["platform"])
             amodality = entry["amodality"]
             emergency = entry["is_emergency"]
@@ -638,6 +659,7 @@ def aggregate_data(request, upload_history_id):
             give_or_take = entry["is_take"]
             total_count = entry["total_count"]
             total_revenue = entry["total_revenue"]
+            total_expense = entry["total_expense"]
 
             print(
                 f"Provider: {provider}, Company: {company}, Year: {year}, Month: {month}, Modality: {amodality}, Total Count: {total_count}, Revenue: {total_revenue}"
@@ -649,12 +671,17 @@ def aggregate_data(request, upload_history_id):
                 company=company,
                 ayear=year,
                 amonth=month,
+                adate=adate,
                 amodality=amodality,
                 emergency=emergency,
                 human_outpatient=human_outpatient,
                 give_or_take=give_or_take,
                 UploadHistory=UploadHistory.objects.get(id=upload_history_id),
-                defaults={"total_count": total_count, "total_revenue": total_revenue},
+                defaults={
+                    "total_count": total_count,
+                    "total_revenue": total_revenue,
+                    "total_expense": total_expense,
+                },
             )
         UploadHistory.objects.filter(id=upload_history_id).update(aggregated=True)
         messages.success(request, "Data aggregated successfully.")
@@ -1103,24 +1130,6 @@ def apply_rule_progress(request, magam_id, rule_id):
         count_target_rows = target_rows.count()
         i = count_target_rows
 
-        # for row in target_rows:
-        #     provider = row.provider
-        #     fee_rate = provider.profile.fee_rate
-
-        #     row.update(
-        #         human_paid=ExpressionWrapper(
-        #             F("readprice") * 0.5,
-        #             output_field=DecimalField(max_digits=10, decimal_places=0),
-        #         ),
-        #         pay_to_provider=ExpressionWrapper(
-        #             (F("pay_to_provider") + (F("readprice") * 0.5 * fee_rate)),
-        #             output_field=DecimalField(max_digits=10, decimal_places=0),
-        #         ),
-        #         pay_to_human=ExpressionWrapper(
-        #             (F("pay_to_provider") + (F("readprice") * 0.5 * (1 - fee_rate))),
-        #             output_field=DecimalField(max_digits=10, decimal_places=0),
-        #         ),
-        #     )
         for row in target_rows:
             provider = row.provider
             fee_rate = provider.profile.fee_rate
@@ -1155,7 +1164,8 @@ def apply_rule_progress(request, magam_id, rule_id):
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
-            is_human_paid=True,
+            human_paid_all__icontains="휴",
+            # is_human_paid=True,
             is_completed=True,
         )
         count_target_rows = target_rows.count()
@@ -1349,7 +1359,6 @@ def apply_rule_progress(request, magam_id, rule_id):
 
         # Convert the string to a datetime object
         # datetime_object = datetime.strptime(date_string, "%Y/%m/%d %H:%M:%S")
-        from datetime import datetime
 
         j = 0  # Initialize counter
 
@@ -1438,7 +1447,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             .values("provider")
             .annotate(
                 magam_rows=Sum("total_count"),
-                magam_revenue=Sum("total_revenue"),
+                magam_revenue=Sum("total_expense"),
             )
         )
 
@@ -1459,7 +1468,8 @@ def apply_rule_progress(request, magam_id, rule_id):
             )  # Default fee_rate to 0 if not found
 
             # Calculate the result using magam_revenue (ensure it's properly accessed via dictionary)
-            calc_result = row["magam_revenue"] * fee_rate if row["magam_revenue"] else 0
+            # calc_result = row["magam_revenue"] * fee_rate if row["magam_revenue"] else 0
+            calc_result = row["magam_revenue"] if row["magam_revenue"] else 0
 
             # Update or create MagamAccounting records
             MagamAccounting.objects.update_or_create(
@@ -1490,6 +1500,38 @@ def apply_rule_progress(request, magam_id, rule_id):
     # 함수를 하나 실행할 때 사용
     elif selected_rule == "UTILITY":
 
+        # temp_rs = ReportMaster.objects.all()[:30]
+        # temp_rs = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
+
+        # first_row = temp_rs.first()
+        # temp_ayear = first_row.ayear
+        # temp_amonth = first_row.amonth
+        # last_day = monthrange(int(temp_ayear), int(temp_amonth))[1]
+        # count_target_rows = temp_rs.count()
+
+        # new_adate = f"{temp_ayear}-{temp_amonth}-{last_day}"
+        # temp_rs.update(adate=new_adate)
+
+        temp_rss = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
+        first_row = temp_rss.first()
+        temp_ayear = first_row.ayear
+        temp_amonth = first_row.amonth
+        last_day = monthrange(int(temp_ayear), int(temp_amonth))[1]
+        count_target_rows = temp_rss.count()
+        new_adate = f"{temp_ayear}-{temp_amonth}-{last_day}"
+        temp_rss.update(adate=new_adate)
+
+        # for row in temp_rs:
+        #     temp_ayear = row.ayear
+        #     temp_amonth = row.amonth
+
+        #     last_day = monthrange(int(temp_ayear), int(temp_amonth))[1]
+        #     magam_date = f"{temp_ayear}-{temp_amonth}-{last_day}"
+        #     row.adate = magam_date
+        #     row.save()
+
+        # print(temp_ayear, temp_amonth, magam_date)
+
         # 해당 PACS 를 사용하는 병원들을 가져온다.
         # target_rows = ReportMaster.objects.all().values("company", "pacs").distinct()
         # for row in target_rows:
@@ -1515,19 +1557,21 @@ def apply_rule_progress(request, magam_id, rule_id):
         #     row.company_paid = row.readprice
         #     row.save()
         # i = target_rows.count()
-        return HttpResponse("Utility function is executed.")
+        # return HttpResponse("Utility function is executed.", count_target_rows)
+        i = count_target_rows
 
     else:
         pass
     context = {
         "i": i,
+        "selected_rule": selected_rule,
     }
     return render(request, "minibooks/magam_apply_rule_progress_result.html", context)
 
 
 @login_required
 def magam_list(request):
-    magam_list = MagamMaster.objects.all()
+    magam_list = MagamMaster.objects.all().order_by("-adate")
     context = {"magam_list": magam_list}
     return render(request, "minibooks/magam_list.html", context)
 
@@ -1541,6 +1585,8 @@ def magam_new(request):
         form = MagamMasterForm(request.POST)
         selected_ayear = form.data.get("ayear")
         selected_amonth = form.data.get("amonth")
+        last_day = monthrange(int(selected_ayear), int(selected_amonth))[1]
+        adate = f"{selected_ayear}-{selected_amonth}-{last_day}"
         target_rows = ReportMaster.objects.filter(
             ayear=selected_ayear, amonth=selected_amonth
         )
@@ -1549,6 +1595,7 @@ def magam_new(request):
             magam = form.save(commit=False)
             magam.user = request.user
             magam.target_rows = target_rows.count()
+            magam.adate = adate
             magam.created_at = timezone.now()
             magam.save()
             messages.success(request, "New Magam created successfully.")
@@ -1561,6 +1608,33 @@ def magam_new(request):
         context = {"form": form, "user": user}
 
     return render(request, "minibooks/magam_new.html", context)
+
+
+def re_cal_magam(request, id):
+    magam = MagamMaster.objects.get(id=id)
+    target_rows = ReportMaster.objects.filter(ayear=magam.ayear, amonth=magam.amonth)
+    count_target_rows = target_rows.count()
+    last_day = monthrange(int(magam.ayear), int(magam.amonth))[1]
+    adate = f"{magam.ayear}-{magam.amonth}-{last_day}"
+    magam.target_rows = count_target_rows
+    magam.adate = adate
+    magam.save()
+    return redirect("minibooks:magam_list")
+
+
+def get_open(request, id, is_opened):
+    magam = MagamMaster.objects.get(id=id)
+    print(is_opened)
+    if is_opened == "True":
+        temp = False
+    else:
+        temp = True
+
+    print(temp)
+    magam.is_opened = temp
+    magam.save()
+
+    return redirect("minibooks:magam_list")
 
 
 @login_required

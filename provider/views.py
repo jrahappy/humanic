@@ -119,12 +119,12 @@ def view_provider(request, id):
     )
 
     rs_monthly = (
-        rs.values("ayear", "amonth")
+        rs.values("ayear", "amonth", "adate")
         .annotate(
             total_count_temp=Sum("total_count"),
             total_revenue_temp=Sum("total_revenue"),
         )
-        .order_by("-ayear", "-amonth")
+        .order_by("-adate")
     )
     # print(rs_monthly)
     context = {

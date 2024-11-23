@@ -229,7 +229,24 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 # 11/11/2024 #
     - Referify
         1. 실시간으로 Radio의 처리 완료에 따라서 Case를 배정해주는 로직 필요
+
+
+# 11/22/2024 #
+    - FeeHistory model 추가
+        - 판독의들의 fee rate 이력을 담는 테이블임
+        - 추후 start_date, end_date 를 감안해서 fee를 달리 적용하는 방안 적용 예정(다음 개발 목표)
+
+    - 마감일 정보 추가: 해당월의 마지막 날임
+        => 통계나 Sorting에 사용됨. ayear, amonth 로 하면 sorting에 문제가 발생함
+        - UploadHistory 에 adate 추가
+        - ReportMaster, ReportMasterStat, ReportMasterPerformance 에 adate 추가
+        - MagamMaster, MagamAccounting 에 adate 추가
+
         
+    - 10월 마감을 하다 보니 clean_data 부분이 너무 시간이 오래 걸림. 
+        - clean_data 함수는 병원명, 의사명을 찾아서 이를 customUser, Company 테이블의 pk와 연결시켜주는 작업, modality 를 key 값으로 추가해 넣아주는 것이 목적임 
+        - 현재 문제는 loop를 전체 ReportMaster 행을 대상으로 함. 그러다 보니 200k 번의 loop가 발생되어 매우 느림
+        - 개선 방향은 Doctor, Company, Modality 별로 찾아서 한번에 update 해주는 방향으로 변경함.
 
 
 

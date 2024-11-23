@@ -65,12 +65,24 @@
                 <div x-show="detail_cost" class="mb-2 w-full">
                     {% for provider in rs_ma_expense_providers %}
                     <div class="flex flex-row justify-between">
-                        <div class="text-start">
+                        <div class="text-start w-24">
                             {{ provider.provider__profile__real_name }}
                         </div>
                         <div class="text-end">
                             {{ provider.account_total|floatformat:0|intcomma }}
                         </div>
+                        <div class="py-1 w-12">
+                            <button 
+                                onclick="base_modal.showModal()"
+                                class="btn btn-sm btn-info" 
+                                hx-get="{% url 'report:report_period_month_radiologist' ayear amonth provider.provider_id %}"
+                                hx-trigger="click"
+                                hx-target="#base_modal"
+                                hx-swap="innerHTML"    
+                                hx-indicator="#spinner"                                  
+                            >Detail</button>
+                        </div>
+                       
                     </div>
                     {% endfor %}
                 </div>
@@ -92,78 +104,6 @@
                 
             </div>
         </div>  
-        <div x-data="{ detail_3rdparties:false}" class="grid grid-cols-2 bg-base-100 w-full">
-            <div class="card-body flex flex-row items-base">
-                <div class="flex justify-start gap-4 w-full">
-                    <div class="text-start me-4 w-1/2">
-                         협력업체 지급액
-                    </div>
-                    <div class="text-end ms-4">
-                        {{ rs_ma_expense_total|floatformat:0|intcomma }}
-                    </div>
-                </div>
-                <button @click="detail_3rdparties = !detail_3rdparties" class="btn btn-primary">상세보기</button>
-            </div> 
-            <div class="card-body flex flex-row items-base">
-                <div x-show="detail_3rdparties" class="mb-2 w-full">
-                    
-                    <div class="flex flex-row justify-between">
-                        <div class="text-start">
-                            인피니트(ONPACS)
-                        </div>
-                        <div class="text-end">
-                            12,345,678
-                        </div>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <div class="text-start">
-                            인피니트(ONPACS)
-                        </div>
-                        <div class="text-end">
-                            12,345,678
-                        </div>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <div class="text-start">
-                            인피니트(ONPACS)
-                        </div>
-                        <div class="text-end">
-                            12,345,678
-                        </div>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <div class="text-start">
-                            인피니트(ONPACS)
-                        </div>
-                        <div class="text-end">
-                            12,345,678
-                        </div>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <div class="text-start">
-                            인피니트(ONPACS)
-                        </div>
-                        <div class="text-end">
-                            12,345,678
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>   
-        <div class="grid grid-cols-2 bg-base-100 w-full">
-            <div class="card-body flex flex-row items-base">
-                <div class="flex justify-start gap-4 w-full">
-                    <div class="text-start me-4 w-1/2">
-                         최종잔액
-                    </div>
-                    <div class="text-end ms-4">
-                        223,334,444
-                    </div>
-                </div>
-            </div> 
-            <div class="card-body flex flex-row items-base">
-                
-            </div>
-        </div>         
+        
     </div>
 </section>

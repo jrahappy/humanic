@@ -27,7 +27,8 @@ def index(request):
     if not syear or not smonth:
         # Fetch the latest available record from the database
         # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
-        temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
+        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
+        temp_rs = UploadHistory.objects.filter(is_deleted=False).order_by("-id")[:1]
         # Check if any records exist in the database
         if temp_rs:
             if temp_rs.count() == 2:
@@ -59,6 +60,8 @@ def index(request):
         else:
             pre_year = temp_rs[0].ayear
             pre_month = temp_rs[0].amonth
+
+    print(syear, smonth)
 
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
@@ -133,6 +136,11 @@ def index(request):
         .distinct()
         .order_by("-ayear", "-amonth")
     )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
 
     # 전체 통계
     rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
@@ -187,7 +195,10 @@ def partial_briefing(request):
 
     if not syear or not smonth:
         # Fetch the latest available record from the database
-        temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
+        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
+        temp_rs = UploadHistory.objects.filter(is_deleted=False).order_by(
+            "-created_at"
+        )[:1]
 
         # Check if any records exist in the database
         if temp_rs:
@@ -203,6 +214,8 @@ def partial_briefing(request):
         # If syear and smonth are provided, ensure proper formatting
         syear = str(syear)
         smonth = str(smonth)
+
+    print(syear, smonth)
 
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
@@ -288,8 +301,19 @@ def partial_briefing(request):
         UploadHistory.objects.filter(is_deleted=False)
         .values("ayear", "amonth")
         .distinct()
-        .order_by("-ayear", "-amonth")
+        .order_by("-ayear", "amonth")
     )
+
+    # print(buttons_year_month)
+
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
+
+    # for buttons
+    # print(buttons_year_month)
 
     # 그래프용 데이터
     rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)

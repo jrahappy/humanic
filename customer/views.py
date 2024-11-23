@@ -306,9 +306,9 @@ def detail(request, customer_id):
     cm_refers = (
         ReportMasterStat.objects.filter(company=company)
         # .values("ayear", "amonth", "amodality")
-        .values("ayear", "amonth")
+        .values("ayear", "amonth", "adate")
         .annotate(total=Count("total_count"), total_amount=Sum("total_revenue"))
-        .order_by("-ayear", "-amonth")
+        .order_by("-adate")
     )
     contracts = ServiceFee.objects.filter(company=company).order_by("-created_at")
     clogs = CustomerLog.objects.filter(

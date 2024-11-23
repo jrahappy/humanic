@@ -55,7 +55,7 @@ class ReportMaster(models.Model):
     company = models.ForeignKey(
         Company, on_delete=models.SET_NULL, null=True, blank=True
     )  # company
-
+    ein = models.CharField(max_length=20, null=True, blank=True)
     case_id = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     department = models.CharField(max_length=100, null=True, blank=True)
@@ -88,6 +88,7 @@ class ReportMaster(models.Model):
 
     # 판독의 성명
     radiologist = models.CharField(max_length=100, null=True, blank=True)
+    radiologist_license = models.CharField(max_length=20, null=True, blank=True)
     # 판독의 ID(DBMS에서 자동부여)
     provider = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True
@@ -111,7 +112,7 @@ class ReportMaster(models.Model):
     ayear = models.CharField(max_length=5, null=True, blank=True)
     amonth = models.CharField(max_length=2, null=True, blank=True)
     # 해당월의 마지막 날짜를 저장. 통계자료를 만들때 사용함(좀 더 생각해봄)
-    # adate = models.DateField(null=True, blank=True)
+    adate = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     time_to_complete = models.IntegerField(
         null=True, blank=True, default=0
@@ -166,6 +167,7 @@ class ReportMasterStat(models.Model):
     )
     ayear = models.CharField("년도", max_length=4)
     amonth = models.CharField("월", max_length=2)
+    adate = models.DateField(null=True, blank=True)
     # platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
     amodality = models.CharField(
         "Modality", max_length=10, choices=get_amodality_choices
@@ -175,6 +177,7 @@ class ReportMasterStat(models.Model):
     give_or_take = models.BooleanField(default=False)  # False Give, True=take차감
     total_count = models.IntegerField(default=0)
     total_revenue = models.FloatField(default=0, null=True, blank=True)
+    total_expense = models.FloatField(default=0, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
 
@@ -196,6 +199,7 @@ class ReportMasterPerformance(models.Model):
     )
     ayear = models.CharField("년도", max_length=4)
     amonth = models.CharField("월", max_length=2)
+    adate = models.DateField(null=True, blank=True)
     amodality = models.CharField(
         "Modality", max_length=10, choices=get_amodality_choices
     )
@@ -217,6 +221,7 @@ class MagamMaster(models.Model):
     )
     ayear = models.CharField("년도", max_length=4)
     amonth = models.CharField("월", max_length=2)
+    adate = models.DateField(null=True, blank=True)
     target_rows = models.IntegerField(default=0)
     completed_rows = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -268,6 +273,7 @@ class HumanRules(models.Model):
 class MagamAccounting(models.Model):
     ayear = models.CharField("년도", max_length=4)
     amonth = models.CharField("월", max_length=2)
+    adate = models.DateField(null=True, blank=True)
     client = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
