@@ -282,44 +282,34 @@ def report_customer_detail(request, id):
     )
     company = Company.objects.get(id=id)
     rpms = ReportMasterStat.objects.filter(company=company).order_by("-adate")
-    adate_array = (
-        rpms.values_list("adate", flat=True).distinct().order_by("adate")
+
+    adate_array_base = (
+        rpms.values_list("adate", flat=True).distinct().order_by("-adate")
     )  # Get distinct dates
-    adate_array = sorted(adate_array, reverse=True)
-    adate = rpms.first().adate if rpms.exists() else datetime.now().date()
+
+    adate = adate_array_base.first()
+    # print("initial date", adate, "type", type(adate))
+    # 초기 최초 마감월만 가져오기
+    adate_array = adate_array_base[:1]
+
     rpms_1 = rpms.filter(adate=adate)
-    rpms_2 = (
-        ReportMasterStat.objects.filter(company=company, adate=adate)
-        .values("adate", "amodality")
-        .annotate(
-            t_count=Sum("total_count"),
-            t_revenue=Sum("total_revenue"),
-        )
+    rpms_2 = rpms_1.values("adate", "amodality").annotate(
+        t_count=Sum("total_count"),
+        t_revenue=Sum("total_revenue"),
     )
 
     rpms_agg = {}
-    # for adate in adate_array:
     rpms_agg[adate] = rpms_2.filter(adate=adate)
 
     rs_by_provider = (
-        rpms_1.values(
-            "ayear", "amonth", "amodality", "provider__profile__real_name", "provider"
-        )
-        .annotate(
-            total_count=Sum("total_count"),
-            total_revenue=Sum("total_revenue"),
-        )
-        .order_by("ayear", "amonth", "amodality", ko_kr.asc())
-    )
-    rs_by_provider = (
-        rpms.values("provider__profile__real_name", "provider", "amodality")
+        rpms_1.values("provider", "amodality")
         .annotate(
             total_count=Sum("total_count"),
             total_revenue=Sum("total_revenue"),
         )
         .order_by(ko_kr.asc())
     )
-    provider_array = rpms.values_list(
+    provider_array = rpms_2.values_list(
         "provider__profile__real_name", flat=True
     ).distinct()
     # print("provider_array", provider_array)
@@ -328,8 +318,10 @@ def report_customer_detail(request, id):
         rs_arr.append(
             (provider, rs_by_provider.filter(provider__profile__real_name=provider))
         )
+    # print("rs_arr", rs_arr)
 
     context = {
+        "adate_array_base": adate_array_base,
         "adate_array": adate_array,
         "adate": adate,
         "rpms_agg": rpms_agg,

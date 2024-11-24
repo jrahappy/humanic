@@ -12,7 +12,7 @@
         <tr>
           <th>년도</th>
           <th>월</th>
-          <th>판독건수</th>
+          <th>판독의</th>
           <th>판독료</th>
           <th>-</th>
           
@@ -34,6 +34,9 @@
                 hx-target="#base_modal"
                 hx-swap="innerHTML"                                      
               >Detail</button>
+              <a target='blank' href="{% url 'report:customer_month_csv' company.id rs.adate %}" class="btn btn-xs btn-secondary">Data(CSV)</a>
+              <a target='blank' href="{% url 'report:customer_month_print' company.id rs.adate %}" class="btn btn-xs btn-neutral">Print</a>             
+             
             </td>
           </tr>
           {% empty %}

@@ -1,93 +1,94 @@
 from django.db import models
 from django.utils import timezone
 from accounts.models import CustomUser
+from customer.models import Company
 
 
-class Organization(models.Model):
-    class CategoryBusiness(models.TextChoices):
-        HOSPITAL = "Hospital", "Hospital"
-        CLINIC = "Clinic", "Clinic"
-        VENDOR = "Vendor", "Vendor"
-        OTHER = "Other", "Other"
+# class Organization(models.Model):
+#     class CategoryBusiness(models.TextChoices):
+#         HOSPITAL = "Hospital", "Hospital"
+#         CLINIC = "Clinic", "Clinic"
+#         VENDOR = "Vendor", "Vendor"
+#         OTHER = "Other", "Other"
 
-    business_name = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    contact_person = models.CharField(max_length=20)
-    description = models.TextField(null=True, blank=True)
-    address = models.CharField(max_length=100, null=True, blank=True)
-    suite = models.CharField(max_length=20, null=True, blank=True)
-    city = models.CharField(max_length=20, null=True, blank=True)
-    state = models.CharField(max_length=20, null=True, blank=True)
-    country = models.CharField(max_length=30, null=True, blank=True)
-    zipcode = models.CharField(max_length=10, null=True, blank=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    fax = models.CharField(max_length=20, null=True, blank=True)
-    website = models.URLField(null=True, blank=True)
-    ein = models.CharField(max_length=20, null=True, blank=True)
-    category_business = models.CharField(
-        max_length=20, choices=CategoryBusiness.choices, null=True, blank=True
-    )
-    deleted_at = models.DateTimeField(null=True, blank=True)
+#     business_name = models.CharField(max_length=100)
+#     name = models.CharField(max_length=100)
+#     contact_person = models.CharField(max_length=20)
+#     description = models.TextField(null=True, blank=True)
+#     address = models.CharField(max_length=100, null=True, blank=True)
+#     suite = models.CharField(max_length=20, null=True, blank=True)
+#     city = models.CharField(max_length=20, null=True, blank=True)
+#     state = models.CharField(max_length=20, null=True, blank=True)
+#     country = models.CharField(max_length=30, null=True, blank=True)
+#     zipcode = models.CharField(max_length=10, null=True, blank=True)
+#     phone = models.CharField(max_length=20, null=True, blank=True)
+#     fax = models.CharField(max_length=20, null=True, blank=True)
+#     website = models.URLField(null=True, blank=True)
+#     ein = models.CharField(max_length=20, null=True, blank=True)
+#     category_business = models.CharField(
+#         max_length=20, choices=CategoryBusiness.choices, null=True, blank=True
+#     )
+#     deleted_at = models.DateTimeField(null=True, blank=True)
 
-    objects = models.Manager()  # Default manager
+#     objects = models.Manager()  # Default manager
 
-    def delete(self):
-        self.deleted_at = timezone.now()
-        self.save()
+#     def delete(self):
+#         self.deleted_at = timezone.now()
+#         self.save()
 
-    class Meta:
-        verbose_name = "Organization"
-        verbose_name_plural = "Organizations"
+#     class Meta:
+#         verbose_name = "Organization"
+#         verbose_name_plural = "Organizations"
 
-    def __str__(self):
-        return self.business_name
+#     def __str__(self):
+#         return self.business_name
 
-    @property
-    def full_address(self):
-        return ", ".join(
-            filter(
-                None,
-                [
-                    self.address,
-                    self.suite,
-                    self.city,
-                    self.state,
-                    self.zipcode,
-                    self.country,
-                ],
-            )
-        )
+#     @property
+#     def full_address(self):
+#         return ", ".join(
+#             filter(
+#                 None,
+#                 [
+#                     self.address,
+#                     self.suite,
+#                     self.city,
+#                     self.state,
+#                     self.zipcode,
+#                     self.country,
+#                 ],
+#             )
+#         )
 
 
-class Contact(models.Model):
-    class ContactType(models.TextChoices):
-        PRIMARY = "Primary", "Primary"
-        SECONDARY = "Secondary", "Secondary"
-        BILLING = "Billing", "Billing"
-        SHIPPING = "Shipping", "Shipping"
-        OTHER = "Other", "Other"
+# class Contact(models.Model):
+#     class ContactType(models.TextChoices):
+#         PRIMARY = "Primary", "Primary"
+#         SECONDARY = "Secondary", "Secondary"
+#         BILLING = "Billing", "Billing"
+#         SHIPPING = "Shipping", "Shipping"
+#         OTHER = "Other", "Other"
 
-    organization = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, related_name="contacts"
-    )
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20, null=True, blank=True)
-    title = models.CharField(max_length=20, null=True, blank=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
-    contact_type = models.CharField(max_length=20, choices=ContactType.choices)
-    deleted_at = models.DateTimeField(null=True, blank=True)
+#     organization = models.ForeignKey(
+#         Organization, on_delete=models.CASCADE, related_name="contacts"
+#     )
+#     first_name = models.CharField(max_length=20)
+#     last_name = models.CharField(max_length=20, null=True, blank=True)
+#     title = models.CharField(max_length=20, null=True, blank=True)
+#     phone = models.CharField(max_length=20, null=True, blank=True)
+#     email = models.EmailField(null=True, blank=True)
+#     contact_type = models.CharField(max_length=20, choices=ContactType.choices)
+#     deleted_at = models.DateTimeField(null=True, blank=True)
 
-    class Meta:
-        verbose_name = "Contact"
-        verbose_name_plural = "Contacts"
+#     class Meta:
+#         verbose_name = "Contact"
+#         verbose_name_plural = "Contacts"
 
-    def delete(self):
-        self.deleted_at = timezone.now()
-        self.save()
+#     def delete(self):
+#         self.deleted_at = timezone.now()
+#         self.save()
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+#     def __str__(self):
+#         return f"{self.first_name} {self.last_name}"
 
 
 class Opportunity(models.Model):
@@ -99,8 +100,8 @@ class Opportunity(models.Model):
         PENDING = "Pending", "Pending"
         LOST = "Lost", "Lost"
 
-    organization = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, related_name="opportunities"
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="opportunities"
     )
     agent = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="opportunities"

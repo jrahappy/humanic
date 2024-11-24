@@ -2,23 +2,31 @@
 {% load humanize %}
 
         <div class="modal-box card-body w-11/12 max-w-5xl">
-            <div class="modal-action justify-between flex flex-row gap-2">
-                <h2></h2>
+            <div class="modal-action justify-between card-body flex flex-row gap-2">
+                <h2 class="card-title px-2">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
+                <div>
+                    <select 
+                        class="select select-bordered select-sm py-0" 
+                        id="adate" 
+                        name="adate"
+                        hx-get="{% url 'report:search' %}"
+                        hx-target="#customer_month_box"
+                        hx-trigger="change"
+                        hx-swap="outerHTML"
+                    >
+                        {% for adate in adate_array %}
+                            <option value="{{ adate|date:'Y-m-d' }}">{{ adate }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <form method="dialog">
-                    <button class="btn btn-warning">Close</button>
+                    <button class="btn btn-warning btn-sm">Close</button>
                 </form>
             </div>
-       
             <div class="card-body grow-0 ">
                 <div class="flex flex-wrap flex-col gap-4 ">
                     <div class="card w-full shadow-xl">
                         <div class="card-body">
-                            <h2 class="card-title">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
-                            <div class="mb-2">
-                                이메일: {{ provider.email }}<br>
-                                연락처: {{ provider.profile.phone_number }}<br>
-                                고객병원: 총 {{ count_rpms }} 곳
-                            </div>
                             <div>
                                 <table class="table w-full border-1">
                                     <thead class="bg-base-200">

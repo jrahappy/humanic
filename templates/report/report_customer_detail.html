@@ -14,7 +14,7 @@
                 hx-trigger="change"
                 hx-swap="outerHTML"
             >
-                {% for adate in adate_array %}
+                {% for adate in adate_array_base %}
                     <option value="{{ adate|date:'Y-m-d' }}">{{ adate }}</option>
                 {% endfor %}
             </select>
