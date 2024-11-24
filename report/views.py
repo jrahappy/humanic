@@ -15,6 +15,8 @@ from accounts.models import CustomUser
 from customer.models import Company
 from utils.base_func import get_specialty_choices
 from collections import defaultdict
+from django.http import HttpResponse
+import csv
 
 
 def monthly_pro_cus(request):
@@ -279,24 +281,28 @@ def report_customer_detail(request, id):
         template='(%(expressions)s) COLLATE "%(function)s"',
     )
     company = Company.objects.get(id=id)
-    rpms = ReportMasterStat.objects.filter(company=company).order_by("-created_at")
-    rpms_agg = (
-        rpms.values("ayear", "amonth", "amodality")
+    rpms = ReportMasterStat.objects.filter(company=company).order_by("-adate")
+    adate_array = (
+        rpms.values_list("adate", flat=True).distinct().order_by("adate")
+    )  # Get distinct dates
+    adate_array = sorted(adate_array, reverse=True)
+    adate = rpms.first().adate if rpms.exists() else datetime.now().date()
+    rpms_1 = rpms.filter(adate=adate)
+    rpms_2 = (
+        ReportMasterStat.objects.filter(company=company, adate=adate)
+        .values("adate", "amodality")
         .annotate(
             t_count=Sum("total_count"),
-            # avg_price=F("total_revenue") / F("total_count"),
             t_revenue=Sum("total_revenue"),
         )
-        .order_by("ayear", "amonth", "amodality")
     )
 
-    tt_count_array = rpms_agg.aggregate(Sum("t_count"))
-    tt_count = tt_count_array["t_count__sum"]
-    tt_revenue_array = rpms_agg.aggregate(Sum("t_revenue"))
-    tt_revenue = tt_revenue_array["t_revenue__sum"]
+    rpms_agg = {}
+    # for adate in adate_array:
+    rpms_agg[adate] = rpms_2.filter(adate=adate)
 
     rs_by_provider = (
-        rpms.values(
+        rpms_1.values(
             "ayear", "amonth", "amodality", "provider__profile__real_name", "provider"
         )
         .annotate(
@@ -307,14 +313,101 @@ def report_customer_detail(request, id):
     )
 
     context = {
+        "adate_array": adate_array,
+        "adate": adate,
         "rpms_agg": rpms_agg,
-        "tt_count": tt_count,
-        "tt_revenue": tt_revenue,
         "company": company,
         "rs_by_provider": rs_by_provider,
     }
 
     return render(request, "report/report_customer_detail.html", context)
+
+
+def partial_customer_month(request, company_id):
+    ko_kr = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+    adate = request.GET.get("adate")
+    adate = adate or ReportMasterStat.objects.latest("adate").adate
+    print("partial_customer_month", adate)
+    company = Company.objects.get(id=company_id)
+    rpm = ReportMaster.objects.filter(company=company, adate=adate)
+    rpms = ReportMasterStat.objects.filter(company=company, adate=adate)
+    rpms_2 = (
+        # ReportMasterStat.objects.filter(company=company, adate=adate)
+        rpms.values("adate", "amodality").annotate(
+            t_count=Sum("total_count"),
+            t_revenue=Sum("total_revenue"),
+        )
+    )
+    # print("test count", rpms_2.count())
+    adate_array = rpms.values_list("adate", flat=True).distinct()  # Get distinct dates
+
+    rpms_agg = {}
+    # for adate in adate_array:
+    rpms_agg[adate] = rpms_2.filter(adate=adate)
+
+    rs_by_provider = (
+        rpms.values("adate", "amodality", "provider__profile__real_name", "provider")
+        .annotate(
+            total_count=Sum("total_count"),
+            total_revenue=Sum("total_revenue"),
+        )
+        .order_by("amodality", ko_kr.asc())
+    )
+
+    context = {
+        "company": company,
+        "rpm": rpm,
+        "adate": adate,
+        "rpms_agg": rpms_agg,
+        "rs_by_provider": rs_by_provider,
+    }
+
+    return render(request, "report/partial_customer_month.html", context)
+
+
+def customer_month_csv(request, company_id, adate):
+    company = Company.objects.get(id=company_id)
+    business_name = company.business_name
+
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = f'attachment; filename="{adate}_{company.id}.csv"'
+    response.write("\ufeff")  # BOM (Byte Order Mark) for Excel
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "Customer",
+            "CaseID",
+            "Patient",
+            "Modality",
+            "Emergency",
+            "Price",
+            "Requestd",
+            "Radiologist",
+            "Approved",
+        ]
+    )
+
+    rpms = ReportMaster.objects.filter(company=company, adate=adate)
+    for rpm in rpms:
+        writer.writerow(
+            [
+                rpm.company.business_name,
+                rpm.case_id,
+                rpm.name,
+                rpm.modality,
+                rpm.stat,
+                rpm.readprice,
+                rpm.requestdttm,
+                rpm.radiologist,
+                rpm.approveddttm,
+            ]
+        )
+
+    return response
 
 
 def report_customer(request):
@@ -640,7 +733,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             # "platform",
             "company__business_name",
             "amodality",
-            "is_onsite",
+            "is_take",
         )
         .annotate(
             r_total_price=Sum("readprice"),
@@ -705,7 +798,7 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
             total_human=Sum("pay_to_human"),
             total_cases=Count("case_id"),
         )
-        .order_by("is_onsite")
+        .order_by("is_take")
     )
 
     total_by_amodality = (
@@ -908,54 +1001,102 @@ def accounting(request):
 
 def accounting_month(request, ayear, amonth):
 
-    ko_kr_provider = Func(
-        "provider__profile__real_name",
-        function="ko_KR.utf8",
-        template='(%(expressions)s) COLLATE "%(function)s"',
+    # ko_kr_provider = Func(
+    #     "provider__profile__real_name",
+    #     function="ko_KR.utf8",
+    #     template='(%(expressions)s) COLLATE "%(function)s"',
+    # )
+
+    # ko_kr_comapny = Func(
+    #     "client__business_name",
+    #     function="ko_KR.utf8",
+    #     template='(%(expressions)s) COLLATE "%(function)s"',
+    # )
+
+    # rs_ma_compony = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth).order_by(
+    #     ko_kr_comapny.asc()
+    # )
+    # rs_ma_revenue = rs_ma_compony.filter(account_code="100")
+    # rs_ma_revenue_total = rs_ma_revenue.aggregate(Sum("account_total"))[
+    #     "account_total__sum"
+    # ]
+    # rs_ma_revenue_total = rs_ma_revenue_total if rs_ma_revenue_total else 0
+
+    # rs_ma = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth).order_by(
+    #     ko_kr_provider.asc()
+    # )
+    # rs_ma_expense = rs_ma.filter(account_code="200")
+    # rs_ma_expense_total = rs_ma_expense.aggregate(Sum("account_total"))[
+    #     "account_total__sum"
+    # ]
+    # rs_ma_expense_total = rs_ma_expense_total if rs_ma_expense_total else 0
+
+    # rs_ma_revenue_clients = rs_ma.filter(account_code="100").values(
+    #     "client__business_name", "account_total", "client_id"
+    # )
+    # rs_ma_expense_providers = rs_ma.filter(account_code="200").values(
+    #     "provider__profile__real_name", "account_total", "provider_id"
+    # )
+    rs = ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
+    rs_ma_revenue_total = rs.aggregate(Sum("readprice"))["readprice__sum"] or 0
+    rs_ma_expense_total = (
+        rs.aggregate(Sum("pay_to_provider"))["pay_to_provider__sum"] or 0
+    )
+    rs_ma_hman_patients = (
+        rs.filter(is_human_outpatient=True).aggregate(Sum("pay_to_provider"))[
+            "pay_to_provider__sum"
+        ]
+        or 0
+    )
+    rs_ma_human_usxrrf = (
+        rs.filter(
+            amodality__in=["US", "XR", "RF"], is_human_outpatient=True, is_take=False
+        ).aggregate(Sum("readprice"))["readprice__sum"]
+        or 0
     )
 
-    ko_kr_comapny = Func(
-        "client__business_name",
-        function="ko_KR.utf8",
-        template='(%(expressions)s) COLLATE "%(function)s"',
+    rs_ma_human_total = rs.aggregate(Sum("pay_to_human"))["pay_to_human__sum"] or 0
+    rs_leaders_revenue = (
+        rs.filter(Q(provider=72) | Q(provider=73)).aggregate(Sum("readprice"))[
+            "readprice__sum"
+        ]
+        or 0
+    )
+    rs_wrong_emergency = (
+        rs.filter(stat="일응").aggregate(Sum("pay_to_human"))["pay_to_human__sum"] or 0
+    )
+    rs_human_paid = (
+        rs.filter(human_paid_all__icontains="휴").aggregate(Sum("human_paid"))[
+            "human_paid__sum"
+        ]
+        or 0
     )
 
-    rs_ma_compony = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth).order_by(
-        ko_kr_comapny.asc()
-    )
-    rs_ma_revenue = rs_ma_compony.filter(account_code="100")
-    rs_ma_revenue_total = rs_ma_revenue.aggregate(Sum("account_total"))[
-        "account_total__sum"
-    ]
-    rs_ma_revenue_total = rs_ma_revenue_total if rs_ma_revenue_total else 0
+    fs_dict = {}
+    fs_dict["1. 총매출(readprice합)"] = rs_ma_revenue_total
+    fs_dict["2. 총원가(판독의 지급합)"] = rs_ma_expense_total
+    fs_dict["3. 총수수료(1-2+원장단,US/XR/RF )"] = rs_ma_human_total
 
-    rs_ma = MagamAccounting.objects.filter(ayear=ayear, amonth=amonth).order_by(
-        ko_kr_provider.asc()
-    )
-    rs_ma_expense = rs_ma.filter(account_code="200")
-    rs_ma_expense_total = rs_ma_expense.aggregate(Sum("account_total"))[
-        "account_total__sum"
-    ]
-    rs_ma_expense_total = rs_ma_expense_total if rs_ma_expense_total else 0
-
-    rs_ma_revenue_clients = rs_ma.filter(account_code="100").values(
-        "client__business_name", "account_total", "client_id"
-    )
-    rs_ma_expense_providers = rs_ma.filter(account_code="200").values(
-        "provider__profile__real_name", "account_total", "provider_id"
-    )
+    fs_dict["3-1. 휴먼외래 판독의 지급합"] = rs_ma_hman_patients
+    fs_dict["3-2. 휴먼외래 판독(US, XR, RF)"] = rs_ma_human_usxrrf
+    fs_dict["9-1. 원장단(파트너 판독합)"] = rs_leaders_revenue
+    fs_dict["9-2. 일반응급"] = rs_wrong_emergency
+    fs_dict["9-3. 휴먼책임"] = rs_human_paid
 
     context = {
-        "rs_ma_revenue_total": rs_ma_revenue_total,
-        "rs_ma_expense_total": rs_ma_expense_total,
-        "rs_ma_profit": rs_ma_revenue_total - rs_ma_expense_total,
-        "rs_ma_revenue_clients": rs_ma_revenue_clients,
-        "rs_ma_expense_providers": rs_ma_expense_providers,
+        # "rs_ma_revenue_total": rs_ma_revenue_total,
+        # "rs_ma_expense_total": rs_ma_expense_total,
+        # "rs_ma_profit": rs_ma_revenue_total - rs_ma_expense_total,
+        # "rs_ma_revenue_clients": rs_ma_revenue_clients,
+        # "rs_ma_expense_providers": rs_ma_expense_providers,
+        "fs_dict": fs_dict,
         "ayear": ayear,
         "amonth": amonth,
     }
 
-    return render(request, "report/accounting_month.html", context)
+    print(fs_dict)
+
+    return render(request, "report/fs.html", context)
 
 
 def chart(request):

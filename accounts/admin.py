@@ -15,13 +15,13 @@ class CustomUserAdmin(UserAdmin):
     list_display = [
         "username",
         "email",
-        "full_name",
+        "first_name",
         "is_staff",
         "is_doctor",
         "is_active",
         "date_joined",
     ]
-    search_fields = ["email", "username"]
+    search_fields = ["email", "username", "first_name", "last_name"]
     list_filter = ["last_login", "is_doctor", "date_joined"]
     ordering = ["-username"]
 

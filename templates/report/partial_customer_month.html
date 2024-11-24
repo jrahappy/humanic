@@ -1,0 +1,77 @@
+{% load custom_filters %}
+{% load humanize %}
+
+<div id="customer_month_box" class="report-transition card bg-base-100 shadow-xl">
+    <div class="card-body">
+        <div class="flex flex-row gap-2 justify-between mb-4">
+            <h2 class="card-title">{{ adate }} 마감일 기준 판독의뢰 결과 </h2>
+            <a target='blank' href="{% url 'report:customer_month_csv' company.id adate %}" class="btn btn-sm btn-secondary">Download data(CSV)</a>
+        </div>
+        <p class="mb-2">
+            <table class="table table-sm table-zebra w-full">
+                {% for adate, queryset in rpms_agg.items %}
+                   <thead>
+                        <tr class="bg-base-200">
+                            <th>Modality</th>
+                            <th class="text-end">Count</th>
+                            <th class="text-end">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in queryset %}
+                        <tr>
+                            <td>{{ record.amodality }}</td>
+                            <td><p class="text-end">{{ record.t_count|floatformat:0|intcomma }}</p></td>
+                            <td><p class="text-end">{{ record.t_revenue|floatformat:0|intcomma }}</p></td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="bg-gray-200 font-semibold">
+                        <td colspan="1">합계</td>
+                        <td>
+                            <p class="text-end">
+                                {{ queryset|sum_values:"t_count"|floatformat:0|intcomma }}
+                            </p>
+                        </td>
+                        <td>
+                            <p class="text-end">
+                                {{ queryset|sum_values:"t_revenue"|floatformat:0|intcomma }}
+                            </p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </p>    
+    </div>
+
+    <div class="card-body">
+        <h2 class="card-title">판독의별 합계</h2>
+        <p class="mb-2">
+            <table class="table table-sm table-zebra w-full">
+                <thead>
+                    <tr class="bg-base-200">
+                        <th>판독의</th>
+                        <th>Modality</th>
+                        <th class="text-end">Count</th>
+                        <th class="text-end">Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rpm in rs_by_provider %}
+                    <tr>
+                        <td>{{ rpm.provider__profile__real_name }}</td>
+                        <td>{{ rpm.amodality }}</td>
+                        <td><p class="text-end">{{ rpm.total_count|floatformat:0|intcomma }}</p></td>
+                        <td><p class="text-end">{{ rpm.total_revenue|floatformat:0|intcomma }}</p></td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="bg-gray-200 font-semibold">
+                        <td colspan="2">합계</td>
+                        <td><p class="text-end">{{ rs_by_provider|sum_values:"total_count"|floatformat:0|intcomma }}</p></td>
+                        <td><p class="text-end">{{ rs_by_provider|sum_values:"total_revenue"|floatformat:0|intcomma }}</p></td>
+                    </tr>
+                </tbody>
+            </table>
+        </p>
+    </div>
+</div>

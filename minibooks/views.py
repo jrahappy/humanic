@@ -8,7 +8,10 @@ from django.db.models import (
     DurationField,
     ExpressionWrapper,
     DecimalField,
+    FloatField,
+    IntegerField,
 )
+from django.db.models.functions import Cast, Ceil
 from django.utils import timezone
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -908,10 +911,12 @@ def apply_rule_progress(request, magam_id, rule_id):
             # is_take=False,
         )
         count_target_rows = target_rows.count()
+        amount_readprice = target_rows.aggregate(Sum("readprice"))["readprice__sum"]
         i = count_target_rows
         target_rows.update(
             pay_to_provider=0,
             pay_to_human=0,
+            company_paid=F("readprice") * 1,
             applied_rate=0,
             is_completed=True,
         )
@@ -919,7 +924,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             magammaster=magam,
             humanrule=rule,
             affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            description=f"Total {count_target_rows}({amount_readprice}) cases are applied {rule.name} successfully.",
             created_at=timezone.now(),
             is_completed=True,
         )
@@ -934,10 +939,12 @@ def apply_rule_progress(request, magam_id, rule_id):
             amodality__in=["US", "XR", "RF"],
         )
         count_target_rows = target_rows.count()
+        amount_readprice = target_rows.aggregate(Sum("readprice"))["readprice__sum"]
         i = count_target_rows
         target_rows.update(
             pay_to_provider=0,
             pay_to_human=0,
+            company_paid=F("readprice") * 1,
             applied_rate=0.0,
             is_completed=True,
         )
@@ -945,7 +952,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             magammaster=magam,
             humanrule=rule,
             affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            description=f"Total {count_target_rows}({amount_readprice}) cases are applied {rule.name} successfully.",
             created_at=timezone.now(),
             is_completed=True,
         )
@@ -961,10 +968,12 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=False,
         )
         count_target_rows = target_rows.count()
+        amount_readprice = target_rows.aggregate(Sum("readprice"))["readprice__sum"]
         i = count_target_rows
         target_rows.update(
             pay_to_provider=F("readprice") * 1,
             pay_to_human=0,
+            company_paid=F("readprice") * 1,
             applied_rate=1.0,
             is_completed=True,
         )
@@ -972,7 +981,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             magammaster=magam,
             humanrule=rule,
             affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            description=f"Total {count_target_rows} cases and ({amount_readprice}) are applied {rule.name} successfully.",
             created_at=timezone.now(),
             is_completed=True,
         )
@@ -994,7 +1003,11 @@ def apply_rule_progress(request, magam_id, rule_id):
         target_rows.update(
             pay_to_provider=1000,
             pay_to_human=F("readprice") - 1000,
-            applied_rate=1000 / F("readprice"),
+            company_paid=F("readprice") * 1,
+            applied_rate=ExpressionWrapper(
+                1000 / Cast(F("readprice"), FloatField()),
+                output_field=DecimalField(max_digits=7, decimal_places=2),
+            ),
             is_completed=True,
         )
 
@@ -1019,21 +1032,17 @@ def apply_rule_progress(request, magam_id, rule_id):
             is_completed=False,
         )
 
-        # target_rows = ReportMaster.objects.filter(
-        #     ayear=syear,
-        #     amonth=smonth,
-        #     amodality="CT",
-        #     readprice__lt=19600,
-        #     is_completed=False,
-        # ).filter(Q(bodypart__icontains="chest") | Q(bodypart__icontains="abdomen"))
-
         count_target_rows = target_rows.count()
         i = count_target_rows
 
         target_rows.update(
             pay_to_provider=14700,
             pay_to_human=F("readprice") - 14700,
-            applied_rate=14700 / F("readprice"),
+            company_paid=F("readprice") * 1,
+            applied_rate=ExpressionWrapper(
+                14700 / Cast(F("readprice"), FloatField()),
+                output_field=DecimalField(max_digits=7, decimal_places=2),
+            ),
             is_completed=True,
         )
 
@@ -1066,8 +1075,12 @@ def apply_rule_progress(request, magam_id, rule_id):
             if count_target_rows > 0:
                 target_rows.update(
                     applied_rate=fee_rate,
-                    pay_to_provider=F("readprice") * fee_rate,
+                    pay_to_provider=ExpressionWrapper(
+                        F("readprice") * fee_rate,
+                        output_field=IntegerField(),
+                    ),
                     pay_to_human=F("readprice") * (1 - fee_rate),
+                    company_paid=F("readprice") * 1,
                     is_completed=True,
                 )
 
@@ -1103,8 +1116,13 @@ def apply_rule_progress(request, magam_id, rule_id):
                     applied_rate=fee_rate,
                     # pay_to_provider=F("readprice") * fee_rate,
                     # pay_to_human=F("readprice") * (1 - fee_rate),
-                    pay_to_provider=F("readprice") * (1 - fee_rate) * -1,
+                    # pay_to_provider=F("readprice") * (1 - fee_rate) * -1,
+                    pay_to_provider=ExpressionWrapper(
+                        F("readprice") * ((1 - fee_rate) * -1),
+                        output_field=DecimalField(max_digits=10, decimal_places=0),
+                    ),
                     pay_to_human=F("readprice") * (1 - fee_rate),
+                    company_paid=F("readprice") * 1,
                     is_completed=True,
                 )
 
@@ -1129,7 +1147,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         )
         count_target_rows = target_rows.count()
         i = count_target_rows
-
+        amount_readprice = target_rows.aggregate(Sum("readprice"))["readprice__sum"]
         for row in target_rows:
             provider = row.provider
             fee_rate = provider.profile.fee_rate
@@ -1153,7 +1171,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             magammaster=magam,
             humanrule=rule,
             affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            description=f"Total {count_target_rows}({amount_readprice}) cases are applied {rule.name} successfully.",
             created_at=timezone.now(),
             is_completed=True,
         )
@@ -1170,6 +1188,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         )
         count_target_rows = target_rows.count()
         i = count_target_rows
+        amount_readprice = target_rows.aggregate(Sum("readprice"))["readprice__sum"]
 
         # 고객병원에서는 부담하지 않고 휴먼에서 매출부담을 모두 떠안음.
         target_rows.update(
@@ -1180,7 +1199,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             magammaster=magam,
             humanrule=rule,
             affected_rows=count_target_rows,
-            description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
+            description=f"Total {count_target_rows}({amount_readprice}) cases are applied {rule.name} successfully.",
             created_at=timezone.now(),
             is_completed=True,
         )
@@ -1261,6 +1280,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         )
 
     # 전체: ONSITE 로 표시된 모든 경우에 is_onsite=True 적용
+    # 계산에 의미는 없음 그냥 어느 PACS를 사용하느냐의 문제임
     elif selected_rule == "NMRISONSITE":
 
         target_rows = ReportMaster.objects.filter(
@@ -1401,19 +1421,14 @@ def apply_rule_progress(request, magam_id, rule_id):
             pay_to_provider=0,
             pay_to_human=0,
             pay_to_service=0,
+            company_paid=0,
+            human_paid=0,
             applied_rate=0,
         )
         magam_detail = MagamDetail.objects.filter(magammaster=magam)
         magam_detail.delete()
 
-        # magam_detail = MagamDetail.objects.create(
-        #     magammaster=magam,
-        #     humanrule=rule,
-        #     affected_rows=count_target_rows,
-        #     description=f"Total {count_target_rows} cases are applied {rule.name} successfully.",
-        #     created_at=timezone.now(),
-        #     is_completed=True,
-        # )
+    # 간편 손익계산서용 데이터 작성(사용안하는 중 11/22/2024)
     elif selected_rule == "MAGAMSTAT":
         sales = (
             ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)

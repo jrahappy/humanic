@@ -47,6 +47,16 @@ urlpatterns = [
         views.report_customer_detail,
         name="report_customer_detail",
     ),
+    path(
+        "partial_customer_month/<int:company_id>/",
+        views.partial_customer_month,
+        name="partial_customer_month",
+    ),
+    path(
+        "csv/<int:company_id>/<str:adate>/",
+        views.customer_month_csv,
+        name="customer_month_csv",
+    ),
     path("performance/", views.performance, name="performance"),
     # path(
     #     "performance_month/<int:ayear>/<int:amonth>/",

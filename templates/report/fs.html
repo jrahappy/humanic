@@ -1,0 +1,44 @@
+{% load humanize %}
+{% load custom_filters %}
+<section id="general_modal" class="card col-span-12 -z-1 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div id ="general_content">
+        <div class="card-body grow-0">
+            <div class="flex justify-between gap-2">
+                <div class="w-1/2">
+                    
+                </div>
+                <div>
+                  
+                    <a href="#"
+                    _="on click transition opacity to 0 then remove #general_content"
+                    class="btn btn-warning"
+                    >Close</a>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 bg-base-100 w-full shadow-xl">
+            <div class="card-body col-span-4 flex items-start">
+                <h2 class="card-title">{{ ayear }}년 {{ amonth }}월 손익계산</h2>
+            </div>
+        </div>
+        <div x-data="{ detail_revenue:false }" class="grid grid-cols-2 bg-base-100 w-full">
+            <div class="card-body flex flex-row items-base">
+                <table>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount (USD)</th>
+                    </tr>
+                    {% for key, value in fs_dict.items %}
+                    <tr>
+                        <td>{{ key}}</td>
+                        <td class="text-end">{{ value|floatformat:0|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                            
+            </div>
+        </div>  
+        
+    </div>
+</section>
