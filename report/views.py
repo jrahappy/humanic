@@ -311,6 +311,23 @@ def report_customer_detail(request, id):
         )
         .order_by("ayear", "amonth", "amodality", ko_kr.asc())
     )
+    rs_by_provider = (
+        rpms.values("provider__profile__real_name", "provider", "amodality")
+        .annotate(
+            total_count=Sum("total_count"),
+            total_revenue=Sum("total_revenue"),
+        )
+        .order_by(ko_kr.asc())
+    )
+    provider_array = rpms.values_list(
+        "provider__profile__real_name", flat=True
+    ).distinct()
+    # print("provider_array", provider_array)
+    rs_arr = []
+    for provider in provider_array:
+        rs_arr.append(
+            (provider, rs_by_provider.filter(provider__profile__real_name=provider))
+        )
 
     context = {
         "adate_array": adate_array,
@@ -318,6 +335,7 @@ def report_customer_detail(request, id):
         "rpms_agg": rpms_agg,
         "company": company,
         "rs_by_provider": rs_by_provider,
+        "rs_arr": rs_arr,
     }
 
     return render(request, "report/report_customer_detail.html", context)
@@ -331,10 +349,11 @@ def partial_customer_month(request, company_id):
     )
     adate = request.GET.get("adate")
     adate = adate or ReportMasterStat.objects.latest("adate").adate
-    print("partial_customer_month", adate)
+    # print("partial_customer_month", adate)
     company = Company.objects.get(id=company_id)
     rpm = ReportMaster.objects.filter(company=company, adate=adate)
     rpms = ReportMasterStat.objects.filter(company=company, adate=adate)
+    # rpms = ReportMaster.objects.filter(company=company, adate=adate)
     rpms_2 = (
         # ReportMasterStat.objects.filter(company=company, adate=adate)
         rpms.values("adate", "amodality").annotate(
@@ -350,13 +369,24 @@ def partial_customer_month(request, company_id):
     rpms_agg[adate] = rpms_2.filter(adate=adate)
 
     rs_by_provider = (
-        rpms.values("adate", "amodality", "provider__profile__real_name", "provider")
+        rpms.values("provider__profile__real_name", "provider", "amodality")
         .annotate(
             total_count=Sum("total_count"),
             total_revenue=Sum("total_revenue"),
         )
-        .order_by("amodality", ko_kr.asc())
+        .order_by(ko_kr.asc())
     )
+    provider_array = rpms.values_list(
+        "provider__profile__real_name", flat=True
+    ).distinct()
+    # print("provider_array", provider_array)
+    rs_arr = []
+    for provider in provider_array:
+        rs_arr.append(
+            (provider, rs_by_provider.filter(provider__profile__real_name=provider))
+        )
+
+    # print("rs_arr", rs_arr)
 
     context = {
         "company": company,
@@ -364,6 +394,7 @@ def partial_customer_month(request, company_id):
         "adate": adate,
         "rpms_agg": rpms_agg,
         "rs_by_provider": rs_by_provider,
+        "rs_arr": rs_arr,
     }
 
     return render(request, "report/partial_customer_month.html", context)
@@ -390,8 +421,9 @@ def customer_month_csv(request, company_id, adate):
             "Approved",
         ]
     )
+    # 2000개까지만 출력
+    rpms = ReportMaster.objects.filter(company=company, adate=adate).order_by("case_id")
 
-    rpms = ReportMaster.objects.filter(company=company, adate=adate)
     for rpm in rpms:
         writer.writerow(
             [
@@ -408,6 +440,44 @@ def customer_month_csv(request, company_id, adate):
         )
 
     return response
+
+
+def customer_month_print(request, company_id, adate):
+    ko_kr = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+
+    # print("partial_customer_month", adate)
+    company = Company.objects.get(id=company_id)
+    # 2000개까지만 출력
+    rpm = ReportMaster.objects.filter(company=company, adate=adate).order_by("case_id")[
+        0:3000
+    ]
+    rpms = ReportMasterStat.objects.filter(company=company, adate=adate)
+    # rpms = ReportMaster.objects.filter(company=company, adate=adate)
+    rpms_2 = (
+        # ReportMasterStat.objects.filter(company=company, adate=adate)
+        rpms.values("adate", "amodality").annotate(
+            t_count=Sum("total_count"),
+            t_revenue=Sum("total_revenue"),
+        )
+    )
+    # print("test count", rpms_2.count())
+    adate_array = rpms.values_list("adate", flat=True).distinct()  # Get distinct dates
+    rpms_agg = {}
+    # for adate in adate_array:
+    rpms_agg[adate] = rpms_2.filter(adate=adate)
+
+    context = {
+        "company": company,
+        "adate": adate,
+        "rpm": rpm,
+        "rpms_agg": rpms_agg,
+    }
+
+    return render(request, "report/report_customer_month_print.html", context)
 
 
 def report_customer(request):

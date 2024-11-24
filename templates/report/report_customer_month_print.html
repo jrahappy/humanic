@@ -1,0 +1,155 @@
+{% load custom_filters %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company.business_name }} 판독의뢰 현황</title>
+    
+    <!-- Styling for Print -->
+    <style>
+        /* General Reset */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Screen-specific styles */
+        @media screen {
+            .print-button {
+                display: block;
+                margin: 10px 0;
+                text-align: center;
+            }
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .print-button {
+                display: none; /* Hide buttons or navigation during print */
+            }
+
+            /* Ensure full-page usage for print */
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            thead {
+                display: table-header-group; /* Ensure table header repeats on each page */
+            }
+
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .no-print {
+                display: none; /* Hide any elements not meant for print */
+            }
+        }
+    </style>
+    <script>
+        // Automatically trigger print dialog when the page loads
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</head>
+<body>
+
+    <!-- Print Button (Visible on Screen Only) -->
+    <div class="print-button">
+        <button onclick="window.print()">Print Report</button>
+    </div>
+
+    <!-- Report Section -->
+    <div id="report" style="text-align:center; width:800px;">
+        <h2>{{ company.business_name }} 판독의뢰 현황</h2>
+        <p><strong>마감기준일: {{ adate }}</strong></p>
+        <p><strong>Limit: 3,000 rows </strong></p>
+        
+        <!-- Table for Data -->
+        <table class="table">
+            {% for adate, queryset in rpms_agg.items %}
+               <thead>
+                    <tr>
+                        <th>Modality</th>
+                        <th class="text-end">수량</th>
+                        <th class="text-end">판독료 합계</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for record in queryset %}
+                    <tr>
+                        <td>{{ record.amodality }}</td>
+                        <td>{{ record.t_count|floatformat:0|intcomma }}</td>
+                        <td>{{ record.t_revenue|floatformat:0|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="1">합계</td>
+                    <td>
+                        <p class="text-end">
+                            {{ queryset|sum_values:"t_count"|floatformat:0|intcomma }}
+                        </p>
+                    </td>
+                    <td>
+                        <p class="text-end">
+                            {{ queryset|sum_values:"t_revenue"|floatformat:0|intcomma }}
+                        </p>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <th>CaseID</th>
+                    <th>Patient</th>
+                    <th>Modality</th>
+                    <th>ER</th>
+                    <th>Price</th>
+                    <th>Requested</th>
+                    <th>Radiologist</th>
+                    <th>Approved</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rp in rpm %}
+                <tr>
+                    <td>{{ rp.case_id }}</td>
+                    <td>{{ rp.name }}</td>
+                    <td>{{ rp.modality }}</td>
+                    <td>{{ rp.stat }}</td>
+                    <td>{{ rp.readprice }}</td>
+                    <td>{{ rp.requestdttm }}</td>
+                    <td>{{ rp.radiologist }}</td>
+                    <td>{{ rp.approveddttm }}</td>
+                </tr>
+               
+                {% endfor %}
+        </table>
+    </div>
+
+</body>
+</html>
