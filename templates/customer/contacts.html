@@ -1,3 +1,5 @@
+{% load custom_filters %}
+{% load humanize %}
 <div class="card-body grow-0"
     id="contacts_box"  
     hx-trigger="CustomerContactChanged from:body"
@@ -24,25 +26,31 @@
             {% for contact in contacts %}
                 <li class="flex flex-row px-1 py-1 mb-1 border-b-2 rounded-md">
                     <div class="flex flex-col gap-1 px-1 w-32 mb-1">
-                        <span class="text-gray-500 font-semibold">{{ contact.name}}</span>                  
-                        <span class="text-gray-500 text-xs">{{ contact.title}}</span>                 
+                        <span class="text-gray-500 font-semibold">
+                           
+                            <a href="#"
+                                onclick="base_modal.showModal()"
+                                hx-get="{% url 'customer:edit_contact' company.id contact.id %}"
+                                hx-trigger="click"
+                                hx-target="#base_modal"
+                                hx-swap="innerHTML"
+                                class="text-sm link"
+                            >{{ contact.name}}</a>
+                        </span>                  
+                        <span class="text-gray-500 text-xs">{{ contact.title|handle_none}}</span>                 
                     </div>
                     <div class="flex flex-col flex-grow gap-1">
-                        <span class="text-gray-900 text-sm">E: {{ contact.email }}</span>
-                        <span class="text-gray-900 text-sm">M: {{ contact.mobile }}</span>
+                        {% if contact.email %}
+                        <span class="text-gray-900 text-sm">E: {{ contact.email|handle_none }}</span>
+                        {% endif %}
+                        {% if contact.mobile %}
+                        <span class="text-gray-900 text-sm">M: {{ contact.mobile|handle_none }}</span>
+                        {% endif %}
                         {% if contact.office_phone %}
-                        <span class="text-gray-900 text-sm">P: {{ contact.office_phone }}</span>
+                        <span class="text-gray-900 text-sm">P: {{ contact.office_phone|handle_none }}</span>
                         {% endif %}
                     </div>
-                    <div class="w-12 text-center px-2 py-2 me-2 ">
-                        <span href="#" class="btn btn-error btn-xs w-6 h-6 "
-                            hx-delete="{% url 'customer:delete_contact' company.id contact.id %}"
-                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                            hx-confirm="Are you sure?"
-                            hx-target="#contacts_box"
-                            hx-trigger="click"
-                        >x</span>
-                    </div>
+                    
                 </li>
                 {% empty %}
                 <li>

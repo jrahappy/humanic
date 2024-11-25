@@ -14,8 +14,13 @@
                 hx-trigger="change"
                 hx-swap="outerHTML"
             >
-                {% for adate in adate_array_base %}
-                    <option value="{{ adate|date:'Y-m-d' }}">{{ adate }}</option>
+                {% for ad in adate_array_base %}
+                    {% if ad|date:'Y-m-d' == adate %}
+                        <option value="{{ ad|date:'Y-m-d' }}" selected>{{ ad }}</option>
+                    {% else %}
+                        <option value="{{ ad|date:'Y-m-d' }}">{{ ad }}</option>
+                    {% endif %}
+                    <option value="{{ ad|date:'Y-m-d' }}">{{ ad }}</option>
                 {% endfor %}
             </select>
         </div>

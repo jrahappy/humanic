@@ -13,7 +13,7 @@
     <div class="flex justify-between gap-2 w-full">
       <div class="flex flex-row justify-between w-2/3">
         <h2 class="card-title ">
-            고객 병원들 목록
+            고객 세부 정보
         </h2>
         <div class="flex flex-col">
             <form method="get" action="{% url 'customer:index' %}">
@@ -108,7 +108,7 @@
             <p class="p-2 font-semibold bg-gray-100 rounded-lg text-md">{{ company.office_fax|handle_none}}</p>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2 ">
           <div class="form-control mb-4">
             <label class="label">
               <span class="label-text">Tags</span>
@@ -132,7 +132,7 @@
     <section class="card card-compact col-span-4 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
       {% include "customer/contacts.html" %}
     </section>  
-    <section class="card card-compact col-span-12 overflow-hidden shadow-sm xl:col-span-12">
+    <section class="card card-compact col-span-12 overflow-hidden shadow-sm xl:col-span-8">
       <div role="tablist" class="tabs tabs-lifted min-h-96">
         <input type="radio" name="customer_tab" role="tab" class="tab w-24" checked="checked" aria-label="상당기록" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 min-h-96">
@@ -153,6 +153,9 @@
        
       </div>
     </section>
+    <section class="card card-compact col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+      {% include "crm/opps.html" %}
+    </section>  
   </div>
 </div>
 {% endblock %}

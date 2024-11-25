@@ -12,7 +12,7 @@
         <tr>
           <th>년도</th>
           <th>월</th>
-          <th>판독의</th>
+          <th>Cases</th>
           <th>판독료</th>
           <th>-</th>
           
@@ -29,7 +29,7 @@
               <button 
                 onclick="base_modal.showModal()"
                 class="btn btn-xs btn-info" 
-                hx-get="{% url 'report:report_customer_detail' company.id %}"
+                hx-get="{% url 'report:report_customer_detail' company.id %}?adate={{ rs.adate|date:'Y-m-d' }}"
                 hx-trigger="click"
                 hx-target="#base_modal"
                 hx-swap="innerHTML"                                      

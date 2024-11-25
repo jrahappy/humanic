@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "report",
     "blog",
     "referdex",
+    "crm",
 ]
 
 MIDDLEWARE = [

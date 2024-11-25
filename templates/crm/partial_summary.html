@@ -1,0 +1,95 @@
+{% load custom_filters %}
+{% load humanize %}
+
+<div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
+  <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+      <div class="card-body grow-0 flex flex-row justify-between">
+        <h2 class="card-title">
+          <a class="link-hover link">병원상담</a>
+        </h2>
+        <div>
+         
+        </div>
+      </div>
+
+      <div class="overflow-x-auto px-4">
+        <table class="table table-zebra">
+          <tbody>
+            {% for rs in opps %}
+            <tr>
+              <td>
+                <a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a>
+              </td>
+
+              <td><p class="text-end">{{ rs.category }}</p></td>
+              <td><p class="text-end">{{ rs.stage }}</p></td>
+              <td><p class="text-end">{{ rs.amount|floatformat:0|intcomma }}</p></td>
+              <td><p class="text-end">{{ rs.possibility}}%</p></td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <div>
+        &nbsp;
+      </div>
+  </section>
+  <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
+      <div class="card-body grow-0">
+        <h2 class="card-title">
+          <a class="link-hover link">환자상담(개발중)</a>
+        </h2>
+      </div>
+      <div class="overflow-x-auto px-4">
+        <table class="table table-zebra">
+          <tbody>
+            {% for rs in chs %}
+              <tr>
+                <td>{{ rs.name }}</td>
+                <td><p class="text-end">{{ rs.purpose }}</p></td>
+                <td><p class="text-end">{{ rs.created_at|naturaltime }}</p></td>
+              </tr>
+              {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <div>
+        &nbsp;
+      </div>
+  </section>
+
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-6">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">최근 고객소통</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+   
+        <table class="table table-zebra w-full">
+          {% for rs in c_logs %}
+          <tr>
+            <td>
+              <p><a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a></p>
+              {% if rs.level == 'INFO' %}
+                <span class="badge badge-info mt-1">{{ rs.level }}</span>
+              {% elif rs.level == 'WARNING' %}
+                <span class="badge badge-warning mt-1">{{ rs.level }}</span>
+              {% else %}
+                <span class="badge badge-error mt-1">{{ rs.level }}</span>
+              {% endif %}
+            </td>
+            <td><p class="text-start">{{ rs.log|truncatechars:30 }}</p></td>
+            <td><p class="text-start">{{ rs.updated_by }}</p>
+              <p class="text-end">{{ rs.created_at|naturaltime }}</p>
+            </td>
+          </tr>
+          {% endfor %}
+         
+        </table>
+       
+    </div>
+  </section>
+</div>

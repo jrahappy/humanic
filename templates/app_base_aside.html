@@ -105,6 +105,21 @@
                     </ul>
                 </details>
             </li>
+            <li>
+                <details>
+                    <summary>
+                        <svg
+                            data-src="https://unpkg.com/heroicons/20/solid/funnel.svg"
+                            class="h-5 w-5"></svg>
+                        CRM
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="{% url 'crm:index' %}" class="px-5">상황판</a>
+                        </li>
+                    </ul>
+                </details>
+            </li>
             {% endif %}
             {% if user.username == "william" %}
             <hr class="my-6">
@@ -117,30 +132,7 @@
                         관리자 메뉴(이하)
                 </details>
             </li>
-            <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/funnel.svg"
-                            class="h-5 w-5"></svg>
-                        CRM
-                    </summary>
-                    <ul>
-                        <li><a href="#"
-                            hx-get="{% url 'report:performance' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >Clients</a></li>
-                        <li>
-                            <a href="{% url 'report:accounting' %}" class="px-5">손익 기준 보기 (Draft)</a>
-                        </li>
-                       
-                    </ul>
-                </details>
-            </li>
+           
             <li>
                 <details>
                     <summary>

@@ -1,8 +1,8 @@
 {% load widget_tweaks %}
-<div id="company_contact_create_box" class="modal-box card-body">
+<div id="company_contact_edit_box" class="modal-box card-body">
     <div class="modal-action justify-between  flex flex-row gap-2">
         <div class="ms-2 ">
-            <h2 class="text-lg font-bold"> New Contact  ({{ company.id }})</h2>
+            <h2 class="text-lg font-bold">Edit Contact</h2>
         </div>
         <div class="flex flex-row gap-2">
             <form method="dialog">  
@@ -16,14 +16,16 @@
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           hx-swap="outerHTML" 
           hx-trigger="submit"
-          hx-target="#company_contact_create_box"
-          id="new_contact_form"
+          hx-target="#company_contact_edit_box"
+          id="edit_contact_form"
         >
         <div class="flex flex-row gap-2">
             <div class="form-control py-2">
                 <label for="id_modality" class="label">성명*</label>
                 {{ form.name|add_class:"input input-bordered" }}
-                {{ form.name.errors }}
+                <span class="text-xs text-red-500 ms-2">
+                    {{ form.name.errors }}
+                </span>
             </div>
             <div class="form-control py-2">
                 <label for="id_modality" class="label">부서/직함</label>
@@ -33,6 +35,7 @@
                 </span>
             </div>
         </div>
+        
         <div class="form-control py-2">
             <label for="id_modality" class="label">Email</label>
             {{ form.email|add_class:"input input-bordered" }}
@@ -56,14 +59,22 @@
                 </span>
             </div>
         </div>
+        
         <div class="divider"></div>
-        <div class="flex justify-end gap-2">
-            <button type="submit" class="btn btn-primary btn-sm">저장</button>              
+        <div class="flex justify-between gap-2 mt-4">
+            <span href="#" class="btn btn-error btn-sm text-white "
+                hx-delete="{% url 'customer:delete_contact' company.id contact.id %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-confirm="Are you sure?"
+                hx-target="#company_contact_edit_box"
+                hx-trigger="click"
+            >Delete</span>  
+            <button type="submit" class="btn btn-primary btn-sm w-16">Save</button>        
         </div>
         </form>
         <script>
-            document.getElementById('company_contact_create_box').addEventListener('htmx:beforeSwap', function(event) {
-                if (event.detail.target.id === 'company_contact_create_box') {
+            document.getElementById('company_contact_edit_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'company_contact_edit_box') {
                     // Check if the form submission was successful
                     console.log("Status:", event.detail.xhr.status);
                     console.log("Headers:", event.detail.xhr.getAllResponseHeaders());

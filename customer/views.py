@@ -9,6 +9,7 @@ from .forms import (
     CustomerContactForm,
     CustomerFilesForm,
 )
+from crm.models import Opportunity
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -122,6 +123,35 @@ def new_contact(request, company_id):
         form = CustomerContactForm()
         context = {"company": company, "form": form}
     return render(request, "customer/new_contact.html", context)
+
+
+def edit_contact(request, company_id, contact_id):
+    company = get_object_or_404(Company, pk=company_id)
+    contact = get_object_or_404(CustomerContact, pk=contact_id)
+    if request.method == "POST":
+        form = CustomerContactForm(request.POST, instance=contact)
+        if form.is_valid():
+            contact = form.save(commit=False)
+            contact.company = company
+            contact.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "CustomerContactChanged": None,
+                            "showMessage": "Contact updated.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+    else:
+        form = CustomerContactForm(instance=contact)
+        context = {"company": company, "form": form, "contact": contact}
+    return render(request, "customer/edit_contact.html", context)
 
 
 def delete_contact(request, company_id, contact_id):
@@ -308,7 +338,7 @@ def detail(request, customer_id):
         ReportMasterStat.objects.filter(company=company)
         # .values("ayear", "amonth", "amodality")
         .values("ayear", "amonth", "adate")
-        .annotate(total=Count("total_count"), total_amount=Sum("total_revenue"))
+        .annotate(total=Sum("total_count"), total_amount=Sum("total_revenue"))
         .order_by("-adate")
     )
     contracts = ServiceFee.objects.filter(company=company).order_by("-created_at")
@@ -317,6 +347,7 @@ def detail(request, customer_id):
     ).order_by("-created_at")
     contacts = CustomerContact.objects.filter(company=company).order_by("name")
     cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
+    opps = Opportunity.objects.filter(company=company).order_by("-created_at")[:20]
     context = {
         "company": company,
         "cm_refers": cm_refers,
@@ -324,6 +355,7 @@ def detail(request, customer_id):
         "clogs": clogs,
         "contacts": contacts,
         "cfiles": cfiles,
+        "opps": opps,
     }
 
     return render(request, "customer/detail.html", context)

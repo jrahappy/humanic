@@ -1,0 +1,109 @@
+{% load widget_tweaks %}
+<div id="opp_create_box" class="modal-box card-body">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold"> Edit Opportunity  ({{ company.id }})</h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">Close</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-full">
+        <form 
+          hx-post="{% url 'crm:edit_opp' opp.id %}" 
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-swap="outerHTML" 
+          hx-trigger="submit"
+          hx-target="#opp_create_box"
+          id="new_opp_form"
+        >
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">목적*</label>
+                {{ form.name|add_class:"input input-bordered" }}
+                {{ form.name.errors }}
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">구분</label>
+                {{ form.category|add_class:"select select-bordered" }}
+                {{ form.category.errors }}
+            </div>
+        </div>
+        <div class="form-control py-2">
+            <label for="id_modality" class="label">설명</label>
+            {{ form.description|add_class:"input input-bordered" }}
+            <span class="text-xs text-red-500 ms-2">
+            {{ form.description.errors }}
+            </span>
+        </div>
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">예상매출</label>
+                {{ form.amount|add_class:"input input-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.amount.errors }}
+                </span>
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">목표 계약일</label>
+                {{ form.target_date|add_class:"input input-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.target_date.errors }}
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">가능성</label>
+                {{ form.possibility|add_class:"input input-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.possibility.errors }}
+                </span>
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">현재단계</label>
+                {{ form.stage|add_class:"select select-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.stage.errors }}
+                </span>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex justify-between gap-2">
+            <a href="#"
+                class="btn btn-error btn-sm w-16 text-white"
+                hx-delete="{% url 'crm:delete_opp' opp.id %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-confirm="Are you sure?"
+                hx-trigger="click"
+                hx-target="#opp_create_box"
+                
+            >Delete</a>          
+            <button type="submit" class="btn btn-primary btn-sm w-16">저장</button>              
+               
+        </div>
+        </form>
+        <script>
+            document.getElementById('opp_create_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'opp_create_box') {
+                    // Check if the form submission was successful
+                    console.log("Status:", event.detail.xhr.status);
+                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+                    if (event.detail.xhr.status === 204) {
+                        // If successful, close the modal
+                        base_modal.close();
+                        console.log("Form submission successful");
+                    } else {
+                        // If there are validation errors, keep the modal open
+                        console.log("Form submission failed with validation errors");
+                    }
+                }
+            });
+
+        </script>
+    </div>  
+</div>
+
+

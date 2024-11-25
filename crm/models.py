@@ -1,114 +1,40 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from accounts.models import CustomUser
 from customer.models import Company
+from utils.base_func import OPPORTUNITY_STAGE, OPPORTUNITY_CATEGORY
 
 
-# class Organization(models.Model):
-#     class CategoryBusiness(models.TextChoices):
-#         HOSPITAL = "Hospital", "Hospital"
-#         CLINIC = "Clinic", "Clinic"
-#         VENDOR = "Vendor", "Vendor"
-#         OTHER = "Other", "Other"
-
-#     business_name = models.CharField(max_length=100)
-#     name = models.CharField(max_length=100)
-#     contact_person = models.CharField(max_length=20)
-#     description = models.TextField(null=True, blank=True)
-#     address = models.CharField(max_length=100, null=True, blank=True)
-#     suite = models.CharField(max_length=20, null=True, blank=True)
-#     city = models.CharField(max_length=20, null=True, blank=True)
-#     state = models.CharField(max_length=20, null=True, blank=True)
-#     country = models.CharField(max_length=30, null=True, blank=True)
-#     zipcode = models.CharField(max_length=10, null=True, blank=True)
-#     phone = models.CharField(max_length=20, null=True, blank=True)
-#     fax = models.CharField(max_length=20, null=True, blank=True)
-#     website = models.URLField(null=True, blank=True)
-#     ein = models.CharField(max_length=20, null=True, blank=True)
-#     category_business = models.CharField(
-#         max_length=20, choices=CategoryBusiness.choices, null=True, blank=True
-#     )
-#     deleted_at = models.DateTimeField(null=True, blank=True)
-
-#     objects = models.Manager()  # Default manager
-
-#     def delete(self):
-#         self.deleted_at = timezone.now()
-#         self.save()
-
-#     class Meta:
-#         verbose_name = "Organization"
-#         verbose_name_plural = "Organizations"
-
-#     def __str__(self):
-#         return self.business_name
-
-#     @property
-#     def full_address(self):
-#         return ", ".join(
-#             filter(
-#                 None,
-#                 [
-#                     self.address,
-#                     self.suite,
-#                     self.city,
-#                     self.state,
-#                     self.zipcode,
-#                     self.country,
-#                 ],
-#             )
-#         )
-
-
-# class Contact(models.Model):
-#     class ContactType(models.TextChoices):
-#         PRIMARY = "Primary", "Primary"
-#         SECONDARY = "Secondary", "Secondary"
-#         BILLING = "Billing", "Billing"
-#         SHIPPING = "Shipping", "Shipping"
-#         OTHER = "Other", "Other"
-
-#     organization = models.ForeignKey(
-#         Organization, on_delete=models.CASCADE, related_name="contacts"
-#     )
-#     first_name = models.CharField(max_length=20)
-#     last_name = models.CharField(max_length=20, null=True, blank=True)
-#     title = models.CharField(max_length=20, null=True, blank=True)
-#     phone = models.CharField(max_length=20, null=True, blank=True)
-#     email = models.EmailField(null=True, blank=True)
-#     contact_type = models.CharField(max_length=20, choices=ContactType.choices)
-#     deleted_at = models.DateTimeField(null=True, blank=True)
-
-#     class Meta:
-#         verbose_name = "Contact"
-#         verbose_name_plural = "Contacts"
-
-#     def delete(self):
-#         self.deleted_at = timezone.now()
-#         self.save()
-
-#     def __str__(self):
-#         return f"{self.first_name} {self.last_name}"
-
-
+# 병원고객들을 상담하는 곳임
 class Opportunity(models.Model):
-    class CategoryStage(models.TextChoices):
-        POTENTIAL = "Potential", "Potential"
-        QUALIFIED = "Qualified", "Qualified"
-        WORKING = "Working", "Working"
-        CLOSED = "Closed", "Closed"
-        PENDING = "Pending", "Pending"
-        LOST = "Lost", "Lost"
-
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="opportunities"
+        Company,
+        on_delete=models.CASCADE,
+        related_name="opportunities",
+        null=True,
+        blank=True,
     )
     agent = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="opportunities"
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="opportunities",
+        null=True,
+        blank=True,
     )
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    close_date = models.DateField()
-    stage = models.CharField(max_length=20, choices=CategoryStage.choices)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, help_text="Monthly Amount"
+    )
+    possibility = models.IntegerField(
+        default=50,
+        help_text="Percentage",
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+    target_date = models.DateField(null=True, blank=True)
+    category = models.CharField(max_length=20, choices=OPPORTUNITY_CATEGORY)
+    stage = models.CharField(max_length=20, choices=OPPORTUNITY_STAGE)
     deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -122,7 +48,7 @@ class Opportunity(models.Model):
 
     class Meta:
         verbose_name = "Opportunity"
-        verbose_name_plural = "Opportunities"
+        verbose_name_plural = "Opportunites"
 
     def __str__(self):
         return f"{self.organization.business_name} - {self.amount}"
@@ -133,6 +59,7 @@ class Note(models.Model):
         Opportunity, on_delete=models.CASCADE, related_name="notes"
     )
     note = models.TextField()
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
@@ -146,3 +73,73 @@ class Note(models.Model):
 
     def __str__(self):
         return self.note
+
+
+class Task(models.Model):
+    opportunity = models.ForeignKey(
+        Opportunity, on_delete=models.CASCADE, related_name="tasks"
+    )
+    task = models.TextField()
+    due_date = models.DateField()
+    completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Task"
+        verbose_name_plural = "Tasks"
+
+    def delete(self):
+        self.deleted_at = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.task
+
+
+class OpportunityHistory(models.Model):
+    opportunity = models.ForeignKey(
+        Opportunity, on_delete=models.CASCADE, related_name="history"
+    )
+    stage = models.CharField(max_length=20, choices=OPPORTUNITY_STAGE)
+    possibility = models.IntegerField(
+        default=0,
+        help_text="Percentage",
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+    changed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Opportunity History"
+        verbose_name_plural = "Opportunity Histories"
+
+    def __str__(self):
+        return self.stage
+
+
+# 일반 환자들의 상담을 관리하는 테이블임
+class Chance(models.Model):
+    name = models.CharField(max_length=20)
+    purpose = models.CharField(max_length=250)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    sns = models.CharField(max_length=100, null=True, blank=True)
+    stage = models.CharField(max_length=20, choices=OPPORTUNITY_STAGE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    agent = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Chance"
+        verbose_name_plural = "Chances"
+
+    def __str__(self):
+        return self.name
+
+
+class ChanceComment(models.Model):
+    chance = models.ForeignKey(Chance, on_delete=models.CASCADE, related_name="history")
+    comment = models.TextField()
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

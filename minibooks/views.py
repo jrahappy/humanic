@@ -1515,26 +1515,43 @@ def apply_rule_progress(request, magam_id, rule_id):
     # 함수를 하나 실행할 때 사용
     elif selected_rule == "UTILITY":
 
-        # temp_rs = ReportMaster.objects.all()[:30]
-        # temp_rs = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
+        # 사업자 번호 넎기(초기정보입력)
+        # data1 = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
+        # ein = data1.values("apptitle", "ein").distinct()
+        # # print(ein)
+        # companies = Company.objects.all()
+        # for company in companies:
+        #     bn = company.business_name
+        #     for row in ein:
+        #         if row["apptitle"] == bn:
+        #             company.ein = row["ein"]
+        #             company.save()
+        #             print(bn)
 
-        # first_row = temp_rs.first()
+        # 의사면허 번호 넣기(초기정보입력)
+        # data1 = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
+        # licen_numbers = data1.values("radiologist", "radiologist_license").distinct()
+
+        # profiles = Profile.objects.all()
+        # for profile in profiles:
+        #     rn = profile.real_name
+        #     for row in licen_numbers:
+        #         if row["radiologist"] == rn:
+        #             profile.license_number = row["radiologist_license"]
+        #             profile.save()
+        #             print(rn)
+
+        # count_target_rows = licen_numbers.count()
+
+        # ReportMasterStat 테이블의 adate 필드를 마지막날로 업데이트함
+        # temp_rss = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
+        # first_row = temp_rss.first()
         # temp_ayear = first_row.ayear
         # temp_amonth = first_row.amonth
         # last_day = monthrange(int(temp_ayear), int(temp_amonth))[1]
-        # count_target_rows = temp_rs.count()
-
+        # count_target_rows = temp_rss.count()
         # new_adate = f"{temp_ayear}-{temp_amonth}-{last_day}"
-        # temp_rs.update(adate=new_adate)
-
-        temp_rss = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth)
-        first_row = temp_rss.first()
-        temp_ayear = first_row.ayear
-        temp_amonth = first_row.amonth
-        last_day = monthrange(int(temp_ayear), int(temp_amonth))[1]
-        count_target_rows = temp_rss.count()
-        new_adate = f"{temp_ayear}-{temp_amonth}-{last_day}"
-        temp_rss.update(adate=new_adate)
+        # temp_rss.update(adate=new_adate)
 
         # for row in temp_rs:
         #     temp_ayear = row.ayear
@@ -1573,7 +1590,8 @@ def apply_rule_progress(request, magam_id, rule_id):
         #     row.save()
         # i = target_rows.count()
         # return HttpResponse("Utility function is executed.", count_target_rows)
-        i = count_target_rows
+        # i = count_target_rows
+        i = 0
 
     else:
         pass

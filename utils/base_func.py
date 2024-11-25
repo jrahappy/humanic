@@ -131,3 +131,18 @@ CONTRACT_STATUS = [
     ("I", "Inactive"),
     ("T", "Terminated"),
 ]
+
+OPPORTUNITY_CATEGORY = [
+    ("Sale", "Sale"),
+    ("Support", "Support"),
+    ("Issue", "Issue"),
+]
+
+OPPORTUNITY_STAGE = [
+    ("Potential", "Potential"),
+    ("Qualified", "Qualified"),
+    ("Working", "Working"),
+    ("Closed", "Closed"),
+    ("Pending", "Pending"),
+    ("Lost", "Lost"),
+]

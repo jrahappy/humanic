@@ -21,6 +21,7 @@ urlpatterns = [
     path("blog/", include("blog.urls")),
     path("cust/", include("cust.urls")),
     path("referdex/", include("referdex.urls")),
+    path("crm/", include("crm.urls")),
 ]
 
 # Debug toolbar

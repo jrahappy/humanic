@@ -1,8 +1,8 @@
 {% load widget_tweaks %}
-<div id="company_contact_create_box" class="modal-box card-body">
+<div id="opp_create_box" class="modal-box card-body">
     <div class="modal-action justify-between  flex flex-row gap-2">
         <div class="ms-2 ">
-            <h2 class="text-lg font-bold"> New Contact  ({{ company.id }})</h2>
+            <h2 class="text-lg font-bold"> New Opportunity  ({{ company.id }})</h2>
         </div>
         <div class="flex flex-row gap-2">
             <form method="dialog">  
@@ -12,58 +12,72 @@
     </div>
     <div class="w-full">
         <form 
-          hx-post="{% url 'customer:new_contact' company.id %}" 
+          hx-post="{% url 'crm:new_opp' company.id %}" 
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           hx-swap="outerHTML" 
           hx-trigger="submit"
-          hx-target="#company_contact_create_box"
-          id="new_contact_form"
+          hx-target="#opp_create_box"
+          id="new_opp_form"
         >
         <div class="flex flex-row gap-2">
             <div class="form-control py-2">
-                <label for="id_modality" class="label">성명*</label>
+                <label for="id_modality" class="label">목적*</label>
                 {{ form.name|add_class:"input input-bordered" }}
                 {{ form.name.errors }}
             </div>
             <div class="form-control py-2">
-                <label for="id_modality" class="label">부서/직함</label>
-                {{ form.title|add_class:"input input-bordered" }}
-                <span class="text-xs text-red-500 ms-2">
-                {{ form.title.errors }}
-                </span>
+                <label for="id_modality" class="label">구분</label>
+                {{ form.category|add_class:"select select-bordered" }}
+                {{ form.category.errors }}
             </div>
         </div>
         <div class="form-control py-2">
-            <label for="id_modality" class="label">Email</label>
-            {{ form.email|add_class:"input input-bordered" }}
+            <label for="id_modality" class="label">설명</label>
+            {{ form.description|add_class:"input input-bordered" }}
             <span class="text-xs text-red-500 ms-2">
-            {{ form.email.errors }}
+            {{ form.description.errors }}
             </span>
         </div>
         <div class="flex flex-row gap-2">
             <div class="form-control py-2">
-                <label for="id_modality" class="label">휴대전화</label>
-                {{ form.mobile|add_class:"input input-bordered" }}
+                <label for="id_modality" class="label">예상매출</label>
+                {{ form.amount|add_class:"input input-bordered" }}
                 <span class="text-xs text-red-500 ms-2">
-                {{ form.mobile.errors }}
+                {{ form.amount.errors }}
                 </span>
             </div>
             <div class="form-control py-2">
-                <label for="id_modality" class="label">일반전화</label>
-                {{ form.office_phone|add_class:"input input-bordered" }}
+                <label for="id_modality" class="label">목표 계약일</label>
+                {{ form.target_date|add_class:"input input-bordered" }}
                 <span class="text-xs text-red-500 ms-2">
-                {{ form.office_phone.errors }}
+                {{ form.target_date.errors }}
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">가능성</label>
+                {{ form.possibility|add_class:"input input-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.possibility.errors }}
+                </span>
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">현재단계</label>
+                {{ form.stage|add_class:"select select-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.stage.errors }}
                 </span>
             </div>
         </div>
         <div class="divider"></div>
         <div class="flex justify-end gap-2">
-            <button type="submit" class="btn btn-primary btn-sm">저장</button>              
+            <button type="submit" class="btn btn-primary btn-sm w-16">저장</button>              
         </div>
         </form>
         <script>
-            document.getElementById('company_contact_create_box').addEventListener('htmx:beforeSwap', function(event) {
-                if (event.detail.target.id === 'company_contact_create_box') {
+            document.getElementById('opp_create_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'opp_create_box') {
                     // Check if the form submission was successful
                     console.log("Status:", event.detail.xhr.status);
                     console.log("Headers:", event.detail.xhr.getAllResponseHeaders());

@@ -287,10 +287,11 @@ def report_customer_detail(request, id):
         rpms.values_list("adate", flat=True).distinct().order_by("-adate")
     )  # Get distinct dates
 
-    adate = adate_array_base.first()
+    adate = request.GET.get("adate")
+    adate = adate or adate_array_base.first()
     # print("initial date", adate, "type", type(adate))
     # 초기 최초 마감월만 가져오기
-    adate_array = adate_array_base[:1]
+    adate_array = adate_array_base.filter(adate=adate)
 
     rpms_1 = rpms.filter(adate=adate)
     rpms_2 = rpms_1.values("adate", "amodality").annotate(

@@ -1,0 +1,72 @@
+{% load humanize %}
+<div class="card-body grow-0"
+    id="opps_box"  
+    hx-trigger="OppsChanged from:body"
+    hx-get="{% url 'crm:opps_customer' company.id%}" 
+    hx-swap="outerHTML"
+    hx-indicator="#spinner"
+    hx-target="#opps_box"
+    >
+    <div class="grid grid-cols-1">
+        <div class="flex flex-row justify-between">
+            <label class="label">
+                <span class="label-text">Issues </span>
+            </label>
+            <a href="#"
+                onclick="base_modal.showModal()"
+                hx-get="{% url 'crm:new_opp' company.id %}"
+                hx-trigger="click"
+                hx-target="#base_modal"
+                hx-swap="innerHTML" 
+                class="btn btn-primary btn-xs text-white me-6"
+            >+</a>
+        </div>
+        <div class="overflow-y-auto bg-base-100">
+            <ul class="max-h-64">
+            {% for opp in opps %}
+                <li class="flex flex-row px-1 py-1 mb-1 border-b-2 rounded-md">
+                    <div class="flex flex-col gap-1 px-1 w-48 mb-1">
+                        <span class="text-gray-500 font-semibold">
+                            <a href="#" 
+                                onclick="base_modal.showModal()"
+                                hx-get="{% url 'crm:edit_opp' opp.id %}"
+                                hx-trigger="click"
+                                hx-target="#base_modal"
+                                hx-swap="innerHTML"
+                                class="link link-hover">
+                            {{ opp.name}}
+                            </a>
+                        </span>                  
+                        <span class="text-gray-500 text-xs">{{ opp.description}}</span>
+                        {% if opp.category == 'Sale' %}
+                            <span class="badge badge-accent badge-border">{{ opp.category }}</span>          
+                        {% else %}
+                            <span class="badge badge-warning badge-border">{{ opp.category }}</span>          
+                        {% endif %}
+                        <span class="badge badge-neutral badge-border">{{ opp.stage }}</span>
+                    </div>
+                    <div class="flex flex-col flex-grow gap-1">
+                        <div class="flex flex-row justify-between">
+                            <span class="text-gray-900 text-sm">예상매출:</span>
+                            <span class="text-gray-900 text-sm">{{ opp.amount|floatformat:0|intcomma  }}</span>
+                        </div>
+                        <div class="flex flex-row justify-between">
+                            <span class="text-gray-900 text-sm">가능성:</span>
+                            <span class="text-gray-900 text-sm">{{ opp.possibility }}%</span>
+                        </div>
+                        <div class="flex flex-row justify-between">
+                            <span class="text-gray-900 text-sm">목표일:</span>
+                            <span class="text-gray-900 text-sm">{{ opp.target_date|date:'Y/m/d' }}</span>
+                        </div>
+                        
+                    </div>
+                    </li>
+                {% empty %}
+                <li>
+                  <div class="ms-2">No data</div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

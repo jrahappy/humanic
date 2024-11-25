@@ -1,2 +1,175 @@
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from .models import Opportunity, Chance
+from customer.models import Company, CustomerLog
+from .forms import OpportunityForm, ChanceForm
+import datetime
+import json
 
-# Create your views here.
+
+def index(request):
+
+    opps = (
+        Opportunity.objects.all()
+        .prefetch_related("company")
+        .order_by("-created_at")[:20]
+    )
+    chs = Chance.objects.all().order_by("-created_at")[:20]
+    c_logs = (
+        CustomerLog.objects.filter(
+            created_at__gte=datetime.date.today() - datetime.timedelta(days=2)
+        )
+        .prefetch_related("company", "updated_by")
+        .order_by("-created_at")
+    )
+
+    context = {
+        "opps": opps,
+        "chs": chs,
+        "c_logs": c_logs,
+    }
+
+    return render(request, "crm/index.html", context)
+
+
+def new_opp(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+
+    if request.method == "POST":
+        form = OpportunityForm(request.POST)
+        if form.is_valid():
+            new_opp = form.save(commit=False)
+            new_opp.company = company
+            new_opp.agent = request.user
+            new_opp.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "OppsChanged": None,
+                            "showMessage": "Opportunity Added.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Error Adding Opportunity.",
+                        }
+                    )
+                },
+            )
+    else:
+        form = OpportunityForm()
+        context = {
+            "form": form,
+            "agent": request.user,
+            "company": company,
+        }
+
+    return render(request, "crm/new_opp.html", context)
+
+
+def opps(request):
+    opps = Opportunity.objects.all().order_by("-created_at")
+    context = {
+        "opps": opps,
+    }
+    return render(request, "crm/opps.html", context)
+
+
+def opp(request, opp_id):
+    opp = get_object_or_404(Opportunity, id=opp_id)
+    context = {
+        "opp": opp,
+    }
+    return render(request, "crm/opp.html", context)
+
+
+def opps_customer(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    opps = Opportunity.objects.filter(company=company).order_by("-created_at")
+
+    context = {
+        "company": company,
+        "agent": request.user,
+        "opps": opps,
+    }
+    return render(request, "crm/opps.html", context)
+
+
+def edit_opp(request, opp_id):
+    opp = get_object_or_404(Opportunity, id=opp_id)
+    company = opp.company
+    agent = request.user
+
+    if request.method == "POST":
+        form = OpportunityForm(request.POST, instance=opp)
+        if form.is_valid():
+            opp = form.save(commit=False)
+            opp.agent = agent
+            opp.company = company
+            opp.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "OppsChanged": None,
+                            "showMessage": "Opportunity Updated.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Error Updating Opportunity.",
+                        }
+                    )
+                },
+            )
+    else:
+        form = OpportunityForm(instance=opp)
+        context = {
+            "form": form,
+            "agent": request.user,
+            "company": opp.company,
+            "opp": opp,
+        }
+
+    return render(request, "crm/edit_opp.html", context)
+
+
+def delete_opp(request, opp_id):
+    # opp = get_object_or_404(Opportunity, id=opp_id)
+    opp = Opportunity.objects.filter(id=opp_id)
+
+    print(opp.count())
+    opp.delete()
+    print("Opportunity Deleted: ", opp_id)
+    return HttpResponse(
+        json.dumps({"message": "Opportunity Deleted."}),
+        content_type="application/json",
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "OppsChanged": None,
+                    "showMessage": "Opportunity Deleted.",
+                }
+            )
+        },
+    )

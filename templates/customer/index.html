@@ -81,7 +81,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="9" class=" ">
+                    <td colspan="9" class="">
                         <div class="flex flex-row justify-between px-6 py-3">
                             <div class="">
                                 Total: {{ page_obj.paginator.count }}
@@ -118,14 +118,11 @@
                     <a class="label-text">Manage</a>
                 </label>
             </div>
-            <div class="flex flex-col">
-                <div class="flex flex-row flex-wrap gap-2 grow">
+            <div class="overflow-y-auto h-92" style="height:548px;">
+                <div class="flex flex-row flex-wrap gap-2 h-92">
                     {% for tag in tags %}
                     <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral text-white cursor-pointer ">{{ tag.name }} ({{tag.num_times}})</a>
                     {% endfor %}
-                </div>
-                <div class="">
-                    <a href="{% url 'customer:index' %}" class="badge badge-neutral text-white cursor-pointer ">Manage</a>
                 </div>
             </div>
         </div>

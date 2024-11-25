@@ -1,63 +1,65 @@
 {% load widget_tweaks %}
-<div id="company_new_clog_box" class="modal-box card-body w-92">
-  <div class="modal-action justify-between  flex flex-row gap-2">
-      <div class="w-92">
-          상담내용 등록 ({{ company.id }})
-      </div>
-      <div class="flex flex-row gap-2">
-          <form method="dialog">  
-              <button class="btn btn-warning">Close</button>
-          </form>
-      </div>
-  </div>
-  <div class="card-body grow-0">
-      <form 
-        href="#"
-        hx-post="{% url 'customer:new_clog' company.id %}"
-        hx-trigger="submit"
-        hx-target="#company_new_clog_box" 
-        hx-swap="outerHTML"
-      >
+<div id="company_new_clog_box" class="modal-box card-body">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold">상담내용 등록 ({{ company.id }})</h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">Close</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-full">
+        <form 
+            href="#"
+            hx-post="{% url 'customer:new_clog' company.id %}"
+            hx-trigger="submit"
+            hx-target="#company_new_clog_box" 
+            hx-swap="outerHTML"
+        >
             {% csrf_token %}
-      
-          <div class="form-control py-2">
-            <label for="id_modality" class="label">작성자*</label>
-            <p class="ms-2">{{real_name}}</p>
-          </div>
-          <div class="form-control py-2">
-              <label for="id_modality" class="label">중요도*</label>
-              {{ form.level|add_class:"select select-bordered" }} 
-              <span class="text-xs text-red-500 ms-2">
-              {{ form.level.errors }}
-              </span>
-          </div>
-          <div class="form-control py-2">
-              <label for="id_target_value" class="label">내용</label>
-              {{ form.log|add_class:"textarea textarea-bordered"|attr:"rows:5"|attr:"cols-20" }}
-          </div>
-          <div class="flex justify-end gap-2">
-              <button type="submit" class="btn btn-primary">저장</button>              
-          </div>
-      </form>
-      <script>
-          document.getElementById('company_new_clog_box').addEventListener('htmx:beforeSwap', function(event) {
-              if (event.detail.target.id === 'company_new_clog_box') {
-                  // Check if the form submission was successful
-                  console.log("Status:", event.detail.xhr.status);
-                  console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
-                  if (event.detail.xhr.status === 204) {
-                      // If successful, close the modal
-                      base_modal.close();
-                      console.log("Form submission successful");
-                  } else {
-                      // If there are validation errors, keep the modal open
-                      console.log("Form submission failed with validation errors");
-                  }
-              }
-          });
+            <div class="flex flex-row gap-2 justify-between">
+                <div class="form-control py-2">
+                    <label for="id_modality" class="label">작성자*</label>
+                    <p class="ms-2 py-2">{{real_name}}</p>
+                </div>
+                <div class="form-control py-2">
+                    <label for="id_modality" class="label">중요도*</label>
+                    {{ form.level|add_class:"select select-bordered" }} 
+                    <span class="text-xs text-red-500 ms-2">
+                    {{ form.level.errors }}
+                    </span>
+                </div>
+            </div>
+            <div class="form-control py-2">
+                <label for="id_target_value" class="label">내용</label>
+                {{ form.log|add_class:"textarea textarea-bordered"|attr:"rows:5"|attr:"cols-20" }}
+            </div>
+            <div class="divider"></div>
+            <div class="flex justify-end gap-2">
+                <button type="submit" class="btn btn-primary btn-sm w-16">Save</button>
+            </div>
+        </form>
+        <script>
+            document.getElementById('company_new_clog_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'company_new_clog_box') {
+                    // Check if the form submission was successful
+                    console.log("Status:", event.detail.xhr.status);
+                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+                    if (event.detail.xhr.status === 204) {
+                        // If successful, close the modal
+                        base_modal.close();
+                        console.log("Form submission successful");
+                    } else {
+                        // If there are validation errors, keep the modal open
+                        console.log("Form submission failed with validation errors");
+                    }
+                }
+            });
 
-      </script>
-  </div>  
+        </script>
+    </div>  
 </div>
 
 
