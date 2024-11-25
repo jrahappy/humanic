@@ -12,7 +12,7 @@
     </div>
     <div class="w-full">
         <form 
-          hx-post="{% url 'customer:new_contact' company.id %}" 
+          hx-post="{% url 'customer:edit_contact' company.id contact.id %}" 
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           hx-swap="outerHTML" 
           hx-trigger="submit"

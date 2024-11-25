@@ -134,7 +134,9 @@ def edit_contact(request, company_id, contact_id):
             contact = form.save(commit=False)
             contact.company = company
             contact.save()
-
+            # form.save(commit=False)
+            # form.company = company
+            # form.save()
             return HttpResponse(
                 status=204,
                 headers={
