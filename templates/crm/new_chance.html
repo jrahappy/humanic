@@ -1,0 +1,92 @@
+{% load widget_tweaks %}
+<div id="chance_create_box" class="modal-box card-body">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold"> New Chance  </h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">Close</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-full">
+        <form 
+          hx-post="{% url 'crm:new_chance' %}" 
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-swap="outerHTML" 
+          hx-trigger="submit"
+          hx-target="#chance_create_box"
+          id="new_chance_form"
+        >
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">환자명*</label>
+                {{ form.name|add_class:"input input-bordered" }}
+                {{ form.name.errors }}
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">상황구분</label>
+                {{ form.stage|add_class:"select select-bordered" }}
+                {{ form.stage.errors }}
+            </div>
+        </div>
+        <div class="form-control py-2">
+            <label for="id_modality" class="label">용건</label>
+            {{ form.purpose|add_class:"input input-bordered" }}
+            <span class="text-xs text-red-500 ms-2">
+            {{ form.purpose.errors }}
+            </span>
+        </div>
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">전화</label>
+                {{ form.phone }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.phone.errors }}
+                </span>
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">SNS</label>
+                {{ form.sns }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.sns.errors }}
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">Email</label>
+                {{ form.email }}
+                <span class="text-xs text-red-500 ms-2">
+                {{ form.email.errors }}
+                </span>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex justify-end gap-2">
+            <button type="submit" class="btn btn-primary btn-sm w-16">저장</button>              
+        </div>
+        </form>
+        <script>
+            document.getElementById('chance_create_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'chance_create_box') {
+                    // Check if the form submission was successful
+                    console.log("Status:", event.detail.xhr.status);
+                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+                    if (event.detail.xhr.status === 204) {
+                        // If successful, close the modal
+                        base_modal.close();
+                        console.log("Form submission successful");
+                    } else {
+                        // If there are validation errors, keep the modal open
+                        console.log("Form submission failed with validation errors");
+                    }
+                }
+            });
+
+        </script>
+    </div>  
+</div>
+
+

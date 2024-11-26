@@ -11,7 +11,6 @@
          
         </div>
       </div>
-
       <div class="overflow-x-auto px-4">
         <table class="table table-zebra">
           <tbody>
@@ -36,28 +35,7 @@
       </div>
   </section>
   <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
-      <div class="card-body grow-0">
-        <h2 class="card-title">
-          <a class="link-hover link">환자상담(개발중)</a>
-        </h2>
-      </div>
-      <div class="overflow-x-auto px-4">
-        <table class="table table-zebra">
-          <tbody>
-            {% for rs in chs %}
-              <tr>
-                <td>{{ rs.name }}</td>
-                <td><p class="text-end">{{ rs.purpose }}</p></td>
-                <td><p class="text-end">{{ rs.created_at|naturaltime }}</p></td>
-              </tr>
-              {% endfor %}
-            
-          </tbody>
-        </table>
-      </div>
-      <div>
-        &nbsp;
-      </div>
+      {% include "crm/chances.html" %}
   </section>
 
   <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-6">

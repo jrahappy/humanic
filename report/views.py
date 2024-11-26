@@ -286,7 +286,7 @@ def report_customer_detail(request, id):
     adate_array_base = (
         rpms.values_list("adate", flat=True).distinct().order_by("-adate")
     )  # Get distinct dates
-
+    print("adate_array_base", adate_array_base)
     adate = request.GET.get("adate")
     adate = adate or adate_array_base.first()
     # print("initial date", adate, "type", type(adate))

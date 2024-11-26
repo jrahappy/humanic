@@ -1,0 +1,68 @@
+{% load humanize %}
+
+<div class="card-body"
+    id="chances_box"  
+    hx-trigger="ChancesChanged from:body"
+    hx-get="{% url 'crm:chances'%}" 
+    hx-swap="outerHTML"
+    hx-indicator="#spinner"
+    hx-target="#chances_box"
+>
+    <div class="flex flex-row justify-between mb-4">
+        <h2 class="card-title">
+            <a class="link-hover link">병원상담</a>
+        </h2>
+        <a href="#"
+            onclick="base_modal.showModal()"
+            hx-get="{% url 'crm:new_chance' %}"
+            hx-trigger="click"
+            hx-target="#base_modal"
+            hx-swap="innerHTML" 
+            class="btn btn-primary btn-xs text-white me-6"
+        >+</a>
+    </div>
+    <div class="overflow-x-auto px-0">
+        <ul class="max-h-64">
+        {% for ch in chs %}
+            <li class="flex flex-row px-1 py-1 mb-1 border-b-2 rounded-md">
+                <div class="flex flex-col gap-1 px-1 w-48 mb-1">
+                    <span class="text-gray-500 font-semibold">
+                        <a href="#" 
+                            onclick="base_modal.showModal()"
+                            hx-get="{% url 'crm:edit_chance' ch.id %}"
+
+                            hx-trigger="click"
+                            hx-target="#base_modal"
+                            hx-swap="innerHTML"
+                            class="link link-hover">
+                        {{ ch.name}}
+                        </a>
+                    </span>                  
+                    <span class="text-gray-500 text-xs">{{ ch.purpose}}</span>
+                    <span class="badge badge-accent badge-border">{{ ch.stage }}</span>          
+                    
+                </div>
+                <div class="flex flex-col flex-grow gap-1">
+                    <div class="flex flex-row justify-between">
+                        <span class="text-gray-900 text-sm">Phone:</span>
+                        <span class="text-gray-900 text-sm">{{ ch.phone }}</span>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                        <span class="text-gray-900 text-sm">Email:</span>
+                        <span class="text-gray-900 text-sm">{{ ch.email }}%</span>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                        <span class="text-gray-900 text-sm">SNS:</span>
+                        <span class="text-gray-900 text-sm">{{ ch.sns }}</span>
+                    </div>
+                    
+                </div>
+                </li>
+            {% empty %}
+            <li>
+                <div class="ms-2">No data</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

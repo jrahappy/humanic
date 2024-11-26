@@ -7,8 +7,124 @@ import datetime
 import json
 
 
-def index(request):
+def chances(request):
+    chs = Chance.objects.all().order_by("-created_at")[0:20]
+    context = {
+        "chs": chs,
+    }
+    return render(request, "crm/chances.html", context)
 
+
+def new_chance(request):
+
+    if request.method == "POST":
+        form = ChanceForm(request.POST)
+        if form.is_valid():
+            new_chance = form.save(commit=False)
+            new_chance.agent = request.user
+            new_chance.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "ChancesChanged": None,
+                            "showMessage": "Chance Added.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Error Adding Chance.",
+                        }
+                    )
+                },
+            )
+    else:
+        form = ChanceForm()
+        context = {
+            "form": form,
+            "agent": request.user,
+        }
+
+    return render(request, "crm/new_chance.html", context)
+
+
+def delete_chance(request, chance_id):
+    # chance = get_object_or_404(Chance, id=chance_id)
+    chance = Chance.objects.filter(id=chance_id)
+
+    # print(chance.count())
+    chance.delete()
+    # print("Chance Deleted: ", chance_id)
+    return HttpResponse(
+        json.dumps({"message": "Chance Deleted."}),
+        content_type="application/json",
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "ChancesChanged": None,
+                    "showMessage": "Chance Deleted.",
+                }
+            )
+        },
+    )
+
+
+def edit_chance(request, chance_id):
+    chance = get_object_or_404(Chance, id=chance_id)
+    agent = request.user
+
+    if request.method == "POST":
+        form = ChanceForm(request.POST, instance=chance)
+        if form.is_valid():
+            chance = form.save(commit=False)
+            chance.agent = agent
+            chance.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "ChancesChanged": None,
+                            "showMessage": "Chance Updated.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Error Updating Chance.",
+                        }
+                    )
+                },
+            )
+    else:
+        form = ChanceForm(instance=chance)
+        context = {
+            "form": form,
+            "agent": request.user,
+            "chance": chance,
+        }
+
+    return render(request, "crm/edit_chance.html", context)
+
+
+def index(request):
     opps = (
         Opportunity.objects.all()
         .prefetch_related("company")
