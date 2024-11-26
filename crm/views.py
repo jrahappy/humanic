@@ -133,7 +133,8 @@ def index(request):
     chs = Chance.objects.all().order_by("-created_at")[:20]
     c_logs = (
         CustomerLog.objects.filter(
-            created_at__gte=datetime.date.today() - datetime.timedelta(days=2)
+            created_at__gte=datetime.date.today() - datetime.timedelta(days=2),
+            deleted_at=None,
         )
         .prefetch_related("company", "updated_by")
         .order_by("-created_at")
