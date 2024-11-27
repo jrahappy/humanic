@@ -134,11 +134,11 @@
     </section>  
     <section class="card card-compact col-span-12 overflow-hidden shadow-sm xl:col-span-8">
       <div role="tablist" class="tabs tabs-lifted min-h-96">
-        <input type="radio" name="customer_tab" role="tab" class="tab w-24" checked="checked" aria-label="상당기록" />
+        <input type="radio" name="customer_tab" role="tab" class="tab w-24 min-w=24" checked="checked" aria-label="상당기록" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 min-h-96">
           {% include "customer/clogs.html" %}
         </div>
-        <input type="radio" name="customer_tab" role="tab" class="tab me-1 w-24" aria-label="협력업체" />
+        <input type="radio" name="customer_tab" role="tab" class="tab me-1 min-w=24" aria-label="협력업체" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 min-h-96">
           {% include "customer/contracts.html" %}
         </div>
@@ -153,7 +153,7 @@
        
       </div>
     </section>
-    <section class="card card-compact col-span-6 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+    <section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
       {% include "crm/opps.html" %}
     </section>  
   </div>

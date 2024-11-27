@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<div class="card-body grow-0"
+<div class="card-body grow-0 overflow-y-auto h-96"
     id="clogs_box"  
     hx-trigger="CustomerLogChanged from:body"
     hx-get="{% url 'customer:clogs' company.id %}" 
@@ -9,7 +9,7 @@
 >
     <div class="flex justify-between gap-2">
         <h2 class="card-title grow">
-            상담 이력 (Logs)({{ clogs.count }})
+            상담 기록
         </h2>
         <div>
             <a href="#"
@@ -38,7 +38,7 @@
                     <td>{{ clog.updated_by}}</td>
                     <td>{{ clog.created_at|naturaltime }}</td>
                     <td>{{ clog.level}}</td>
-                    <td class=""><div class="w-96">{{ clog.log}}</div></td>
+                    <td class=""><div class="w-96">{{ clog.log|linebreaksbr }}</div></td>
                     <td class="text-right">
                         <a href="#" class="btn btn-xs btn-error"
                             hx-delete="{% url 'customer:delete_clog' company.id clog.id %}"

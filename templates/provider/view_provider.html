@@ -158,6 +158,7 @@
 					<th>월</th>
 					<th>판독건수</th>
 					<th>판독료</th>
+					<th>지급액</th>
 					<th>-</th>
 					
 				</tr>
@@ -169,6 +170,7 @@
 						<td>{{ rs.amonth }}</td>
 						<td>{{ rs.total_count_temp|floatformat:0|intcomma }}</td>
 						<td>{{ rs.total_revenue_temp|floatformat:0|intcomma }}</td>
+						<td>{{ rs.tatal_expense_temp|floatformat:0|intcomma }}</td>
 						<td>
 							<button 
 								onclick="base_modal.showModal()"
@@ -178,6 +180,10 @@
 								hx-target="#base_modal"
 								hx-swap="innerHTML"                                      
 							>Detail</button>
+							<a href="{% url 'report:report_period_month_radiologist_csv' rs.ayear rs.amonth provider.id %}"
+								class="btn btn-sm btn-secondary"
+								target="_blank"                                   
+							>CSV</a>
 						</td>
 
 						

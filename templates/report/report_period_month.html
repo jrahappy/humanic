@@ -33,6 +33,9 @@
                     hx-indicator="#spinner"
                     class="btn btn-primary">
                     표로 보기</a>
+                    <a href="{% url 'report:report_period_month_csv' ayear amonth %}"
+                    class="btn btn-secondary">
+                    CSV Download</a>
                     <a href="#"
                     _="on click transition opacity to 0 then remove #general_content"
                     class="btn btn-warning"

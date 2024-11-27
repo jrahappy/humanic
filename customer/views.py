@@ -255,6 +255,7 @@ def index(request):
                 return redirect("customer:detail", companies[0].id)
         else:
             companies = Company.objects.all().order_by(ko_kr.asc())
+            # companies = Company.objects.all().order_by("-updated_at")
     if companies.count() == 1:
         return redirect("customer:detail", companies[0].id)
     paginator = Paginator(companies, 15)  # Show 10 companies per page

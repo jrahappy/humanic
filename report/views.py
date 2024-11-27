@@ -16,6 +16,7 @@ from customer.models import Company
 from utils.base_func import get_specialty_choices
 from collections import defaultdict
 from django.http import HttpResponse
+from urllib.parse import quote
 import csv
 
 
@@ -396,10 +397,16 @@ def partial_customer_month(request, company_id):
 def customer_month_csv(request, company_id, adate):
     company = Company.objects.get(id=company_id)
     business_name = company.business_name
+    file_name = f"{adate}_{business_name}.csv"
+
+    # Encode the filename for Content-Disposition
+    encoded_file_name = quote(file_name)
 
     response = HttpResponse(content_type="text/csv; charset=utf-8")
-    response["Content-Disposition"] = f'attachment; filename="{adate}_{company.id}.csv"'
-    response.write("\ufeff")  # BOM (Byte Order Mark) for Excel
+    response["Content-Disposition"] = (
+        f"attachment; filename*=UTF-8''{encoded_file_name}"
+    )
+    response.write("\ufeff")  # BOM (Byte Order Mark) for Excel compatibility
     writer = csv.writer(response)
     writer.writerow(
         [
@@ -789,6 +796,77 @@ def report_period_month_table(request, ayear, amonth):
     return render(request, "report/report_period_month_table.html", context)
 
 
+def report_period_month_csv(request, ayear, amonth):
+    ko_kr = Func(
+        "provider__profile__real_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+
+    rpms = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth)
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
+        .values(
+            "provider__profile__real_name", "provider"
+        )  # Use the related field's real_name
+        .annotate(
+            total_price=Sum("readprice"),
+            total_provider=Sum("pay_to_provider"),
+            total_human=Sum("pay_to_human"),
+            total_cases=Count("case_id"),
+        )
+        .order_by(ko_kr.asc())
+    )
+    count_rpms = rpms.count()
+
+    rp_humans = (
+        ReportMaster.objects.filter(ayear=ayear, amonth=amonth, company=1)
+        .exclude(Q(provider=72) | Q(provider=73))  # Exclude 상근원장단(이재희, 김성현)
+        .values("provider")
+        .annotate(
+            human_total_price=Sum("readprice"),
+            human_total_provider=Sum("pay_to_provider"),
+            human_total_human=Sum("pay_to_human"),
+            human_total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name")
+    )
+
+    human_total_provider_total = rp_humans.aggregate(
+        total=Sum("human_total_provider"),
+    )["total"]
+
+    file_name = f"{ayear}_{amonth}_판독매출.csv"
+    encoded_file_name = quote(file_name)
+
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = (
+        f"attachment; filename*=UTF-8''{encoded_file_name}"
+    )
+    response.write("\ufeff")  # BOM (Byte Order Mark) for Excel compatibility
+    writer = csv.writer(response)
+    writer.writerow(["판독의", "Total Cases", "매출", "판독료", "수수료", "휴먼외래"])
+
+    for rpm in rpms:
+        temp_human = rp_humans.filter(provider=rpm["provider"]).first()
+        if temp_human is None:
+            temp_human = {
+                "human_total_provider": 0,
+            }
+        writer.writerow(
+            [
+                rpm["provider__profile__real_name"],
+                rpm["total_cases"],
+                rpm["total_price"],
+                rpm["total_provider"],
+                rpm["total_human"],
+                temp_human["human_total_provider"],
+            ]
+        )
+
+    return response
+
+
 def report_period_month_radiologist(request, ayear, amonth, radio):
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
@@ -899,6 +977,49 @@ def report_period_month_radiologist(request, ayear, amonth, radio):
     }
 
     return render(request, "report/report_period_month_radiologist.html", context)
+
+
+def report_period_month_radiologist_csv(request, ayear, amonth, radio):
+    provider = CustomUser.objects.get(id=radio)
+    real_name = provider.profile.real_name
+    file_name = f"{ayear}_{amonth}_{real_name}_판독매출.csv"
+
+    encoded_file_name = quote(file_name)
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = (
+        f"attachment; filename*=UTF-8''{encoded_file_name}"
+    )
+    response.write("\ufeff")  # BOM (Byte Order Mark) for Excel compatibility
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "AppTitle",
+            "CaseID",
+            "Patient",
+            "Modality",
+            "ReadPrice",
+            "Provider ",
+            "Human",
+        ]
+    )
+
+    rpms = ReportMaster.objects.filter(
+        ayear=ayear, amonth=amonth, provider=radio
+    ).order_by("company__business_name", "amodality")
+    for rpm in rpms:
+        writer.writerow(
+            [
+                rpm.company.business_name,
+                rpm.case_id,
+                rpm.name,
+                rpm.amodality,
+                rpm.readprice,
+                rpm.pay_to_provider,
+                rpm.pay_to_human,
+            ]
+        )
+
+    return response
 
 
 def report_period_month_radiologist_detail(

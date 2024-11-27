@@ -173,16 +173,22 @@ def new_opp(request, company_id):
             )
         else:
             print(form.errors)
-            return HttpResponse(
-                status=400,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "showMessage": "Error Adding Opportunity.",
-                        }
-                    )
-                },
+
+            return render(
+                request,
+                "crm/new_opp.html",
+                {"form": form, "company": company, "agent": request.user},
             )
+            # return HttpResponse(
+            #     status=400,
+            #     headers={
+            #         "HX-Trigger": json.dumps(
+            #             {
+            #                 "showMessage": "Error Adding Opportunity.",
+            #             }
+            #         )
+            #     },
+            # )
     else:
         form = OpportunityForm()
         context = {

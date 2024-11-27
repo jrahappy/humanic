@@ -17,9 +17,19 @@ urlpatterns = [
         name="report_period_month_table",
     ),
     path(
+        "report_period_month_csv/<int:ayear>/<int:amonth>/",
+        views.report_period_month_csv,
+        name="report_period_month_csv",
+    ),
+    path(
         "report_period_month_radiologist/<int:ayear>/<int:amonth>/<int:radio>/",
         views.report_period_month_radiologist,
         name="report_period_month_radiologist",
+    ),
+    path(
+        "report_period_month_radiologist_csv/<int:ayear>/<int:amonth>/<int:radio>/",
+        views.report_period_month_radiologist_csv,
+        name="report_period_month_radiologist_csv",
     ),
     path(
         "report_period_month_radiologist_detail/<int:ayear>/<int:amonth>/<int:provider>/<str:company>/<str:amodality>/",

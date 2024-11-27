@@ -25,7 +25,7 @@ class Opportunity(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0, help_text="Monthly Amount"
+        max_digits=15, decimal_places=2, default=0, help_text="Monthly Amount"
     )
     possibility = models.IntegerField(
         default=50,

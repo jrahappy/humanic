@@ -36,14 +36,20 @@
                                 class="link link-hover">
                             {{ opp.name}}
                             </a>
-                        </span>                  
+                        </span>
                         <span class="text-gray-500 text-xs">{{ opp.description}}</span>
-                        {% if opp.category == 'Sale' %}
-                            <span class="badge badge-accent badge-border">{{ opp.category }}</span>          
-                        {% else %}
-                            <span class="badge badge-warning badge-border">{{ opp.category }}</span>          
-                        {% endif %}
-                        <span class="badge badge-neutral badge-border">{{ opp.stage }}</span>
+                        <div class="flex flex-row gap-1">
+                            {% if opp.category == 'Sale' %}
+                                <span class="badge badge-accent badge-border">{{ opp.category }}</span>          
+                            {% else %}
+                                <span class="badge badge-warning badge-border">{{ opp.category }}</span>          
+                            {% endif %}
+                            {% if opp.stage == 'Won' %}
+                                <span class="badge badge-success text-white">{{ opp.stage }}</span>
+                            {% else %}
+                                <span class="badge badge-neutral badge-border">{{ opp.stage }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="flex flex-col flex-grow gap-1">
                         <div class="flex flex-row justify-between">

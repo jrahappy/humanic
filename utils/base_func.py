@@ -142,7 +142,7 @@ OPPORTUNITY_STAGE = [
     ("Potential", "Potential"),
     ("Qualified", "Qualified"),
     ("Working", "Working"),
-    ("Closed", "Closed"),
+    ("Won", "Won"),
     ("Pending", "Pending"),
     ("Lost", "Lost"),
 ]

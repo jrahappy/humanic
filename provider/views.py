@@ -123,6 +123,7 @@ def view_provider(request, id):
         .annotate(
             total_count_temp=Sum("total_count"),
             total_revenue_temp=Sum("total_revenue"),
+            tatal_expense_temp=Sum("total_expense"),
         )
         .order_by("-adate")
     )
