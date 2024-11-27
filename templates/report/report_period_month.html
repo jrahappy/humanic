@@ -49,7 +49,12 @@
                 {% for rpm in rpms %}
                     <div class="card bg-base-100 w-64 shadow-xl">
                         <div class="card-body">
-                            <h2 class="card-title">{{ rpm.provider__profile__real_name }}</h2>
+                            <h2 class="card-title">
+                                <a href="{% url 'provider:view_provider' rpm.provider %}" class="link">
+                                    {{ rpm.provider__profile__real_name }}
+                                </a>
+                                
+                            </h2>
                             <p class="mb-2">
                                 <div class="flex justify-between">
                                     <span>판독건수</span>

@@ -46,7 +46,11 @@
             {% for but_cm in rs %}
             <div class="card bg-base-100 w-64 shadow-xl">
                 <div class="card-body">
-                    <h2 class="card-title">{{ but_cm.company__business_name}}</h2>
+                    <h2 class="card-title">
+                        <a href="{% url 'customer:detail' but_cm.company_id %}" class="link">
+                        {{ but_cm.company__business_name}}
+                        </a>
+                    </h2>
                     <p class="mb-2">
                         <div class="flex justify-between">
                             <span>누적매출</span>

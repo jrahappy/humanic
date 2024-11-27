@@ -59,7 +59,11 @@
                     <tbody id="search-results">
                         {% for rpm in rpms %}
                             <tr>
-                                <td>{{ rpm.provider__profile__real_name }}</td>
+                                <td>
+                                    <a href="{% url 'provider:view_provider' rpm.provider %}" class="link">
+                                        {{ rpm.provider__profile__real_name }}
+                                    </a>
+                                </td>
                                 <td>{{ rpm.total_cases|intcomma  }}</td>
                                 <td>{{ rpm.total_price|floatformat:0|intcomma  }}</td>
                                 <td>{{ rpm.total_provider|floatformat:0|intcomma }}</td>

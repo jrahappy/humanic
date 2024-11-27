@@ -4,21 +4,7 @@
         <div class="modal-box card-body w-11/12 max-w-5xl">
             <div class="modal-action justify-between card-body flex flex-row gap-2">
                 <h2 class="card-title px-2">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
-                <div>
-                    <select 
-                        class="select select-bordered select-sm py-0" 
-                        id="adate" 
-                        name="adate"
-                        hx-get="{% url 'report:search' %}"
-                        hx-target="#customer_month_box"
-                        hx-trigger="change"
-                        hx-swap="outerHTML"
-                    >
-                        {% for adate in adate_array %}
-                            <option value="{{ adate|date:'Y-m-d' }}">{{ adate }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                
                 <form method="dialog">
                     <button class="btn btn-warning btn-sm">Close</button>
                 </form>
