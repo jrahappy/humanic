@@ -23,12 +23,23 @@
             <div class="form-control py-2">
                 <label for="id_modality" class="label">목적*</label>
                 {{ form.name|add_class:"input input-bordered" }}
-                {{ form.name.errors }}
+                <span class="text-xs text-red-500 ms-2">
+                    {{ form.name.errors }}
+                </span>
             </div>
             <div class="form-control py-2">
                 <label for="id_modality" class="label">구분</label>
                 {{ form.category|add_class:"select select-bordered" }}
-                {{ form.category.errors }}
+                <span class="text-xs text-red-500 ms-2">
+                    {{ form.category.errors }}
+                </span>
+            </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">담당</label>
+                {{ form.agent|add_class:"select select-bordered" }}
+                <span class="text-xs text-red-500 ms-2">
+                    {{ form.agent.errors }}
+                </span>
             </div>
         </div>
         <div class="form-control py-2">

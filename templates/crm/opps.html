@@ -53,6 +53,10 @@
                     </div>
                     <div class="flex flex-col flex-grow gap-1">
                         <div class="flex flex-row justify-between">
+                            <span class="text-gray-900 text-sm">담당:</span>
+                            <span class="text-gray-900 text-sm">{{ opp.agent }}</span>
+                        </div>
+                        <div class="flex flex-row justify-between">
                             <span class="text-gray-900 text-sm">예상매출:</span>
                             <span class="text-gray-900 text-sm">{{ opp.amount|floatformat:0|intcomma  }}</span>
                         </div>

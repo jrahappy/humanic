@@ -22,15 +22,15 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField("Is admin", default=False)
     # doctor or not
     is_doctor = models.BooleanField("Is Doctor", default=False)
-    # CBCT/False, SAVVY/True
     is_terms = models.BooleanField("Is Terms", default=False)
     is_privacy = models.BooleanField("Is Privacy", default=False)
     is_staff = models.BooleanField("Is Staff", default=False)
     is_superuser = models.BooleanField("Is Superuser", default=False)
+    menu_id = models.SmallIntegerField(null=True, blank=True, default=0)
     is_active = models.BooleanField("Is Active", default=True)
 
     def __str__(self):
-        return self.username
+        return self.first_name
 
     def clean(self):
         # Check if a user with the same username already exists

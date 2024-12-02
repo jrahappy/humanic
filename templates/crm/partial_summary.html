@@ -5,7 +5,7 @@
   <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
       <div class="card-body grow-0 flex flex-row justify-between">
         <h2 class="card-title">
-          <a class="link-hover link">병원상담</a>
+          <a class="link-hover link">병원관련</a>
         </h2>
         <div>
          
@@ -19,7 +19,8 @@
               <td>
                 <a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a>
               </td>
-
+              <td>{{ rs.name }}</td>
+              <td>{{ rs.agent }}</td>
               <td><p class="text-end">{{ rs.category }}</p></td>
               <td><p class="text-end">{{ rs.stage }}</p></td>
               <td><p class="text-end">{{ rs.amount|floatformat:0|intcomma }}</p></td>

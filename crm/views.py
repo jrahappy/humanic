@@ -157,7 +157,7 @@ def new_opp(request, company_id):
         if form.is_valid():
             new_opp = form.save(commit=False)
             new_opp.company = company
-            new_opp.agent = request.user
+            # new_opp.agent = request.user
             new_opp.save()
 
             return HttpResponse(
@@ -179,21 +179,11 @@ def new_opp(request, company_id):
                 "crm/new_opp.html",
                 {"form": form, "company": company, "agent": request.user},
             )
-            # return HttpResponse(
-            #     status=400,
-            #     headers={
-            #         "HX-Trigger": json.dumps(
-            #             {
-            #                 "showMessage": "Error Adding Opportunity.",
-            #             }
-            #         )
-            #     },
-            # )
     else:
         form = OpportunityForm()
         context = {
             "form": form,
-            "agent": request.user,
+            # "agent": request.user,
             "company": company,
         }
 
@@ -222,7 +212,7 @@ def opps_customer(request, company_id):
 
     context = {
         "company": company,
-        "agent": request.user,
+        # "agent": request.user,
         "opps": opps,
     }
     return render(request, "crm/opps.html", context)
@@ -231,13 +221,13 @@ def opps_customer(request, company_id):
 def edit_opp(request, opp_id):
     opp = get_object_or_404(Opportunity, id=opp_id)
     company = opp.company
-    agent = request.user
+    # agent = request.user
 
     if request.method == "POST":
         form = OpportunityForm(request.POST, instance=opp)
         if form.is_valid():
             opp = form.save(commit=False)
-            opp.agent = agent
+            # opp.agent = agent
             opp.company = company
             opp.save()
 
@@ -268,7 +258,7 @@ def edit_opp(request, opp_id):
         form = OpportunityForm(instance=opp)
         context = {
             "form": form,
-            "agent": request.user,
+            # "agent": request.user,
             "company": opp.company,
             "opp": opp,
         }
@@ -280,9 +270,9 @@ def delete_opp(request, opp_id):
     # opp = get_object_or_404(Opportunity, id=opp_id)
     opp = Opportunity.objects.filter(id=opp_id)
 
-    print(opp.count())
+    # print(opp.count())
     opp.delete()
-    print("Opportunity Deleted: ", opp_id)
+    # print("Opportunity Deleted: ", opp_id)
     return HttpResponse(
         json.dumps({"message": "Opportunity Deleted."}),
         content_type="application/json",

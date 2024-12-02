@@ -30,6 +30,11 @@
                 {{ form.category|add_class:"select select-bordered" }}
                 {{ form.category.errors }}
             </div>
+            <div class="form-control py-2">
+                <label for="id_modality" class="label">담당자</label>
+                {{ form.agent|add_class:"select select-bordered" }}
+                {{ form.agent.errors }}
+            </div>
         </div>
         <div class="form-control py-2">
             <label for="id_modality" class="label">설명</label>
