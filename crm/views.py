@@ -3,8 +3,15 @@ from django.http import HttpResponse
 from .models import Opportunity, Chance
 from customer.models import Company, CustomerLog
 from .forms import OpportunityForm, ChanceForm
+from collab.models import Refers
 import datetime
 import json
+
+
+def collab(request):
+    refers = Refers.objects.all().order_by("-created_at")
+    context = {"refers": refers}
+    return render(request, "crm/collab.html", context)
 
 
 def chances(request):

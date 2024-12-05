@@ -12,4 +12,5 @@ urlpatterns = [
     path("new_chance/", views.new_chance, name="new_chance"),
     path("edit_chance/<int:chance_id>/", views.edit_chance, name="edit_chance"),
     path("delete_chance/<int:chance_id>/", views.delete_chance, name="delete_chance"),
+    path("collab/", views.collab, name="collab"),
 ]

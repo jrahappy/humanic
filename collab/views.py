@@ -5,7 +5,24 @@ from .forms import ReferForm, CollabCompanyForm
 from accounts.models import CustomUser, Profile
 from customer.models import Company, CustomerContact
 from customer.forms import CompanyForm
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
+
+
+def home(request):
+    user = request.user
+    refers = Refers.objects.all().order_by("-created_at")
+    paginator = Paginator(refers, 10)  # Show 10 refers per page
+    page = request.GET.get("page")
+    try:
+        refers = paginator.page(page)
+    except PageNotAnInteger:
+        refers = paginator.page(1)
+    except EmptyPage:
+        refers = paginator.page(paginator.num_pages)
+    context = {"refers": refers}
+    return render(request, "collab/home.html", context)
 
 
 def index(request):

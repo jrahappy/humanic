@@ -118,6 +118,11 @@
                             <a href="{% url 'crm:index' %}" class="px-5">상황판</a>
                         </li>
                     </ul>
+                    <ul>
+                        <li>
+                            <a href="{% url 'crm:collab' %}" class="px-5">협진요청관리</a>
+                        </li>
+                    </ul>
                 </details>
             </li>
             {% endif %}
@@ -164,9 +169,9 @@
             </li>
             
             <li>
-                <a href="{% url 'collab:index' %}">
+                <a href="{% url 'collab:home' %}">
                     <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
-                    협진관리
+                    Collab
                     <span class="badge badge-info badge-sm">12</span>
                 </a>
             </li>
