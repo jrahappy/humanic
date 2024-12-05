@@ -1,0 +1,94 @@
+{% extends 'collab/base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'collab/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card-body grow-0">
+      <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+              <a class="link-hover link">병원정보</a>
+          </h2>
+      </div>
+  </div>
+</section> 
+<div id="stat_panel" class="col-span-12 w-full">
+  <div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
+
+    <section class="card card-compact col-span-8 px-4 overflow-hidden bg-base-100 shadow-sm xl:col-span-8">
+      <div class="card-body grow-0">
+        <div class="grid grid-cols-4 gap-2">
+          <div class="">
+            <label class="label">
+              <span class="label-text">병원명</span>
+            </label>
+            <p class="p-1 font-semibold  bg-gray-100 rounded-lg text-md">{{ company.business_name}}  ({{ company.id}})</p>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">대표자명</span>
+            </label>
+            <p class="p-1 font-semibold  bg-gray-100 rounded-lg text-md">{{ company.president_name|handle_none}}</p>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">사업자번호</span>
+            </label>
+            <p class="p-1 font-semibold  bg-gray-100 rounded-lg text-md">{{ company.ein|handle_none}}</p>
+          </div>
+          <div class="grid grid-cols-1 gap-2">
+            
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">주소</span>
+            </label>
+            <p class="p-1 bg-gray-100 h-8">{{ company.full_address|handle_none}}</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">대표번호</span>
+            </label>
+            <p class="p-3 bg-gray-100 h-8">{{ company.office_phone|handle_none}}</p>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">담당자</span>
+            </label>
+            <p class="p-1 font-semibold  bg-gray-100 rounded-lg text-md">{{company.contact_person|handle_none}}</p>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">담당자 이메일</span>
+            </label>
+            <p class="p-1 font-semibold  bg-gray-100 rounded-lg text-md">{{ company.office_email|handle_none}}</p>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">담당자 전화번호</span>
+            </label>
+            <p class="p-1 font-semibold  bg-gray-100 rounded-lg text-md">{{ company.office_fax|handle_none}}</p>
+          </div>
+        </div>
+        <div class="flex flex-row justify-end p-4">
+            <a href="{% url 'collab:company_update' company.id %}" class="self-align-bottom btn btn-primary btn-sm text-white w-16">Edit</a> 
+        </div>
+      </div>
+		</section>
+   
+  </div>
+</div>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'collab/aside.html' %}
+	
+{% endblock %}

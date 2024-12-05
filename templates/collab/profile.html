@@ -1,0 +1,57 @@
+{% extends 'collab/base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'collab/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card-body grow-0">
+      <div class="flex justify-between gap-2">
+          <h2 class="card-title grow">
+              <a class="link-hover link">사용자정보</a>
+          </h2>
+      </div>
+  </div>
+</section> 
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card m-8">
+    <div class="mt-6 border-t border-gray-100 px-8">
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">User ID</label></div>
+        <div class="p-3 w-80">{{ user.username }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">성명</label></div>
+        <div class="p-3 w-80">{{ user.profile.real_name }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">이메일</label></div>
+        <div class="p-3 w-80">{{ user.profile.email }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"><label for="id_oldpassword" class="label">핸드폰</label></div>
+        <div class="p-3 w-80">{{ user.profile.cellphone|handle_none }}</div>
+      </div>
+      <div class="flex flex-row">
+        <div class="w-52"></div>
+        <div class="p-3 w-80">
+          <a 
+            class="btn btn-primary w-24"
+           
+            hx-trigger="click"
+            hx-target="#main_area"
+            hx-swap="outerHTML"
+          >Edit</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'collab/aside.html' %}
+	
+{% endblock %}

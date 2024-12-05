@@ -24,6 +24,8 @@ class Company(models.Model):
     bio = models.TextField(null=True, blank=True)
     is_public = models.BooleanField(default=False)
     is_clinic = models.BooleanField(default=False)
+    #  협진병원 여부
+    is_collab = models.BooleanField(default=False, null=True, blank=True)
     # taggit
     tags = TaggableManager(blank=True)
 

@@ -16,8 +16,10 @@ def index(request):
     if user.is_staff:
         pass
     else:
+        # 판독의의 경우
         if user.is_doctor:
             return redirect("dashboard:index")
+        # 병원(고객)의 경우
         else:
             return redirect("cust:index")
 

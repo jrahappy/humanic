@@ -23,7 +23,7 @@ class CustomUserAdmin(UserAdmin):
         "date_joined",
     ]
     search_fields = ["email", "username", "first_name", "last_name"]
-    list_filter = ["last_login", "is_doctor", "date_joined"]
+    list_filter = ["last_login", "is_doctor", "is_active", "is_staff", "menu_id"]
     ordering = ["-username"]
 
     # Add fieldsets to show 'is_doctor' in the user change form

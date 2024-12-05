@@ -44,7 +44,7 @@ def index(request):
                 | Q(profile__cv3_id__icontains=q)
                 | Q(profile__onpacs_id__icontains=q)
             )
-            .filter(is_staff=False)
+            .filter(is_staff=False, is_doctor=True)
             .select_related("profile")
             .annotate(hr_files_count=Count("hrfiles__id"))
             .order_by("profile__real_name")
@@ -53,7 +53,7 @@ def index(request):
             return redirect("provider:view_provider", doctors[0].id)
     else:
         doctors = (
-            CustomUser.objects.filter(is_staff=False)
+            CustomUser.objects.filter(is_staff=False, is_doctor=True)
             .select_related("profile")
             .annotate(hr_files_count=Count("hrfiles__id"))
             .order_by("-username")

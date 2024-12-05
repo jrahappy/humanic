@@ -146,3 +146,16 @@ OPPORTUNITY_STAGE = [
     ("Pending", "Pending"),
     ("Lost", "Lost"),
 ]
+
+GENDER = [
+    ("M", "Male"),
+    ("F", "Female"),
+    ("O", "Other"),
+]
+
+REFER_STATUS = [
+    ("Draft", "Draft"),
+    ("Requested", "협진요청"),
+    ("Interpreted", "1차판독완료"),
+    ("Cosigned", "2차찬독완료"),
+]

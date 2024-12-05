@@ -1,0 +1,89 @@
+{% load static %}
+{% load custom_filters %}
+
+{% load widget_tweaks %}
+<div id="refer_create_box" class="modal-box card-body w-1/2 max-w-2xl">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold"> 검사의뢰서  ({{ company.id }})</h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">닫기</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-full">
+        <form 
+          hx-post="{% url 'collab:refer_update' refer.id %}" 
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-swap="outerHTML" 
+          hx-trigger="submit"
+          hx-target="#refer_create_box"
+          id="new_refer_form"
+        >
+        <table class="table w-full" >
+            <tr>
+                <td colspan="4" class="w-full text-center font-semibold bg-base-200">검 사 의 뢰 서</td>
+            </tr>
+            <tr>
+                <td>의뢰병원</td><td>{{company.business_name}} </td>
+                <td>의사명</td><td>{{company.president_name}} </td>
+            </tr>
+            <tr>
+                <td>의뢰일</td><td>{% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}</td>
+                <td>상태</td><td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>
+            </tr>
+            <tr>
+                <td>환자명</td><td>{% render_field form.patient_name class="input input-bordered input-sm w-40" %}</td>
+                <td>환자성별</td><td>{% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}</td>
+            </tr>
+            <tr>
+                <td>생년월일</td><td>{% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}</td>
+                <td>연락처</td><td>{% render_field form.patient_phone class="input input-bordered input-sm w-40" %}</td>
+            </tr>
+            <tr>
+                <td>환자상병</td><td>{% render_field form.illness class="input input-bordered input-sm w-40" %}</td>
+                <td>외뢰할 검사</td><td>{% render_field form.treatment class="input input-bordered input-sm w-40" %}</td>
+            </tr>
+            <tr>
+                <td colspan="1">임상소견</td>
+                <td colspan="3">{% render_field form.opinion1 class="textarea textarea-bordered w-full" cols=50 rows=3 %}</td>
+            </tr>
+            <tr>
+                <td colspan="1">오 시 는 길</td>
+                <td colspan="3">
+                    <img src="{% static 'images/map_small3.png' %}" alt="map" class="w-full" />
+                </td>
+            </tr>
+            
+        </table>
+
+        <div class="divider"></div>
+        <div class="flex justify-end gap-2">
+            <button type="submit" class="btn btn-primary btn-sm">저장</button>
+            <button type="submit" class="btn btn-primary btn-sm">인쇄</button>
+        </div>
+        </form>
+        <script>
+            document.getElementById('refer_create_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'refer_create_box') {
+                    // Check if the form submission was successful
+                    console.log("Status:", event.detail.xhr.status);
+                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+                    if (event.detail.xhr.status === 204) {
+                        // If successful, close the modal
+                        base_modal.close();
+                        console.log("Form submission successful");
+                    } else {
+                        // If there are validation errors, keep the modal open
+                        console.log("Form submission failed with validation errors");
+                    }
+                }
+            });
+
+        </script>
+    </div>  
+</div>
+
+

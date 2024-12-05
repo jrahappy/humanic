@@ -17,7 +17,7 @@ class CompanyAdmin(admin.ModelAdmin):
         "tag_list",
     ]
     search_fields = ["business_name"]
-    list_filter = ["is_clinic"]
+    list_filter = ["is_clinic", "is_collab"]
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related("tags")
