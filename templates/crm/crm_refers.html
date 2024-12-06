@@ -2,7 +2,7 @@
 {% load custom_filters %}
 
 <tbody id="refer_list_box" class="divide-y divide-gray-300 bg-white"
-    hx-get="{% url 'crm:collab' %}"
+    hx-get="{% url 'crm:crm_refers' %}"
     hx-trigger="RefersChanged from:body"
     hx-target="this"
     hx-swap="outerHTML"
@@ -28,6 +28,9 @@
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_name|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_phone|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.treatment|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.opinioned_at|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.opinioned_at|handle_none }}</td>
+
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.status|handle_none }}</td>
         
         

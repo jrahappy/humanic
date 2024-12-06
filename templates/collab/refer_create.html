@@ -17,7 +17,7 @@
           hx-swap="outerHTML" 
           hx-trigger="submit"
           hx-target="#refer_create_box"
-          id="new_refer_form"
+          id="refer_create_form"
         >
         <table class="table w-full" >
             <tr>
@@ -70,6 +70,7 @@
                     console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
                     if (event.detail.xhr.status === 204) {
                         // If successful, close the modal
+                        refer_create_form.reset();
                         base_modal.close();
                         console.log("Form submission successful");
                     } else {

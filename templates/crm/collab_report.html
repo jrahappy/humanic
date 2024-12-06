@@ -1,0 +1,81 @@
+{% load static %}
+{% load custom_filters %}
+
+{% load widget_tweaks %}
+<div id="report_create_box" class="modal-box card-body w-1/2 max-w-2xl">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold"> 진료회송서 </h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">닫기</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-full">
+        <form 
+          hx-post="{% url 'crm:collab_report' refer.id %}" 
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-swap="outerHTML" 
+          hx-trigger="submit"
+          hx-target="#report_create_box"
+          id="new_report_form"
+        >
+        <table class="table w-full" >
+            <tr>
+                <td colspan="4" class="w-full text-center font-semibold bg-base-200">진 료 회 송 서</td>
+            </tr>
+            <tr>
+                <td>의뢰병원</td><td>{{refer.company.business_name}} </td>
+                <td>의사명</td><td>{{refer.company.president_name}} </td>
+            </tr>
+            <tr>
+                <td>환자명</td><td>{{refer.patient_name}} </td>
+                <td>성별</td><td>{{refer.patient_gender}} </td>
+            </tr>
+            <tr>
+                <td>생년월일</td><td>{{refer.patient_birthdate}} </td>
+                <td>연락처</td><td>{{refer.patient_phone}} </td>
+            </tr>
+            <tr>
+                <td>병명</td><td colspan="3">{% render_field form.illness2 class="input input-bordered input-sm w-full" %}</td>
+            </tr>
+            <tr>
+                <td colspan="1">향후치료<br>의견</td>
+                <td colspan="3">{% render_field form.opinion2 class="textarea textarea-bordered w-full" cols=50 rows=3 %}</td>
+            </tr>
+            <tr>
+                <td>회송일</td><td>{{form.opinioned_at }}</td>                    
+                <td>현재상태</td><td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>                
+            </tr>
+        </table>
+
+        <div class="divider"></div>
+        <div class="flex justify-end gap-2">
+            <button type="submit" class="btn btn-primary btn-sm">저장</button>
+            <button type="submit" class="btn btn-primary btn-sm">인쇄</button>
+        </div>
+        </form>
+        <script>
+            document.getElementById('report_create_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'report_create_box') {
+                    // Check if the form submission was successful
+                    console.log("Status:", event.detail.xhr.status);
+                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+                    if (event.detail.xhr.status === 204) {
+                        // If successful, close the modal
+                        base_modal.close();
+                        console.log("Form submission successful");
+                    } else {
+                        // If there are validation errors, keep the modal open
+                        console.log("Form submission failed with validation errors");
+                    }
+                }
+            });
+
+        </script>
+    </div>  
+</div>
+
+

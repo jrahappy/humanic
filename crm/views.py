@@ -4,6 +4,7 @@ from .models import Opportunity, Chance
 from customer.models import Company, CustomerLog
 from .forms import OpportunityForm, ChanceForm
 from collab.models import Refers
+from collab.forms import ReportForm
 import datetime
 import json
 
@@ -12,6 +13,61 @@ def collab(request):
     refers = Refers.objects.all().order_by("-created_at")
     context = {"refers": refers}
     return render(request, "crm/collab.html", context)
+
+
+def crm_refers(request):
+    refers = Refers.objects.all().order_by("-created_at")
+    context = {"refers": refers}
+    return render(request, "collab/crm_refers.html", context)
+
+
+def collab_refer_detail(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    context = {"refer": refer}
+    return render(request, "crm/collab_refer_detail.html", context)
+
+
+def collab_report(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    if request.method == "POST":
+        form = ReportForm(request.POST, instance=refer)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.provider = request.user
+            report.updated_at = datetime.datetime.now()
+            report.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "RefersChanged": None,
+                            "showMessage": "Report Updated.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Error Updating Report.",
+                        }
+                    )
+                },
+            )
+    else:
+        form = ReportForm(instance=refer)
+        context = {
+            "form": form,
+            "refer": refer,
+        }
+
+    return render(request, "crm/collab_report.html", context)
 
 
 def chances(request):

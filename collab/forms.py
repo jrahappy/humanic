@@ -53,13 +53,34 @@ class ReferForm(ModelForm):
         initial=datetime.date.today(),
     )
 
-    # patient_name = forms.CharField(
-    #     widget=forms.TextInput(attrs={"class": "form-control"}),
-    #     required=True,
-    # )
 
-    # patient_birthdate = forms.DateField(
-    #     input_formats=["%Y-%m-%d"],
-    #     widget=forms.DateInput(attrs={"type": "date"}),
-    #     required=True,
-    # )
+class ReportForm(ModelForm):
+    class Meta:
+        model = Refers
+        fields = "__all__"
+        exclude = [
+            "company",
+            "referred_date",
+            "patient_name",
+            "patient_gender",
+            "patient_birthdate",
+            "patient_phone",
+            "illness",
+            "treatment",
+            "opinion1",
+            "created_at",
+            "updated_at",
+        ]
+
+        # target_date = forms.DateField(
+        #     input_formats=["%Y-%m-%d"],
+        #     widget=forms.DateInput(attrs={"type": "date"}),
+        #     required=False,
+        # )
+
+    opinioned_at = forms.DateField(
+        input_formats=["%Y-%m-%d"],
+        widget=forms.DateInput(attrs={"type": "date"}),
+        required=True,
+        initial=datetime.date.today,
+    )

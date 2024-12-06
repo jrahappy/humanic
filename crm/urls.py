@@ -13,4 +13,11 @@ urlpatterns = [
     path("edit_chance/<int:chance_id>/", views.edit_chance, name="edit_chance"),
     path("delete_chance/<int:chance_id>/", views.delete_chance, name="delete_chance"),
     path("collab/", views.collab, name="collab"),
+    path(
+        "collab_refer_detail/<int:refer_id>/",
+        views.collab_refer_detail,
+        name="collab_refer_detail",
+    ),
+    path("collab_report/<int:refer_id>/", views.collab_report, name="collab_report"),
+    path("crm_refers/", views.crm_refers, name="crm_refers"),
 ]

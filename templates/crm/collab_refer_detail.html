@@ -1,0 +1,70 @@
+{% load widget_tweaks %}
+<div id="refer_create_box" class="modal-box card-body w-1/2 max-w-2xl">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold"> 검사의뢰서  ({{ company.id }})</h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            
+        </div>
+    </div>
+    <div class="w-full">
+        <table class="table w-full" >
+            <tr>
+                <td colspan="4" class="w-full text-center font-semibold bg-base-200">검 사 의 뢰 서</td>
+            </tr>
+            <tr>
+                <td>의뢰병원</td><td>{{refer.company.business_name}} </td>
+                <td>의사명</td><td>{{refer.company.president_name}} </td>
+            </tr>
+            <tr>
+                <td>의뢰일</td><td>{{ refer.referred_date }}</td>
+                <td>상태</td><td>{{ refer.status }}</td>
+            </tr>
+            <tr>
+                <td>환자명</td><td>{{ refer.patient_name }}</td>
+                <td>환자성별</td><td>{{ refer.patient_gender }}</td>
+            </tr>
+            <tr>
+                <td>생년월일</td><td>{{ refer.patient_birthdate }}</td>
+                <td>연락처</td><td>{{ refer.patient_phone }}</td>
+            </tr>
+            <tr>
+                <td>환자상병</td><td>{{ refer.illness }}</td>
+                <td>외뢰할 검사</td><td>{{ refer.treatment }}</td>
+            </tr>
+            <tr>
+                <td colspan="1">임상소견</td>
+                <td colspan="3">{{ refer.opinion1 }}</td>
+            </tr>
+        </table>
+        <table class="table w-full" >
+            <tr>
+                <td colspan="4" class="w-full text-center font-semibold bg-base-200">진 료 회 송 서</td>
+            </tr>
+            <tr>
+                <td>병명</td><td colspan="3">{{ refer.illness2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="1">향후치료<br>의견</td>
+                <td colspan="3">{{ refer.opinion2 }}</td>
+            </tr>
+        </table>
+
+        <div class="divider"></div>
+        <div class="flex justify-end gap-2">
+            <a type="submit" class="btn btn-primary btn-sm"
+                hx-get="{% url 'crm:collab_report' refer.id %}"
+                hx-swap="outerHTML"
+                hx-target="#refer_create_box"
+                hx-trigger="click"
+            >회송서 작성</a>
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">닫기</button>
+            </form>
+        </div>
+       
+    </div>  
+</div>
+
+

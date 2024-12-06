@@ -11,14 +11,6 @@
         </div>
     </div>
     <div class="w-full">
-        <form 
-          hx-post="{% url 'collab:refer_create' %}" 
-          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-          hx-swap="outerHTML" 
-          hx-trigger="submit"
-          hx-target="#refer_create_box"
-          id="new_refer_form"
-        >
         <table class="table w-full" >
             <tr>
                 <td colspan="4" class="w-full text-center font-semibold bg-base-200">검 사 의 뢰 서</td>
@@ -61,7 +53,7 @@
             <button type="submit" class="btn btn-primary btn-sm">저장</button>
             <button type="submit" class="btn btn-primary btn-sm">인쇄</button>
         </div>
-        </form>
+       
         <script>
             document.getElementById('refer_create_box').addEventListener('htmx:beforeSwap', function(event) {
                 if (event.detail.target.id === 'refer_create_box') {
