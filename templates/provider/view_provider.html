@@ -142,6 +142,8 @@
 	</div>
 	
 </section>
+<!-- 판독의 매출 // 일반사용자는 볼 수 없음 // 관리자(팀장이상)에서 보여짐 -->
+{% if user.menu_id > 10 %}
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
 	<div class="card-body grow-0">
 		<div class="flex justify-between gap-2">
@@ -204,7 +206,7 @@
 	</div>
 
 </section>
-
+{% endif %}
 <section 
 	id="hr_files_section" 
 	class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6"

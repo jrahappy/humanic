@@ -20,193 +20,22 @@
                     stroke-width="10" />
                 <circle cx="512" cy="353.28" r="114.688" class="fill-base-100" />
             </svg>
-            휴먼영상의학센터
+            휴먼영상의학센터 
         </div>
-        <ul class="menu">
-            <li>
-                <a href="{% url 'briefing:index' %}">
-                    <svg data-src="https://unpkg.com/heroicons/20/solid/home.svg" class="h-5 w-5"></svg>
-                    Briefing
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'customer:index' %}">
-                    <svg data-src="https://unpkg.com/heroicons/20/solid/building-library.svg" class="h-5 w-5"></svg>
-                    고객정보
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'provider:index' %}">
-                    <svg 
-                    data-src="https://unpkg.com/heroicons/20/solid/users.svg"
-                    class="h-5 w-5"></svg>
-                    판독의사
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'blog:index' %}">
-                    <svg
-                    data-src="https://unpkg.com/heroicons/20/solid/flag.svg"
-                    class="h-5 w-5"></svg>
-                    게시판
-                </a>
-            </li>
-            
-            <li>
-                <details id="reports-menu">
-                    <summary>
-                        <svg
-                        data-src="https://unpkg.com/heroicons/20/solid/chart-pie.svg"
-                        class="h-5 w-5"></svg>
-                        리포트
-                    </summary>
-                    <ul>
-                        <li>
-                            <a href="{% url 'report:monthly_pro_cus' %}" class="px-5">월별 순위 보기</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'report:report_customer' %}" class="px-5">고객병원별 통계</a>
-                        </li> 
-                        <li>
-                            <a href="{% url 'report:report_period' %}" class="px-5">판독의별 통계</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'report:index' %}" class="px-5">상세검색</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'report:chart' %}" class="px-5">Chart로 보기</a>
-                        </li>                                               
-                        <li>
-                            <a href="{% url 'report:rad_by_subspecialty' %}" class="px-5">세부전공별 통계</a>
-                        </li>
-                                               
-                        
-                </details>
-            </li>
-            {% if user.username == "albert" or user.username == "william" %}
-            
-            <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/bolt.svg"
-                            class="h-5 w-5"></svg>
-                        ReferDex
-                    </summary>
-                    <ul>
-                        <li>
-                            <a href="{% url 'referdex:index' %}" class="px-5">Board</a>
-                        </li>
-                    </ul>
-                    <ul>
-                        <li>
-                            <a href="{% url 'referdex:pm' %}" class="px-5">Workbench</a>
-                        </li>
-                    </ul>
-                </details>
-            </li>
-            <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/funnel.svg"
-                            class="h-5 w-5"></svg>
-                        CRM
-                    </summary>
-                    <ul>
-                        <li>
-                            <a href="{% url 'crm:index' %}" class="px-5">상황판</a>
-                        </li>
-                    </ul>
-                    <ul>
-                        <li>
-                            <a href="{% url 'crm:collab' %}" class="px-5">협진요청관리</a>
-                        </li>
-                    </ul>
-                </details>
-            </li>
-            {% endif %}
-            {% if user.username == "william" %}
-            <hr class="my-6">
-            <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/cog.svg"
-                            class="h-5 w-5"></svg>
-                        관리자 메뉴(이하)
-                </details>
-            </li>
-           
-            <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/document-text.svg"
-                            class="h-5 w-5"></svg>
-                        Data Works
-                    </summary>
-                <ul>
-                    <li><a href="#"
-                        hx-get="{% url 'minibooks:index' %}"
-                        hx-trigger="click"
-                        hx-target="#main_area"
-                        hx-swap="outerHTML"
-                        hx-push-url="true"
-                        class="px-5"
-                        >파일업로드/정규화</a></li>
-                </ul>
-                <ul>
-                    <li><a href="#"
-                        hx-get="{% url 'minibooks:magam_list' %}"
-                        hx-trigger="click"
-                        hx-target="#main_area"
-                        hx-swap="outerHTML"
-                        hx-push-url="true"
-                        class="px-5"
-                        >마감작업</a></li>
-                </ul>
-            </li>
-            
-            <li>
-                <a href="{% url 'collab:home' %}">
-                    <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
-                    Collab
-                    <span class="badge badge-info badge-sm">12</span>
-                </a>
-            </li>
-            <li>
-                <details>
-                    <summary>
-                        <svg
-                            data-src="https://unpkg.com/heroicons/20/solid/adjustments-vertical.svg"
-                            class="h-5 w-5"></svg>
-                        Settings
-                    </summary>
-                    <ul>
-                        <li><a href="#"
-                            hx-get="{% url 'report:performance' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >Purformance (Draft)</a></li>
-                        <li><a href="#"
-                            hx-get="{% url 'report:accounting' %}"
-                            hx-trigger="click"
-                            hx-target="#main_area"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                            class="px-5"
-                            >손익 기준 보기 (Draft)</a>
-                        </li>
-                        
-                    </ul>
-                </details>
-            </li>
-            {% endif %}
-        </ul>
+        {% if user.menu_id == 10 or user.menu_id == 0 %}
+            {% include "aside_10.html" %}
+        {% elif user.menu_id == 20 %}
+            {% include "aside_20.html" %}
+        {% elif user.menu_id == 30 %}
+            {% include "aside_30.html" %}
+        {% elif user.menu_id == 40 %}
+            {% include "aside_40.html" %}
+        {% else %}
+            {% include "aside_90.html" %}
+        {% endif %}
+        
+
+        
     </nav>
     <!-- /sidebar menu -->
 </aside>

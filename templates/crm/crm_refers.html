@@ -1,12 +1,11 @@
 {% load static %}
 {% load custom_filters %}
 
-<tbody id="refer_list_box" class="divide-y divide-gray-300 bg-white"
+<tbody id="report_list_box" class="divide-y divide-gray-300 bg-white"
     hx-get="{% url 'crm:crm_refers' %}"
     hx-trigger="RefersChanged from:body"
     hx-target="this"
     hx-swap="outerHTML"
-    
 >
 {% for refer in refers %}
     <tr id="{{refer.id}}"

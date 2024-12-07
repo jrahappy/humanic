@@ -28,7 +28,6 @@
             판독의사
         </a>
     </li>
-    
     <li>
         <details>
             <summary>
@@ -45,6 +44,26 @@
             <ul>
                 <li>
                     <a href="{% url 'crm:collab' %}" class="px-5">협진요청관리</a>
+                </li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/bolt.svg"
+                    class="h-5 w-5"></svg>
+                ReferDex
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'referdex:index' %}" class="px-5">Board</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <a href="{% url 'referdex:pm' %}" class="px-5">Workbench</a>
                 </li>
             </ul>
         </details>

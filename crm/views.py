@@ -18,7 +18,7 @@ def collab(request):
 def crm_refers(request):
     refers = Refers.objects.all().order_by("-created_at")
     context = {"refers": refers}
-    return render(request, "collab/crm_refers.html", context)
+    return render(request, "crm/crm_refers.html", context)
 
 
 def collab_refer_detail(request, refer_id):

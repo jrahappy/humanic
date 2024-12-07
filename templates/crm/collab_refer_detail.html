@@ -53,10 +53,11 @@
 
         <div class="divider"></div>
         <div class="flex justify-end gap-2">
-            <a type="submit" class="btn btn-primary btn-sm"
+            <a class="btn btn-primary btn-sm"
+                
                 hx-get="{% url 'crm:collab_report' refer.id %}"
-                hx-swap="outerHTML"
-                hx-target="#refer_create_box"
+                hx-swap="innerHTML"
+                hx-target="#base_modal"
                 hx-trigger="click"
             >회송서 작성</a>
             <form method="dialog">  
