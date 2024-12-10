@@ -14,7 +14,7 @@ class BlogForm(ModelForm):
 
     class Meta:
         model = Post
-        fields = ["title", "content", "is_public"]
+        fields = ["title", "category", "content", "is_public"]
         labels = {
             "title": "제목",
             "content": "내용",

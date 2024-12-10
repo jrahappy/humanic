@@ -8,7 +8,12 @@ import json
 
 
 def index(request):
-    post_list = Post.objects.all().order_by("-created_at").select_related("author")
+    # post_list = Post.objects.all().order_by("-created_at").select_related("author")
+    post_list = (
+        Post.objects.filter(is_public=True)
+        .order_by("-created_at")
+        .select_related("author")
+    )
     paginator = Paginator(post_list, 10)  # Show 10 posts per page
 
     page_number = request.GET.get("page")

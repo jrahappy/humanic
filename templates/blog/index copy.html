@@ -1,0 +1,81 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">공지사항 게시판</a>
+            </h2>
+            <a href="#"
+                hx-get="{% url 'blog:create_admin' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                class="btn btn-primary">새 공지사항 작성</a>
+        </div>
+    </div>
+</section>  
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="space-y-12">
+        <table class="min-w-full divide-y divide-gray-500">
+
+            
+        </table>
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    
+                    <section class="w-full md:w-2/3 flex flex-col items-start px-8">
+                        {% for post in posts %}
+                        <article class="w-full flex flex-col shadow my-4 mb-4 px-6 gap-2">
+
+                            <a href="{% url 'blog:detail' post.id %}"
+                                class="text-2xl font-bold hover:text-gray-700 pb-4 cursor-pointer"
+                            >{{ post.title }}
+                            </a>
+                            <p class="text-sm text-gray-600">{{ post.content|truncatechars_html:50 |safe }}</p>
+                            <p class="text-sm text-gray-600">{{ post.created_at|naturaltime }}</p>
+                                                      
+                            <p class="my-4">
+                                <a href="{% url 'blog:detail' post.id %}" class="link text-gray-800 hover:text-black">자세히 보기</a>
+                            </p>
+                        </article>
+                        {% endfor %}
+                    </section>
+                    <section class="w-full md:w-2/3 flex flex-col items-center px-3">
+                        <div class="btn-group">
+                            {% if posts.has_previous %}
+                                <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.previous_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">이전</a>
+                            {% else %}
+                                <button class="btn" disabled>이전</button>
+                            {% endif %}
+                            <span class="btn">{{ posts.number }} / {{ posts.paginator.num_pages }}</span>
+                            {% if posts.has_next %}
+                                <a class="btn" hx-get="{% url 'blog:index' %}?page={{ posts.next_page_number }}" hx-trigger="click" hx-target="#main_area" hx-swap="outerHTML">다음</a>
+                            {% else %}
+                                <button class="btn" disabled>다음</button>
+                            {% endif %}
+                        </div>
+                    </section>
+                      
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+

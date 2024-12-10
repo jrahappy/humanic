@@ -26,7 +26,7 @@
                 hx-trigger="click"
                 hx-target="#main_area"
                 hx-swap="outerHTML"
-                class="btn btn-primary">돌아가기</a>
+                class="btn btn-primary btn-sm">돌아가기</a>
                         
             
         </div>
@@ -34,28 +34,25 @@
 </section>
 
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <article class="card-body grow-0 col-span-12 max-w-4xl">
-        <div class="grid grid-cols-4 gap-2 mt-4">
+    <article class="card-body grow-0 col-span-12 max-w-5xl">
+        <div class="grid grid-cols-4 gap-2 mt-4 border-b-2">
             <!-- Title Field -->
             <div class="col-span-4 flex flex-row justify-between">
-                <div class="text-3xl font-bold hover:text-gray-700 pb-4 px-6">{{ post.title }}</div>
+                <div class="text-2xl font-bold hover:text-gray-700 pb-4 px-6">{{ post.title }}</div>
                 <div class="flex items-end p-2">
                     {% if post.is_public %}
                         <span class="ml-2">공개</span>
                     {% else %}
                         <span class="ml-2">비공개</span>
                     {% endif %}
-
                 </div>
             </div>
         </div>
-        <div class="divider"></div>
-        <div class="grid grid-cols-4 gap-2 mt-4">
-            <div class="col-span-4 px-6">
+        <div class="grid grid-cols-4 gap-2 mt-0">
+            <div class="col-span-4 px-6 bordered shadow-lg text-wrap">
                 {{ post.content|safe }}
             </div>
         </div>
-        <div class="divider"></div>
         <div class="grid grid-cols-4 gap-2 mt-4">
             <div class="form-control col-span-4">
                 <label class="label">
@@ -71,7 +68,7 @@
                         
                     {% endfor %}
                 {% else %}
-                    <div class="border bg-gray-100 p-2 w-full   ">첨부파일 없음</div>
+                    <div class="border bg-gray-100 p-2 w-full">첨부파일 없음</div>
                 {% endif %}
                 </div>
             </div>
@@ -80,12 +77,14 @@
             <div class=" flex flex-row justify-between">
                 <a href="{% url 'blog:index'%}"
                     type="link" 
-                    class="btn btn-primary w-40"
+                    class="btn btn-primary btn-sm w-40"
                 >목록으로</a>
+                {% if user.menu_id > 20 %}
                 <a href="{% url 'blog:update' post.id %}"
                     type="link" 
-                    class="btn w-40"
+                    class="btn btn-sm w-40"
                 >수정하기</a>
+                {% endif %}
             </div>
            
         </div>

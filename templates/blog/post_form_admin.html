@@ -44,15 +44,27 @@
                       <p class="text-red-500 text-xs italic">{{ form.title.errors.0 }}</p> <!-- Display the first error -->
                   {% endif %}
               </div>
+            </div>
+            <div class="">
               <!-- Public Checkbox -->
-              <div class="">
+              <div class="flex flex-row w-full justify-start">
+                <div class="w-30">
                   <label class="label">
-                      <span class="label-text">공개여부</span>
+                    <span class="label-text">대상</span>
+                  </label>
+                  <div class="flex items-center me-4">
+                    {% render_field form.category class="select select-sm select-bordered py-0" %}
+                  </div>
+                </div>
+                <div call="w-30">
+                  <label class="label">
+                    <span class="label-text">공개여부</span>
                   </label>
                   <div class="flex items-center px-2">
-                      {% render_field form.is_public class="checkbox checkbox-sm" %}
-                      <span class="ml-2">공개</span>
+                    {% render_field form.is_public class="checkbox checkbox-sm checkbox-bordered  " %}
+                    <span class="ml-2">공개</span>
                   </div>
+                </div>
               </div>
           </div>
           
