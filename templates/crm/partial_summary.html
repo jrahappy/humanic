@@ -5,44 +5,64 @@
   <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
       <div class="card-body grow-0 flex flex-row justify-between">
         <h2 class="card-title">
-          <a class="link-hover link">병원관련</a>
+          <a class="link-hover link">병원관련 이슈관리</a>
         </h2>
         <div>
          
         </div>
       </div>
-      <div class="overflow-x-auto px-4">
-        <table class="table table-zebra">
-          <tbody>
+      <div class="flex flex-row flex-wrap gap-4 overflow-y-auto px-4">
+      
             {% for rs in opps %}
-            <tr>
-              <td>
-                <a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a>
-              </td>
-              <td>{{ rs.name }}</td>
-              <td>{{ rs.agent }}</td>
-              <td><p class="text-end">{{ rs.category }}</p></td>
-              <td><p class="text-end">{{ rs.stage }}</p></td>
-              <td><p class="text-end">{{ rs.amount|floatformat:0|intcomma }}</p></td>
-              <td><p class="text-end">{{ rs.possibility}}%</p></td>
-            </tr>
+            <div class="card card-compact bg-base-100 w-48 shadow-xl">
+              <div class="card-body">
+                <h3 class="font-semibold"><a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a></h3>
+                <div class="flex flex-row justify-between">
+                  <span>{{ rs.name }} </span>
+                  {% if rs.category  == 'Sale' %}
+                    <span class="badge badge-secondary">{{ rs.category }}</span>
+                  {% else %}
+                    <span class="badge badge-warning">{{ rs.category }}</span>
+                  {% endif %}
+                </div>
+                {% if rs.category == "Sale" %}
+                <div class="flex flex-row justify-between">
+                  <span>{{ rs.amount|floatformat:0|intcomma }} </span>
+                  <span>{{ rs.possibility }}%</span>
+                </div>
+                {% endif %}
+                <div class="flex flex-row justify-between">
+                  <span>목표일:</span>
+                  <span>{{ rs.target_date|date:'Y-m-d' }}</span>
+                </div>
+                <div class="flex flex-row justify-between">
+                  <span>Stage:</span>
+                  <span>{{ rs.stage }}</span>
+                </div>
+                <div class="flex flex-row justify-between">
+                  <span>담당자:</span>
+                  <span>{{ rs.agent }}</span>
+                </div>
+                
+                <!-- <div class="card-actions justify-end">
+                  <button class="btn btn-primary btn-sm">Detail</button>
+                </div> -->
+              </div>
+            </div>
+           
             {% endfor %}
-            
-          </tbody>
-        </table>
+           
       </div>
       <div>
         &nbsp;
       </div>
   </section>
-  <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
-      {% include "crm/chances.html" %}
-  </section>
+  
 
   <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-6">
     <div class="card-body grow-0">
       <h2 class="card-title">
-        <a class="link-hover link">최근 고객소통</a>
+        <a class="link-hover link">최근 소통들</a>
       </h2>
     </div>
     <div class="overflow-x-auto px-4">
