@@ -4,15 +4,59 @@ from .models import Opportunity, Chance
 from customer.models import Company, CustomerLog
 from .forms import OpportunityForm, ChanceForm
 from collab.models import Refers
-from collab.forms import ReportForm
+from collab.forms import ReportForm, ReferChangeStatus
 import datetime
 import json
+
+
+def collab_kanban(request):
+    refers = Refers.objects.all().order_by("-created_at")
+
+    status_rq = refers.filter(status="Requested")
+    status_sch = refers.filter(status="Scheduled")
+    status_in = refers.filter(status="Interpreted")
+    status_cosign = refers.filter(status="Cosigned")
+
+    context = {
+        "refers": refers,
+        "status_rq": status_rq,
+        "status_rq_count": status_rq.count(),
+        "status_sch": status_sch,
+        "status_sch_count": status_sch.count(),
+        "status_in": status_in,
+        "status_in_count": status_in.count(),
+        "status_cosign": status_cosign,
+        "status_cosign_count": status_cosign.count(),
+    }
+    return render(request, "crm/collab_kanban.html", context)
 
 
 def collab(request):
     refers = Refers.objects.all().order_by("-created_at")
     context = {"refers": refers}
     return render(request, "crm/collab.html", context)
+
+
+def partial_collab_kanban(request):
+    refers = Refers.objects.all().order_by("-created_at")
+
+    status_rq = refers.filter(status="Requested")
+    status_sch = refers.filter(status="Scheduled")
+    status_in = refers.filter(status="Interpreted")
+    status_cosign = refers.filter(status="Cosigned")
+
+    context = {
+        "refers": refers,
+        "status_rq": status_rq,
+        "status_rq_count": status_rq.count(),
+        "status_sch": status_sch,
+        "status_sch_count": status_sch.count(),
+        "status_in": status_in,
+        "status_in_count": status_in.count(),
+        "status_cosign": status_cosign,
+        "status_cosign_count": status_cosign.count(),
+    }
+    return render(request, "crm/partial_collab_kanban.html", context)
 
 
 def crm_refers(request):
@@ -25,6 +69,50 @@ def collab_refer_detail(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     context = {"refer": refer}
     return render(request, "crm/collab_refer_detail.html", context)
+
+
+def collab_schedule(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    if request.method == "POST":
+        form = ReferChangeStatus(request.POST, instance=refer)
+        # print(form)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.updated_at = datetime.datetime.now()
+            report.save()
+            # 로그 넣는 부분 추가 필요
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "RefersChanged": None,
+                            "showMessage": "Report Updated.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Error Updating Report.",
+                        }
+                    )
+                },
+            )
+    else:
+        form = ReferChangeStatus(instance=refer)
+        context = {
+            "form": form,
+            "refer": refer,
+        }
+
+    return render(request, "crm/collab_schedule.html", context)
 
 
 def collab_report(request, refer_id):

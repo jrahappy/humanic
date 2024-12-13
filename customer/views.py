@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 from django.db.models import Count, Sum, Func, F, Q
-from .models import Company, ServiceFee, CustomerLog, CustomerContact, CustomerFiles
 from minibooks.models import ReportMasterStat
+from crm.models import Opportunity
+from accounts.models import CustomUser
+from .models import Company, ServiceFee, CustomerLog, CustomerContact, CustomerFiles
 from .forms import (
     CompanyForm,
     ServiceFeeForm,
@@ -9,10 +14,6 @@ from .forms import (
     CustomerContactForm,
     CustomerFilesForm,
 )
-from crm.models import Opportunity
-from django.core.paginator import Paginator
-from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
 import json
 
 
@@ -23,7 +24,7 @@ def tag_delete(request, company_id, tag_id):
     company.tags.remove(tag)
     print(company.tags.all())
     return redirect("customer:detail", company_id)
-    # return HttpResponse(
+    # return HttpResponse(``
     #     status=204,
     #     headers={"HX-Trigger": json.dumps({"CustomerTagsChanged": None})},
     # )
@@ -351,6 +352,8 @@ def detail(request, customer_id):
     contacts = CustomerContact.objects.filter(company=company).order_by("name")
     cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
     opps = Opportunity.objects.filter(company=company).order_by("-created_at")[:20]
+    # sys_users = CustomUser.objects.filter(id=company.customuser).first()
+    print(company.customuser)
     context = {
         "company": company,
         "cm_refers": cm_refers,

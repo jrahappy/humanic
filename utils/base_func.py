@@ -155,7 +155,10 @@ GENDER = [
 
 REFER_STATUS = [
     ("Draft", "Draft"),
-    ("Requested", "협진요청"),
+    ("Requested", "검사요청"),
+    ("Scheduled", "검사예약"),
+    ("Cancelled", "검사취소"),
     ("Interpreted", "1차판독완료"),
-    ("Cosigned", "2차찬독완료"),
+    ("Cosigned", "2차판독완료"),
+    ("Archive", "정산완료"),
 ]

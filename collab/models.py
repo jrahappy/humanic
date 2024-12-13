@@ -18,6 +18,7 @@ class Refers(models.Model):
     # 임상의견(의뢰인이 입력함)
     opinion1 = models.TextField()
     status = models.CharField(choices=REFER_STATUS, max_length=20)
+    scheduled_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # 아래는 진효 회송서 정보

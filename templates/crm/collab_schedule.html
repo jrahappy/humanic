@@ -1,0 +1,112 @@
+{% load widget_tweaks %}
+<div id="collab_schedule_box" class="modal-box card-body w-1/2 max-w-2xl">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div class="ms-2 ">
+            <h2 class="text-lg font-bold"> 검사의뢰 예약하기  ({{ refer.company.id }})</h2>
+        </div>
+        <div class="flex flex-row gap-2">
+            
+        </div>
+    </div>
+    <div class="w-full">
+        <table class="table w-full" >
+            <tr>
+                <td colspan="4" class="w-full text-center font-semibold bg-base-200">검 사 의 뢰 서</td>
+            </tr>
+            <tr>
+                <td>의뢰병원</td><td>{{refer.company.business_name}} </td>
+                <td>의사명</td><td>{{refer.company.president_name}} </td>
+            </tr>
+            <tr>
+                <td>의뢰일</td><td>{{ refer.referred_date }}</td>
+                <td>상태</td><td>{{ refer.status }}</td>
+            </tr>
+            <tr>
+                <td>환자명</td><td>{{ refer.patient_name }}</td>
+                <td>환자성별</td><td>{{ refer.patient_gender }}</td>
+            </tr>
+            <tr>
+                <td>생년월일</td><td>{{ refer.patient_birthdate }}</td>
+                <td>연락처</td><td>{{ refer.patient_phone }}</td>
+            </tr>
+            <tr>
+                <td>환자상병</td><td>{{ refer.illness }}</td>
+                <td>외뢰할 검사</td><td>{{ refer.treatment }}</td>
+            </tr>
+            <tr>
+                <td colspan="1">임상소견</td>
+                <td colspan="3">{{ refer.opinion1 }}</td>
+            </tr>
+        </table>
+        <form 
+            hx-post="{% url 'crm:collab_schedule' refer.id %}"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            hx-swap="outerHTML"
+            hx-trigger="submit"
+            hx-target="#collab_schedule_box"
+            id="collab_schedule_form"
+        >
+            <table class="table w-full" >
+                <tr>
+                    <td colspan="4" class="w-full text-center font-semibold bg-base-200">진료예약</td>
+                </tr>
+                <tr>
+                    <td>일시</td><td colspan="3">
+                        <div>
+                            {{ form.scheduled_at }}
+                            {% if form.scheduled_at.errors %}
+                                <div class="error">
+                                    {% for error in form.scheduled_at.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>상태</td>
+                    <td colspan="3">{{ form.status }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div class="flex flex-row justify-between gap-2">
+                            <a 
+                                href="{% url 'crm:collab_schedule' refer.id %}" 
+                                class="btn btn-secondary btn-sm" 
+                                hx-get="{% url 'crm:collab_schedule' refer.id %}" 
+                                hx-swap="outerHTML" 
+                                hx-trigger="click"
+                                hx-target="#collab_schedule_box"
+                            >진료회송서 작성</a>
+                            <button class="btn btn-primary btn-sm" type="submit">저장하기</button>
+                            
+                            <form method="dialog">  
+                                <button class="btn btn-warning btn-sm">Close</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>  
+</div>
+<script>
+    document.getElementById('collab_schedule_box').addEventListener('htmx:beforeSwap', function(event) {
+        if (event.detail.target.id === 'collab_schedule_box') {
+            // Check if the form submission was successful
+            console.log("Status:", event.detail.xhr.status);
+            console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
+            if (event.detail.xhr.status === 204) {
+                // If successful, close the modal
+                base_modal.close();
+                console.log("Form submission successful");
+            } else {
+                // If there are validation errors, keep the modal open
+                console.log("Form submission failed with validation errors");
+            }
+        }
+    });
+
+</script>
+

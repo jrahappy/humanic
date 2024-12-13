@@ -1,0 +1,28 @@
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+        {{ form.scheduled_at.label_tag }}
+        {{ form.scheduled_at }}
+        {% if form.scheduled_at.errors %}
+            <div class="error">
+                {% for error in form.scheduled_at.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div>
+        {{ form.status.label_tag }}
+        {{ form.status }}
+        {% if form.status.errors %}
+            <div class="error">
+                {% for error in form.status.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <button type="submit">Submit</button>
+</form>

@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from collab.models import Refers, ReferHistory
 from customer.models import Company
+from utils.base_func import REFER_STATUS
 import datetime
 
 
@@ -84,3 +85,29 @@ class ReportForm(ModelForm):
         required=True,
         initial=datetime.date.today,
     )
+
+
+class ReferChangeStatus(ModelForm):
+    class Meta:
+        model = Refers
+        fields = "scheduled_at", "status"
+
+    scheduled_at = forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        required=True,
+        initial=datetime.datetime.now,
+        error_messages={
+            "required": "Please enter the scheduled date and time.",
+            "invalid": "Enter a valid date and time.",
+        },
+    )
+    status = forms.CharField(
+        widget=forms.Select(choices=REFER_STATUS),
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:
+            self.fields["status"].initial = "Scheduled"
+            self.fields["scheduled_at"].initial = datetime.datetime.now()

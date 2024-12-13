@@ -9,6 +9,17 @@ import json
 
 def index(request):
     # post_list = Post.objects.all().order_by("-created_at").select_related("author")
+    user = request.user
+    # Check if the user is a staff member
+    if user.is_staff:
+        pass
+    else:
+        # 판독의의 경우
+        if user.is_doctor:
+            return redirect("dashboard:index")
+        # 병원(고객)의 경우
+        else:
+            return redirect("cust:index")
     post_list = (
         Post.objects.filter(is_public=True)
         .order_by("-created_at")
