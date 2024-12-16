@@ -14,4 +14,6 @@ urlpatterns = [
         "company_update/<int:company_id>/", views.company_update, name="company_update"
     ),
     path("profile/", views.profile, name="profile"),
+    path("illness_list/", views.illness_list, name="illness_list"),
+    path("illness_code_import/", views.illness_code_import, name="illness_code_import"),
 ]

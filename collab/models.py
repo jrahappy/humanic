@@ -15,6 +15,10 @@ class Refers(models.Model):
     illness = models.CharField(max_length=100, null=True, blank=True)
     # List 형태로 입력함
     treatment = models.CharField(max_length=100, null=True, blank=True)
+    # 판독료
+    readprice = models.IntegerField(default=0)
+    # 협력판독료
+    collab_price = models.IntegerField(default=0)
     # 임상의견(의뢰인이 입력함)
     opinion1 = models.TextField()
     status = models.CharField(choices=REFER_STATUS, max_length=20)
@@ -36,9 +40,43 @@ class Refers(models.Model):
         return self.company.business_name + " - " + self.patient_name
 
 
+class ReferIllness(models.Model):
+    refer = models.ForeignKey(Refers, on_delete=models.CASCADE)
+    illness = models.ForeignKey("IllnessCode", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ReferTreatment(models.Model):
+    refer = models.ForeignKey(Refers, on_delete=models.CASCADE)
+    treatment = models.ForeignKey("TreatmentCode", on_delete=models.CASCADE)
+    readprice = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class ReferHistory(models.Model):
     refer = models.ForeignKey(Refers, on_delete=models.CASCADE)
     changed_status = models.CharField(max_length=20)
     memo = models.CharField(max_length=100)
     changed_at = models.DateTimeField(auto_now_add=True)
     changed_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+
+class IllnessCode(models.Model):
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=250)
+    eng_name = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.code + " - " + self.name
+
+
+class TreatmentCode(models.Model):
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+    eng_name = models.CharField(max_length=100, null=True, blank=True)
+    point = models.IntegerField(default=0)
+    price = models.IntegerField(default=0)
+    deleted_at = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.code + " - " + self.name
