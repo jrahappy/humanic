@@ -36,7 +36,6 @@
                                             <th class="w-24">건수</th>
                                             <th class="w-24">OnSite</th>
                                             <th class="w-24">판독료</th>
-                                            <th class="w-24">수수료</th>
                                             <th class="w-24">-</th>
                                         </tr>
                                     </thead>
@@ -51,11 +50,6 @@
                                             </td>
                                             <td>{{ rpm.is_onsite }}</td>
                                             <td>{{ rpm.r_total_provider|floatformat:0|intcomma }}</td>
-                                            {% if rpm.is_onsite %}
-                                            <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
-                                            {% else %}
-                                            <td>{{ rpm.r_total_human|floatformat:0|intcomma }}</td>
-                                            {% endif %}
                                             <td>
                                                 <a href="#"
                                                     onclick="base_modal.showModal()"

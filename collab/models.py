@@ -69,9 +69,17 @@ class IllnessCode(models.Model):
     def __str__(self):
         return self.code + " - " + self.name
 
+    class Meta:
+        verbose_name = "질병코드"
+        verbose_name_plural = "질병코드"
+        ordering = ["code"]
+
 
 class TreatmentCode(models.Model):
     code = models.CharField(max_length=10)
+    category1 = models.CharField(max_length=100, null=True, blank=True)
+    category2 = models.CharField(max_length=100, null=True, blank=True)
+    category3 = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=100)
     eng_name = models.CharField(max_length=100, null=True, blank=True)
     point = models.IntegerField(default=0)
@@ -80,3 +88,8 @@ class TreatmentCode(models.Model):
 
     def __str__(self):
         return self.code + " - " + self.name
+
+    class Meta:
+        verbose_name = "행위코드"
+        verbose_name_plural = "행위코드"
+        ordering = ["code"]
