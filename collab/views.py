@@ -1,6 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Refers, ReferHistory, IllnessCode, ReferIllness, ReferTreatment
+from .models import (
+    Refers,
+    ReferHistory,
+    IllnessCode,
+    ReferIllness,
+    ReferTreatment,
+    SimpleDiagnosis,
+)
 from .forms import ReferForm, CollabCompanyForm
 from accounts.models import CustomUser, Profile
 from customer.models import Company, CustomerContact
@@ -8,7 +15,7 @@ from customer.forms import CompanyForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from tablib import Dataset
-from .resources import IllnessCodeResource
+from .resources import IllnessCodeResource, SimpleDiagnosisResource
 import json
 import csv
 import io
@@ -61,6 +68,55 @@ def illness_code_import(request):
     else:
         context = {"company": company}
         return render(request, "collab/illness_code_import.html", context)
+
+
+def simplecode_list(request):
+    user = request.user
+    user = CustomUser.objects.get(id=user.id)
+    company = Company.objects.filter(customuser=user).first()
+
+    simples = SimpleDiagnosis.objects.all()
+    paginator = Paginator(simples, 10)  # Show 10 illnesses per page
+    page = request.GET.get("page")
+    try:
+        illnesses = paginator.page(page)
+    except PageNotAnInteger:
+        illnesses = paginator.page(1)
+    except EmptyPage:
+        illnesses = paginator.page(paginator.num_pages)
+
+    context = {"simples": simples, "company": company}
+    return render(request, "collab/simplecode_list.html", context)
+
+
+def simplecode_import(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+
+    if request.method == "POST":
+        simple_resource = SimpleDiagnosisResource()
+        dataset = Dataset()
+        new_simple = request.FILES["myfile"]
+
+        print(new_simple)
+
+        dataset.load(new_simple.read(), format="xlsx")
+        result = simple_resource.import_data(dataset, dry_run=True)
+
+        for row in result:
+            for error in row.errors:
+                print(error)
+        if not result.has_errors():
+            simple_resource.import_data(dataset, dry_run=False)
+        else:
+            print(result.errors)
+
+        return redirect("collab:simplecode_list")
+
+    else:
+
+        context = {"company": company}
+        return render(request, "collab/simplecode_import.html", context)
 
 
 def home(request):

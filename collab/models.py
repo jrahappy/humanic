@@ -93,3 +93,19 @@ class TreatmentCode(models.Model):
         verbose_name = "행위코드"
         verbose_name_plural = "행위코드"
         ordering = ["code"]
+
+
+class SimpleDiagnosis(models.Model):
+    code1 = models.CharField(max_length=100, null=True, blank=True)
+    code2 = models.CharField(max_length=200, null=True, blank=True)
+    code3 = models.CharField(max_length=100, null=True, blank=True)
+    code4 = models.CharField(max_length=100, null=True, blank=True)
+    order = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.code1 + " - " + self.code2 + " - " + self.code3 + " - " + self.code4
+
+    class Meta:
+        verbose_name = "간단진단"
+        verbose_name_plural = "간단진단"
+        ordering = ["order"]

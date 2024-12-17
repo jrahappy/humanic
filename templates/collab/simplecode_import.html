@@ -1,0 +1,65 @@
+{% extends 'collab/base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'collab/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2 w-full">
+            <div class="flex flex-row justify-between w-2/3">
+                <h2 class="card-title ">
+                    검사코드(간편)
+                </h2>
+                <div class="flex flex-col">
+                    <form method="get" action="{% url 'customer:index' %}">
+                        <label class="input input-bordered flex items-center gap-2">
+                            <input type="text" class="grow" placeholder="Search" name="q" />
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 16 16"
+                              fill="currentColor"
+                              class="h-4 w-4 opacity-70">
+                              <path
+                                fill-rule="evenodd"
+                                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                                clip-rule="evenodd" />
+                            </svg>
+                          </label>
+                    </form>
+                </div>
+            </div>
+            <div class="text-end me-4 w-1/3">
+                <a href="{% url 'collab:simplecode_list' %}" class="btn btn-primary btn-sm text-white ">업로드 상병코드</a> 
+            </div>
+            
+        </div>
+    </div>
+</section>
+<section class="card col-span-9 overflow-hidden bg-base-100 shadow-sm xl:col-span-9">
+    <div class="card-body grow-0">
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">파일선택</span>
+                </label>
+                <input type="file" name="myfile" class="input input-bordered" />
+                <button type="submit" class="btn btn-primary">업로드</button>
+            </div>
+        </form>
+      
+    </div>
+</section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'collab/aside.html' %}
+	
+{% endblock %}
+
