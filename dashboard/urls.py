@@ -51,4 +51,9 @@ urlpatterns = [
         views.delete_weekday_modality_target,
         name="delete_weekday_modality_target",
     ),
+    path(
+        "export_csv_provider/<int:ayear>/<int:amonth>/<int:provider_id>/",
+        views.export_csv_provider,
+        name="export_csv_provider",
+    ),
 ]

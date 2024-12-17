@@ -13,8 +13,15 @@
                                     고객병원: 총 {{ count_rpms }} 곳
                                 </div>
                                 <div>
-                                    
+                                    <a 
+                                        class="btn btn-sm btn-secondary"
+                                        href="{% url 'dashboard:export_csv_provider' ayear amonth provider.id %}"                                        
+                                    >
+                                        Download Data as CSV
+                                    </a>
+                                   
                                 </div>
+                                
                             </div>
                             <div class="divider"></div>
                             <div>

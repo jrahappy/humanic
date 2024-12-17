@@ -1,5 +1,5 @@
 {% load widget_tweaks %}
-<div id="refer_create_box" class="modal-box card-body w-1/2 max-w-2xl">
+<div id="refer_create_box" class="modal-box card-body max-w-2xl">
     <div class="modal-action justify-between  flex flex-row gap-2">
         <div class="ms-2 ">
             <h2 class="text-lg font-bold"> 검사의뢰서  ({{ company.id }})</h2>
@@ -19,7 +19,7 @@
           hx-target="#refer_create_box"
           id="refer_create_form"
         >
-        <table class="table w-full" >
+        <table class="table min-w-full divide-y devide-x divide-gray-500">
             <tr>
                 <td colspan="4" class="w-full text-center font-semibold bg-base-200">검 사 의 뢰 서</td>
             </tr>

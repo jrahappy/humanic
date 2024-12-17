@@ -8,7 +8,6 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory, MagamMaster
 from accounts.forms import ProfileForm
 from accounts.models import CustomUser, Profile, WorkHours, Holidays, ProductionTarget
@@ -27,7 +26,52 @@ from utils.base_func import (
     WORKHOURS,
 )
 from .forms import ProductionTargetForm
+from urllib.parse import quote
 import json
+import csv
+
+
+def export_csv_provider(request, ayear, amonth, provider_id):
+    provider = CustomUser.objects.get(id=provider_id)
+    real_name = provider.profile.real_name
+    file_name = f"{ayear}_{amonth}_{real_name}_판독매출.csv"
+
+    encoded_file_name = quote(file_name)
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = (
+        f"attachment; filename*=UTF-8''{encoded_file_name}"
+    )
+    response.write("\ufeff")  # BOM (Byte Order Mark) for Excel compatibility
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "AppTitle",
+            "CaseID",
+            "Patient",
+            "Modality",
+            # "ReadPrice",
+            "Radiologist",
+            # "Human",
+        ]
+    )
+
+    rpms = ReportMaster.objects.filter(
+        ayear=ayear, amonth=amonth, provider=provider
+    ).order_by("company__business_name", "amodality")
+    for rpm in rpms:
+        writer.writerow(
+            [
+                rpm.company.business_name,
+                rpm.case_id,
+                rpm.name,
+                rpm.amodality,
+                # rpm.readprice,
+                rpm.pay_to_provider,
+                # rpm.pay_to_human,
+            ]
+        )
+
+    return response
 
 
 def create_weekday_modality_target(request, id):
