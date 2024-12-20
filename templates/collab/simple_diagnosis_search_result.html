@@ -1,0 +1,10 @@
+{% for sim in simples %}
+    <div class="simple">
+        <h3>{{ sim.code4 }}</h3>
+        <a href="#" class="btn btn-primary btn-sm text-white"
+            hx-get="{% url 'collab:simple_diagnosis_create' %}?code4={{ sim.code4 }}"
+            hx-trigger="click"
+            hx-target="#treatment_list"
+            hx-swap="innerHTML">
+    </div>
+{% endfor %}

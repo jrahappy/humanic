@@ -1,0 +1,24 @@
+<div id="simple_diagonosis_list_box"
+    class=""
+    hx-get="{% url 'collab:partial_simple_list' draft_refer.id %}"
+    hx-trigger="SimpleDiagnosisChanged from:body"
+    hx-target="this"
+    hx-swap="innerHTML"
+>
+    <ul>
+        {% for simple in simples %}
+        <li ng-repeat="item in items">
+            <a href="#"
+                hx-delete="{% url 'collab:delete_simple_diagnosis' simple.id %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-confirm="Are you sure you want to delete this record?"
+                hx-trigger="click"
+                hx-target="#simple_diagonosis_list_box"
+            
+            >{{ simple }}</a>
+        </li>
+        {% empty %}
+        <li>검색 결과가 없습니다.</li>
+        {% endfor %}
+    </ul>
+</div>

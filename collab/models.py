@@ -6,19 +6,19 @@ from utils.base_func import GENDER, REFER_STATUS
 
 class Refers(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    referred_date = models.DateField()
+    referred_date = models.DateField(null=True, blank=True)
     patient_name = models.CharField(max_length=50)
     patient_gender = models.CharField(choices=GENDER, max_length=1)
-    patient_birthdate = models.DateField()
+    patient_birthdate = models.DateField(null=True, blank=True)
     patient_phone = models.CharField(max_length=20, null=True, blank=True)
     # List 형태로 입력함
     illness = models.CharField(max_length=100, null=True, blank=True)
     # List 형태로 입력함
     treatment = models.CharField(max_length=100, null=True, blank=True)
     # 판독료
-    readprice = models.IntegerField(default=0)
+    readprice = models.IntegerField(default=0, null=True, blank=True)
     # 협력판독료
-    collab_price = models.IntegerField(default=0)
+    collab_price = models.IntegerField(default=0, null=True, blank=True)
     # 임상의견(의뢰인이 입력함)
     opinion1 = models.TextField()
     status = models.CharField(choices=REFER_STATUS, max_length=20)
@@ -51,6 +51,23 @@ class ReferTreatment(models.Model):
     treatment = models.ForeignKey("TreatmentCode", on_delete=models.CASCADE)
     readprice = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ReferSimpleDiagnosis(models.Model):
+    refer = models.ForeignKey(Refers, on_delete=models.CASCADE)
+    diagnosis = models.ForeignKey("SimpleDiagnosis", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return (
+            self.diagnosis.code1
+            + " - "
+            + self.diagnosis.code2
+            + " - "
+            + self.diagnosis.code3
+            + " - "
+            + self.diagnosis.code4
+        )
 
 
 class ReferHistory(models.Model):

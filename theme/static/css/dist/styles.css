@@ -6303,6 +6303,10 @@ html:has(.drawer-toggle:checked) {
   padding-right: 1rem;
 }
 
+.ps-2 {
+  padding-inline-start: 0.5rem;
+}
+
 .pt-0 {
   padding-top: 0px;
 }

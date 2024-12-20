@@ -278,3 +278,9 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
                 - 새 사용자 등록(내부 인원, 판독의, 고객병원별 담당자)
                 - 사용자 정보 변경(삭제 포함)
 
+# 12/17/2024 #
+    - 검사의뢰서 작서 방식 고민중
+        1안 : Wizard 방식. 환자 선택 -> 상병 선택 -> 검사 선택 -> 제출
+        2안 : Cart 방식. 환자 선택후 상병,검사 선택을 카트방식으로 함
+        3안 : Modal 방식
+        4안 : 창나누기 방식

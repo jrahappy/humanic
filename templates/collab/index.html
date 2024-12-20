@@ -32,16 +32,8 @@
                 </div>
             </div>
             <div class="text-end me-4 w-1/3">
-                <a href="#"
-                    onclick = "base_modal.showModal()"
-                    hx-get="{% url 'collab:refer_create' %}" 
-                    hx-trigger="click"
-                    hx-target="#base_modal"
-                    hx-swap="innerHTML"
-                    class="btn btn-primary btn-sm text-white "
-                    >새 검사 의뢰 </a> 
+                <a href="{% url 'collab:refer_create' %}" class="btn btn-primary btn-sm text-white ">새 검사 의뢰</a>
             </div>
-            
         </div>
     </div>
 </section>

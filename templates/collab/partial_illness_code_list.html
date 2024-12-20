@@ -1,0 +1,16 @@
+<div id="illnesses_list" class="overflow-y-auto h-92" style="height:548px;">
+    {% for ill in illnesses %}
+    
+        <div class="flex flex-row justify-between mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-100">
+            <h3>{{ ill.code }} {{ ill.name }} {{ ill.eng_name }}</h3>
+            <a href="#" class="btn btn-primary btn-sm text-white"
+                hx-get="{% url 'collab:create_refer_illness' draft_refer.id ill.id %}"
+                hx-trigger="click"
+                hx-target="#illness_list_box"
+                hx-swap="innerHTML">
+                추가
+            </a>
+        </div>
+    {% endfor %}
+</div>
+       

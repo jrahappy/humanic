@@ -1,14 +1,55 @@
+{% extends 'collab/base.html' %}
+{% load static %}
+{% load custom_filters %}
 {% load widget_tweaks %}
-<div id="refer_create_box" class="modal-box card-body w-1/2 max-w-2xl">
+
+{% block header %}
+    {% include 'collab/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2 w-full">
+            <div class="flex flex-row justify-between w-2/3">
+                <h2 class="card-title ">
+                    새 검사의뢰서 작성 / {{ draft_refer.id }}
+                </h2>
+                <div class="flex flex-col">
+                    <form method="get" action="{% url 'customer:index' %}">
+                        <label class="input input-bordered flex items-center gap-2">
+                            <input type="text" class="grow" placeholder="Search" name="q" />
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 16 16"
+                              fill="currentColor"
+                              class="h-4 w-4 opacity-70">
+                              <path
+                                fill-rule="evenodd"
+                                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                                clip-rule="evenodd" />
+                            </svg>
+                          </label>
+                    </form>
+                </div>
+            </div>
+            <div class="text-end me-4 w-1/3">
+                <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
+            </div>
+            
+        </div>
+    </div>
+</section>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-8">
+    <div class="card-body grow-0">
+           
+           
+<div id="refer_create_box" class="">
     <div class="modal-action justify-between  flex flex-row gap-2">
         <div class="ms-2 ">
             <h2 class="text-lg font-bold"> 검사의뢰서  ({{ company.id }})</h2>
         </div>
-        <div class="flex flex-row gap-2">
-            <form method="dialog">  
-                <button class="btn btn-warning btn-sm">닫기</button>
-            </form>
-        </div>
+       
     </div>
     <div class="w-full">
         <table class="table w-full" >
@@ -20,29 +61,40 @@
                 <td>의사명</td><td>{{company.president_name}} </td>
             </tr>
             <tr>
-                <td>의뢰일</td><td>{% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}</td>
-                <td>상태</td><td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>
+                <td>의뢰일</td><td>{{ refer.referred_date }}</td>
+                <td>상태</td><td>{{ refer.status }}</td>
             </tr>
             <tr>
-                <td>환자명</td><td>{% render_field form.patient_name class="input input-bordered input-sm w-40" %}</td>
-                <td>환자성별</td><td>{% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}</td>
+                <td>환자명</td><td>{{ refer.patient_name }}</td>
+                <td>환자성별</td><td>{{ refer.patient_gender }}</td>
             </tr>
             <tr>
-                <td>생년월일</td><td>{% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}</td>
-                <td>연락처</td><td>{% render_field form.patient_phone class="input input-bordered input-sm w-40" %}</td>
+                <td>생년월일</td><td>{{ refer.patient_birthdate }}</td>
+                <td>연락처</td><td>{{ refer.patient_phone }}</td>
             </tr>
             <tr>
-                <td>환자상병</td><td>{% render_field form.illness class="input input-bordered input-sm w-40" %}</td>
-                <td>외뢰할 검사</td><td>{% render_field form.treatment class="input input-bordered input-sm w-40" %}</td>
+                <td>환자상병</td>
+                <td>
+                    {% for ill in illnesses %}
+                        <div class="">{{ill.illness}}</div>
+                    {% endfor %}
+                </td>
+                <td>외뢰할 검사</td>
+                <td>
+                    {% for sim in simples %}
+                        <div class="">{{sim.diagnosis}}</div>
+                    {% endfor %}
+
+                </td>
             </tr>
             <tr>
                 <td colspan="1">임상소견</td>
-                <td colspan="3">{% render_field form.opinion1 class="textarea textarea-bordered w-full" cols=50 rows=3 %}</td>
+                <td colspan="3">{{ refer.opinion1 }}</td>
             </tr>
             <tr>
                 <td colspan="1">오 시 는 길</td>
                 <td colspan="3">
-
+                    <img src="{% static 'img/map_small.png' %}" alt="map" class="w-full" />
                 </td>
             </tr>
             
@@ -54,25 +106,18 @@
             <button type="submit" class="btn btn-primary btn-sm">인쇄</button>
         </div>
        
-        <script>
-            document.getElementById('refer_create_box').addEventListener('htmx:beforeSwap', function(event) {
-                if (event.detail.target.id === 'refer_create_box') {
-                    // Check if the form submission was successful
-                    console.log("Status:", event.detail.xhr.status);
-                    console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
-                    if (event.detail.xhr.status === 204) {
-                        // If successful, close the modal
-                        base_modal.close();
-                        console.log("Form submission successful");
-                    } else {
-                        // If there are validation errors, keep the modal open
-                        console.log("Form submission failed with validation errors");
-                    }
-                }
-            });
-
-        </script>
     </div>  
 </div>
+</div>
+</section>
+   
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'collab/aside.html' %}
+	
+{% endblock %}
+
 
 

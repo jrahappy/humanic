@@ -4,3 +4,4 @@ from .models import Refers, IllnessCode, TreatmentCode
 # Register your models here.
 admin.site.register(IllnessCode)
 admin.site.register(TreatmentCode)
+admin.site.register(Refers)

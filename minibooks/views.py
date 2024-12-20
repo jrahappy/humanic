@@ -357,10 +357,14 @@ def create_reportmaster(request, id):
     platform = a_raw.platform
     ayear = a_raw.ayear
     amonth = a_raw.amonth
+    # 해달월의 마지막 날짜를 구함
+    last_date = date(temp_year, temp_month, monthrange(temp_year, temp_month)[1])
+
     a_file = a_raw.afile
     # 상수들 준비
     humanic = Company.objects.get(id=1)
-    humanic_platform = Platform.objects.filter(name="HPACS").first()
+    # not use on Nov 2024
+    # humanic_platform = Platform.objects.filter(name="HPACS").first()
 
     # rawdata_resource = rawdataResource()
     dataset = Dataset()
@@ -424,13 +428,56 @@ def create_reportmaster(request, id):
                         human_paid_all=str(data[24]).strip() if data[24] else "",
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
+                        adate=last_date,
                         created_at=date.today(),
                         # verified=False,
                         uploadhistory=a_raw,
                         excelrownum=i,
                     )
-                # elif platform == "ETC":
+                elif platform == "TAKE":
+                    ReportMaster.objects.create(
+                        apptitle=str(data[0]).strip() if data[0] else "",
+                        ein=str(data[1]).strip() if data[1] else "",
+                        case_id=str(data[2]).strip() if data[2] else "",
+                        name=str(data[3]).strip() if data[3] else "",
+                        department=str(data[4]).strip() if data[4] else "",
+                        bodypart=str(data[5]).strip() if data[5] else "",
+                        modality=str(data[6]).strip() if data[6] else "",
+                        equipment=str(data[7]).strip() if data[7] else "",
+                        studydescription=str(data[8]).strip() if data[8] else "",
+                        imagecount=data[9],
+                        accessionnumber=str(data[10]).strip() if data[10] else "",
+                        readprice=data[11],
+                        reader=str(data[12]).strip() if data[12] else "",
+                        approver=str(data[13]).strip() if data[13] else "",
+                        radiologist=(
+                            str(data[14]).strip().replace("\n", "").replace("\t", "")
+                            if data[14]
+                            else ""
+                        ),
+                        radiologist_license=str(data[15]).strip() if data[15] else "",
+                        studydate=str(data[16]).strip() if data[16] else "",
+                        approveddttm=str(data[17]).strip() if data[17] else "",
+                        stat=str(data[18]).strip() if data[18] else "",
+                        pacs=str(data[19]).strip() if data[19] else "",
+                        requestdttm=str(data[20]).strip() if data[20] else "",
+                        ecode=str(data[21]).strip() if data[21] else "",
+                        sid=str(data[22]).strip() if data[22] else "",
+                        # X column
+                        patientid=str(data[23]).strip() if data[23] else "",
+                        # 24번 칼럼은 보라매, 건보일산 파일에는 존재하지 않음
+                        # human_paid_all=str(data[24]).strip() if data[24] else "",
+                        ayear=str(ayear).strip() if ayear else "",
+                        amonth=str(amonth).strip() if amonth else "",
+                        adate=last_date,
+                        created_at=date.today(),
+                        # verified=False,
+                        uploadhistory=a_raw,
+                        excelrownum=i,
+                    )
 
+                # 아주 예전 엑셀파일 처리를 위해 사용된 것들 12/20/2024
+                # elif platform == "ETC":
                 # ReportMaster.objects.create(
                 #     apptitle=data[0],
                 #     case_id=data[1],
@@ -469,6 +516,7 @@ def create_reportmaster(request, id):
                         patientid=data[13],
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
+                        adate=last_date,
                         created_at=date.today(),
                         verified=False,
                         uploadhistory=a_raw,
@@ -625,6 +673,7 @@ def aggregate_data(request, upload_history_id):
     uh = get_object_or_404(UploadHistory, id=upload_history_id)
     temp_year = int(uh.ayear)
     temp_month = int(uh.amonth)
+    # 해달월의 마지막 날짜를 구함
     last_date = date(temp_year, temp_month, monthrange(temp_year, temp_month)[1])
 
     try:

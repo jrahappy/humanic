@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import ModelForm
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 from collab.models import Refers, ReferHistory
 from customer.models import Company
 from utils.base_func import REFER_STATUS
@@ -41,17 +43,26 @@ class ReferForm(ModelForm):
             "opinioned_at",
         ]
 
-        # target_date = forms.DateField(
-        #     input_formats=["%Y-%m-%d"],
-        #     widget=forms.DateInput(attrs={"type": "date"}),
-        #     required=False,
-        # )
-
     referred_date = forms.DateField(
         input_formats=["%Y-%m-%d"],
         widget=forms.DateInput(attrs={"type": "date"}),
         required=True,
         initial=datetime.date.today(),
+        validators=[
+            MinValueValidator(datetime.date(1900, 1, 1)),
+            MaxValueValidator(datetime.date.today()),
+        ],
+    )
+    patient_phone = forms.CharField(
+        max_length=20,
+        required=True,
+        error_messages={
+            "required": "Please enter the patient's phone number.",
+        },
+    )
+    directions = forms.CharField(
+        widget=forms.Textarea(attrs={"cols": 50, "rows": 3}),
+        required=False,
     )
 
 
@@ -72,12 +83,6 @@ class ReportForm(ModelForm):
             "created_at",
             "updated_at",
         ]
-
-        # target_date = forms.DateField(
-        #     input_formats=["%Y-%m-%d"],
-        #     widget=forms.DateInput(attrs={"type": "date"}),
-        #     required=False,
-        # )
 
     opinioned_at = forms.DateField(
         input_formats=["%Y-%m-%d"],
