@@ -355,11 +355,10 @@ def create_reportmaster(request, id):
 
     a_raw = UploadHistory.objects.get(id=id)
     platform = a_raw.platform
-    ayear = a_raw.ayear
-    amonth = a_raw.amonth
+    ayear = int(a_raw.ayear)
+    amonth = int(a_raw.amonth)
     # 해달월의 마지막 날짜를 구함
-    last_date = date(temp_year, temp_month, monthrange(temp_year, temp_month)[1])
-
+    last_date = date(ayear, amonth, monthrange(ayear, amonth)[1])
     a_file = a_raw.afile
     # 상수들 준비
     humanic = Company.objects.get(id=1)
