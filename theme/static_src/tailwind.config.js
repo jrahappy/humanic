@@ -44,6 +44,9 @@ module.exports = {
     theme: {
         extend: {},
     },
+    daisyui: {
+        themes: ["light", "dark", "cupcake", "corporate", "business", "wireframe"],
+    },
     plugins: [
         /**
          * '@tailwindcss/forms' is the forms plugin that provides a minimal styling

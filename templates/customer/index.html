@@ -13,21 +13,10 @@
                 <h2 class="card-title ">
                     고객 병원들 목록
                 </h2>
-                <div class="flex flex-col">
-                    <form method="get" action="{% url 'customer:index' %}">
-                        <label class="input input-bordered flex items-center gap-2">
-                            <input type="text" class="grow" placeholder="Search" name="q" />
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 16 16"
-                              fill="currentColor"
-                              class="h-4 w-4 opacity-70">
-                              <path
-                                fill-rule="evenodd"
-                                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                                clip-rule="evenodd" />
-                            </svg>
-                          </label>
+                <div class="flex flex-row bg-base-200 p-2 rounded-lg w-80">
+                    <form method="get" class="flex flex-row" action="{% url 'customer:index' %}">
+                        <input type="text" class="w-full" placeholder="병원명, 담당자명, 사업자번호 검색" name="q" />
+                        <input type="submit" class="btn btn-primary btn-sm text-white mt-2" value="검색" />
                     </form>
                 </div>
             </div>

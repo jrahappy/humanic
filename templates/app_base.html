@@ -1,7 +1,8 @@
 {% load humanize %}
 {% load static tailwind_tags %} 
 <!doctype html>
-<html data-theme="corporate" data-leftbar-hide>
+<!-- <html data-theme="corporate" data-leftbar-hide> -->
+<html data-theme="cupcake">
 	<head>
 		<meta charset="utf-8" />
 		<title>{{ title }} | Humanrad </title>
@@ -21,6 +22,7 @@
 		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
 		<style>
 			#spinner {
 				position: fixed;
@@ -96,35 +98,45 @@
 				
 			}
 			@keyframes fade-in {
-				from { opacity: 0; }
-			  }
-		   
-			  @keyframes fade-out {
-				to { opacity: 0; }
-			  }
-		   
-			  @keyframes slide-from-right {
-				from { transform: translateX(90px); }
-			  }
-		   
-			  @keyframes slide-to-left {
-				to { transform: translateX(-90px); }
-			  }
-		   
-			  /* define animations for the old and new content */
-			  ::view-transition-old(slide-it) {
-				animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-				600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
-			  }
-			  ::view-transition-new(slide-it) {
-				animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
-				600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
-			  }
-		   
-			  /* tie the view transition to a given CSS class */
-			  .report-transition {
-				  view-transition-name: slide-it;
-			  }
+			from { opacity: 0; }
+			}
+		
+			@keyframes fade-out {
+			to { opacity: 0; }
+			}
+		
+			@keyframes slide-from-right {
+			from { transform: translateX(90px); }
+			}
+		
+			@keyframes slide-to-left {
+			to { transform: translateX(-90px); }
+			}
+		
+			/* define animations for the old and new content */
+			::view-transition-old(slide-it) {
+			animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+			600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+			}
+			::view-transition-new(slide-it) {
+			animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+			600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+			}
+		
+			/* tie the view transition to a given CSS class */
+			.report-transition {
+				view-transition-name: slide-it;
+			}
+			:root {
+				--my-color: #fff;
+				/* or any other variables/style */
+			}
+			[data-theme='dark'] {
+			--my-color: #000;
+			}
+			[data-theme='pink'] {
+			--my-color: #ffabc8;
+			}
 			   
 		</style>
 

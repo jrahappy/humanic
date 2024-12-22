@@ -249,8 +249,11 @@ def index(request):
     else:
         q = request.GET.get("q")
         if q:
+            q = q.strip()
             companies = Company.objects.filter(
-                Q(business_name__icontains=q) | Q(contact_person__icontains=q)
+                Q(business_name__icontains=q)
+                | Q(contact_person__icontains=q)
+                | Q(ein__icontains=q)
             ).order_by(ko_kr.asc())
             if companies.count() == 1:
                 return redirect("customer:detail", companies[0].id)
@@ -282,7 +285,7 @@ def search_company(request):
     if request.method == "GET":
         q = request.GET["q"].strip()
         # print(q)
-        companies = Company.objects.filter(business_name__icontains=q)
+        companies = Company.objects.filter(Q(business_name__icontains=q) | Q(ein=q))
         # if companies.count() == 1:
         #     return redirect("customer:detail", companies[0].id)
         context = {"companies": companies, "q": q}
