@@ -8,7 +8,9 @@ urlpatterns = [
     path("refer_list/<int:company_id>/", views.refer_list, name="refer_list"),
     path("refer_create/", views.refer_create, name="refer_create"),
     path("refer_detail/<int:refer_id>/", views.refer_detail, name="refer_detail"),
+    path("refer_print/<int:refer_id>/", views.refer_print, name="refer_print"),
     path("refer_update/<int:refer_id>/", views.refer_update, name="refer_update"),
+    path("refer_delete/<int:refer_id>/", views.refer_delete, name="refer_delete"),
     path("company_info/<int:company_id>/", views.company_info, name="company_info"),
     path(
         "company_update/<int:company_id>/", views.company_update, name="company_update"
@@ -19,27 +21,27 @@ urlpatterns = [
     path("simplecode_list/", views.simplecode_list, name="simplecode_list"),
     path("simplecode_import/", views.simplecode_import, name="simplecode_import"),
     path(
-        "/partial_simple_list/<int:refer_id>/",
+        "partial_simple_list/<int:refer_id>/",
         views.partial_simple_list,
         name="partial_simple_list",
     ),
     path(
-        "/partial_simple_diagnosis_list/<int:refer_id>/",
+        "partial_simple_diagnosis_list/<int:refer_id>/",
         views.partial_simple_diagnosis_list,
         name="partial_simple_diagnosis_list",
     ),
     path(
-        "/delete_simple_diagnosis/<int:simple_id>/",
+        "delete_simple_diagnosis/<int:simple_id>/",
         views.delete_simple_diagnosis,
         name="delete_simple_diagnosis",
     ),
     path(
-        "/create_simple_diagnosis/<int:refer_id>/<int:simple_id>/",
+        "create_simple_diagnosis/<int:refer_id>/<int:simple_id>/",
         views.create_simple_diagnosis,
         name="create_simple_diagnosis",
     ),
     path(
-        "/partial_illness_code_list/<int:refer_id>/",
+        "partial_illness_code_list/<int:refer_id>/",
         views.partial_illness_code_list,
         name="partial_illness_code_list",
     ),

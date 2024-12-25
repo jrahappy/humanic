@@ -1,0 +1,174 @@
+
+{% load static tailwind_tags %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Gothic+A1:100,400,700" rel="stylesheet">
+
+    {% tailwind_css %}
+    <title></title>
+    
+    <!-- Styling for Print -->
+    <style>
+        /* General Reset */
+        body {
+            font-size: 10px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Screen-specific styles */
+        @media screen {
+            .print-button {
+                display: block;
+                margin: 10px 0;
+                text-align: center;
+            }
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .print-button {
+                display: none; /* Hide buttons or navigation during print */
+            }
+
+            /* Ensure full-page usage for print */
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            thead {
+                display: table-header-group; /* Ensure table header repeats on each page */
+            }
+
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .no-print {
+                display: none; /* Hide any elements not meant for print */
+            }
+        }
+    </style>
+    <script>
+        // Automatically trigger print dialog when the page loads
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</head>
+<body>
+    <!-- Print Button (Visible on Screen Only) -->
+    <div class="print-button " style="text-align:right;width:800px;">
+        <button onclick="window.print()">Print Report</button>
+    </div>
+    <div id="report" style="text-align:center; width:800px;">
+        <table class="table min-w-full divide-y devide-x divide-gray-900">
+            <tr class="align-top border border-gray-500">
+                <td colspan="4">
+                    <div class="text-bold text-3xl text-center mt-2 mb-2">검  사  의  뢰  서</div>
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="w-24 align-top border-e border-gray-500">의뢰병원</td>
+                <td class="w-48 align-top border-e border-gray-500">{{company.business_name}} </td>
+                <td class="w-24 align-top border-e border-gray-500">의사명</td>
+                <td class="w-48">{{company.president_name}} </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="align-top border-e border-gray-500">의뢰일</td>
+                <td class="align-top border-e border-gray-500">{{ refer.referred_date }}</td>
+                <td class="align-top border-e border-gray-500">상태</td>
+                <td>{{ refer.status }}</td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="align-top border-e border-gray-500">환자명</td>
+                <td class="align-top border-e border-gray-500">{{ refer.patient_name }}</td>
+                <td class="align-top border-e border-gray-500">환자성별</td>
+                <td>{{ refer.patient_gender }}</td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="align-top border-e border-gray-500">생년월일</td>
+                <td class="align-top border-e border-gray-500">{{ refer.patient_birthdate }}</td>
+                <td class="align-top border-e border-gray-500">연락처</td>
+                <td>{{ refer.patient_phone }}</td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="align-top border-e border-gray-500">환자상병</td>
+                <td class="align-top border-e border-gray-500">
+                    {% for ill in illnesses %}
+                        <div class="">{{ill.illness}}</div>
+                    {% endfor %}
+                </td>
+                <td class="align-top border-e border-gray-500">외뢰할 검사</td>
+                <td>
+                    {% for sim in simples %}
+                        <div class="">{{sim.diagnosis}}</div>
+                    {% endfor %}
+
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td colspan="1" class="align-top border-e border-gray-500">
+                    <div class="font-semibold text-sm">임상소견:</div>
+                </td>
+                <td colspan="3" class="align-top border border-gray-500">
+                    <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1 }}</div>
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td colspan="4" class="align-top border-e border-gray-500">
+                    <div class="font-semibold text-sm text-center">휴먼영상의학센터의원 오시는 길</div>
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td colspan="2">
+                    <img src="{% static 'img/map_small.png' %}" alt="map" style="width:300px;" />
+                </td>
+                <td colspan="2" class="align-top border-e border-gray-500">
+                    <div class="flex flex-col gap-2">
+                        <div class="font-semibold text-md">
+                            휴먼영상의학센터(강남 신사역 5번출구)
+                        </div>
+                        <div>
+                            전화: 1588-7515, 02-512-6695<br>
+                            팩스: 02-3014-3696 <br>
+                        </div>
+                        <div>
+                            주소: 서울특별시 서초구 강남대로 621 K-타워 3층 <br>
+                            주차장진입로 : K타워 1층<br>
+                            홈페이지: www.humiic.co.kr<br>
+                        </div>
+                        <div>
+                            진료시간<br>
+                            평일. 오전 9:00 ~ 오후 6:00 <br>
+                            토요일. 오전 9:00 ~ 오후 1:00 <br>
+                            공휴일/일요일. 휴진<br>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+</body>
+</html>

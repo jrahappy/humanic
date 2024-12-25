@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<!-- <section class="card col-span-12 overflow-hidden shadow-sm xl:col-span-12"> -->
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
         <div class="flex flex-row justify-even gap-2">
@@ -14,8 +15,8 @@
             </h2>
             <div class="card-title">
                 <form action="{% url 'provider:index' %}" method="GET">
-                    <input type="text" name="q" class="input input-bordered w-96" placeholder="성명, 이메일, 전공 또는 PACS id....." value="{{ request.GET.q }}">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <input type="text" name="q" class="input input-bordered input-sm w-80" placeholder="성명, 이메일, 전공 또는 PACS id....." value="{{ request.GET.q }}">
+                    <button type="submit" class="btn btn-primary btn-sm">Search</button>
                 </form>
             </div>
         </div>
@@ -23,37 +24,39 @@
 </section>
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="px-6 mt-4">
-        <table class="table table-zebra">
-            <thead class="bg-gray-100">
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">RAD ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider ">Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Specialty 1</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Specialty 2</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">CV3 ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">OnPACS ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Files</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider text-center">Action</th>
+        <table class="min-w-full divide-y divide-gray-500">
+            <thead >
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">RAD ID</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Radiologist</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Email</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Phone</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Specialty1</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Specialty2</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">CV3 ID</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">OnPACS ID</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Files</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Status</th>
+                    
                 </tr>
             </thead>
             <tbody>
             {% for data in  doctors %}
-                <tr>
-                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                <tr data-company-id="{{company.id}}" class=" hover:bg-gray-500 hover:text-gray-100 hover:cursor-pointer"
+                    onclick="location.href='{% url 'provider:view_provider' data.id %}'" 
+                >
+                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium  sm:pl-6">
                         {{ data.username }}
                     </td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ data.email }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 hover:bg-sky-200">
-                        <a href="{% url 'provider:view_provider' data.id %}" class="">
-                            {{ data.profile.real_name }}
-                        </a>
-                    </td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty2|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.specialty3|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.cv3_id|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">{{ data.profile.onpacs_id|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.real_name }}</td>
+                    <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ data.email }}</td>
+                    <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ data.profile.cellphone|handle_none }}</td>
+                   
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.specialty2|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.specialty3|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.cv3_id|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.onpacs_id|handle_none }}</td>
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">
                         {% if data.hr_files_count > 0 %}
                             <a href="#" class="btn btn-outline btn-xs">
                                 {{ data.hr_files_count }}
@@ -62,7 +65,7 @@
                             -
                         {% endif %}
                     </td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
+                    <td class="px-6 py-2 whitespace-nowrap text-sm ">
                         {% if data.profile.contract_status == 'T' %}
                         <span class="badge badge-error">{{ data.profile.contract_status|handle_none }}</span>
                         {% elif data.profile.contract_status == 'I' %}
@@ -71,9 +74,6 @@
                         <span class="badge badge-success">{{ data.profile.contract_status|handle_none }}</span>
                         {% endif %}
                        
-                    </td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-end">
-                        <a href="{% url 'provider:view_provider' data.id %}" class="btn btn-primary btn-sm">Detail</a>
                     </td>
                 </tr>
             {% empty %}

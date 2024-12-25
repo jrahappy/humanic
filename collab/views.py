@@ -75,7 +75,9 @@ def partial_illness_code_list(request, refer_id):
     q = request.GET.get("q")
     print(q)
     if q:
-        illnesses = IllnessCode.objects.filter(name__icontains=q)
+        illnesses = IllnessCode.objects.filter(
+            name__icontains=q
+        ) | IllnessCode.objects.filter(code__icontains=q)
         paginator = Paginator(illnesses, 20)  # Show 10 illnesses per page
         page = request.GET.get("page")
         try:
@@ -111,6 +113,9 @@ def delete_simple_diagnosis(request, simple_id):
 
 
 def create_simple_diagnosis(request, refer_id, simple_id):
+    refer_id = int(refer_id)
+    simple_id = int(simple_id)
+    print(refer_id, simple_id)
     refer = Refers.objects.get(id=refer_id)
     simple = SimpleDiagnosis.objects.get(id=simple_id)
     new_one = ReferSimpleDiagnosis.objects.create(refer=refer, diagnosis=simple)
@@ -137,10 +142,74 @@ def partial_simple_list(request, refer_id):
     return render(request, "collab/partial_simple_list.html", context)
 
 
+# def partial_simple_diagnosis_list(request, refer_id):
+#     simples = SimpleDiagnosis.objects.all()
+#     context = {"simples": simples, "refer_id": refer_id}
+#     return render(request, "collab/partial_simple_diagnosis_list.html", context)
+
+
 def partial_simple_diagnosis_list(request, refer_id):
-    simples = SimpleDiagnosis.objects.all()
-    context = {"simples": simples, "refer_id": refer_id}
-    return render(request, "collab/partial_simple_diagnosis_list.html", context)
+    refer = Refers.objects.get(id=refer_id)
+    sims = SimpleDiagnosis.objects.all().order_by("order")
+    v_html = ""
+    v_step = -1
+    v_code = ""
+    header_flag = False
+    header2_flag = False
+    header3_flag = False
+
+    i = 0
+    for sim in sims:
+        temp_htmx = (
+            "<div class='flex flex-row justify-between items-center w-full mb-1'>"
+        )
+        if sim.is_head:
+            if sim.step == 0:
+                temp_header = temp_htmx + f"<h3>{sim.code1}</h3>"
+            elif sim.step == 1:
+                temp_header = f"<h3 class='mt-4'>{sim.code1}</h3>"
+                temp_header += temp_htmx + f"<p class='text-sm ps-2'>--{sim.code2}</p>"
+            elif sim.step == 2:
+                temp_header = f"<h3 class='mt-4'>{sim.code1}</h3>"
+                temp_header += f"<p class='text-sm ps-2'>--{sim.code2}</p>"
+                temp_header += (
+                    temp_htmx + f"<p class='text-sm ps-2'>----{sim.code3}</p>"
+                )
+            else:
+                temp_header = f"<h3 class='mt-4'>{sim.code1}</h3>"
+                temp_header += f"<p class='text-sm ps-2'>--{sim.code2}</p>"
+                temp_header += f"<p class='text-sm ps-2'>----{sim.code3}</p>"
+                temp_header += (
+                    temp_htmx + f"<p class='text-sm ps-2'>------{sim.code4}</p>"
+                )
+
+        else:
+
+            if sim.step == 0:
+                temp_header = temp_htmx + f"<p class='text-sm'>{sim.code1}</p>"
+            elif sim.step == 1:
+                temp_header = temp_htmx + f"<p class='text-sm ps-2'>--{sim.code2}</p>"
+            elif sim.step == 2:
+                temp_header = temp_htmx + f"<p class='text-sm ps-2'>----{sim.code3}</p>"
+            else:
+                temp_header = (
+                    temp_htmx + f"<p class='text-sm ps-2'>------{sim.code4}</p>"
+                )
+        temp_header += (
+            f"<a href='#' class='btn btn-xs btn-primary' "
+            f"hx-target='#simple_diagonosis_list_box' "
+            f"hx-get='/collabcreate_simple_diagnosis/{refer.id}/{sim.id}'>Add</a>"
+        )
+
+        temp_header += "</div>"
+        # print(temp_header)
+        v_step = sim.step
+        v_html += temp_header
+        i += 1
+
+    return render(
+        request, "collab/partial_simple_diagnosis_list.html", {"html": v_html}
+    )
 
 
 def illness_list(request):
@@ -260,8 +329,10 @@ def index(request):
     user = request.user
     user = CustomUser.objects.get(id=user.id)
     company = Company.objects.filter(customuser=user).first()
-    print(company)
-    refers = Refers.objects.all().order_by("-created_at")
+    # print(company)
+    # refers = Refers.objects.all().order_by("-created_at")
+    refers = Refers.objects.exclude(status="Draft").order_by("-created_at")
+
     # Draft refer를 무조건 하나 만들어둔다.
     draft_exists = Refers.objects.filter(company=company, status="Draft").exists()
     print(draft_exists)
@@ -275,7 +346,7 @@ def index(request):
         )
         print("Draft refer created")
 
-    context = {"refers": refers, "company": company}
+    context = {"refers": refers, "company": company, "draft_exist": draft_exists}
     return render(request, "collab/index.html", context)
 
 
@@ -297,9 +368,15 @@ def refer_create(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     draft_refer = Refers.objects.filter(company=company, status="Draft").first()
-    print(draft_refer)
+    simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
+    simples.delete()
+    illnesses = ReferIllness.objects.filter(refer=draft_refer)
+    illnesses.delete()
+
+    # print(draft_refer.id)
     if request.method == "POST":
         form = ReferForm(request.POST, instance=draft_refer)
+        print("valid form?")
         if form.is_valid():
             form.save(commit=False)
             form.instance.company = company
@@ -308,10 +385,16 @@ def refer_create(request):
             return redirect("collab:refer_detail", refer_id=draft_refer.id)
         else:
             print(form.errors)
+            context = {
+                "form": form,
+                "company": company,
+                "draft_refer": draft_refer,
+                "simples": simples,
+                "illnesses": illnesses,
+            }
+            return render(request, "collab/refer_create.html", context)
     else:
         form = ReferForm(instance=draft_refer)
-        simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
-        illnesses = ReferIllness.objects.filter(refer=draft_refer)
         context = {
             "form": form,
             "company": company,
@@ -319,19 +402,7 @@ def refer_create(request):
             "simples": simples,
             "illnesses": illnesses,
         }
-    return render(request, "collab/refer_create.html", context)
-
-
-# def refer_detail(request, refer):
-#     refer = Refers.objects.get(id=refer.id)
-#     simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
-#     illnesses = ReferIllness.objects.filter(refer=refer)
-#     context = {
-#         "refer": refer,
-#         "simples": simples,
-#         "illnesses": illnesses,
-#     }
-#     return render(request, "collab/refer_view.html", context)
+        return render(request, "collab/refer_create.html", context)
 
 
 def refer_detail(request, refer_id):
@@ -350,29 +421,68 @@ def refer_detail(request, refer_id):
     return render(request, "collab/refer_detail.html", context)
 
 
-def refer_update(request, refer_id):
+def refer_print(request, refer_id):
     refer = Refers.objects.get(id=refer_id)
     company = refer.company
     history = ReferHistory.objects.filter(refer=refer)
+    simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
+    illnesses = ReferIllness.objects.filter(refer=refer)
+    context = {
+        "refer": refer,
+        "simples": simples,
+        "illnesses": illnesses,
+        "company": company,
+        "history": history,
+    }
+    return render(request, "collab/refer_print.html", context)
+
+
+def refer_update(request, refer_id):
+    draft_refer = Refers.objects.get(id=refer_id)
+    company = draft_refer.company
+    simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
+    illnesses = ReferIllness.objects.filter(refer=draft_refer)
+
+    # print(draft_refer.id)
     if request.method == "POST":
-        form = ReferForm(request.POST, instance=refer)
+        form = ReferForm(request.POST, instance=draft_refer)
+        print("valid form?")
         if form.is_valid():
+            form.save(commit=False)
+            form.instance.company = company
+            form.instance.status = "Requested"
             form.save()
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "RefersChanged": None,
-                            "showMessage": "Refer added",
-                        }
-                    )
-                },
-            )
+            return redirect("collab:refer_detail", refer_id=draft_refer.id)
+        else:
+            print(form.errors)
+            context = {
+                "form": form,
+                "company": company,
+                "draft_refer": draft_refer,
+                "simples": simples,
+                "illnesses": illnesses,
+            }
+            return render(request, "collab/refer_update.html", context)
     else:
-        form = ReferForm(instance=refer)
-    context = {"refer": refer, "history": history, "company": company, "form": form}
-    return render(request, "collab/refer_update.html", context)
+        form = ReferForm(instance=draft_refer)
+        context = {
+            "form": form,
+            "company": company,
+            "draft_refer": draft_refer,
+            "simples": simples,
+            "illnesses": illnesses,
+        }
+        return render(request, "collab/refer_update.html", context)
+
+
+def refer_delete(request, refer_id):
+    refer = Refers.objects.get(id=refer_id)
+    refer_simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
+    refer_simples.delete()
+    refer_illnesses = ReferIllness.objects.filter(refer=refer)
+    refer_illnesses.delete()
+    refer.delete()
+    return redirect("collab:index")
 
 
 def company_info(request, company_id):

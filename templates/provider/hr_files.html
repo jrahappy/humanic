@@ -30,7 +30,7 @@
             {% csrf_token %}
             <li class=" flex flex-row justify-between mb-1">
                 <a href="{{ hr.file.url }}" target="_blank">{{ hr.file_name|truncatechars:30 }}</a>
-                <button type="submit" class="btn btn-sm btn-error">X</button>
+                <button type="submit" class="btn btn-xs btn-error">X</button>
             </li>
             </form> 
         {% empty %}

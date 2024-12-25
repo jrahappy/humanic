@@ -8,12 +8,17 @@
     <ul>
         {% for ill in illnesses %}
         <li ng-repeat="item in items">
+            {{ ill.illness }}
             <a href="#"
-                hx-delete="{% url 'collab:delete_refer_illness' ill.id %}"
-                hx-confirm="삭제하시겠습니까?"
-                hx-target="this"
-                hx-swap="innerHTML"
-            >{{ ill.illness }}</a>
+                hx-get="{% url 'collab:delete_refer_illness' ill.id %}"
+                hx-trigger="confirmed"
+                onClick="Swal.fire({title: '확인요청', text:'선택된 상명을 삭제하시겠습니까?',showCancelButton: true}).then((result)=>{
+                    if(result.isConfirmed){
+                      htmx.trigger(this, 'confirmed');  
+                    } 
+                })"
+                class="btn btn-error btn-xs text-white"
+            >X</a>
         </li>
         {% empty %}
         <li>검색 결과가 없습니다.</li>

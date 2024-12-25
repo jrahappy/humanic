@@ -13,7 +13,7 @@
         <div class="flex justify-between gap-2 w-full">
             <div class="flex flex-row justify-between w-2/3">
                 <h2 class="card-title ">
-                    새 검사의뢰서 작성 / {{ draft_refer.id }}
+                    검사의뢰서 보기 / {{ refer.id }} / {{ company.id }}
                 </h2>
                 <div class="flex flex-col">
                     <form method="get" action="{% url 'customer:index' %}">
@@ -40,75 +40,111 @@
         </div>
     </div>
 </section>
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-8">
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
     <div class="card-body grow-0">
-           
-           
-<div id="refer_create_box" class="">
-    <div class="modal-action justify-between  flex flex-row gap-2">
-        <div class="ms-2 ">
-            <h2 class="text-lg font-bold"> 검사의뢰서  ({{ company.id }})</h2>
+        <div id="refer_create_box" class="">
+            <div id="print_area" class="w-full">
+                <table  class="table min-w-full divide-y devide-x divide-gray-900">
+                    <tr class="align-top border border-gray-500">
+                        <td colspan="4" class="w-24 text-bold text-2xl text-center">검  사  의  뢰  서</td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td class="w-24 align-top border-e border-gray-500">의뢰병원</td>
+                        <td class="w-48 align-top border-e border-gray-500">{{company.business_name}} </td>
+                        <td class="w-24 align-top border-e border-gray-500">의사명</td>
+                        <td class="w-48">{{company.president_name}} </td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td class="align-top border-e border-gray-500">의뢰일</td>
+                        <td class="align-top border-e border-gray-500">{{ refer.referred_date }}</td>
+                        <td class="align-top border-e border-gray-500">상태</td>
+                        <td>{{ refer.status }}</td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td class="align-top border-e border-gray-500">환자명</td>
+                        <td class="align-top border-e border-gray-500">{{ refer.patient_name }}</td>
+                        <td class="align-top border-e border-gray-500">환자성별</td>
+                        <td>{{ refer.patient_gender }}</td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td class="align-top border-e border-gray-500">생년월일</td>
+                        <td class="align-top border-e border-gray-500">{{ refer.patient_birthdate }}</td>
+                        <td class="align-top border-e border-gray-500">연락처</td>
+                        <td>{{ refer.patient_phone }}</td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td class="align-top border-e border-gray-500">환자상병</td>
+                        <td class="align-top border-e border-gray-500">
+                            {% for ill in illnesses %}
+                                <div class="">{{ill.illness}}</div>
+                            {% endfor %}
+                        </td>
+                        <td class="align-top border-e border-gray-500">외뢰할 검사</td>
+                        <td>
+                            {% for sim in simples %}
+                                <div class="">{{sim.diagnosis}}</div>
+                            {% endfor %}
+
+                        </td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td colspan="1" class="align-top border-e border-gray-500">
+                            <div class="font-semibold text-sm">임상소견:</div>
+                        </td>
+                        <td colspan="3" class="align-top border border-gray-500">
+                            <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1 }}</div>
+                        </td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td colspan="4" class="align-top border-e border-gray-500">
+                            <div class="font-semibold text-sm text-center">오시는 길</div>
+                        </td>
+                    </tr>
+                    <tr class="align-top border border-gray-500">
+                        <td colspan="2">
+                            <img src="{% static 'img/map_small.png' %}" alt="map" style="width:300px;" />
+                        </td>
+                        <td colspan="2" class="align-top border-e border-gray-500">
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    전화: 1588-7515, 02-512-6695<br>
+                                    팩스: 02-3014-3696 <br>
+                                </div>
+                                <div>
+                                    주소: 서울특별시 서초구 강남대로 621 K-타워 3층 <br>
+                                    주차장진입로 : K타워 1층<br>
+                                    홈페이지: www.humiic.co.kr<br>
+                                </div>
+                                <div>
+                                    진료시간<br>
+                                    평일. 오전 9:00 ~ 오후 6:00 <br>
+                                    토요일. 오전 9:00 ~ 오후 1:00 <br>
+                                    공휴일/일요일. 휴진<br>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                </table>
+                <div id="printSection" style="display:none"></div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <a href="{% url 'collab:refer_update' refer.id %}" class="btn btn-primary btn-sm">수정하기</a>
+                    <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
+
+                    <script>
+                        function openPopup(url) {
+                            // Define the window features
+                            var windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes';
+                        
+                            // Open the new window with the specified URL and features
+                            window.open(url, '_blank', windowFeatures);
+                        }
+                    </script>
+                </div>
+                
+            </div>  
         </div>
-       
     </div>
-    <div class="w-full">
-        <table class="table w-full" >
-            <tr>
-                <td colspan="4" class="w-full text-center font-semibold bg-base-200">검 사 의 뢰 서</td>
-            </tr>
-            <tr>
-                <td>의뢰병원</td><td>{{company.business_name}} </td>
-                <td>의사명</td><td>{{company.president_name}} </td>
-            </tr>
-            <tr>
-                <td>의뢰일</td><td>{{ refer.referred_date }}</td>
-                <td>상태</td><td>{{ refer.status }}</td>
-            </tr>
-            <tr>
-                <td>환자명</td><td>{{ refer.patient_name }}</td>
-                <td>환자성별</td><td>{{ refer.patient_gender }}</td>
-            </tr>
-            <tr>
-                <td>생년월일</td><td>{{ refer.patient_birthdate }}</td>
-                <td>연락처</td><td>{{ refer.patient_phone }}</td>
-            </tr>
-            <tr>
-                <td>환자상병</td>
-                <td>
-                    {% for ill in illnesses %}
-                        <div class="">{{ill.illness}}</div>
-                    {% endfor %}
-                </td>
-                <td>외뢰할 검사</td>
-                <td>
-                    {% for sim in simples %}
-                        <div class="">{{sim.diagnosis}}</div>
-                    {% endfor %}
-
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">임상소견</td>
-                <td colspan="3">{{ refer.opinion1 }}</td>
-            </tr>
-            <tr>
-                <td colspan="1">오 시 는 길</td>
-                <td colspan="3">
-                    <img src="{% static 'img/map_small.png' %}" alt="map" class="w-full" />
-                </td>
-            </tr>
-            
-        </table>
-
-        <div class="divider"></div>
-        <div class="flex justify-end gap-2">
-            <button type="submit" class="btn btn-primary btn-sm">저장</button>
-            <button type="submit" class="btn btn-primary btn-sm">인쇄</button>
-        </div>
-       
-    </div>  
-</div>
-</div>
 </section>
    
 {% endblock %}

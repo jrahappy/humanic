@@ -8,14 +8,17 @@
     <ul>
         {% for simple in simples %}
         <li ng-repeat="item in items">
+             {{ simple }}
             <a href="#"
-                hx-delete="{% url 'collab:delete_simple_diagnosis' simple.id %}"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                hx-confirm="Are you sure you want to delete this record?"
-                hx-trigger="click"
-                hx-target="#simple_diagonosis_list_box"
-            
-            >{{ simple }}</a>
+                hx-get="{% url 'collab:delete_simple_diagnosis' simple.id %}"
+                hx-trigger="confirmed"
+                onClick="Swal.fire({title: '확인요청', text:'검사항목을 삭제하시겠습니까?',showCancelButton: true}).then((result)=>{
+                    if(result.isConfirmed){
+                      htmx.trigger(this, 'confirmed');  
+                    } 
+                })"
+                class="btn btn-error btn-xs text-white"
+            >X</a>
         </li>
         {% empty %}
         <li>검색 결과가 없습니다.</li>

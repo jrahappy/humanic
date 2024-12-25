@@ -2,7 +2,7 @@
     {% for ill in illnesses %}
     
         <div class="flex flex-row justify-between mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-100">
-            <h3>{{ ill.code }} {{ ill.name }} {{ ill.eng_name }}</h3>
+            <p class="text-xs">{{ ill.code }} {{ ill.name }} {{ ill.eng_name }}</p>
             <a href="#" class="btn btn-primary btn-sm text-white"
                 hx-get="{% url 'collab:create_refer_illness' draft_refer.id ill.id %}"
                 hx-trigger="click"

@@ -62,7 +62,7 @@ def index(request):
         #     specialty2="신경두경"
         # )
 
-    paginator = Paginator(doctors, 10)  # Show 10 doctors per page
+    paginator = Paginator(doctors, 15)  # Show 10 doctors per page
     page = request.GET.get("page")
 
     try:

@@ -1,36 +1,4 @@
-<div>
-    <form>
-        <input name="illness_q" type="text" class="input input-bordered input-sm w-40" placeholder="상병명"
-            
-            hx-trigger="keyup delay:500ms"
-            hx-target="#simple_diagnosis_list"
-        >
-        <button class="btn btn-primary btn-sm">검색</button>
-    </form>
-    
-</div>
-<div class="divider"></div>
-<div id="simple_diagnosis_list" class="overflow-y-auto h-92" style="height:548px;">
-    {% for sim in simples %}
-    
-        <div class="flex flex-row justify-between mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-100">
-            <h3>
-                {{ sim.code1 }}
-                {% if sim.code2 %} <br><span class="ms-2">{{ sim.code2 }}</span>{% endif %}
-                {% if sim.code3 %} <br><span class="ms-4">{{ sim.code3 }}</span>{% endif %}
-                {% if sim.code4 %} <br><span class="ms-4 ps-2">{{ sim.code4 }}</span>{% endif %}
-            </h3>
-            <a href="#" class="btn btn-primary btn-sm text-white"
-                hx-get="{% url 'collab:create_simple_diagnosis' refer_id sim.id %}"
-                hx-trigger="click"
-                hx-target="#simple_diagonosis_list_box"
-                hx-swap="innerHTML">
-                추가
-            </a>
-        </div>
 
- 
-    
-    {% endfor %}
-</div>
-       
+    <div id="simple_diagnosis_list" class="overflow-y-auto h-92" style="height:548px;">
+        {{ html|safe}}
+    </div>

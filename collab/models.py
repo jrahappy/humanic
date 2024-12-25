@@ -59,14 +59,16 @@ class ReferSimpleDiagnosis(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return (
-            self.diagnosis.code1
-            + " - "
-            + self.diagnosis.code2
-            + " - "
-            + self.diagnosis.code3
-            + " - "
-            + self.diagnosis.code4
+        return " - ".join(
+            filter(
+                None,
+                [
+                    self.diagnosis.code1,
+                    self.diagnosis.code2,
+                    self.diagnosis.code3,
+                    self.diagnosis.code4,
+                ],
+            )
         )
 
 
@@ -118,9 +120,14 @@ class SimpleDiagnosis(models.Model):
     code3 = models.CharField(max_length=100, null=True, blank=True)
     code4 = models.CharField(max_length=100, null=True, blank=True)
     order = models.IntegerField(default=0)
+    step = models.SmallIntegerField(default=0)
+    is_head = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.code1 + " - " + self.code2 + " - " + self.code3 + " - " + self.code4
+        # return self.code1 + " - " + self.code2 + " - " + self.code3 + " - " + self.code4
+        return " - ".join(
+            filter(None, [self.code1, self.code2, self.code3, self.code4])
+        )
 
     class Meta:
         verbose_name = "간단진단"

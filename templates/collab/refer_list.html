@@ -1,7 +1,7 @@
 {% load static %}
 {% load custom_filters %}
 
-<tbody id="refer_list_box" class="divide-y divide-gray-300 bg-white"
+<tbody id="refer_list_box" class="divide-y divide-gray-300"
     hx-get="{% url 'collab:refer_list' company.id  %}" 
     hx-trigger="RefersChanged from:body"
     hx-target="this"
@@ -10,23 +10,17 @@
 >
 {% for refer in refers %}
     <tr id="{{refer.id}}" a
-       
         class="hover:bg-sky-100 cursor-pointer"
+        onclick="location.href='{% url 'collab:refer_detail' refer.id %}'"
     >
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:bg-sky-100" >
-            <a href="{% url 'collab:refer_detail' refer.id %}">
-                {{ refer.id }}                             
-            </a>
-        </td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.id }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.referred_date }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.company|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.company.office_phone|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_name|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_phone|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.treatment|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.refertreatment_set|default_if_none:"N/A"|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.status|handle_none }}</td>
-        
-        
     </tr>
 {% empty %}
 
