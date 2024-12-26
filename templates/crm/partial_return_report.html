@@ -1,0 +1,80 @@
+<div class="divider"></div>
+    <table  class="table min-w-full divide-y devide-x divide-gray-900">
+        <tr class="align-top border border-gray-500">
+            <td colspan="4" class="w-24 text-bold text-2xl text-center">진 료 회 송 서</td>
+        </tr>
+        <tr class="align-top border border-gray-500">
+            <td class="align-top border-e border-gray-500">환자명</td>
+            <td class="align-top border-e border-gray-500">{{ refer.patient_name }}</td>
+            <td class="align-top border-e border-gray-500">환자성별</td>
+            <td>{{ refer.patient_gender }}</td>
+        </tr>
+        <tr class="align-top border border-gray-500">
+            <td class="align-top border-e border-gray-500">생년월일</td>
+            <td class="align-top border-e border-gray-500">{{ refer.patient_birthdate }}</td>
+            <td class="align-top border-e border-gray-500">연락처</td>
+            <td>{{ refer.patient_phone }}</td>
+        </tr>
+        <tr class="align-top border border-gray-500">
+            <td colspan="1" class="align-top border-e border-gray-500">
+                <div class="text-sm">병명:</div>
+            </td>
+            <td colspan="3" class="align-top border border-gray-500 p-0">
+                <div class="bg-base-50 flex flex-row border-b border-gray-500 px-4 py-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                    </svg>
+                    <span class="me-4">임상적추정</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <span>최종판단</span>
+                </div>
+                <div class="h-32 max-h-48 bg-base-50 px-4 py-2">
+                    {% for ill in illnesses %}
+                        <div class="">{{ill.illness}}</div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+        <tr class="align-top border border-gray-500">
+            <td colspan="1" class="align-top border-e border-gray-500">
+                <div class="font-semibold text-sm">향후치료<br>의견:</div>
+            </td>
+            <td colspan="3" class="align-top border border-gray-500">
+                <div class="h-32 max-h-48 bg-base-50">위와 같이 의견을 보내드립니다.<br>
+                    {{ refer.opinion2|linebreaks }}
+                </div>
+            </td>
+        </tr>
+        <tr class="align-top border border-gray-500">
+            <td colspan="1" class="align-top border-e border-gray-500">
+                <div class="font-semibold text-sm">이미지</div>
+            </td>
+            <td colspan="3" class="align-top border border-gray-500">
+                <div class="bg-base-50"></div>
+            </td>
+        </tr>
+        <tr class="align-top border border-gray-500">
+            <td colspan="4" class="align-top border-e border-gray-500 p-8">
+                <div class="font-semibold text-lg mb-4">위 와 같 이  소견함</div>
+                <div class="flex flex-row font-semibold text-sm">
+                    <div class="w-24">발행일:</div>
+                    <div>{{ refer.opinioned_at}}</div>
+                </div>
+                <div class="flex flex-row font-semibold text-sm">
+                    <div class="w-24">의사명:</div>
+                    <div>{{ refer.provider }}</div>
+                </div>
+                <div class="flex flex-row font-semibold text-sm">
+                    <div class="w-24">주소:</div>
+                    <div>서울시 서초구 강남대로 621 K-Tower 3층</div>
+                </div>
+                <div class="flex flex-row font-semibold text-sm">
+                    <div class="w-24">전화번호:</div>
+                    <div>02-3014-3601</div>
+                </div>
+            </td>
+            
+        </tr>
+    </table>

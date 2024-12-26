@@ -1,9 +1,8 @@
 <div id="illnesses_list" class="overflow-y-auto h-92" style="height:548px;">
     {% for ill in illnesses %}
-    
-        <div class="flex flex-row justify-between mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-100">
+        <div class="flex flex-row justify-between mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-200">
             <p class="text-xs">{{ ill.code }} {{ ill.name }} {{ ill.eng_name }}</p>
-            <a href="#" class="btn btn-primary btn-sm text-white"
+            <a href="#" class="btn btn-primary btn-xs"
                 hx-get="{% url 'collab:create_refer_illness' draft_refer.id ill.id %}"
                 hx-trigger="click"
                 hx-target="#illness_list_box"

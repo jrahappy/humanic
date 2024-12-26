@@ -1,28 +1,141 @@
-{% load static %}
 {% load custom_filters %}
-
-<tbody id="refer_list_box" class="divide-y divide-gray-300"
-    hx-get="{% url 'collab:refer_list' company.id  %}" 
+{% load humanize %}
+<div id="collab_kanban_dashboard" 
+    class="flex flex-grow px-10 mt-4 space-x-6 overflow-x-visible"
+    hx-get="{% url 'crm:partial_collab_kanban' %}"
     hx-trigger="RefersChanged from:body"
-    hx-target="this"
+    hx-target="#collab_kanban_dashboard"
     hx-swap="outerHTML"
-    
 >
-{% for refer in refers %}
-    <tr id="{{refer.id}}" a
-        class="hover:bg-sky-100 cursor-pointer"
-        onclick="location.href='{% url 'collab:refer_detail' refer.id %}'"
-    >
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.id }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.referred_date }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.company|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.company.office_phone|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_name|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_phone|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.refertreatment_set|default_if_none:"N/A"|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.status|handle_none }}</td>
-    </tr>
-{% empty %}
-
-{% endfor %}
-</tbody>
+    <div class="flex flex-col flex-shrink-0 w-64 ">
+        <div class="flex items-center flex-shrink-0 h-10 px-2">
+            <span class="block text-sm font-semibold">검사의뢰 접수</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_rq_count }}</span>
+            <!-- <button class="flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+            </button> -->
+        </div>
+        <div class="flex flex-col pb-2 overflow-auto">
+            {% for rq in status_rq %}
+            <div class="relative flex flex-col items-start p-4 mt-3 bg-yellow-100 rounded-lg bg-opacity-90">
+                <a href="{% url 'collab:refer_detail' rq.id %}">
+                    <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                </a>
+                <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
+                <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
+                    <div class="flex flex-col gap-1 items-start">
+                        <span class="ml-1 leading-none">의뢰일: {{ rq.referred_date}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            
+        </div>
+    </div>
+    <div class="flex flex-col flex-shrink-0 w-64">
+        <div class="flex items-center flex-shrink-0 h-10 px-2">
+            <span class="block text-sm font-semibold">환자예약 완료</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_sch_count }}</span>
+           
+        </div>
+        <div class="flex flex-col pb-2 overflow-auto">
+            {% for rq in status_sch %}
+            <div class="relative flex flex-col items-start p-4 mt-3 bg-green-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+                <a href="{% url 'collab:refer_detail' rq.id %}">
+                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                </a>
+                <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
+                <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
+                    <div class="flex flex-col gap-1 items-start">
+                        <span class="ml-1 leading-none">의뢰일: {{ rq.referred_date}}</span>
+                        <span class="ml-1 leading-none">예약일: {{ rq.scheduled_at|handle_none}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            
+        </div>
+    </div>
+    <div class="flex flex-col flex-shrink-0 w-64">
+        <div class="flex items-center flex-shrink-0 h-10 px-2">
+            <span class="block text-sm font-semibold">검사/회송 완료</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_in_count }}</span>
+            
+        </div>
+        <div class="flex flex-col pb-2 overflow-auto">
+            {% for rq in status_in %}
+            <div class="relative flex flex-col items-start p-4 mt-3 bg-purple-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+                <a href="{% url 'collab:refer_detail' rq.id %}">
+                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                </a>
+                <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
+                <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
+                    <div class="flex flex-col gap-1 items-start">
+                        <span class="ml-1 leading-none">의뢰일: {{ rq.referred_date}}</span>
+                        <span class="ml-1 leading-none">예약일: {{ rq.scheduled_at|handle_none}}</span>
+                        <span class="ml-1 leading-none">회송일: {{ rq.opinioned_at|handle_none}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            
+        </div>
+    </div>
+    <div class="flex flex-col flex-shrink-0 w-64">
+        <div class="flex items-center flex-shrink-0 h-10 px-2">
+            <span class="block text-sm font-semibold">확인/협진 완료</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_cosign_count }}</span>
+            
+        </div>
+        <div class="flex flex-col pb-2 overflow-auto">
+            {% for rq in status_cosign %}
+            <div class="relative flex flex-col items-start p-4 mt-3 bg-red-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+                <a href="{% url 'collab:refer_detail' rq.id %}">
+                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                </a>
+                <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
+                <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
+                    <div class="flex flex-col gap-1 items-start">
+                        <span class="ml-1 leading-none">의뢰일: {{ rq.referred_date}}</span>
+                        <span class="ml-1 leading-none">예약일: {{ rq.scheduled_at|handle_none}}</span>
+                        <span class="ml-1 leading-none">회송일: {{ rq.opinioned_at|handle_none}}</span>
+                        <span class="ml-1 leading-none">Cosign: {{ rq.cosigned_at|handle_none}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            
+        </div>
+    </div>
+    <div class="flex flex-col flex-shrink-0 w-64">
+        <div class="flex items-center flex-shrink-0 h-10 px-2">
+            <span class="block text-sm font-semibold">검사취소</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_cosign_count }}</span>
+           
+        </div>
+        <div class="flex flex-col pb-2 overflow-auto">
+            {% for rq in status_cancelled %}
+            <div class="relative flex flex-col items-start p-4 mt-3 bg-gray-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+                <a href="{% url 'collab:refer_detail' rq.id %}">
+                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                </a>
+                <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
+                <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
+                    <div class="flex flex-col gap-1 items-start">
+                        <span class="ml-1 leading-none">의뢰일: {{ rq.referred_date}}</span>
+                        <span class="ml-1 leading-none">예약일: {{ rq.scheduled_at|handle_none}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="flex-shrink-0 w-6"></div>
+</div>

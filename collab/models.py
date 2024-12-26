@@ -34,6 +34,7 @@ class Refers(models.Model):
     illness2 = models.CharField(max_length=100, null=True, blank=True)
     opinion2 = models.TextField(null=True, blank=True)
     opinioned_at = models.DateTimeField(null=True, blank=True)
+    cosigned_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         # return self.company.business_name + " - " + self.patient_name

@@ -12,7 +12,7 @@
         <div class="flex justify-between gap-2 w-full">
             <div class="flex flex-row justify-between w-2/3">
                 <h2 class="card-title ">
-                    검사의뢰서 수정하기 / {{ draft_refer.id }}
+                    검사의뢰서 수정하기 ({{ draft_refer.id }})
                 </h2>
                 <div class="flex flex-col">
                     <form method="get" action="{% url 'customer:index' %}">
@@ -122,7 +122,8 @@
                         >상병 추가</a>
                         {% include 'collab/partial_illness_list.html' %}
                     </td>
-                    <td class="align-top border-e border-gray-500">외뢰할 검사</td><td>
+                    <td class="align-top border-e border-gray-500">외뢰할 검사</td>
+                    <td class="align-top">
                         <a 
                             href="#" 
                             class="btn btn-primary btn-xs"
@@ -150,7 +151,7 @@
                 >삭제하기</a>
                 <div>
                     <button type="submit" class="btn btn-primary btn-sm">저장하기</button>
-                    <a href="{% url 'collab:index' %}" class="btn btn-warning btn-sm">취소하기</a>
+                    <a href="{% url 'collab:refer_detail' draft_refer.id %}" class="btn btn-warning btn-sm">취소하기</a>
                 </div>
             </div>
             </form>

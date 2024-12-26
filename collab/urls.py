@@ -11,6 +11,14 @@ urlpatterns = [
     path("refer_print/<int:refer_id>/", views.refer_print, name="refer_print"),
     path("refer_update/<int:refer_id>/", views.refer_update, name="refer_update"),
     path("refer_delete/<int:refer_id>/", views.refer_delete, name="refer_delete"),
+    path(
+        "refer_completed/<int:refer_id>/", views.refer_completed, name="refer_completed"
+    ),
+    # path(
+    #     "create_history/<int:refer_id>/<str:new_status>/",
+    #     views.create_history,
+    #     name="create_history",
+    # ),
     path("company_info/<int:company_id>/", views.company_info, name="company_info"),
     path(
         "company_update/<int:company_id>/", views.company_update, name="company_update"

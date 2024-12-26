@@ -23,6 +23,22 @@ import io
 import datetime
 
 
+def create_history(request, refer_id, new_status, memo=None):
+    refer = Refers.objects.get(id=refer_id)
+    re_history = ReferHistory.objects.create(
+        refer=refer,
+        changed_status=new_status,
+        memo=memo,
+        changed_by=request.user,
+        changed_at=datetime.datetime.now(),
+    )
+    return re_history
+    # return HttpResponse(
+    #     status=204,
+    #     headers={"HX-Trigger": json.dumps({"HistoryChanged": None})},
+    # )
+
+
 def partial_illness_list(request, refer_id):
     refer = Refers.objects.get(id=refer_id)
     illnesses = ReferIllness.objects.filter(refer=refer_id)
@@ -140,12 +156,6 @@ def partial_simple_list(request, refer_id):
     print(simples.count())
     context = {"simples": simples, "draft_refer": refer}
     return render(request, "collab/partial_simple_list.html", context)
-
-
-# def partial_simple_diagnosis_list(request, refer_id):
-#     simples = SimpleDiagnosis.objects.all()
-#     context = {"simples": simples, "refer_id": refer_id}
-#     return render(request, "collab/partial_simple_diagnosis_list.html", context)
 
 
 def partial_simple_diagnosis_list(request, refer_id):
@@ -288,9 +298,6 @@ def simplecode_import(request):
         simple_resource = SimpleDiagnosisResource()
         dataset = Dataset()
         new_simple = request.FILES["myfile"]
-
-        print(new_simple)
-
         dataset.load(new_simple.read(), format="xlsx")
         result = simple_resource.import_data(dataset, dry_run=True)
 
@@ -301,11 +308,8 @@ def simplecode_import(request):
             simple_resource.import_data(dataset, dry_run=False)
         else:
             print(result.errors)
-
         return redirect("collab:simplecode_list")
-
     else:
-
         context = {"company": company}
         return render(request, "collab/simplecode_import.html", context)
 
@@ -329,13 +333,25 @@ def index(request):
     user = request.user
     user = CustomUser.objects.get(id=user.id)
     company = Company.objects.filter(customuser=user).first()
-    # print(company)
-    # refers = Refers.objects.all().order_by("-created_at")
-    refers = Refers.objects.exclude(status="Draft").order_by("-created_at")
+    q = request.GET.get("q")
+    if q:
+        refers = Refers.objects.filter(
+            company=company, patient_name__icontains=q
+        ).order_by("-created_at")
+    else:
+        refers = (
+            Refers.objects.filter(company=company)
+            .exclude(status="Draft")
+            .order_by("-created_at")
+        )
+    status_rq = refers.filter(status="Requested")
+    status_sch = refers.filter(status="Scheduled")
+    status_in = refers.filter(status="Interpreted")
+    status_cosign = refers.filter(status="Cosigned")
+    status_cancelled = refers.filter(status="Cancelled")
 
     # Draft refer를 무조건 하나 만들어둔다.
     draft_exists = Refers.objects.filter(company=company, status="Draft").exists()
-    print(draft_exists)
     if not draft_exists:
         # referred_date = datetime.date.today()
         Refers.objects.create(
@@ -346,15 +362,56 @@ def index(request):
         )
         print("Draft refer created")
 
-    context = {"refers": refers, "company": company, "draft_exist": draft_exists}
+    context = {
+        "refers": refers,
+        "company": company,
+        "draft_exist": draft_exists,
+        "status_rq": status_rq,
+        "status_rq_count": status_rq.count(),
+        "status_sch": status_sch,
+        "status_sch_count": status_sch.count(),
+        "status_in": status_in,
+        "status_in_count": status_in.count(),
+        "status_cosign": status_cosign,
+        "status_cosign_count": status_cosign.count(),
+        "status_cancelled": status_cancelled,
+        "status_cancelled_count": status_cancelled.count(),
+    }
     return render(request, "collab/index.html", context)
 
 
 def refer_list(request, company_id):
     company = Company.objects.get(id=company_id)
-    refers = Refers.objects.filter(company=company).order_by("-created_at")
+    q = request.GET.get("q")
+    if q:
+        refers = Refers.objects.filter(
+            company=company, patient_name__icontains=q
+        ).order_by("-created_at")
+    else:
+        refers = Refers.objects.exclude(status="Draft", company=company).order_by(
+            "-created_at"
+        )
+    status_rq = refers.filter(status="Requested")
+    status_sch = refers.filter(status="Scheduled")
+    status_in = refers.filter(status="Interpreted")
+    status_cosign = refers.filter(status="Cosigned")
+    status_cancelled = refers.filter(status="Cancelled")
 
-    context = {"refers": refers, "company": company}
+    context = {
+        "refers": refers,
+        "company": company,
+        # "draft_exist": draft_exists,
+        "status_rq": status_rq,
+        "status_rq_count": status_rq.count(),
+        "status_sch": status_sch,
+        "status_sch_count": status_sch.count(),
+        "status_in": status_in,
+        "status_in_count": status_in.count(),
+        "status_cosign": status_cosign,
+        "status_cosign_count": status_cosign.count(),
+        "status_cancelled": status_cancelled,
+        "status_cancelled_count": status_cancelled.count(),
+    }
     return render(request, "collab/refer_list.html", context)
 
 
@@ -368,20 +425,18 @@ def refer_create(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     draft_refer = Refers.objects.filter(company=company, status="Draft").first()
-    simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
-    simples.delete()
-    illnesses = ReferIllness.objects.filter(refer=draft_refer)
-    illnesses.delete()
 
     # print(draft_refer.id)
     if request.method == "POST":
         form = ReferForm(request.POST, instance=draft_refer)
         print("valid form?")
         if form.is_valid():
+            new_status = "Requested"
             form.save(commit=False)
             form.instance.company = company
-            form.instance.status = "Requested"
+            form.instance.status = new_status
             form.save()
+            create_history(request, draft_refer.id, new_status, "Refer created")
             return redirect("collab:refer_detail", refer_id=draft_refer.id)
         else:
             print(form.errors)
@@ -394,6 +449,11 @@ def refer_create(request):
             }
             return render(request, "collab/refer_create.html", context)
     else:
+        simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
+        simples.delete()
+        illnesses = ReferIllness.objects.filter(refer=draft_refer)
+        illnesses.delete()
+
         form = ReferForm(instance=draft_refer)
         context = {
             "form": form,
@@ -424,7 +484,7 @@ def refer_detail(request, refer_id):
 def refer_print(request, refer_id):
     refer = Refers.objects.get(id=refer_id)
     company = refer.company
-    history = ReferHistory.objects.filter(refer=refer)
+    # history = ReferHistory.objects.filter(refer=refer)
     simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
     illnesses = ReferIllness.objects.filter(refer=refer)
     context = {
@@ -432,7 +492,7 @@ def refer_print(request, refer_id):
         "simples": simples,
         "illnesses": illnesses,
         "company": company,
-        "history": history,
+        # "history": history,
     }
     return render(request, "collab/refer_print.html", context)
 
@@ -448,10 +508,14 @@ def refer_update(request, refer_id):
         form = ReferForm(request.POST, instance=draft_refer)
         print("valid form?")
         if form.is_valid():
+            new_status = "Requested"
             form.save(commit=False)
             form.instance.company = company
-            form.instance.status = "Requested"
+            form.instance.status = new_status
             form.save()
+            new_history = create_history(
+                request, draft_refer.id, new_status, "Refer updated"
+            )
             return redirect("collab:refer_detail", refer_id=draft_refer.id)
         else:
             print(form.errors)
@@ -477,11 +541,22 @@ def refer_update(request, refer_id):
 
 def refer_delete(request, refer_id):
     refer = Refers.objects.get(id=refer_id)
-    refer_simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
-    refer_simples.delete()
-    refer_illnesses = ReferIllness.objects.filter(refer=refer)
-    refer_illnesses.delete()
+    # refer_simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
+    # refer_simples.delete()
+    # refer_illnesses = ReferIllness.objects.filter(refer=refer)
+    # refer_illnesses.delete()
     refer.delete()
+
+    return redirect("collab:index")
+
+
+def refer_completed(request, refer_id):
+    refer = Refers.objects.get(id=refer_id)
+    new_status = "Cosigned"
+    refer.status = new_status
+    refer.cosigned_at = datetime.datetime.now()
+    refer.save()
+    create_history(request, refer.id, new_status, "협진(Co-sign) 완료")
     return redirect("collab:index")
 
 

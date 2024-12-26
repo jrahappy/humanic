@@ -5,6 +5,7 @@ from customer.models import Company, CustomerLog
 from .forms import OpportunityForm, ChanceForm
 from collab.models import Refers
 from collab.forms import ReportForm, ReferChangeStatus
+from collab.views import create_history
 import datetime
 import json
 
@@ -67,7 +68,18 @@ def crm_refers(request):
 
 def collab_refer_detail(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
-    context = {"refer": refer}
+    company = refer.company
+    illnesses = refer.referillness_set.all()
+    simples = refer.refersimplediagnosis_set.all()
+    history = refer.referhistory_set.all()
+
+    context = {
+        "refer": refer,
+        "company": company,
+        "illnesses": illnesses,
+        "simples": simples,
+        "history": history,
+    }
     return render(request, "crm/collab_refer_detail.html", context)
 
 
@@ -79,32 +91,37 @@ def collab_schedule(request, refer_id):
         if form.is_valid():
             report = form.save(commit=False)
             report.updated_at = datetime.datetime.now()
+            # report.status = form.cleaned_data["status"]
             report.save()
+            new_status = form.cleaned_data["status"]
+            scheduled_at = form.cleaned_data["scheduled_at"]
             # 로그 넣는 부분 추가 필요
+            create_history(request, refer.id, new_status, "예약 완료")
+            history = refer.referhistory_set.all()
 
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "RefersChanged": None,
-                            "showMessage": "Report Updated.",
-                        }
-                    )
+            return render(
+                request,
+                "crm/partial_history.html",
+                {
+                    "form": form,
+                    "refer": refer,
+                    "history": history,
+                    "scheduled_at": scheduled_at,
                 },
             )
+
         else:
             print(form.errors)
-            return HttpResponse(
-                status=400,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "showMessage": "Error Updating Report.",
-                        }
-                    )
-                },
-            )
+            # return HttpResponse(
+            #     status=400,
+            #     headers={
+            #         "HX-Trigger": json.dumps(
+            #             {
+            #                 "showMessage": "Error Updating Report.",
+            #             }
+            #         )
+            #     },
+            # )
     else:
         form = ReferChangeStatus(instance=refer)
         context = {
@@ -122,20 +139,35 @@ def collab_report(request, refer_id):
         if form.is_valid():
             report = form.save(commit=False)
             report.provider = request.user
+            report.opinioned_at = datetime.datetime.now()
             report.updated_at = datetime.datetime.now()
             report.save()
+            # 로그 넣는 부분 추가 필요
+            new_status = form.cleaned_data["status"]
+            create_history(request, refer.id, new_status, "회송 완료")
+            history = refer.referhistory_set.all()
 
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "RefersChanged": None,
-                            "showMessage": "Report Updated.",
-                        }
-                    )
+            return render(
+                request,
+                "crm/partial_history_report.html",
+                {
+                    # "form": form,
+                    "refer": refer,
+                    "history": history,
                 },
             )
+
+            # return HttpResponse(
+            #     status=204,
+            #     headers={
+            #         "HX-Trigger": json.dumps(
+            #             {
+            #                 "RefersChanged": None,
+            #                 "showMessage": "Report Updated.",
+            #             }
+            #         )
+            #     },
+            # )
         else:
             print(form.errors)
             return HttpResponse(

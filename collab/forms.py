@@ -123,19 +123,12 @@ class ReferForm(forms.ModelForm):
 class ReportForm(ModelForm):
     class Meta:
         model = Refers
-        fields = "__all__"
-        exclude = [
-            "company",
-            "referred_date",
-            "patient_name",
-            "patient_gender",
-            "patient_birthdate",
-            "patient_phone",
-            "illness",
-            "treatment",
-            "opinion1",
-            "created_at",
-            "updated_at",
+        fields = [
+            # "opinioned_at",
+            "opinion2",
+            "status",
+            "readprice",
+            # Add other fields as necessary
         ]
 
     opinioned_at = forms.DateField(
@@ -144,6 +137,16 @@ class ReportForm(ModelForm):
         required=True,
         initial=datetime.date.today,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Define the filtered choices
+        filtered_choices = [
+            ("Interpreted", "1차판독완료"),
+            # Exclude 'Cancelled', 'Interpreted', 'Cosigned', 'Archive'
+        ]
+        # Apply the filtered choices to the 'status' field
+        self.fields["status"].choices = filtered_choices
 
 
 class ReferChangeStatus(ModelForm):
@@ -160,13 +163,24 @@ class ReferChangeStatus(ModelForm):
             "invalid": "Enter a valid date and time.",
         },
     )
-    status = forms.CharField(
-        widget=forms.Select(choices=REFER_STATUS),
-        required=True,
-    )
+    # status = forms.CharField(
+    #     widget=forms.Select(choices=REFER_STATUS),
+    #     required=True,
+    # )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.instance.pk:
-            self.fields["status"].initial = "Scheduled"
-            self.fields["scheduled_at"].initial = datetime.datetime.now()
+
+        filtered_choices = [
+            ("Scheduled", "검사예약"),
+            ("Cancelled", "검사취소"),
+            ("Requested", "검사요청"),
+            ("Interpreted", "1차판독완료"),
+            # Exclude 'Cancelled', 'Interpreted', 'Cosigned', 'Archive'
+        ]
+        # Apply the filtered choices to the 'status' field
+        self.fields["status"].choices = filtered_choices
+
+        # if not self.instance.pk:
+        #     self.fields["status"].initial = "Scheduled"
+        #     self.fields["scheduled_at"].initial = datetime.datetime.now()

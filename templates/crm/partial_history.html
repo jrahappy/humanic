@@ -1,0 +1,18 @@
+<ul id="history_box" class="steps steps-vertical">
+    {% for his in history %}
+        <li class="step step-primary" data-content="{{ forloop.counter }}">
+            <div class="flex flex-row justify-between w-80">
+                <div>{{ his.changed_status }} </div>
+                <span class="text-xs text-end"> {{ his.changed_at }} <br>by {{ his.changed_by }}</span>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+
+<div id="status_box" 
+    hx-swap-oob="true" class="text-semibold text-error"
+>{{ refer.status }}</div>
+
+<div id="scheduled_at_box"
+    hx-swap-oob="true"
+>{{ refer.scheduled_at }}</div>

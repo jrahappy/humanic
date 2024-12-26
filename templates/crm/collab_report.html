@@ -8,9 +8,7 @@
             <h2 class="text-lg font-bold"> 진료회송서 </h2>
         </div>
         <div class="flex flex-row gap-2">
-            <form method="dialog">  
-                <button class="btn btn-warning btn-sm">닫기</button>
-            </form>
+          
         </div>
     </div>
     <div class="w-full">
@@ -19,7 +17,7 @@
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           hx-swap="outerHTML" 
           hx-trigger="submit"
-          hx-target="#report_create_box"
+          hx-target="#history_box"
           id="new_report_form"
         >
         <table class="table w-full" >
@@ -39,9 +37,6 @@
                 <td>연락처</td><td>{{refer.patient_phone}} </td>
             </tr>
             <tr>
-                <td>병명</td><td colspan="3">{% render_field form.illness2 class="input input-bordered input-sm w-full" %}</td>
-            </tr>
-            <tr>
                 <td colspan="1">향후치료<br>의견</td>
                 <td colspan="3">{% render_field form.opinion2 class="textarea textarea-bordered w-full" cols=50 rows=3 %}</td>
             </tr>
@@ -49,21 +44,27 @@
                 <td>회송일</td><td>{{form.opinioned_at }}</td>                    
                 <td>현재상태</td><td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>                
             </tr>
+            <tr>
+                <td colspan="1">판독비</td>
+                <td colspan="3">{% render_field form.readprice class="input input-bordered input-sm w-32 py-0" %}</td>               
+            </tr>
         </table>
 
         <div class="divider"></div>
-        <div class="flex justify-end gap-2">
-            <button type="submit" class="btn btn-primary btn-sm">저장</button>
-            <button type="submit" class="btn btn-primary btn-sm">인쇄</button>
+        <div class="flex flex-row justify-end gap-2">
+            <button class="btn btn-primary btn-sm" type="submit">저장하기</button>
+            <form method="dialog">  
+                <button class="btn btn-warning btn-sm">취소하기</button>
+            </form>
         </div>
         </form>
         <script>
-            document.getElementById('report_create_box').addEventListener('htmx:beforeSwap', function(event) {
-                if (event.detail.target.id === 'report_create_box') {
+            document.getElementById('history_box').addEventListener('htmx:beforeSwap', function(event) {
+                if (event.detail.target.id === 'history_box') {
                     // Check if the form submission was successful
                     console.log("Status:", event.detail.xhr.status);
                     console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
-                    if (event.detail.xhr.status === 204) {
+                    if (event.detail.xhr.status === 200) {
                         // If successful, close the modal
                         base_modal.close();
                         console.log("Form submission successful");
@@ -73,7 +74,7 @@
                     }
                 }
             });
-
+        
         </script>
     </div>  
 </div>

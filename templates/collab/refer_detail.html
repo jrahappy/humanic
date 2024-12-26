@@ -80,7 +80,7 @@
                             {% endfor %}
                         </td>
                         <td class="align-top border-e border-gray-500">외뢰할 검사</td>
-                        <td>
+                        <td class="align-top">
                             {% for sim in simples %}
                                 <div class="">{{sim.diagnosis}}</div>
                             {% endfor %}
@@ -92,43 +92,57 @@
                             <div class="font-semibold text-sm">임상소견:</div>
                         </td>
                         <td colspan="3" class="align-top border border-gray-500">
-                            <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1 }}</div>
-                        </td>
-                    </tr>
-                    <tr class="align-top border border-gray-500">
-                        <td colspan="4" class="align-top border-e border-gray-500">
-                            <div class="font-semibold text-sm text-center">오시는 길</div>
-                        </td>
-                    </tr>
-                    <tr class="align-top border border-gray-500">
-                        <td colspan="2">
-                            <img src="{% static 'img/map_small.png' %}" alt="map" style="width:300px;" />
-                        </td>
-                        <td colspan="2" class="align-top border-e border-gray-500">
-                            <div class="flex flex-col gap-2">
-                                <div>
-                                    전화: 1588-7515, 02-512-6695<br>
-                                    팩스: 02-3014-3696 <br>
-                                </div>
-                                <div>
-                                    주소: 서울특별시 서초구 강남대로 621 K-타워 3층 <br>
-                                    주차장진입로 : K타워 1층<br>
-                                    홈페이지: www.humiic.co.kr<br>
-                                </div>
-                                <div>
-                                    진료시간<br>
-                                    평일. 오전 9:00 ~ 오후 6:00 <br>
-                                    토요일. 오전 9:00 ~ 오후 1:00 <br>
-                                    공휴일/일요일. 휴진<br>
-                                </div>
-                            </div>
+                            <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1|linebreaks }}</div>
                         </td>
                     </tr>
                     
                 </table>
+                {% if refer.status == 'Interpreted' or refer.status == "Cosigned" %}
+                    
+                {% include 'crm/partial_return_report.html' %}
+                
+                
                 <div id="printSection" style="display:none"></div>
                 <div class="flex justify-end gap-2 mt-4">
-                    <a href="{% url 'collab:refer_update' refer.id %}" class="btn btn-primary btn-sm">수정하기</a>
+                    {% if refer.status == 'Interpreted' %}
+                    <a  href="#" 
+                        class="btn btn-primary btn-sm"
+                        data-confirm-url="{% url 'collab:refer_completed' refer.id %}"
+                        onclick="confirmaCosign(this);"
+                    >회송확인 및 완료처리하기(Co-sign)</a>
+                    
+                    <script>
+                        function confirmaCosign(element) {
+                            const confirmUrl = element.getAttribute('data-confirm-url');
+                            Swal.fire({
+                                title: 'Cosign',
+                                text: '회송내용을 확인하고 완료처리합니다.',
+                                showCancelButton: true,
+                                confirmButtonText: '완료',
+                                cancelButtonText: '취소',
+                                icon: 'warning'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = confirmUrl;
+                                }
+                            });
+                        }
+
+                    
+                    </script>
+                    {% endif %}
+
+                    <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
+
+                    
+                </div>
+                {% else %}
+                <div id="printSection" style="display:none"></div>
+                <div class="flex justify-end gap-2 mt-4">
+                    {% if refer.status == 'Requested' %}
+                        <a href="{% url 'collab:refer_update' refer.id %}" class="btn btn-primary btn-sm">수정하기</a>
+                    {% endif %}
+                    <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
                     <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
 
                     <script>
@@ -141,10 +155,31 @@
                         }
                     </script>
                 </div>
+                                    
+                {% endif %}
+
+                
                 
             </div>  
         </div>
     </div>
+</section>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0">
+        <div id="refer_create_box" class="">
+            <ul class="steps steps-vertical">
+            {% for his in history %}
+                <li class="step step-primary" data-content="{{ forloop.counter }}">
+                    <div class="flex flex-row justify-between w-80">
+                        <div>{{ his.changed_status }} </div>
+                        <span class="text-xs text-end"> {{ his.changed_at }} <br>by {{ his.changed_by }}</span>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+            
+        </div>
+    </div>  
 </section>
    
 {% endblock %}

@@ -85,7 +85,7 @@
         <table class="table min-w-full divide-y devide-x divide-gray-900">
             <tr class="align-top border border-gray-500">
                 <td colspan="4">
-                    <div class="text-bold text-3xl text-center mt-2 mb-2">검  사  의  뢰  서</div>
+                    <div class="text-bold text-2xl text-center mt-1 mb-1">검  사  의  뢰  서</div>
                 </td>
             </tr>
             <tr class="align-top border border-gray-500">
@@ -120,7 +120,7 @@
                     {% endfor %}
                 </td>
                 <td class="align-top border-e border-gray-500">외뢰할 검사</td>
-                <td>
+                <td class="align-top border-e border-gray-500">
                     {% for sim in simples %}
                         <div class="">{{sim.diagnosis}}</div>
                     {% endfor %}
@@ -132,7 +132,7 @@
                     <div class="font-semibold text-sm">임상소견:</div>
                 </td>
                 <td colspan="3" class="align-top border border-gray-500">
-                    <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1 }}</div>
+                    <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1|linebreaks }}</div>
                 </td>
             </tr>
             <tr class="align-top border border-gray-500">

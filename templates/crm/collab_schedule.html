@@ -18,10 +18,6 @@
                 <td>의사명</td><td>{{refer.company.president_name}} </td>
             </tr>
             <tr>
-                <td>의뢰일</td><td>{{ refer.referred_date }}</td>
-                <td>상태</td><td>{{ refer.status }}</td>
-            </tr>
-            <tr>
                 <td>환자명</td><td>{{ refer.patient_name }}</td>
                 <td>환자성별</td><td>{{ refer.patient_gender }}</td>
             </tr>
@@ -29,21 +25,14 @@
                 <td>생년월일</td><td>{{ refer.patient_birthdate }}</td>
                 <td>연락처</td><td>{{ refer.patient_phone }}</td>
             </tr>
-            <tr>
-                <td>환자상병</td><td>{{ refer.illness }}</td>
-                <td>외뢰할 검사</td><td>{{ refer.treatment }}</td>
-            </tr>
-            <tr>
-                <td colspan="1">임상소견</td>
-                <td colspan="3">{{ refer.opinion1 }}</td>
-            </tr>
+           
         </table>
         <form 
             hx-post="{% url 'crm:collab_schedule' refer.id %}"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
             hx-swap="outerHTML"
             hx-trigger="submit"
-            hx-target="#collab_schedule_box"
+            hx-target="#history_box"
             id="collab_schedule_form"
         >
             <table class="table w-full" >
@@ -70,19 +59,10 @@
                 </tr>
                 <tr>
                     <td colspan="4">
-                        <div class="flex flex-row justify-between gap-2">
-                            <a 
-                                href="{% url 'crm:collab_schedule' refer.id %}" 
-                                class="btn btn-secondary btn-sm" 
-                                hx-get="{% url 'crm:collab_schedule' refer.id %}" 
-                                hx-swap="outerHTML" 
-                                hx-trigger="click"
-                                hx-target="#collab_schedule_box"
-                            >진료회송서 작성</a>
+                        <div class="flex flex-row justify-end gap-2">
                             <button class="btn btn-primary btn-sm" type="submit">저장하기</button>
-                            
                             <form method="dialog">  
-                                <button class="btn btn-warning btn-sm">Close</button>
+                                <button class="btn btn-warning btn-sm">취소하기</button>
                             </form>
                         </div>
                     </td>
@@ -92,12 +72,12 @@
     </div>  
 </div>
 <script>
-    document.getElementById('collab_schedule_box').addEventListener('htmx:beforeSwap', function(event) {
-        if (event.detail.target.id === 'collab_schedule_box') {
+    document.getElementById('history_box').addEventListener('htmx:beforeSwap', function(event) {
+        if (event.detail.target.id === 'history_box') {
             // Check if the form submission was successful
             console.log("Status:", event.detail.xhr.status);
             console.log("Headers:", event.detail.xhr.getAllResponseHeaders());
-            if (event.detail.xhr.status === 204) {
+            if (event.detail.xhr.status === 200) {
                 // If successful, close the modal
                 base_modal.close();
                 console.log("Form submission successful");
