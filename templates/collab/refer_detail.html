@@ -98,7 +98,7 @@
                     
                 </table>
             
-                {% if refer.status == 'Interpreted' or refer.status == "Cosigned" %}
+                {% if refer.status == 'Interpreted' or refer.status == "Cosigned" or refer.status == "Archived" %}
                     
                     {% include 'crm/partial_return_report.html' %}
                 
@@ -189,7 +189,7 @@
         </div>
     </div>
 </section>
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
     <div class="card-body grow-0">
         <div id="refer_create_box" class="">
             <ul class="steps steps-vertical">

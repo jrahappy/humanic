@@ -3,7 +3,7 @@
         <li class="step step-primary" data-content="{{ forloop.counter }}">
             <div class="flex flex-row justify-between w-80">
                 <div>{{ his.changed_status }} </div>
-                <span class="text-xs text-end"> {{ his.changed_at }} <br>by {{ his.changed_by }}</span>
+                <span class="text-xs text-end">{{ his.memo }}<br> {{ his.changed_at }} by {{ his.changed_by }}</span>
             </div>
         </li>
     {% endfor %}

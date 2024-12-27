@@ -19,6 +19,11 @@ urlpatterns = [
         name="collab_refer_detail",
     ),
     path("collab_report/<int:refer_id>/", views.collab_report, name="collab_report"),
+    path(
+        "collab_report_one/<int:refer_id>/",
+        views.collab_report_one,
+        name="collab_report_one",
+    ),
     path("crm_refers/", views.crm_refers, name="crm_refers"),
     path("collab_kanban/", views.collab_kanban, name="collab_kanban"),
     path(
@@ -28,6 +33,11 @@ urlpatterns = [
     ),
     path(
         "collab_schedule/<int:refer_id>/", views.collab_schedule, name="collab_schedule"
+    ),
+    path(
+        "collab_schedule_one/<int:refer_id>/",
+        views.collab_schedule_one,
+        name="collab_schedule_one",
     ),
     path(
         "collab_refer_archive/<int:refer_id>/",

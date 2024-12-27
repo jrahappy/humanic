@@ -121,6 +121,8 @@
                     >
                     검사예약 입력하기
                     </a>
+                    <a href="{% url 'crm:collab_schedule_one' refer.id %}" class="btn btn-success btn-sm text-white">간편 예약완료 처리</a>
+                        
                 </div>
 
                 {% elif refer.status == 'Scheduled' %}
@@ -138,7 +140,7 @@
                     검사예약 수정하기
                     </a>
                     <a 
-                        class="btn btn-secondary btn-sm" 
+                        class="btn btn-success btn-sm text-white" 
                         onclick="base_modal.showModal()"
                         hx-get="{% url 'crm:collab_report' refer.id %}" 
                         hx-swap="innnerHTML" 
@@ -147,6 +149,7 @@
                     >
                     진료회송서 작성
                     </a>
+                    <a href="{% url 'crm:collab_report_one' refer.id %}" class="btn btn-success btn-sm text-white">간편 진료회송서 처리</a>
                 </div>
 
                 {% elif refer.status == 'Interpreted' %}
@@ -219,7 +222,7 @@
             <li class="step step-primary" data-content="{{ forloop.counter }}">
                 <div class="flex flex-row justify-between w-80">
                     <div>{{ his.changed_status }} </div>
-                    <span class="text-xs text-end"> {{ his.changed_at }} <br>by {{ his.changed_by }}</span>
+                    <span class="text-xs text-end">{{his.memo}}<br> {{ his.changed_at }} by {{ his.changed_by }}</span>
                 </div>
             </li>
         {% endfor %}

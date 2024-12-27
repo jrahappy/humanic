@@ -97,6 +97,16 @@ def collab_refer_detail(request, refer_id):
     return render(request, "crm/collab_refer_detail.html", context)
 
 
+def collab_schedule_one(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    refer.status = "Scheduled"
+    refer.scheduled_at = datetime.datetime.now()
+    refer.updated_at = datetime.datetime.now()
+    refer.save()
+    create_history(request, refer.id, "Scheduled", "간편예약 처리")
+    return redirect("crm:collab_kanban")
+
+
 def collab_schedule(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     if request.method == "POST":
@@ -144,6 +154,16 @@ def collab_schedule(request, refer_id):
         }
 
     return render(request, "crm/collab_schedule.html", context)
+
+
+def collab_report_one(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    refer.status = "Interpreted"
+    refer.opinioned_at = datetime.datetime.now()
+    refer.updated_at = datetime.datetime.now()
+    refer.save()
+    create_history(request, refer.id, "Interpreted", "간편회송서 처리")
+    return redirect("crm:collab_kanban")
 
 
 def collab_report(request, refer_id):

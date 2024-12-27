@@ -29,7 +29,7 @@ def stat(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     refers = Refers.objects.filter(company=company)
-    cosigned_refers = refers.filter(status="Cosigned")
+    cosigned_refers = refers.filter(Q(status="Cosigned") | Q(status="Archived"))
     year_month_list = (
         cosigned_refers.annotate(
             year=ExtractYear("cosigned_at"), month=ExtractMonth("cosigned_at")
