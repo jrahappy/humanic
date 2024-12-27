@@ -1,0 +1,27 @@
+<div id="my_simple_list" class="px-2 w-full"
+    hx-get="{% url 'collab:partial_my_simple_diagonosis_list' draft_refer.id %}"
+    hx-trigger="MySimplesChanged from:body"
+    hx-target="this"
+    hx-swap="outerHTML"
+>
+    {% for sim in my_simples %}
+        <div class="flex flex-row gap-2 justify-between w-full mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-200">
+            <p class="text-xs">{{ sim }}</p>
+            <a href="#" class="btn btn-primary btn-xs"
+                hx-get="/collabcreate_simple_diagnosis/{{draft_refer.id}}/{{sim.simple_diagnosis.id}}"
+                hx-trigger="click"
+                hx-target="#simple_diagonosis_list_box"
+                >
+                검사추가
+            </a>
+            <a href="#" class="btn btn-secondary btn-xs"
+                hx-get="{% url 'collab:delete_my_simple_code' sim.id %}"
+                hx-trigger="click"
+                hx-target="#my_simple_list"
+                hx-swap="innerHTML">
+                -
+            </a>
+        </div>
+    {% endfor %}
+</div>
+       

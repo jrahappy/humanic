@@ -95,6 +95,18 @@ class IllnessCode(models.Model):
         ordering = ["code"]
 
 
+class MyIllnessCode(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    illness_code = models.ForeignKey(IllnessCode, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.illness_code.code + " - " + self.illness_code.name
+
+    class Meta:
+        ordering = ["illness_code__code"]
+
+
 class TreatmentCode(models.Model):
     code = models.CharField(max_length=10)
     category1 = models.CharField(max_length=100, null=True, blank=True)
@@ -123,6 +135,7 @@ class SimpleDiagnosis(models.Model):
     order = models.IntegerField(default=0)
     step = models.SmallIntegerField(default=0)
     is_head = models.BooleanField(default=False)
+    short_name = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         # return self.code1 + " - " + self.code2 + " - " + self.code3 + " - " + self.code4
@@ -134,3 +147,25 @@ class SimpleDiagnosis(models.Model):
         verbose_name = "간단진단"
         verbose_name_plural = "간단진단"
         ordering = ["order"]
+
+
+class MySimpleDiagnosis(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    simple_diagnosis = models.ForeignKey(SimpleDiagnosis, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return " - ".join(
+            filter(
+                None,
+                [
+                    self.simple_diagnosis.code1,
+                    self.simple_diagnosis.code2,
+                    self.simple_diagnosis.code3,
+                    self.simple_diagnosis.code4,
+                ],
+            )
+        )
+
+    class Meta:
+        ordering = ["simple_diagnosis__order"]

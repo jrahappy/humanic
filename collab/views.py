@@ -10,6 +10,8 @@ from .models import (
     ReferTreatment,
     ReferSimpleDiagnosis,
     SimpleDiagnosis,
+    MyIllnessCode,
+    MySimpleDiagnosis,
 )
 from .forms import ReferForm, CollabCompanyForm
 from accounts.models import CustomUser, Profile
@@ -23,6 +25,93 @@ import json
 import csv
 import io
 import datetime
+
+
+def partial_my_simple_diagonosis_list(request, refer_id):
+    refer = Refers.objects.get(id=refer_id)
+    my_simples = MySimpleDiagnosis.objects.filter(company=refer.company)
+    context = {"draft_refer": refer, "my_simples": my_simples}
+    return render(request, "collab/partial_my_simple_diagonosis_list.html", context)
+
+
+def add_my_simple_code(request, refer_id, simple_id):
+    refer = Refers.objects.get(id=refer_id)
+    company = refer.company
+    simple = SimpleDiagnosis.objects.get(id=simple_id)
+    if not MySimpleDiagnosis.objects.filter(
+        company=company, simple_diagnosis=simple
+    ).exists():
+        my_simple = MySimpleDiagnosis.objects.create(
+            company=company, simple_diagnosis=simple
+        )
+        my_simple.save()
+    else:
+        print("Already exists")
+        # add.message = "Already exists"
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {"MySimplesChanged": None, "showMessage": "Simple added"}
+            )
+        },
+    )
+
+
+def delete_my_simple_code(request, simple_id):
+    my_simple = MySimpleDiagnosis.objects.get(id=simple_id)
+    my_simple.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {"MySimplesChanged": None, "showMessage": "Simple added"}
+            )
+        },
+    )
+
+
+def partial_my_illness_code_list(request, refer_id):
+    refer = Refers.objects.get(id=refer_id)
+    # user = request.user
+    # company = Company.objects.filter(customuser=user).first()
+    my_illnesses = MyIllnessCode.objects.filter(company=refer.company)
+    context = {"draft_refer": refer, "my_illnesses": my_illnesses}
+    return render(request, "collab/partial_my_illness_code_list.html", context)
+
+
+def add_my_illness_code(request, refer_id, illness_id):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    illness = IllnessCode.objects.get(id=illness_id)
+    if not MyIllnessCode.objects.filter(company=company, illness_code=illness).exists():
+        my_illness = MyIllnessCode.objects.create(company=company, illness_code=illness)
+        my_illness.save()
+    else:
+        print("Already exists")
+        # add.message = "Already exists"
+
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {"MyIllnessesChanged": None, "showMessage": "Illness added"}
+            )
+        },
+    )
+
+
+def delete_my_illness_code(request, refer_id, illness_id):
+    my_illness = MyIllnessCode.objects.get(id=illness_id)
+    my_illness.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {"MyIllnessesChanged": None, "showMessage": "Illness added"}
+            )
+        },
+    )
 
 
 def stat(request):
@@ -160,9 +249,11 @@ def create_refer_illness(request, refer_id, illness_id):
 
 
 def partial_illness_code_search(request, refer_id):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    my_illnesses = MyIllnessCode.objects.filter(company=company)
     refer = Refers.objects.get(id=refer_id)
-    context = {"draft_refer": refer}
-
+    context = {"draft_refer": refer, "my_illnesses": my_illnesses}
     return render(request, "collab/partial_illness_code_search.html", context)
 
 
@@ -238,8 +329,16 @@ def partial_simple_list(request, refer_id):
 
 
 def partial_simple_diagnosis_list(request, refer_id):
+    q = request.GET.get("q")
+    if q:
+        sims = SimpleDiagnosis.objects.filter(short_name__icontains=q).order_by("order")
+    else:
+        sims = SimpleDiagnosis.objects.all().order_by("order")
+
     refer = Refers.objects.get(id=refer_id)
-    sims = SimpleDiagnosis.objects.all().order_by("order")
+    my_simples = MySimpleDiagnosis.objects.filter(company=refer.company)
+    filtered = request.GET.get("filtered")
+
     v_html = ""
     v_step = -1
     v_code = ""
@@ -249,9 +348,7 @@ def partial_simple_diagnosis_list(request, refer_id):
 
     i = 0
     for sim in sims:
-        temp_htmx = (
-            "<div class='flex flex-row justify-between items-center w-full mb-1'>"
-        )
+        temp_htmx = "<div class='flex flex-row justify-between items-center w-full mb-2 me-2 border-b border-t border-gray-300 hover:bg-gray-200'>"
         if sim.is_head:
             if sim.step == 0:
                 temp_header = temp_htmx + f"<h3>{sim.code1}</h3>"
@@ -260,22 +357,23 @@ def partial_simple_diagnosis_list(request, refer_id):
                 temp_header += temp_htmx + f"<p class='text-sm ps-2'>--{sim.code2}</p>"
             elif sim.step == 2:
                 temp_header = f"<h3 class='mt-4'>{sim.code1}</h3>"
-                temp_header += f"<p class='text-sm ps-2'>--{sim.code2}</p>"
+                temp_header += f"<p class='text-sm ps-2'>--{sim.code2} </p>"
                 temp_header += (
                     temp_htmx + f"<p class='text-sm ps-2'>----{sim.code3}</p>"
                 )
             else:
-                temp_header = f"<h3 class='mt-4'>{sim.code1}</h3>"
-                temp_header += f"<p class='text-sm ps-2'>--{sim.code2}</p>"
-                temp_header += f"<p class='text-sm ps-2'>----{sim.code3}</p>"
+                temp_header = f"<h3 class='mt-4 mb-1'>{sim.code1}</h3>"
+                temp_header += f"<p class='text-sm ps-2 mb-1'>--{sim.code2}</p>"
+                temp_header += f"<p class='text-sm ps-2 mb-1'>----{sim.code3}</p>"
                 temp_header += (
                     temp_htmx + f"<p class='text-sm ps-2'>------{sim.code4}</p>"
                 )
 
         else:
-
             if sim.step == 0:
-                temp_header = temp_htmx + f"<p class='text-sm'>{sim.code1}</p>"
+                temp_header = (
+                    temp_htmx + f"<p class='text-sm mb-1 font-semibold'>{sim.code1}</p>"
+                )
             elif sim.step == 1:
                 temp_header = temp_htmx + f"<p class='text-sm ps-2'>--{sim.code2}</p>"
             elif sim.step == 2:
@@ -285,20 +383,35 @@ def partial_simple_diagnosis_list(request, refer_id):
                     temp_htmx + f"<p class='text-sm ps-2'>------{sim.code4}</p>"
                 )
         temp_header += (
+            f"<div class='flex flex-row justify-end items-center gap-2'>"
             f"<a href='#' class='btn btn-xs btn-primary' "
             f"hx-target='#simple_diagonosis_list_box' "
-            f"hx-get='/collabcreate_simple_diagnosis/{refer.id}/{sim.id}'>Add</a>"
+            f"hx-get='/collabcreate_simple_diagnosis/{refer.id}/{sim.id}'>검사추가</a>"
+        )
+        temp_header += (
+            f"<a href='#' class='btn btn-xs btn-secondary' "
+            f"hx-target='#my_simple_list'"
+            f"hx-get='/collabadd_my_simple_code/{refer.id}/{sim.id}'>+</a>"
         )
 
-        temp_header += "</div>"
+        temp_header += "</div></div>"
         # print(temp_header)
         v_step = sim.step
         v_html += temp_header
         i += 1
 
-    return render(
-        request, "collab/partial_simple_diagnosis_list.html", {"html": v_html}
-    )
+    if filtered:
+        return render(
+            request,
+            "collab/partial_simple_diagnosis_list_filtered.html",
+            {"html": v_html, "draft_refer": refer, "my_simples": my_simples},
+        )
+    else:
+        return render(
+            request,
+            "collab/partial_simple_diagnosis_list.html",
+            {"html": v_html, "draft_refer": refer, "my_simples": my_simples},
+        )
 
 
 def illness_list(request):

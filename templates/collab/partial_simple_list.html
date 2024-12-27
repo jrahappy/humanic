@@ -1,5 +1,5 @@
 <div id="simple_diagonosis_list_box"
-    class=""
+    class="mt-2"
     hx-get="{% url 'collab:partial_simple_list' draft_refer.id %}"
     hx-trigger="SimpleDiagnosisChanged from:body"
     hx-target="this"
@@ -21,7 +21,7 @@
             >X</a>
         </li>
         {% empty %}
-        <li>검색 결과가 없습니다.</li>
+        
         {% endfor %}
     </ul>
 </div>

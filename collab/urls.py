@@ -21,11 +21,6 @@ urlpatterns = [
         "refer_completed/<int:refer_id>/", views.refer_completed, name="refer_completed"
     ),
     path("refer_archive/<int:refer_id>/", views.refer_archive, name="refer_archive"),
-    # path(
-    #     "create_history/<int:refer_id>/<str:new_status>/",
-    #     views.create_history,
-    #     name="create_history",
-    # ),
     path("company_info/<int:company_id>/", views.company_info, name="company_info"),
     path(
         "company_update/<int:company_id>/", views.company_update, name="company_update"
@@ -79,5 +74,35 @@ urlpatterns = [
         "delete_refer_illness/<int:refer_illness_id>/",
         views.delete_refer_illness,
         name="delete_refer_illness",
+    ),
+    path(
+        "partial_my_illness_code_list<int:refer_id>/",
+        views.partial_my_illness_code_list,
+        name="partial_my_illness_code_list",
+    ),
+    path(
+        "add_my_illness_code/<int:refer_id>/<int:illness_id>/",
+        views.add_my_illness_code,
+        name="add_my_illness_code",
+    ),
+    path(
+        "delete_my_illness_code/<int:refer_id>/<int:illness_id>/",
+        views.delete_my_illness_code,
+        name="delete_my_illness_code",
+    ),
+    path(
+        "partial_my_simple_diagonosis_list/<int:refer_id>/",
+        views.partial_my_simple_diagonosis_list,
+        name="partial_my_simple_diagonosis_list",
+    ),
+    path(
+        "add_my_simple_code/<int:refer_id>/<int:simple_id>/",
+        views.add_my_simple_code,
+        name="add_my_simple_code",
+    ),
+    path(
+        "delete_my_simple_code/<int:simple_id>/",
+        views.delete_my_simple_code,
+        name="delete_my_simple_code",
     ),
 ]

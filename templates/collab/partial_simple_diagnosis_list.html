@@ -1,4 +1,61 @@
-
-    <div id="simple_diagnosis_list" class="overflow-y-auto h-92" style="height:548px;">
-        {{ html|safe}}
-    </div>
+<div class="flex flex-row justify-between mb-2 border-gray-300 hover:bg-gray-200">
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=EKG&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >EKG</a>
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=AVF&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >AVF</a>
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=MRI&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >MRI</a>
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=CT&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >CT</a>
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=초음파&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >초음파</a>
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=특수촬영&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >특수촬영</a>
+    <a href="#" class="btn btn-sm"
+        hx-get="{% url 'collab:partial_simple_diagnosis_list' draft_refer.id %}?q=X선촬영&filtered=Y"
+        hx-trigger="click"
+        hx-target="#simple_diagnosis_list"
+        hx-swap="outerHTML"
+        value
+    >X선촬영</a>
+   
+</div>
+<div class="divider"></div>
+<div class="flex flex-row justify-between mb-2 border-gray-300 hover:bg-gray-200">
+    {% include 'collab/partial_my_simple_diagonosis_list.html' %}
+</div>
+<div class="divider"></div>
+<div id="simple_diagnosis_list" class="overflow-y-auto h-92 pe-2" style="height:548px;">
+    
+    {{ html|safe}}
+</div>

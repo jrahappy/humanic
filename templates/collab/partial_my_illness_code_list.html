@@ -1,0 +1,27 @@
+<div id="my_illnesses_list" class="px-2"
+    hx-get="{% url 'collab:partial_my_illness_code_list' draft_refer.id %}"
+    hx-trigger="MyIllnessesChanged from:body"
+    hx-target="this"
+    hx-swap="outerHTML"
+>
+    {% for ill in my_illnesses %}
+        <div class="flex flex-row gap-2 justify-between mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-200">
+            <p class="text-xs">{{ ill.illness_code.code }} {{ ill.illness_code.name }}  </p>
+            <a href="#" class="btn btn-primary btn-xs"
+                hx-get="{% url 'collab:create_refer_illness' draft_refer.id ill.illness_code.id %}"
+                hx-trigger="click"
+                hx-target="#illness_list_box"
+                hx-swap="innerHTML">
+                상병추가
+            </a>
+            <a href="#" class="btn btn-secondary btn-xs"
+                hx-get="{% url 'collab:delete_my_illness_code' draft_refer.id ill.id %}"
+                hx-trigger="click"
+                hx-target="#illness_list_box"
+                hx-swap="innerHTML">
+                -
+            </a>
+        </div>
+    {% endfor %}
+</div>
+       

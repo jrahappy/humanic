@@ -93,12 +93,20 @@
                     <tr class="align-top border border-gray-500">
                         <td colspan="1" class="align-top border-e border-gray-500">
                             <div class="font-semibold text-sm">임상소견:</div>
+                            
                         </td>
                         <td colspan="3" class="align-top border border-gray-500">
-                            <div class="h-32 max-h-48 bg-base-50">{{ refer.opinion1|linebreaks }}</div>
+                            <div class="h-32 max-h-48 bg-base-50">
+                                <div class="h-full w-full relative overflow-auto">
+                                    <button onclick="copyToClipboard()" id="btn_copy" class="absolute top-0 right-0 btn btn-xs btn-secondary">Copy</button>
+                                    {{ refer.opinion1|linebreaks }}
+                                </div>
+                                
+                            </div>
                         </td>
                     </tr>
                 </table>
+
                 <table  class="table min-w-full divide-y devide-x divide-gray-900">
                     <tr class="align-top border border-gray-500">
                         <td class="w-32 align-top border-e border-gray-500">예약일시</td>
@@ -107,6 +115,23 @@
                         </td>
                     </tr>
                 </table>
+                <!-- 숨겨진 부분(클립보드로 복사하기 위함) -->
+                <div class="w-0 h-0 text-base-0 overflow-hidden" id="copyInput">
+                    <span>상병명:<br/>
+                    {% for ill in illnesses %}
+                        <span>&nbsp;{{ill.illness}}</span><br>
+                    {% endfor %}
+                    </span>
+                    <span>요청검사:<br/>
+                    {% for sim in simples %}
+                        <span>&nbsp;{{sim.diagnosis}}</span><br>
+                    {% endfor %}
+                    </span>
+                    <span>임상소견:<br/>
+                    <span>{{ refer.opinion1|linebreaks }}</span>
+                    </span>
+                </div>
+
                 {% if refer.status == 'Requested' %}
                 <div id="return_report"></div>
                 <div class="flex justify-end gap-2 mt-4">
@@ -230,7 +255,34 @@
         
     </div>  
 </section>
-
+<script>
+    function copyToClipboard() {
+        // Select the input element
+        var copyText = document.getElementById("copyInput");
+        var btnCopy = document.getElementById("btn_copy");
+      
+        // Create a range object
+        var range = document.createRange();
+        range.selectNode(copyText);
+      
+        // Select the text
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+      
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.innerText)
+          .then(() => {
+            // Alert the copied text
+            // alert("Copied the text: " + copyText.innerText);
+            btnCopy.innerHTML = 'Copied';
+            //
+          })
+          .catch(err => {
+            console.error('Failed to copy: ', err);
+          });
+    }
+      
+</script>
   
 {% endblock %}
 

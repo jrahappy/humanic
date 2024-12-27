@@ -1,16 +1,17 @@
 <div>
-   
-        <input 
-            name="q" 
-            type="text" 
-            class="input input-bordered input-sm w-40" 
-            placeholder="상병명 혹은 코드 검색"
-            hx-get="{% url 'collab:partial_illness_code_list' draft_refer.id %}?q={{ value }}"
-            hx-trigger="keyup changed delay:500ms"
-            hx-target="#illnesses_list"
-        >
-    
+    <input 
+        name="q" 
+        type="text" 
+        class="input input-bordered input-sm w-80" 
+        placeholder="상병명 혹은 코드 검색"
+        hx-get="{% url 'collab:partial_illness_code_list' draft_refer.id %}?q={{ value }}"
+        hx-trigger="keyup changed delay:500ms"
+        hx-target="#illnesses_list"
+        hx-swap="outerHTML"
+    >
 </div>
+<div class="divider"></div>
+{% include 'collab/partial_my_illness_code_list.html' %}
 <div class="divider"></div>
 <div id="illnesses_list" class="overflow-y-auto h-92" style="height:548px;">
     
