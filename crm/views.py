@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from .models import Opportunity, Chance
 from customer.models import Company, CustomerLog
@@ -11,12 +11,14 @@ import json
 
 
 def collab_kanban(request):
-    refers = Refers.objects.all().order_by("-created_at")
+    refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
 
     status_rq = refers.filter(status="Requested")
     status_sch = refers.filter(status="Scheduled")
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
+    status_cancelled = refers.filter(status="Cancelled")[0:5]
+    print(status_cancelled.count())
 
     context = {
         "refers": refers,
@@ -28,24 +30,26 @@ def collab_kanban(request):
         "status_in_count": status_in.count(),
         "status_cosign": status_cosign,
         "status_cosign_count": status_cosign.count(),
+        "status_cancelled": status_cancelled,
     }
     return render(request, "crm/collab_kanban.html", context)
 
 
 def collab(request):
-    refers = Refers.objects.all().order_by("-created_at")
+    refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
     context = {"refers": refers}
     return render(request, "crm/collab.html", context)
 
 
 def partial_collab_kanban(request):
-    refers = Refers.objects.all().order_by("-created_at")
+    refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
 
     status_rq = refers.filter(status="Requested")
     status_sch = refers.filter(status="Scheduled")
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
-
+    status_cancelled = refers.filter(status="Cancelled")[0:5]
+    print(status_cancelled.count())
     context = {
         "refers": refers,
         "status_rq": status_rq,
@@ -56,6 +60,7 @@ def partial_collab_kanban(request):
         "status_in_count": status_in.count(),
         "status_cosign": status_cosign,
         "status_cosign_count": status_cosign.count(),
+        "status_cancelled": status_cancelled,
     }
     return render(request, "crm/partial_collab_kanban.html", context)
 
@@ -64,6 +69,15 @@ def crm_refers(request):
     refers = Refers.objects.all().order_by("-created_at")
     context = {"refers": refers}
     return render(request, "crm/crm_refers.html", context)
+
+
+def collab_refer_archive(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    refer.status = "Archived"
+    refer.updated_at = datetime.datetime.now()
+    refer.save()
+    create_history(request, refer.id, "Archived", "Archived")
+    return redirect("crm:collab_kanban")
 
 
 def collab_refer_detail(request, refer_id):
@@ -139,6 +153,7 @@ def collab_report(request, refer_id):
         if form.is_valid():
             report = form.save(commit=False)
             report.provider = request.user
+            report.collab_price = form.cleaned_data["readprice"] / 2
             report.opinioned_at = datetime.datetime.now()
             report.updated_at = datetime.datetime.now()
             report.save()
@@ -146,6 +161,7 @@ def collab_report(request, refer_id):
             new_status = form.cleaned_data["status"]
             create_history(request, refer.id, new_status, "회송 완료")
             history = refer.referhistory_set.all()
+            illnesses = refer.referillness_set.all()
 
             return render(
                 request,
@@ -154,6 +170,7 @@ def collab_report(request, refer_id):
                     # "form": form,
                     "refer": refer,
                     "history": history,
+                    "illnesses": illnesses,
                 },
             )
 

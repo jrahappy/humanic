@@ -1,0 +1,33 @@
+<tbody id="refer_tbody_box">
+    {% for refer in refers %}
+    <tr class="hover:bg-gray-100 hover:bg-opacity-50 cursor-pointer"
+        onclick="location.href='{% url 'collab:refer_detail' refer.id %}'"
+    >
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.id }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.referred_date|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.company.business_name }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.patient_name }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.patient_birthdate|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.patient_phone }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.scheduled_at|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.cosigned_at|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">
+            {% if refer.status == 'Cosigned' %}
+                <span class="badge badge-success text-white">{{ refer.status }}</span>
+            {% elif refer.status == 'Interpreted' %}
+                <span class="badge badge-warning">{{ refer.status }}</span>
+            {% elif refer.status == 'Requested' %}
+                <span class="badge badge-primary">{{ refer.status }}</span>
+            {% elif refer.status == 'Scheduled' %}
+                <span class="badge badge-secondary">{{ refer.status }}</span>
+            {% elif refer.status == 'Cancelled' %}
+                <span class="badge badge-neutral">{{ refer.status }}</span>
+            {% else %}
+                <span class="badge badge-warning">{{ refer.status }}</span>
+            {% endif %}
+            
+        </td>
+
+    </tr>
+    {% endfor %}
+</tbody>

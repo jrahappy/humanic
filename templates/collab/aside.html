@@ -26,18 +26,26 @@
             <li>
                 <a href="{% url 'collab:index' %}">
                     <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
-                    협진관리
-                    <span class="badge badge-info badge-sm">12</span>
+                    검사의뢰 대시보드
+                    
                 </a>
             </li>
             <li>
-                <a href="{% url 'cust:stat' %}" {% if side_menu == "stat" %}class='active'{% endif %}>
+                <a href="{% url 'collab:home' %}">
+                    <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
+                    검사의뢰 관리
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'collab:stat' %}" {% if side_menu == "stat" %}class='active'{% endif %}>
                     <svg
                         data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
                         class="h-5 w-5"></svg>
                     정산/통계
                 </a>
             </li>
+            
+            {% if user.name == 'william' %}
             <li>
                 <a href="{% url 'collab:illness_list' %}">
                     <svg
@@ -54,6 +62,7 @@
                     검사코드(간편)
                 </a>
             </li>
+            {% endif %}
         </ul>
     </nav>
     <!-- /sidebar menu -->

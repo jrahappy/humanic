@@ -166,6 +166,12 @@
                         진료회송서 수정
                         </a>
                     </div>
+
+                {% elif refer.status == 'Cancelled' %}
+                    
+                    <div class="flex justify-end gap-2 mt-4">
+                        <a href="{% url 'crm:collab_kanban' %}" class="btn btn-primary btn-sm text-white ">대시보드로 돌아가기</a>
+                    </div>
                 
                     
                 {% else %}
@@ -173,8 +179,29 @@
                         {% include 'crm/partial_return_report.html' %}
                     </div>
                     <div class="flex justify-end gap-2 mt-4">
+                        <a  href="#" 
+                            class="btn btn-primary btn-sm"
+                            data-archive-url="{% url 'crm:collab_refer_archive' refer.id %}"
+                            onclick="archive(this);"
+                        >Archive 처리</a>
+                        <script>
+                            function archive(element) {
+                                const archiveUrl = element.getAttribute('data-archive-url');
+                                Swal.fire({
+                                    title: 'Archive',
+                                    text: '협진완료된 Case를 Archive 처리합니다.',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Archive',
+                                    cancelButtonText: '취소',
+                                    icon: 'warning'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = archiveUrl;
+                                    }
+                                });
+                            }
+                        </script>
                         <a href="{% url 'crm:collab_kanban' %}" class="btn btn-primary btn-sm text-white ">대시보드로 돌아가기</a>
-                    
                     </div>
                     
                 {% endif %}

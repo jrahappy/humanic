@@ -1,0 +1,74 @@
+{% extends 'collab/base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'collab/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2 w-full">
+            <div class="flex flex-row justify-between w-full">
+                <h2 class="card-title w-80">
+                    검사의뢰서 관리
+                </h2>
+                <div class="flex flex-row w-80">
+                    <span class="p-2 me-2 text-gray-700"> 년도/월 선택:</span>
+                         
+                    <select
+                        name="year_month"
+                        class="select select-bordered select-sm w-40 max-w-xs py-0 px-4" 
+                        hx-get="{% url 'collab:partial_stat_filtered' company.id %}" 
+                        hx-include="[name=year_month]" 
+                        hx-trigger="change"
+                        hx-target="#refer_tbody_box" 
+                        hx-swap="outerHTML" 
+                    >
+                        <option value="-">---</option>
+                        {% for ym in year_month_list %}
+                            <option value="{{ ym }}">{{ ym }}</option>
+                        {% endfor %}
+                    </select>
+                   
+                </div>
+            </div>
+            <div class="text-end me-4 w-1/3">
+                <a href="{% url 'collab:refer_create' %}" class="btn btn-primary btn-sm text-white ">새 검사 의뢰</a>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <table class="min-w-full divide-y divide-gray-500">
+            <thead >
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">#</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">의뢰일</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">환자명</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">DOB</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">환자연락처</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">예약일시</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">Cosign</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">판독료</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">협진료</th>
+
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">현재상태</th>
+                    
+                </tr>
+            </thead>
+           {% include 'collab/partial_stat_filtered.html' %}
+            
+        </table>
+    </div>
+</section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'collab/aside.html' %}
+	
+{% endblock %}
+

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.db.models import Value, CharField, Q
+from django.db.models.functions import Concat, ExtractYear, ExtractMonth
 from .models import (
     Refers,
     ReferHistory,
@@ -21,6 +23,83 @@ import json
 import csv
 import io
 import datetime
+
+
+def stat(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    refers = Refers.objects.filter(company=company)
+    cosigned_refers = refers.filter(status="Cosigned")
+    year_month_list = (
+        cosigned_refers.annotate(
+            year=ExtractYear("cosigned_at"), month=ExtractMonth("cosigned_at")
+        )
+        .annotate(
+            year_month=Concat("year", Value("-"), "month", output_field=CharField())
+        )
+        .values_list("year_month", flat=True)
+        .distinct()
+        .order_by("year_month")
+    )
+
+    context = {
+        "refers": "",
+        "company": company,
+        "year_month_list": year_month_list,
+    }
+    return render(request, "collab/stat.html", context)
+
+
+def partial_stat_filtered(request, company_id):
+    company = Company.objects.get(id=company_id)
+    year_month = request.GET.get("year_month")
+
+    if year_month == "-":
+        context = {"refers": "", "company": company, "year": "", "month": ""}
+        return render(request, "collab/partial_stat_filtered.html", context)
+    else:
+
+        refers = (
+            Refers.objects.filter(company=company)
+            .filter(Q(status="Cosigned") | Q(status="Archived"))
+            .order_by("-cosigned_at")
+        )
+        year = int(year_month.split("-")[0])
+        month = int(year_month.split("-")[1])
+        refers = refers.filter(
+            cosigned_at__year=year,
+            cosigned_at__month=month,
+        )
+        context = {"refers": refers, "company": company, "year": year, "month": month}
+        return render(request, "collab/partial_stat_filtered.html", context)
+
+
+def refer_archive(request, refer_id):
+    refer = Refers.objects.get(id=refer_id)
+    refer.status = "Archived"
+    refer.updated_at = datetime.datetime.now()
+    refer.save()
+    create_history(request, refer.id, "Archived", "Archived")
+    return redirect("collab:index")
+
+
+def go_archive(request, company_id):
+    company = Company.objects.get(id=company_id)
+    refers = Refers.objects.filter(
+        company=company,
+        status__in=["Cosigned", "Cancelled"],
+        cosigned_at__lte=datetime.date.today() - datetime.timedelta(days=1),
+    )
+    if refers:
+        i = 0
+        for refer in refers:
+            refer.status = "Archived"
+            refer.save()
+            create_history(request, refer.id, "Archived", "Archived")
+            i += 1
+        print(f"{i} refer archived")
+    else:
+        print("No refer to archive")
 
 
 def create_history(request, refer_id, new_status, memo=None):
@@ -314,10 +393,38 @@ def simplecode_import(request):
         return render(request, "collab/simplecode_import.html", context)
 
 
+# def home(request):
+#     user = request.user
+#     refers = Refers.objects.all().order_by("-created_at")
+#     paginator = Paginator(refers, 10)  # Show 10 refers per page
+#     page = request.GET.get("page")
+#     try:
+#         refers = paginator.page(page)
+#     except PageNotAnInteger:
+#         refers = paginator.page(1)
+#     except EmptyPage:
+#         refers = paginator.page(paginator.num_pages)
+#     context = {"refers": refers}
+#     return render(request, "collab/home.html", context)
+
+
 def home(request):
     user = request.user
-    refers = Refers.objects.all().order_by("-created_at")
-    paginator = Paginator(refers, 10)  # Show 10 refers per page
+    company = Company.objects.filter(customuser=user).first()
+    q = request.GET.get("q")
+    if q:
+        refers = (
+            Refers.objects.filter(company=company, patient_name__icontains=q)
+            .exclude(status="Draft")
+            .order_by("-created_at")
+        )
+    else:
+        refers = (
+            Refers.objects.filter(company=company)
+            .exclude(status="Draft")
+            .order_by("-created_at")
+        )
+    paginator = Paginator(refers, 20)  # Show 10 refers per page
     page = request.GET.get("page")
     try:
         refers = paginator.page(page)
@@ -325,14 +432,17 @@ def home(request):
         refers = paginator.page(1)
     except EmptyPage:
         refers = paginator.page(paginator.num_pages)
-    context = {"refers": refers}
+    context = {"refers": refers, "company": company}
     return render(request, "collab/home.html", context)
 
 
 def index(request):
     user = request.user
-    user = CustomUser.objects.get(id=user.id)
+    # user = CustomUser.objects.get(id=user.id)
     company = Company.objects.filter(customuser=user).first()
+    # Archive old refers
+    go_archive(request, company.id)
+
     q = request.GET.get("q")
     if q:
         refers = Refers.objects.filter(
@@ -348,7 +458,7 @@ def index(request):
     status_sch = refers.filter(status="Scheduled")
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
-    status_cancelled = refers.filter(status="Cancelled")
+    status_cancelled = refers.filter(status="Cancelled")[0:5]
 
     # Draft refer를 무조건 하나 만들어둔다.
     draft_exists = Refers.objects.filter(company=company, status="Draft").exists()
@@ -382,6 +492,9 @@ def index(request):
 
 def refer_list(request, company_id):
     company = Company.objects.get(id=company_id)
+    # Archive old refers
+    go_archive(request, company.id)
+
     q = request.GET.get("q")
     if q:
         refers = Refers.objects.filter(
@@ -425,10 +538,12 @@ def refer_create(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     draft_refer = Refers.objects.filter(company=company, status="Draft").first()
-
     # print(draft_refer.id)
     if request.method == "POST":
         form = ReferForm(request.POST, instance=draft_refer)
+        simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
+        illnesses = ReferIllness.objects.filter(refer=draft_refer)
+
         print("valid form?")
         if form.is_valid():
             new_status = "Requested"

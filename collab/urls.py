@@ -5,6 +5,12 @@ app_name = "collab"
 urlpatterns = [
     path("", views.index, name="index"),
     path("home/", views.home, name="home"),
+    path("stat/", views.stat, name="stat"),
+    path(
+        "partial_stat_filtered/<int:company_id>/",
+        views.partial_stat_filtered,
+        name="partial_stat_filtered",
+    ),
     path("refer_list/<int:company_id>/", views.refer_list, name="refer_list"),
     path("refer_create/", views.refer_create, name="refer_create"),
     path("refer_detail/<int:refer_id>/", views.refer_detail, name="refer_detail"),
@@ -14,6 +20,7 @@ urlpatterns = [
     path(
         "refer_completed/<int:refer_id>/", views.refer_completed, name="refer_completed"
     ),
+    path("refer_archive/<int:refer_id>/", views.refer_archive, name="refer_archive"),
     # path(
     #     "create_history/<int:refer_id>/<str:new_status>/",
     #     views.create_history,

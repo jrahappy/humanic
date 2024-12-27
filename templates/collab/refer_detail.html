@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2 w-full">
             <div class="flex flex-row justify-between w-2/3">
@@ -16,7 +16,7 @@
                     검사의뢰서 보기 / {{ refer.id }} / {{ company.id }}
                 </h2>
                 <div class="flex flex-col">
-                    <form method="get" action="{% url 'customer:index' %}">
+                    <form method="get" action="{% url 'collab:home' %}">
                         <label class="input input-bordered flex items-center gap-2">
                             <input type="text" class="grow" placeholder="Search" name="q" />
                             <svg
@@ -97,45 +97,70 @@
                     </tr>
                     
                 </table>
+            
                 {% if refer.status == 'Interpreted' or refer.status == "Cosigned" %}
                     
-                {% include 'crm/partial_return_report.html' %}
+                    {% include 'crm/partial_return_report.html' %}
                 
                 
-                <div id="printSection" style="display:none"></div>
-                <div class="flex justify-end gap-2 mt-4">
-                    {% if refer.status == 'Interpreted' %}
-                    <a  href="#" 
-                        class="btn btn-primary btn-sm"
-                        data-confirm-url="{% url 'collab:refer_completed' refer.id %}"
-                        onclick="confirmaCosign(this);"
-                    >회송확인 및 완료처리하기(Co-sign)</a>
-                    
-                    <script>
-                        function confirmaCosign(element) {
-                            const confirmUrl = element.getAttribute('data-confirm-url');
-                            Swal.fire({
-                                title: 'Cosign',
-                                text: '회송내용을 확인하고 완료처리합니다.',
-                                showCancelButton: true,
-                                confirmButtonText: '완료',
-                                cancelButtonText: '취소',
-                                icon: 'warning'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = confirmUrl;
+                    <div id="printSection" style="display:none"></div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        {% if refer.status == 'Interpreted' %}
+
+                            <a  href="#" 
+                                class="btn btn-primary btn-sm"
+                                data-confirm-url="{% url 'collab:refer_completed' refer.id %}"
+                                onclick="confirmaCosign(this);"
+                            >회송확인 및 완료처리하기(Co-sign)</a>
+                            <script>
+                                function confirmaCosign(element) {
+                                    const confirmUrl = element.getAttribute('data-confirm-url');
+                                    Swal.fire({
+                                        title: 'Cosign',
+                                        text: '회송내용을 확인하고 완료처리합니다.',
+                                        showCancelButton: true,
+                                        confirmButtonText: '완료',
+                                        cancelButtonText: '취소',
+                                        icon: 'warning'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = confirmUrl;
+                                        }
+                                    });
                                 }
-                            });
-                        }
+                            </script>
 
-                    
-                    </script>
-                    {% endif %}
+                        {% else %}
 
-                    <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
+                            <a  href="#" 
+                                class="btn btn-primary btn-sm"
+                                data-archive-url="{% url 'collab:refer_archive' refer.id %}"
+                                onclick="archive(this);"
+                            >Archive 처리</a>
+                            <script>
+                                function archive(element) {
+                                    const archiveUrl = element.getAttribute('data-archive-url');
+                                    Swal.fire({
+                                        title: 'Archive',
+                                        text: '협진완료된 Case를 Archive 처리합니다.',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Archive',
+                                        cancelButtonText: '취소',
+                                        icon: 'warning'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = archiveUrl;
+                                        }
+                                    });
+                                }
+                            </script>
+                            
+                        {% endif %}
 
-                    
-                </div>
+                        <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
+
+                        
+                    </div>
                 {% else %}
                 <div id="printSection" style="display:none"></div>
                 <div class="flex justify-end gap-2 mt-4">
