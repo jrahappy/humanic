@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <div class="divider"></div>
     <table  class="table min-w-full divide-y devide-x divide-gray-900">
         <tr class="align-top border border-gray-500">
@@ -44,7 +45,7 @@
             <td colspan="3" class="align-top border border-gray-500">
                 <div class="h-32 max-h-80 bg-base-50">위와 같이 의견을 보내드립니다.<br>
                     <div class="text-sm">
-                    {{ refer.opinion2|linebreaks }}
+                    {{ refer.opinion2|handle_none|linebreaks }}
                     </div>
                 </div>
             </td>
@@ -66,7 +67,13 @@
                 </div>
                 <div class="flex flex-row font-semibold text-sm">
                     <div class="w-24">의사명:</div>
-                    <div>{{ refer.provider }}</div>
+                    <div>
+                        {% if refer.provider is None %}
+                            휴먼
+                        {% else %}
+                            {{ refer.provider }}
+                        {% endif %}
+                         </div>
                 </div>
                 <div class="flex flex-row font-semibold text-sm">
                     <div class="w-24">주소:</div>

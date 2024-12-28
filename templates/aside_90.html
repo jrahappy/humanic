@@ -99,18 +99,25 @@
                 <li>
                     <a href="{% url 'crm:collab_kanban' %}" class="px-5">대시보드</a>
                 </li>
-            </ul>
-            <ul>
+           
                 <li>
                     <a href="{% url 'crm:collab' %}" class="px-5">협진요청 보기</a>
                 </li>
-            </ul>
-            <ul>
                 <li>
                     <a href="{% url 'crm:collab' %}" class="px-5">월별통계 보기</a>
                 </li>
+                <li>
+                    <a href="{% url 'collab:illness_list' %}">
+                        상병코드
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'collab:simplecode_list' %}">
+                        검사코드(간편)
+                    </a>
+                </li>
+         
             </ul>
-            
         </details>
     </li>
     {% endif %}

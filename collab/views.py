@@ -651,6 +651,9 @@ def refer_create(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     draft_refer = Refers.objects.filter(company=company, status="Draft").first()
+    # 오늘 날짜로 업데이트를 해준다.
+    draft_refer.referred_date = datetime.date.today()
+    draft_refer.save()
     # print(draft_refer.id)
     if request.method == "POST":
         form = ReferForm(request.POST, instance=draft_refer)

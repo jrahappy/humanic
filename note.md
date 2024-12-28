@@ -298,4 +298,5 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     V - 상병/검사요청/의뢰소견 원클릭 카피(클립보드로)
 
     ? 판독의(김성현, 전우선, 이재희, 윤혜경, 전용식, 김수진) - 협진관리 볼 수 있도록 함
+    ? 회송서에 파일업로드 필요(dicom, zip, etc)
     

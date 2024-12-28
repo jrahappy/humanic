@@ -128,7 +128,7 @@
                     {% endfor %}
                     </span>
                     <span>임상소견:<br/>
-                    <span>{{ refer.opinion1|linebreaks }}</span>
+                        &nbsp;{{ refer.opinion1|trim }}
                     </span>
                 </div>
 
@@ -233,8 +233,6 @@
                     </div>
                     
                 {% endif %}
-
-               
                 
             </div>  
         </div>

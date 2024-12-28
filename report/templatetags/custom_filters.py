@@ -6,6 +6,12 @@ import datetime
 register = template.Library()
 
 
+@register.filter(name="trim")
+def trim(value):
+    """Removes leading and trailing whitespace from the string."""
+    return value.strip()
+
+
 @register.filter
 def is_older_than_24_hours(value):
     """
