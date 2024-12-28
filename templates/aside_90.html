@@ -80,31 +80,37 @@
                     <a href="{% url 'referdex:pm' %}" class="px-5">Workbench</a>
                 </li>
             </ul>
+            <ul>
+                <li>
+                    <a href="{% url 'crm:index' %}" class="px-5">상황판</a>
+                </li>
+            </ul>
         </details>
     </li>
     <li>
         <details>
             <summary>
                 <svg
-                    data-src="https://unpkg.com/heroicons/20/solid/funnel.svg"
+                    data-src="https://unpkg.com/heroicons/20/solid/globe-alt.svg"
                     class="h-5 w-5"></svg>
-                CRM
+                협진관리
             </summary>
             <ul>
                 <li>
-                    <a href="{% url 'crm:index' %}" class="px-5">상황판</a>
+                    <a href="{% url 'crm:collab_kanban' %}" class="px-5">대시보드</a>
                 </li>
             </ul>
             <ul>
                 <li>
-                    <a href="{% url 'crm:collab' %}" class="px-5">협진요청관리</a>
+                    <a href="{% url 'crm:collab' %}" class="px-5">협진요청 보기</a>
                 </li>
             </ul>
             <ul>
                 <li>
-                    <a href="{% url 'crm:collab_kanban' %}" class="px-5">Collab Board</a>
+                    <a href="{% url 'crm:collab' %}" class="px-5">월별통계 보기</a>
                 </li>
             </ul>
+            
         </details>
     </li>
     {% endif %}

@@ -14,7 +14,7 @@
                     hx-get="{% url 'collab:add_my_illness_code' draft_refer.id ill.id %}"
                     hx-trigger="click"
                     hx-target="#my_illnesses_list"
-                    hx-swap="outerHTML">
+                    hx-swap="outerHTML transition:true">
                     +
                 </a>
             </div>

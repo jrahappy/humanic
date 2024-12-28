@@ -36,7 +36,15 @@ def collab_kanban(request):
 
 
 def collab(request):
-    refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
+    q = request.GET.get("q", "")
+    if q:
+        refers = (
+            Refers.objects.filter(patient_name__icontains=q)
+            .exclude(status="Draft")
+            .order_by("-created_at")
+        )
+    else:
+        refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
     context = {"refers": refers}
     return render(request, "crm/collab.html", context)
 

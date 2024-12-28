@@ -12,10 +12,10 @@
         <div class="flex justify-between gap-2 w-full">
             <div class="flex flex-row justify-between w-2/3">
                 <h2 class="card-title ">
-                    협진관리 대시보드
+                    대시보드
                 </h2>
                 <div class="flex flex-col">
-                    <form method="get" action="{% url 'customer:index' %}">
+                    <form method="get" action="{% url 'crm:collab' %}">
                         <label class="input input-bordered flex items-center gap-2">
                             <input type="text" class="grow" placeholder="Search" name="q" />
                             <svg

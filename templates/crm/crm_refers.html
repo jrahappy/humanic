@@ -9,11 +9,7 @@
 >
 {% for refer in refers %}
     <tr id="{{refer.id}}"
-        onclick="base_modal.showModal()"
-        hx-get="{% url 'crm:collab_refer_detail' refer.id %}" 
-        hx-trigger="click"
-        hx-target="#base_modal"
-        hx-swap="innerHTML"
+        onclick="location.href='{% url 'crm:collab_refer_detail' refer.id %}'"
         class="hover:bg-sky-100 cursor-pointer"
     >
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:bg-sky-100" >
