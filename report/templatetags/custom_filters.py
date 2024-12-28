@@ -1,7 +1,20 @@
 import ast
 from django import template
+from django.utils import timezone
+import datetime
 
 register = template.Library()
+
+
+@register.filter
+def is_older_than_24_hours(value):
+    """
+    주어진 datetime이 현재 시각으로부터 24시간이 지났는지 확인합니다.
+    """
+    if not value:
+        return False
+    now = timezone.now()
+    return value < now - datetime.timedelta(hours=24)
 
 
 @register.filter(name="sum_values")

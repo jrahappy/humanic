@@ -5,9 +5,7 @@
             <h2 class="text-lg font-bold">Edit Contact</h2>
         </div>
         <div class="flex flex-row gap-2">
-            <form method="dialog">  
-                <button class="btn btn-warning btn-sm">Close</button>
-            </form>
+           
         </div>
     </div>
     <div class="w-full">
@@ -69,7 +67,13 @@
                 hx-target="#company_contact_edit_box"
                 hx-trigger="click"
             >Delete</span>  
-            <button type="submit" class="btn btn-primary btn-sm w-16">Save</button>        
+            <div class="flex flex-row justify-end gap-2">
+                
+                <button type="submit" class="btn btn-primary btn-sm w-16">Save</button> 
+                <form method="dialog">  
+                    <button class="btn btn-warning btn-sm">Close</button>
+                </form>
+            </div>    
         </div>
         </form>
         <script>
