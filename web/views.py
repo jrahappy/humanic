@@ -5,3 +5,7 @@ from django.shortcuts import redirect
 def index(request):
     return redirect("account_login")
     # return render(request, "web/index.html")
+
+
+def terms(request):
+    return render(request, "web/terms.html")

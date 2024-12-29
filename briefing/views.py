@@ -27,9 +27,6 @@ def index(request):
     smonth = request.GET.get("smonth")
 
     if not syear or not smonth:
-        # Fetch the latest available record from the database
-        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
-        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
         temp_rs = UploadHistory.objects.filter(is_deleted=False).order_by("-id")[:1]
         # Check if any records exist in the database
         if temp_rs:

@@ -17,19 +17,41 @@ from .forms import (
 import json
 
 
-# 중요함.
+# 중요함 협진병원/고객병원 사용자 생성기능
 def add_collab_login_user(request, customer_id):
     company = get_object_or_404(Company, pk=customer_id)
+    menu_id = 0
+    v_collab = False
+    if company.is_tele:
+        if company.is_collab:
+            menu_id = 84
+            v_collab = True
+        else:
+            menu_id = 80
+    else:
+        if company.is_collab:
+            menu_id = 82
+            v_collab = True
+        else:
+            # 외부 서비스 업체 로그인 사용자 메뉴
+            menu_id = 86
+
+    # 기존 사용자가 있는지 확인
     is_exist = CustomUser.objects.filter(username=f"user{company.id}").exists()
     if is_exist:
         existing_user = CustomUser.objects.get(username=f"user{company.id}")
-        company.is_collab = True
+
+        company.is_collab = v_collab
         company.customuser = existing_user
         company.save()
+
         existing_user.profile.email = existing_user.email
         existing_user.profile.real_name = existing_user.first_name
         existing_user.profile.cellphone = company.office_phone
         existing_user.profile.save()
+
+        existing_user.menu_id = menu_id
+        existing_user.save()
 
         return redirect("customer:detail", company.id)
     else:
@@ -39,18 +61,14 @@ def add_collab_login_user(request, customer_id):
             password=f"human{company.id}",
             first_name=company.president_name,
             last_name=company.president_name,
+            menu_id=menu_id,
             is_privacy=True,
             is_active=True,
         )
-        company.is_collab = True
+        company.is_collab = v_collab
         company.customuser = new_user
         company.save()
         return redirect("customer:detail", company.id)
-
-    # new_user.profile.email = company.office_email
-    # new_user.profile.real_name = company.president_name
-    # new_user.porfile.cellphone = company.office_phone
-    # new_user.profile.save()
 
 
 def tag_delete(request, company_id, tag_id):
@@ -60,10 +78,6 @@ def tag_delete(request, company_id, tag_id):
     company.tags.remove(tag)
     print(company.tags.all())
     return redirect("customer:detail", company_id)
-    # return HttpResponse(``
-    #     status=204,
-    #     headers={"HX-Trigger": json.dumps({"CustomerTagsChanged": None})},
-    # )
 
 
 def cfiles(request, company_id):
@@ -296,7 +310,7 @@ def index(request):
             # companies = Company.objects.all().order_by("-updated_at")
     if companies.count() == 1:
         return redirect("customer:detail", companies[0].id)
-    paginator = Paginator(companies, 100)  # Show 10 companies per page
+    paginator = Paginator(companies, 15)  # Show 10 companies per page
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     tags = Company.tags.all()

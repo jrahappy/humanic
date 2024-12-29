@@ -8,11 +8,11 @@
 
 {% block content %}
 
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
   <div class="card-body grow-0">
     <div class="flex justify-between gap-2 w-full">
       <div class="flex flex-row justify-between w-2/3">
-        <h2 class="card-title ">
+        <h2 class="card-title pl-4">
             고객 세부 정보
         </h2>
         <div class="flex flex-col">
@@ -50,7 +50,9 @@
             <label class="label">
               <span class="label-text">병원명</span>
             </label>
-            <p class="p-2 font-semibold rounded-lg text-md">{{ company.business_name}}  ({{ company.id}})</p>
+            <p class="flex flex-row p-2 font-semibold rounded-lg text-md">
+                {{ company.business_name}}  ({{ company.id}})
+            </p>
           </div>
           <div class="form-control">
             <label class="label">
@@ -67,10 +69,18 @@
           <div class="grid grid-cols-1 gap-2">
             <div class="form-control">
               <label class="label">
-                <span class="label-text">의료기관이면 True</span>
+                <span class="label-text">의료기관|원격|협진</span>
               </label>
-              <p class="p-2 font-semibold rounded-lg text-md">{{ company.is_clinic}}</p>
-              
+              <p class="p-2 font-semibold rounded-lg text-md">
+                
+                <span class="badge badge-neutral bagde-md">{{ company.is_clinic}}</span>
+                {% if company.is_tele %}
+                <span class="badge badge-primary bagde-md">원격</span>
+                {% endif %}
+                {% if company.is_collab %}
+                <span class="badge badge-secondary bagde-md">협진</span>
+                {% endif %}
+              </p>              
             </div>
           </div>
         </div>
@@ -126,10 +136,15 @@
           </div>
           <div class="flex flex-row justify-end gap-2 p-4">
             <a href="{% url 'customer:update' company.id %}" class="self-align-bottom btn btn-primary btn-sm text-white w-16">Edit</a> 
-            {% if user.username == "william" %}
-            <a href="{% url 'customer:add_collab_login_user' company.id %}" class="self-align-bottom btn btn-sm btn-error text-white w-32">
-              Add {{ company.customuser.username }}
-            </a>
+            {% if user.username == "william" or user.username == "albert" %}
+            {% if company.president_name|default_if_none:"" == "" or company.office_email|default_if_none:"" == "" or company.office_phone|default_if_none:"" == "" %}
+              <div class="text-error">대표자/이메일/전화번호</div>
+                
+            {% else %}
+              <a href="{% url 'customer:add_collab_login_user' company.id %}" class="self-align-bottom btn btn-sm btn-error text-white w-32">
+                new user {{ company.customuser.username }}
+              </a>
+            {% endif %}
             {% endif %}
           </div>
       </div>

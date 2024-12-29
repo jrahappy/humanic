@@ -26,6 +26,8 @@ class Company(models.Model):
     is_clinic = models.BooleanField(default=False)
     #  협진병원 여부
     is_collab = models.BooleanField(default=False, null=True, blank=True)
+    #  원격판독 여부
+    is_tele = models.BooleanField(default=False, null=True, blank=True)
     # taggit
     tags = TaggableManager(blank=True)
 

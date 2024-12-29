@@ -23,6 +23,7 @@ class CustomUser(AbstractUser):
     # doctor or not
     is_doctor = models.BooleanField("Is Doctor", default=False)
     is_terms = models.BooleanField("Is Terms", default=False)
+    # 12/29/2024 협진유저일 경우 is_privacy = True 로 하는 방안 고민해보자
     is_privacy = models.BooleanField("Is Privacy", default=False)
     is_staff = models.BooleanField("Is Staff", default=False)
     is_superuser = models.BooleanField("Is Superuser", default=False)
@@ -94,17 +95,6 @@ class Profile(models.Model):
     )
     extra_info2_int = models.IntegerField(null=True, blank=True, default=0)
     extra_info3_bool = models.BooleanField("Extra info 3", default=False)
-
-    # def __str__(self):
-    #     return self.real_name
-
-    # def save(self, *args, **kwargs):
-    #     if self.real_name:
-    #         self.real_name = self.real_name.strip()
-    #     CustomUser.objects.filter(pk=self.user.pk).update(
-    #         first_name=self.real_name, email=self.email
-    #     )
-    #     super(Profile, self).save(*args, **kwargs)
 
 
 class FeeHistory(models.Model):

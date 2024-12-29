@@ -300,3 +300,45 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     ? 판독의(김성현, 전우선, 이재희, 윤혜경, 전용식, 김수진) - 협진관리 볼 수 있도록 함
     ? 회송서에 파일업로드 필요(dicom, zip, etc)
     
+    - 협진병원 사용자 생성기능 완성
+        - customer:detail 에서 버튼을 만들어 둠. (주의할 점은 해당 병원의 대표자명, 전화번호, 이메일을 사용하므로 이 정보가 다 들어 있는지 확인해야 함.)
+    - Header에서 비밀번호 변경 기능 개선(hx에서 그냥 a href="")
+    - Customer Form 에서 Fields 리스트 변경
+        - 기존은 _all__로 해두고 exclude 하는 방식. 새 방식은 그냥 필요한 field만 추가함
+        - 기존방식으로 form 을 만들면 원치 않는 필드들의 데이터가 초기화 되거나 지워짐.. 중요함.
+
+
+# 12/29/2024 #
+    - 로그인 과정에서 사용자별 초기 페이지 찾아가는 로직
+        1. "/" 로 접속하면 /web/ url.py 에서 index 로 감
+        2. web:index 에서 account_login 으로 보냄
+        3. account_login 
+            Success: briefing:index 감
+                user.is_staff
+                    - True: briefing:index
+                    = False: 
+                        user.is_doctor 
+                            True: 판독의 -> dashboard:index
+                            False: 고객병원 -> cust:index
+                                로그인 user의 company.customuser 확인
+                                company.is_collab:
+                                    True: 협진병원 collab:index
+                                    False: 원격판독 cust:index 
+
+    - 협진병원과 원격판독병원의 차이는 실제 환자를 리퍼해서 내원하는 경우가 있는지 여부임.
+
+    대안: 메뉴 iD로 접속자의 권한을 통제하는 방안 고민
+        menu_id <= 10 :  일반근무자
+        menu_id = 20 :  팀장급
+        menu_id = 30 :  부장급
+        menu_id = 40 :  임원급(파트너들)
+        menu_id = 45 :  상근의(출근)
+        menu_id = 70 :  판독의(프로바이더)
+        menu_id = 80 :  고객병원(원격판독)
+        menu_id = 82 :  협진병원(환자내원)
+        menu_id = 84 :  원격판독+협진병원(환자내원)
+        menu_id >= 90 :  IT
+
+        menu_id 별로 접속가능한 App dict 을 만들어서 url 통제함
+        => 해당 user 의 menu_id의 app dict을 가져와서 접속하려는 url 를 걸러내는 방안임
+

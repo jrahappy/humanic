@@ -1602,6 +1602,47 @@ def apply_rule_progress(request, magam_id, rule_id):
     # 함수를 하나 실행할 때 사용
     elif selected_rule == "UTILITY":
 
+        companies = ReportMaster.objects.all().values("company").distinct()
+        i = 0
+        for com in companies:
+            company = Company.objects.get(id=com["company"])
+
+            # is_exist = CustomUser.objects.filter(username=f"user{company.id}").exists()
+            # if is_exist:
+            #     existing_user = CustomUser.objects.get(username=f"user{company.id}")
+            #     company.is_collab = True
+            #     company.customuser = existing_user
+            #     company.save()
+
+            #     existing_user.profile.email = existing_user.email
+            #     existing_user.profile.real_name = existing_user.first_name
+            #     existing_user.profile.cellphone = company.office_phone
+            #     existing_user.profile.save()
+
+            #     existing_user.menu_id = menu_id
+            #     existing_user.save()
+
+            #     return redirect("customer:detail", company.id)
+            # else:
+            #     new_user = CustomUser.objects.create_user(
+            #         username=f"user{company.id}",
+            #         email=company.office_email,
+            #         password=f"human{company.id}",
+            #         first_name=company.president_name,
+            #         last_name=company.president_name,
+            #         menu_id=menu_id,
+            #         is_privacy=True,
+            #         is_active=True,
+            #     )
+            #     company.is_collab = True
+            #     company.customuser = new_user
+            #     company.save()
+
+            company.is_tele = True
+            company.save()
+            i += 1
+        print(i, "개의 회사에 대해 적용되었습니다.")
+
         # 사업자 번호 넎기(초기정보입력)
         # data1 = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
         # ein = data1.values("apptitle", "ein").distinct()

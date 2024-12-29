@@ -77,10 +77,14 @@ def index(request):
 
     # 연결되어 있는 병원 정보를 가져온다.
     company = Company.objects.filter(customuser=user).first()
-    print("this is ", company.is_collab)
-    # 협진병원의 경우 collab 페이지로 이동
-    if company.is_collab:
-        return redirect("collab:index")
+    if not company:
+        messages.error(request, "Error 301번: 연결된 병원 정보가 없습니다.")
+        user.logout()
+        return redirect("account_login")
+    else:
+        # 협진병원의 경우 collab 페이지로 이동
+        if company.is_collab:
+            return redirect("collab:index")
 
     # Check if the user is a staff member
     if user.is_staff:
