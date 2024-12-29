@@ -20,11 +20,55 @@ from customer.forms import CompanyForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from tablib import Dataset
+from allauth.account.forms import ChangePasswordForm
 from .resources import IllnessCodeResource, SimpleDiagnosisResource
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 import json
 import csv
 import io
 import datetime
+
+
+@login_required
+def password_change(request):
+    company = Company.objects.filter(customuser=request.user).first()
+    if request.method == "POST":
+        form = ChangePasswordForm(user=request.user, data=request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your password was successfully updated!")
+            update_session_auth_hash(request, form.user)
+            return HttpResponse(
+                '<script>window.location.href="%s";</script>'
+                % reverse_lazy("collab:password_change_done")
+            )  # Redirect to success URL using JavaScript if the form is valid
+
+        else:
+            messages.error(request, "There was an error in your password update.")
+            return render(
+                request,
+                "collab/password_change.html",
+                {"form": form, "company": company},
+            )
+    else:
+        form = ChangePasswordForm(user=request.user)
+
+    context = {
+        "form": form,
+        "company": company,
+    }
+
+    return render(request, "collab/password_change.html", context)
+
+
+@login_required
+def password_change_done(request):
+    company = Company.objects.filter(customuser=request.user).first()
+    context = {"company": company}
+    return render(request, "collab/password_change_done.html", context)
 
 
 def partial_my_simple_diagonosis_list(request, refer_id):
@@ -114,6 +158,7 @@ def delete_my_illness_code(request, refer_id, illness_id):
     )
 
 
+@login_required
 def stat(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
@@ -201,10 +246,6 @@ def create_history(request, refer_id, new_status, memo=None):
         changed_at=datetime.datetime.now(),
     )
     return re_history
-    # return HttpResponse(
-    #     status=204,
-    #     headers={"HX-Trigger": json.dumps({"HistoryChanged": None})},
-    # )
 
 
 def partial_illness_list(request, refer_id):
@@ -521,6 +562,7 @@ def simplecode_import(request):
 #     return render(request, "collab/home.html", context)
 
 
+@login_required
 def home(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
@@ -549,6 +591,7 @@ def home(request):
     return render(request, "collab/home.html", context)
 
 
+@login_required
 def index(request):
     user = request.user
     # user = CustomUser.objects.get(id=user.id)
@@ -603,6 +646,7 @@ def index(request):
     return render(request, "collab/index.html", context)
 
 
+@login_required
 def refer_list(request, company_id):
     company = Company.objects.get(id=company_id)
     # Archive old refers

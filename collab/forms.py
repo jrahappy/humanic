@@ -12,16 +12,24 @@ class CollabCompanyForm(ModelForm):
 
     class Meta:
         model = Company
-        fields = "__all__"
-        exclude = [
-            "customuser",
-            "created_at",
-            "updated_at",
+        fields = {
+            "business_name",
+            "president_name",
+            "ein",
             "is_clinic",
-            "is_collab",
-            "is_active",
-            "deleted_at",
-        ]
+            "address",
+            "suite",
+            "city",
+            "state",
+            "country",
+            "zipcode",
+            "office_phone",
+            "office_fax",
+            "office_email",
+            "website",
+            "contact_person",
+            "tags",
+        }
         error_messages = {
             "business_name": {
                 "required": "병원명을 반드시 입력해주세요.",

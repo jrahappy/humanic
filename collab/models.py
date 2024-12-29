@@ -35,6 +35,7 @@ class Refers(models.Model):
     opinion2 = models.TextField(null=True, blank=True)
     opinioned_at = models.DateTimeField(null=True, blank=True)
     cosigned_at = models.DateTimeField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         # return self.company.business_name + " - " + self.patient_name
@@ -107,6 +108,7 @@ class MyIllnessCode(models.Model):
         ordering = ["illness_code__code"]
 
 
+# 2021/12/26 : 실제 병원에서 처리를 한 것들을 저장하는 테이블임. 현재는 사용되지 않음.
 class TreatmentCode(models.Model):
     code = models.CharField(max_length=10)
     category1 = models.CharField(max_length=100, null=True, blank=True)
@@ -169,3 +171,21 @@ class MySimpleDiagnosis(models.Model):
 
     class Meta:
         ordering = ["simple_diagnosis__order"]
+
+
+class ReferFile(models.Model):
+    def upload_location_refer(instance, filename):
+        return f"refer_files/{instance.refer.id}/{filename}"
+
+    refer = models.ForeignKey(Refers, on_delete=models.CASCADE, related_name="files")
+    file = models.FileField(
+        upload_to=upload_location_refer, max_length=250, null=True, blank=True
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Refer File"
+        verbose_name_plural = "Refer Files"
+
+    def __str__(self):
+        return self.file.name

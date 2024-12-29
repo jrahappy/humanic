@@ -1,0 +1,34 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">새 협진병원 사용자 등록</a>
+            </h2>
+        </div>
+    </div>
+</section>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        {{ form.as_p}}        
+    </div>
+</section>
+
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}
+
+

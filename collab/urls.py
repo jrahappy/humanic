@@ -105,4 +105,12 @@ urlpatterns = [
         views.delete_my_simple_code,
         name="delete_my_simple_code",
     ),
+    path(
+        "password/change/",
+        views.password_change,
+        name="change_password",
+    ),
+    path(
+        "password/change/done/", views.password_change_done, name="password_change_done"
+    ),
 ]

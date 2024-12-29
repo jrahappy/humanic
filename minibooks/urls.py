@@ -4,6 +4,7 @@ from . import views
 app_name = "minibooks"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("create_collab_user", views.create_collab_user, name="create_collab_user"),
     path("history_delete/<int:id>/", views.history_delete, name="history_delete"),
     path("new_upload", views.new_upload, name="new_upload"),
     path(

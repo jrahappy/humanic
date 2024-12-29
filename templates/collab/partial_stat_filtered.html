@@ -14,8 +14,6 @@
         <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.patient_phone }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.scheduled_at|date:'Y-m-d' }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.cosigned_at|date:'Y-m-d' }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-end text-sm text-gray-900 sm:pl-6 lg:pl-8"> {{ refer.readprice|default:0|floatformat:0|intcomma }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-end text-sm text-gray-900 sm:pl-6 lg:pl-8"> {{ refer.collab_price|default:0|floatformat:0|intcomma }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">
             {% if refer.status == 'Cosigned' %}
                 <span class="badge badge-success text-white">{{ refer.status }}</span>
@@ -30,15 +28,8 @@
             {% else %}
                 <span class="badge badge-warning">{{ refer.status }}</span>
             {% endif %}
-            
         </td>
-
     </tr>
     {% endfor %}
-    <tr class="divide-y divide-gray-500">
-        <td colspan="7" class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 bg-base-200 sm:pl-6 lg:pl-8">합계</td>
-        <td class="py-3.5 pl-4 pr-3 text-end text-sm font-semibold text-gray-900 bg-base-200 sm:pl-6 lg:pl-8">{{ refers|sum_values:"readprice"|floatformat:0|intcomma }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-end text-sm font-semibold text-gray-900 bg-base-200 sm:pl-6 lg:pl-8">{{ refers|sum_values:"collab_price"|floatformat:0|intcomma }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-end text-sm font-semibold text-gray-900 bg-base-200 sm:pl-6 lg:pl-8">&nbsp;</td>
-    </tr>
+   
 </tbody>

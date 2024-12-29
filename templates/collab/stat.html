@@ -11,10 +11,10 @@
         <div class="flex justify-between gap-2 w-full">
             <div class="flex flex-row justify-between w-full">
                 <h2 class="card-title w-80">
-                    검사의뢰서 관리
+                    년/월을 선택하세요.
                 </h2>
                 <div class="flex flex-row w-80">
-                    <span class="p-2 me-2 text-gray-700"> 년도/월 선택:</span>
+                    <span class="p-2 me-2 text-gray-700">   </span>
                          
                     <select
                         name="year_month"
@@ -50,12 +50,8 @@
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">DOB</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">환자연락처</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">예약일시</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">Cosign</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">판독료</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">협진료</th>
-
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">Cosigned</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">현재상태</th>
-                    
                 </tr>
             </thead>
            {% include 'collab/partial_stat_filtered.html' %}

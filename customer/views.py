@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Count, Sum, Func, F, Q
 from minibooks.models import ReportMasterStat
 from crm.models import Opportunity
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Profile
 from .models import Company, ServiceFee, CustomerLog, CustomerContact, CustomerFiles
 from .forms import (
     CompanyForm,
@@ -15,6 +15,42 @@ from .forms import (
     CustomerFilesForm,
 )
 import json
+
+
+# 중요함.
+def add_collab_login_user(request, customer_id):
+    company = get_object_or_404(Company, pk=customer_id)
+    is_exist = CustomUser.objects.filter(username=f"user{company.id}").exists()
+    if is_exist:
+        existing_user = CustomUser.objects.get(username=f"user{company.id}")
+        company.is_collab = True
+        company.customuser = existing_user
+        company.save()
+        existing_user.profile.email = existing_user.email
+        existing_user.profile.real_name = existing_user.first_name
+        existing_user.profile.cellphone = company.office_phone
+        existing_user.profile.save()
+
+        return redirect("customer:detail", company.id)
+    else:
+        new_user = CustomUser.objects.create_user(
+            username=f"user{company.id}",
+            email=company.office_email,
+            password=f"human{company.id}",
+            first_name=company.president_name,
+            last_name=company.president_name,
+            is_privacy=True,
+            is_active=True,
+        )
+        company.is_collab = True
+        company.customuser = new_user
+        company.save()
+        return redirect("customer:detail", company.id)
+
+    # new_user.profile.email = company.office_email
+    # new_user.profile.real_name = company.president_name
+    # new_user.porfile.cellphone = company.office_phone
+    # new_user.profile.save()
 
 
 def tag_delete(request, company_id, tag_id):
@@ -243,9 +279,7 @@ def index(request):
     )
     tag_slug = request.GET.get("tag_slug")
     if tag_slug:
-        companies = Company.objects.filter(tags__slug=tag_slug).order_by(
-            "business_name"
-        )
+        companies = Company.objects.filter(tags__slug=tag_slug).order_by(ko_kr.asc())
     else:
         q = request.GET.get("q")
         if q:
@@ -262,7 +296,7 @@ def index(request):
             # companies = Company.objects.all().order_by("-updated_at")
     if companies.count() == 1:
         return redirect("customer:detail", companies[0].id)
-    paginator = Paginator(companies, 15)  # Show 10 companies per page
+    paginator = Paginator(companies, 100)  # Show 10 companies per page
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     tags = Company.tags.all()
@@ -374,18 +408,6 @@ def update(request, customer_id):
     company = Company.objects.get(pk=customer_id)
     if request.method == "POST":
         form = CompanyForm(request.POST, instance=company)
-        # print(form)
-        # tag validation
-
-        # tag = request.POST.get("tag")
-        # if tag == None:
-        #     form.tag = ""
-        # if tag:
-        #     print("there is a tag")
-        # else:
-        #     form.add_error(
-        #         "tag", "태그를 입력하세요. 삭제하려면 보기메뉴에서 x를 입력하세요."
-        #     )
 
         if form.is_valid():
             # form.id = customer_id

@@ -107,16 +107,14 @@
                     <a href="{% url 'crm:collab' %}" class="px-5">월별통계 보기</a>
                 </li>
                 <li>
-                    <a href="{% url 'collab:illness_list' %}">
-                        상병코드
-                    </a>
+                    <a href="{% url 'minibooks:create_collab_user' %}" class="px-5">협진병원 새 사용자</a>
                 </li>
                 <li>
-                    <a href="{% url 'collab:simplecode_list' %}">
-                        검사코드(간편)
-                    </a>
+                    <a href="{% url 'collab:illness_list' %}">상병코드</a>
                 </li>
-         
+                <li>
+                    <a href="{% url 'collab:simplecode_list' %}">검사코드(간편)</a>
+                </li>
             </ul>
         </details>
     </li>

@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "referdex",
     "crm",
     "collab",
+    "task",
 ]
 
 MIDDLEWARE = [

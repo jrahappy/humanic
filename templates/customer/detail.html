@@ -116,7 +116,7 @@
             <div class="flex flex-row gap-2 ">
               {% for tag in company.tags.all %}
               <span class="me-2">
-                <span>{{ tag.name }}</span>
+                <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral cursor-pointer">{{ tag.name }}</a>
                 <a href="{% url 'customer:tag_delete' company.id tag.id %}?tag_slug={{ tag.slug }}" class="btn btn-xs">x</a>
               </span>
               {% empty %}
@@ -124,8 +124,13 @@
               {% endfor %}
             </div>
           </div>
-          <div class="flex flex-row justify-end p-4">
+          <div class="flex flex-row justify-end gap-2 p-4">
             <a href="{% url 'customer:update' company.id %}" class="self-align-bottom btn btn-primary btn-sm text-white w-16">Edit</a> 
+            {% if user.username == "william" %}
+            <a href="{% url 'customer:add_collab_login_user' company.id %}" class="self-align-bottom btn btn-sm btn-error text-white w-32">
+              Add {{ company.customuser.username }}
+            </a>
+            {% endif %}
           </div>
       </div>
 		</section>

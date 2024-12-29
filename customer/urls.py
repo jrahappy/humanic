@@ -9,6 +9,11 @@ urlpatterns = [
     path("new_customer/", views.new_customer, name="new_customer"),
     path("new/", views.new, name="new"),
     path("detail/<int:customer_id>/", views.detail, name="detail"),
+    path(
+        "add_collab_login_user/<int:customer_id>/",
+        views.add_collab_login_user,
+        name="add_collab_login_user",
+    ),
     path("edit_customer/<int:customer_id>/", views.edit_customer, name="edit_customer"),
     path("contracts/<int:company_id>/", views.contracts, name="contracts"),
     path(

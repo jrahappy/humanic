@@ -1,6 +1,20 @@
 from django import forms
 from .models import UploadHistory, MagamMaster
 from utils.base_func import get_platform_choices
+from allauth.account.forms import SignupForm, ChangePasswordForm
+
+
+class CollabUserSignupForm(SignupForm):
+    # username = forms.CharField(max_length=30, label="Username")
+    # email = forms.EmailField(label="Email")
+    # is_doctor = forms.BooleanField(label="I am a doctor", required=False)
+
+    # def save(self, request):
+    #     user = super(CustomSignupForm, self).save(request)
+    #     user.is_doctor = self.cleaned_data.get("is_doctor")
+    #     user.save()
+    #     return user
+    pass
 
 
 class UploadHistoryForm(forms.ModelForm):

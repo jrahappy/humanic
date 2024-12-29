@@ -113,16 +113,10 @@
 				 >사용자정보</a>
 			</li>
 			<li>
-				<a 
-				 href="#"
-				 hx-get="{% url 'dashboard:change_password' %}"
-				 hx-trigger="click"
-				 hx-target="#main_area"
-				 hx-swap="outerHTML"
-				 >비밀번호 변경</a>
+				<a href="{% url 'collab:change_password' %}">비밀번호 변경</a>
 			</li>
 			<!-- <li>
-				<a>
+				<a> 
 					Inbox
 					<span class="badge badge-success">12</span>
 				</a>

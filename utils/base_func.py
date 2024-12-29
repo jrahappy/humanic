@@ -162,3 +162,10 @@ REFER_STATUS = [
     ("Cosigned", "2차판독완료"),
     ("Archive", "정산완료"),
 ]
+
+TASK_STATUS = [
+    ("Todo", "Todo"),
+    ("Doing", "Doing"),
+    ("Done", "Done"),
+    ("Cancelled", "Cancelled"),
+]

@@ -30,7 +30,25 @@ class CompanyForm(ModelForm):
 
     class Meta:
         model = Company
-        fields = "__all__"
+        fields = {
+            "business_name",
+            "president_name",
+            "ein",
+            "is_clinic",
+            "address",
+            "suite",
+            "city",
+            "state",
+            "country",
+            "zipcode",
+            "office_phone",
+            "office_fax",
+            "office_email",
+            "website",
+            "contact_person",
+            "tags",
+        }
+        # fields = "__all__"
         error_messages = {
             "business_name": {
                 "required": "병원명을 반드시 입력해주세요.",

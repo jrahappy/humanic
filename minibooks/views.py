@@ -29,13 +29,24 @@ from .models import (
     HumanRules,
     MagamAccounting,
 )
-from .forms import UploadHistoryForm, MagamMasterForm
+from .forms import UploadHistoryForm, MagamMasterForm, CollabUserSignupForm
 from .utils import log_uploadhistory
 from tablib import Dataset
 from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 from calendar import monthrange
 from django.http import HttpResponse
+
+
+def create_collab_user(request):
+    if request.method == "POST":
+        form = CollabUserSignupForm(request.POST)
+        if form.is_valid():
+            form.save(request)
+            return redirect("minibooks:index")
+    else:
+        form = CollabUserSignupForm()
+    return render(request, "minibooks/create_collab_user.html", {"form": form})
 
 
 @login_required
