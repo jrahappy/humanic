@@ -11,33 +11,25 @@ import datetime
 class ReferFileForm(ModelForm):
     class Meta:
         model = ReferFile
-        fields = {
+        fields = [
             "file",
-        }
+        ]
 
 
 class CollabCompanyForm(ModelForm):
 
     class Meta:
         model = Company
-        fields = {
-            "business_name",
-            "president_name",
-            "ein",
+        fields = "__all__"
+        exclude = [
+            "customuser",
+            "created_at",
+            "updated_at",
             "is_clinic",
-            "address",
-            "suite",
-            "city",
-            "state",
-            "country",
-            "zipcode",
-            "office_phone",
-            "office_fax",
-            "office_email",
-            "website",
-            "contact_person",
-            "tags",
-        }
+            "is_collab",
+            "is_active",
+            "deleted_at",
+        ]
         error_messages = {
             "business_name": {
                 "required": "병원명을 반드시 입력해주세요.",

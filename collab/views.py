@@ -12,6 +12,7 @@ from .models import (
     SimpleDiagnosis,
     MyIllnessCode,
     MySimpleDiagnosis,
+    ReferFile,
 )
 from .forms import ReferForm, CollabCompanyForm
 from accounts.models import CustomUser, Profile
@@ -833,12 +834,14 @@ def refer_detail(request, refer_id):
     history = ReferHistory.objects.filter(refer=refer)
     simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
     illnesses = ReferIllness.objects.filter(refer=refer)
+    files = ReferFile.objects.filter(refer=refer)
     context = {
         "refer": refer,
         "simples": simples,
         "illnesses": illnesses,
         "company": company,
         "history": history,
+        "files": files,
     }
     return render(request, "collab/refer_detail.html", context)
 
