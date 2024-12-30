@@ -680,6 +680,9 @@ def index(request):
     user = request.user
     # user = CustomUser.objects.get(id=user.id)
     company = Company.objects.filter(customuser=user).first()
+    if not company:
+        logout(request)
+        return redirect("web:index")
     # Archive old refers
     # go_archive(request, company.id)
 
