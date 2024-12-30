@@ -4,12 +4,15 @@ from django.http import HttpResponse, Http404
 from .models import Post, PostAttachment
 from .forms import BlogForm
 from django.core.paginator import Paginator
+from django.contrib.auth import logout
 import json
 
 
 def index(request):
     # post_list = Post.objects.all().order_by("-created_at").select_related("author")
     user = request.user
+    if not user.is_authenticated:
+        return redirect("account_login")
     # Check if the user is a staff member
     if user.is_staff:
         pass
