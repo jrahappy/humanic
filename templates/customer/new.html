@@ -66,11 +66,25 @@
             </label>
             {% render_field form.ein  class='input input-bordered font-mono input-sm' %}
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">의료기관이면 Checked</span>
-            </label>
-            {% render_field form.is_clinic  class='checkbox checkbox-bordered ms-4 mt-2' %}
+          <div class="form-control flex flex-row gap-3">
+            <div>
+              <label class="label">
+                <span class="label-text">의료기관</span>
+              </label>
+              {% render_field form.is_clinic class="checkbox checkbox-bordered" %}
+            </div>
+            <div>
+              <label class="label">
+                <span class="label-text">원격판독</span>
+              </label>
+              {% render_field form.is_tele class="select select-bordered select-sm py-0 w-24" %}
+            </div>
+            <div>
+              <label class="label">
+                <span class="label-text">협의병원</span>
+              </label>
+              {% render_field form.is_collab class="select select-bordered select-sm py-0 w-24" %}
+            </div>
           </div>
            
         </div>

@@ -319,12 +319,15 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
                     = False: 
                         user.is_doctor 
                             True: 판독의 -> dashboard:index
+
                             False: 고객병원 -> cust:index
                                 로그인 user의 company.customuser 확인
                                 company.is_collab:
                                     True: 협진병원 collab:index
                                     False: 원격판독 cust:index 
-
+                            # 12/30/2024 부터 아래로 적용함        
+                            False: 고객병원 -> collab:index
+                               
     - 협진병원과 원격판독병원의 차이는 실제 환자를 리퍼해서 내원하는 경우가 있는지 여부임.
 
     대안: 메뉴 iD로 접속자의 권한을 통제하는 방안 고민
@@ -337,6 +340,7 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         menu_id = 80 :  고객병원(원격판독)
         menu_id = 82 :  협진병원(환자내원)
         menu_id = 84 :  원격판독+협진병원(환자내원)
+        menu_id = 86 :  외부서비스업체
         menu_id >= 90 :  IT
 
         menu_id 별로 접속가능한 App dict 을 만들어서 url 통제함

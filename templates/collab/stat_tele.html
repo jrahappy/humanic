@@ -1,0 +1,56 @@
+{% extends 'collab/base.html' %}
+{% load custom_filters %}
+
+{% block header %}
+    {% include 'collab/header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2 w-full">
+            <div class="flex flex-row justify-between w-full">
+                <h2 class="card-title w-80">
+                    년/월을 선택하세요.
+                </h2>
+                <div class="flex flex-row w-80">
+                    <span class="p-2 me-2 text-gray-700">   </span>
+                         
+                    <select
+                        name="year_month"
+                        class="select select-bordered select-sm w-40 max-w-xs py-0 px-4" 
+                        hx-get="{% url 'collab:partial_stat_tele' %}" 
+                        hx-include="[name=year_month]" 
+                        hx-trigger="change"
+                        hx-target="#stat_tele_box" 
+                        hx-swap="innerHTML" 
+                    >
+                        <option value="-">---</option>
+                        {% for ym in year_month_list %}
+                            <option value="{{ ym|date:'Y-m-d' }}">{{ ym }}</option>
+                        {% endfor %}
+                    </select>
+                   
+                </div>
+            </div>
+            <div class="text-end me-4 w-1/3">
+                
+            </div>
+        </div>
+    </div>
+</section>
+<section class="card col-span-12 overflow-hidden h-full bg-base-100 shadow-sm xl:col-span-12">
+    <div id="stat_tele_box" class="card-body w-11/12 max-w-5xl">
+        
+        
+    </div>
+</section>
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'collab/aside.html' %}
+	
+{% endblock %}
+

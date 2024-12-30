@@ -424,7 +424,6 @@ def update(request, customer_id):
         form = CompanyForm(request.POST, instance=company)
 
         if form.is_valid():
-            # form.id = customer_id
             form.save()
             # print("form saved")
             return render(request, "customer/detail.html", {"company": company})

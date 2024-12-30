@@ -66,11 +66,25 @@
             </label>
             {% render_field form.ein  class='input input-bordered font-mono input-sm' %}
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">의료기관이면 Checked</span>
-            </label>
-            {% render_field form.is_clinic  class='checkbox checkbox-bordered ms-4 mt-2' %}
+          <div class="form-control flex flex-row gap-3">
+            <div>
+              <label class="label">
+                <span class="label-text">의료기관</span>
+              </label>
+              {% render_field form.is_clinic class="checkbox checkbox-bordered" %}
+            </div>
+            <div>
+              <label class="label">
+                <span class="label-text">원격판독</span>
+              </label>
+              {% render_field form.is_tele class="select select-bordered select-sm py-0 w-24" %}
+            </div>
+            <div>
+              <label class="label">
+                <span class="label-text">협의병원</span>
+              </label>
+              {% render_field form.is_collab class="select select-bordered select-sm py-0 w-24" %}
+            </div>
           </div>
            
         </div>
@@ -126,8 +140,8 @@
             {% render_field form.office_fax  class='input input-bordered font-mono input-sm' %}
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div class="form-control">
+        <div class="grid grid-cols-4 gap-2">
+          <div class="form-control col-span-2">
             <label class="label">
               <span class="label-text">Tags</span>
             </label>
@@ -136,6 +150,18 @@
               <p class="text-red-500 text-xs italic">{{ form.tags.errors }}</p>
             {% endif %}
           </div>
+          <!-- <div class="form-control">
+            <label class="label">
+              <span class="label-text">원격판독병원 여부</span>
+            </label>
+            {% render_field form.is_tele class="select select-bordered select-sm py-0 " %}
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">협진병원 여부</span>
+            </label>
+            {% render_field form.is_collab class="select select-bordered select-sm py-0 " %}
+          </div> -->
         </div>
         <div class="grid grid-cols-12 gap-2 py-4 mt-4">
             <button type="submit" class="btn btn-primary btn-sm">Save</button>

@@ -6,6 +6,8 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("home/", views.home, name="home"),
     path("stat/", views.stat, name="stat"),
+    path("stat_tele/", views.stat_tele, name="stat_tele"),
+    path("partial_stat_tele/", views.partial_stat_tele, name="partial_stat_tele"),
     path(
         "partial_stat_filtered/<int:company_id>/",
         views.partial_stat_filtered,

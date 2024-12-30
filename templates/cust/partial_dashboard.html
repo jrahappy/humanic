@@ -4,7 +4,7 @@
 <div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
   <section class="stats stats-vertical col-span-12 w-full mb-4 shadow-sm xl:stats-horizontal">
     <div class="stat">
-      <div class="stat-title">현재</div>
+      <div class="stat-title">현재</div> 
       <div class="stat-value">{{syear}}. {{smonth}}</div>
       <div class="stat-desc"></div>
     </div>
@@ -105,4 +105,30 @@
     </div>
   </section>
  
+</div>
+{% if side_menu == 'yes' %}
+<div class="flex flex-row gap-4 px-6" id="year_month_filter_box" hx-swap-oob="true">
+{% else %}
+<div class="hidden flex flex-row   gap-4 px-6" id="year_month_filter_box" hx-swap-oob="true">
+{% endif %}
+
+{% for button_ym in buttons_year_month %}
+<div class="test" id="button_{{ button_ym.ayear }}_{{ button_ym.amonth }}">
+    <a href="#"
+        hx-get="{% url 'cust:partial_dashboard' %}?syear={{ button_ym.ayear }}&smonth={{ button_ym.amonth }}"
+        hx-trigger="click"
+        hx-target="#stat_panel"
+        hx-swap="innerHTML"
+        hx-transition=""
+        hx-indicator="#spinner"
+        {% if button_ym.ayear == syear and button_ym.amonth == smonth %}
+        class="btn btn-sm btn-primary"
+        {% else %}
+        class="btn btn-sm"
+        {% endif %}
+        >
+        {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
+    </a>
+</div>
+{% endfor %}
 </div>

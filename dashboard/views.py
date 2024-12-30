@@ -804,7 +804,6 @@ def index(request):
 
     # 공지사항
     posts = Post.objects.filter(is_public=True).order_by("-created_at")[:5]
-
     context = {
         "cm_total": cm_total,
         "rp_total": rp_total_value,

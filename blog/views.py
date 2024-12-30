@@ -19,7 +19,7 @@ def index(request):
             return redirect("dashboard:index")
         # 병원(고객)의 경우
         else:
-            return redirect("cust:index")
+            return redirect("collab:index")
     post_list = (
         Post.objects.filter(is_public=True)
         .order_by("-created_at")

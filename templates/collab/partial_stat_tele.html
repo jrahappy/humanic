@@ -1,0 +1,118 @@
+{% load custom_filters %}
+{% load humanize %}
+
+
+        <div class="flex flex-wrap flex-col gap-4 ">
+            <div class="card w-full shadow-xl">
+                <div class="card-body">
+                    <div class="flex justify-between gap-2">
+                        <h2 class="card-title">{{ company.business_name }} {{ayear}}년 {{amonth}}월 판독의뢰 내역</h2>
+                        <div class="flex flex-row justify-end gap-2">
+                            <a target='blank' href="{% url 'report:customer_month_csv' company.id adate %}" class="btn btn-xs btn-secondary">CSV File</a>
+                            <a target='blank' href="{% url 'report:customer_month_print' company.id adate %}" class="btn btn-xs btn-neutral">Print</a>             
+                        </div>
+                    </div>
+                    <div class="mb-2 display-6 font-semibold">
+                        판독의: 총 {{ count_providers }} 명 참여
+                    </div>
+                    <div>
+                        <table class="table w-full border-1">
+                            <thead class="bg-base-200">
+                                <tr>
+                                    <td>Site/Tele</td>
+                                    <th style="width:150px;">건수</th>
+                                    <th style="width:200px;">판독료</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for total in total_by_onsite %}
+                                <tr>
+                                    <td><span class="w-24">{{ total.is_onsite|yesno:"ONSite,TELE" }}</span></td>
+                                    <td>{{ total.total_cases|intcomma }}</td>
+                                    <td>{{ total.total_price|floatformat:0|intcomma }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="font-semibold">
+                                    <td>합계</td>
+                                    <td>{{ total_by_onsite|sum_values:"total_cases"|intcomma }}</td>
+                                    <td>{{ total_by_onsite|sum_values:"total_price"|floatformat:0|intcomma }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <table class="table w-full">
+                            <thead class="bg-base-200">
+                                <tr>
+                                    <th>Modality</th>
+                                    <th style="width:150px;">건수</th>
+                                    <th style="width:200px;">판독료</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for total in total_by_amodality %}
+                                <tr>
+                                    <td>{{ total.amodality }}</td>
+                                    <td>{{ total.total_cases|intcomma }}</td>
+                                    <td>{{ total.total_price|floatformat:0|intcomma }}</td>
+                                </tr>
+                                {% endfor %}
+                            
+                                <tr class="font-semibold">
+                                    <td>합계</td>
+                                    <td>{{ total_by_amodality|sum_values:"total_cases"|intcomma }}</td>
+                                    <td>{{ total_by_amodality|sum_values:"total_price"|floatformat:0|intcomma }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            {% for provider in providers %}
+            <div class="card bg-base-100  shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">{{ forloop.counter0|add:1 }}. {{ provider.provider__profile__real_name }}</h2>
+                    <div class="mb-2">
+                        <table class="table table-sm table-zebra w-full">
+                            <thead>
+                                <tr class="bg-base-200">
+                                    <th class="w-24">Modality</th>
+                                    <th class="w-24">건수</th>
+                                    <th class="w-24">OnSite</th>
+                                    <th class="w-24">판독료</th>
+                                    <th class="w-24">-</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rpm in rpms %}
+                                {% if rpm.provider__profile__real_name == provider.provider__profile__real_name %}
+                                <tr>
+                                    <td>{{ rpm.amodality }} </td>
+                                    <td>
+                                        {{ rpm.r_total_cases|intcomma  }}
+                                    </td>
+                                    <td>{{ rpm.is_onsite }}</td>
+                                    <td>{{ rpm.r_total_price|floatformat:0|intcomma }}</td>
+                                    <td>
+                                        <a href="#"
+                                            onclick="base_modal.showModal()"
+                                            hx-get="{% url 'cust:report_period_month_company_detail' ayear amonth provider.provider__profile__real_name company_id rpm.amodality %}"
+                                            hx-trigger="click"
+                                            hx-target="#base_modal"
+                                            hx-swap="innerHTML"
+                                            class="btn btn-sm btn-info"
+                                        >Detail
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>

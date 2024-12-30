@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.db.models import Value, CharField, Q
+from django.db.models import Value, CharField, Q, Sum, Count
 from django.db.models.functions import Concat, ExtractYear, ExtractMonth
 from .models import (
     Refers,
@@ -17,6 +17,7 @@ from .forms import ReferForm, CollabCompanyForm
 from accounts.models import CustomUser, Profile
 from customer.models import Company, CustomerContact
 from customer.forms import CompanyForm
+from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from tablib import Dataset
@@ -182,6 +183,89 @@ def stat(request):
         "year_month_list": year_month_list,
     }
     return render(request, "collab/stat.html", context)
+
+
+def stat_tele(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    rpms = ReportMasterStat.objects.filter(company=company)
+    year_month_list = rpms.values_list("adate", flat=True).distinct().order_by("-adate")
+
+    context = {
+        "rpms": "",
+        "company": company,
+        "year_month_list": year_month_list,
+    }
+    return render(request, "collab/stat_tele.html", context)
+
+
+def partial_stat_tele(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    year_month = request.GET.get("year_month")
+    ayear = int(year_month.split("-")[0])
+    amonth = int(year_month.split("-")[1])
+
+    rpms = (
+        ReportMaster.objects.filter(adate=year_month, company=company)
+        .values(
+            # "platform",
+            "provider__profile__real_name",
+            "amodality",
+            "is_onsite",
+        )
+        .annotate(
+            r_total_price=Sum("readprice"),
+            r_total_cases=Count("case_id"),
+        )
+        .order_by("provider__profile__real_name", "amodality")
+    )
+    count_rpms = rpms.count()
+
+    # 일반 판독금액 합계
+    total_by_onsite = (
+        ReportMaster.objects.filter(adate=year_month, company=company)
+        .values("is_take")
+        .annotate(
+            total_price=Sum("readprice"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("is_onsite")
+    )
+
+    total_by_amodality = (
+        ReportMaster.objects.filter(adate=year_month, company=company)
+        .values("amodality")
+        .annotate(
+            total_price=Sum("readprice"),
+            total_cases=Count("case_id"),
+        )
+        .order_by("amodality")
+    )
+
+    providers = (
+        ReportMaster.objects.filter(adate=year_month, company=company)
+        .values("provider__profile__real_name")
+        .distinct()
+    )
+
+    count_providers = providers.count()
+
+    context = {
+        "company": company,
+        "company_id": company.id,
+        "rpms": rpms,
+        "count_rpms": count_rpms,
+        "count_providers": count_providers,
+        "adate": year_month,
+        "ayear": ayear,
+        "amonth": amonth,
+        "providers": providers,
+        "total_by_onsite": total_by_onsite,
+        "total_by_amodality": total_by_amodality,
+    }
+
+    return render(request, "collab/partial_stat_tele.html", context)
 
 
 def partial_stat_filtered(request, company_id):

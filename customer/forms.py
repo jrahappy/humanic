@@ -46,6 +46,8 @@ class CompanyForm(ModelForm):
             "office_email",
             "website",
             "contact_person",
+            "is_collab",
+            "is_tele",
             "tags",
         }
         # fields = "__all__"
@@ -55,6 +57,12 @@ class CompanyForm(ModelForm):
             },
             # Add other fields and their error messages as needed
         }
+
+        # is_tele = forms.BooleanField(
+        #     required=False,
+        #     label="원격판독",
+        #     widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        # )
 
 
 class ServiceFeeForm(ModelForm):
