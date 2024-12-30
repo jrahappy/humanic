@@ -346,3 +346,4 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         menu_id 별로 접속가능한 App dict 을 만들어서 url 통제함
         => 해당 user 의 menu_id의 app dict을 가져와서 접속하려는 url 를 걸러내는 방안임
 
+https://www.hpacsweb.com/referralLogin/eyJ0eXAiOiJKV1QiLCJ0eXBlIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJpc3MiOiJoZWFsdGhodWIiLCJleHAiOjE3MzU2MDQwMjEsInVzZXIiOiJ7XCJyb2xlc1wiOltcImRlZmF1bHRcIixcInRlY2huaWNpYW5cIixcImVkaXRvclwiXSxcIm5hbWVcIjpcIu2ctOuovOq0gOumrOyekFwiLFwiaWRcIjpcIjViYmRjZTZkZTRiMDQ3M2QyZDhjZDQ1MlwiLFwiZW1haWxcIjpcImhtb2ZmQGhlYWx0aGh1Yi5rclwifSJ9.DFjfackCumJnIkKtnNz54W689GWvXDym_8v-S4a8oQM/1735604021853/7144108/

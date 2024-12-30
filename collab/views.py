@@ -681,7 +681,7 @@ def index(request):
     # user = CustomUser.objects.get(id=user.id)
     company = Company.objects.filter(customuser=user).first()
     # Archive old refers
-    go_archive(request, company.id)
+    # go_archive(request, company.id)
 
     q = request.GET.get("q")
     if q:
@@ -734,7 +734,7 @@ def index(request):
 def refer_list(request, company_id):
     company = Company.objects.get(id=company_id)
     # Archive old refers
-    go_archive(request, company.id)
+    # go_archive(request, company.id)
 
     q = request.GET.get("q")
     if q:
