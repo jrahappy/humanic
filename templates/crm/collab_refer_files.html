@@ -20,7 +20,7 @@
                     >
                 {% csrf_token %}
                 <li class="flex flex-row justify-between gap-4 mb-1">
-                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.name }}">{{ rf.file|filename}}</a>
+                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.name }}">{{ rf.file}}</a>
                     <button type="submit" class="btn btn-xs btn-error">x</button>
                 </li>
                 </form> 

@@ -64,8 +64,14 @@ def break_loop(context):
 @register.filter
 def filename(value):
     """Extracts the filename from a file path or URL."""
-    return os.path.basename(value.name)
+    return value.split("/")[-1]
     # return os.path.basename(value)
+
+
+@register.filter
+def filename2(value):
+    """Extracts the filename from a file path or URL."""
+    return os.path.basename(value)
 
 
 @register.filter
