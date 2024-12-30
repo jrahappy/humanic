@@ -44,4 +44,19 @@ urlpatterns = [
         views.collab_refer_archive,
         name="collab_refer_archive",
     ),
+    path(
+        "collab_refer_file_upload/<int:refer_id>/",
+        views.collab_refer_file_upload,
+        name="collab_refer_file_upload",
+    ),
+    path(
+        "collab_refer_file_delete/<int:file_id>/",
+        views.collab_refer_file_delete,
+        name="collab_refer_file_delete",
+    ),
+    path(
+        "collab_refer_files/<int:refer_id>/",
+        views.collab_refer_files,
+        name="collab_refer_files",
+    ),
 ]

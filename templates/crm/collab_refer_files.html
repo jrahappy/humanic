@@ -1,0 +1,41 @@
+{% load humanize %}
+{% load custom_filters %}
+
+<div class="w-full"
+    id="collab_refer_files_box"  
+    hx-trigger="ReferFilesChanged from:body"
+    hx-get="{% url 'crm:collab_refer_files' refer.id %}" 
+    hx-target="this"
+    hx-swap="collab_refer_files_box"
+>
+    <div class="flex flex-row w-full justify-between gap-2">
+        <div class="py-1 mb-4 align-top ">
+            <ul class="align-top">
+            {% for rf in files %}
+                <form 
+                    hx-delete="{% url 'crm:collab_refer_file_delete' rf.id %}" 
+                    hx-trigger="submit"
+                    hx-confirm="Are you sure you want to delete this file?"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    >
+                {% csrf_token %}
+                <li class="flex flex-row justify-between gap-4 mb-1">
+                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.name }}">{{ rf.file|filename}}</a>
+                    <button type="submit" class="btn btn-xs btn-error">x</button>
+                </li>
+                </form> 
+            {% empty %}
+                <li>No files</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <a href="#" class="btn btn-primary btn-sm" 
+                onclick="base_modal.showModal()" 
+                hx-get="{% url 'crm:collab_refer_file_upload' refer.id %}" 
+                hx-trigger="click" 
+                hx-target="#base_modal">
+                Upload Files</a>
+        </div>
+    </div>
+</div>

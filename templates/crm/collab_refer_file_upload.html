@@ -1,0 +1,56 @@
+{% load widget_tweaks %}
+<section id="refer_file_box" class="card bg-base-100 w-96 overflow-hidden shadow-sm xl:col-span-6 ">
+    <div class="card-body">
+        <h2 class="card-title mb-4"> 첨부파일 업로드 ({{ refer.id }})</h2>
+       
+        <div class="flex flex-col gap-2">
+            <form 
+                
+                hx-post="{% url 'crm:collab_refer_file_upload' refer.id %}" 
+                hx-target="#refer_file_box"  
+                hx-swap="outerHTML"    
+                hx-trigger="submit"
+                id="refer_file_upload_form"
+                enctype="multipart/form-data"
+                class = "flex flex-col gap-2"
+            >
+                {% csrf_token %}
+                <div>
+                    <input 
+                    type="file" 
+                    name="file" 
+                    id="file" 
+                    class="file-input file-input-bordered w-full max-w-xs file-input-sm" multiple>
+                    {% if form.file.errors %}
+                        <div class="text-red-500 text-sm mt-1">
+                            {{ form.file.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-control flex flex-row gap-2 justify-between">
+                    <button type="submit" class="btn btn-primary btn-sm w-24">Upload</button>
+                    <button type="button" class="btn btn-sm" onclick="base_modal.close()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('refer_file_box').addEventListener('htmx:beforeSwap', function(event) {
+            if (event.detail.elt.id === 'refer_file_box') {
+                // Check if the form submission was successful
+                if (event.detail.xhr.status === 204) {
+                    const form = document.querySelector('refer_file_upload_form');
+                    if (form) {
+                        form.reset();  // Reset the form fields
+                    }
+                    // If successful, close the modal
+                    base_modal.close();
+                    console.log("Form submission successful");
+                } else {
+                    // Handle other status codes or failed submission
+                    console.log("Form submission failed or other status");
+                }
+            }
+        });
+    </script>
+</section>

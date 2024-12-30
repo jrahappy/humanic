@@ -2,6 +2,7 @@ import ast
 from django import template
 from django.utils import timezone
 import datetime
+import os
 
 register = template.Library()
 
@@ -63,7 +64,7 @@ def break_loop(context):
 @register.filter
 def filename(value):
     """Extracts the filename from a file path or URL."""
-    return value.split("/")[-1]
+    return os.path.basename(value.name)
     # return os.path.basename(value)
 
 

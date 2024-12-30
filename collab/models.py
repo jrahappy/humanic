@@ -35,7 +35,9 @@ class Refers(models.Model):
     opinion2 = models.TextField(null=True, blank=True)
     opinioned_at = models.DateTimeField(null=True, blank=True)
     cosigned_at = models.DateTimeField(null=True, blank=True)
-    url = models.URLField(null=True, blank=True)
+    # url = models.URLField(null=True, blank=True)
+    url = models.CharField(max_length=1024, null=True, blank=True)
+    # webpacs_url = models.TextField(null=True, blank=True)
 
     def __str__(self):
         # return self.company.business_name + " - " + self.patient_name

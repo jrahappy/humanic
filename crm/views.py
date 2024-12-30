@@ -3,11 +3,64 @@ from django.http import HttpResponse
 from .models import Opportunity, Chance
 from customer.models import Company, CustomerLog
 from .forms import OpportunityForm, ChanceForm
-from collab.models import Refers
-from collab.forms import ReportForm, ReferChangeStatus
+from collab.models import Refers, ReferFile
+from collab.forms import ReportForm, ReferChangeStatus, ReferFileForm
 from collab.views import create_history
 import datetime
 import json
+
+
+def collab_refer_file_upload(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    if request.method == "POST":
+        form = ReferFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            files = request.FILES.getlist("file")
+            for file in files:
+                ReferFile.objects.create(refer=refer, file=file)
+                # referfile.objects.create(refer=refer, file=file)
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "ReferFilesChanged": None,
+                            "showMessage": "File Uploaded.",
+                        }
+                    )
+                },
+            )
+        else:
+            print(form.errors)
+
+    else:
+        form = ReferFileForm()
+        context = {"form": form, "refer": refer}
+        return render(request, "crm/collab_refer_file_upload.html", context)
+
+
+def collab_refer_file_delete(request, file_id):
+    file = get_object_or_404(ReferFile, id=file_id)
+    refer = file.refer
+    file.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "ReferFilesChanged": None,
+                    "showMessage": "File Deleted.",
+                }
+            )
+        },
+    )
+
+
+def collab_refer_files(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    files = ReferFile.objects.filter(refer=refer)
+    context = {"refer": refer, "files": files}
+    return render(request, "crm/collab_refer_files.html", context)
 
 
 def collab_kanban(request):
@@ -94,6 +147,8 @@ def collab_refer_detail(request, refer_id):
     illnesses = refer.referillness_set.all()
     simples = refer.refersimplediagnosis_set.all()
     history = refer.referhistory_set.all()
+    # files = refer.referfile_set.all()
+    files = ReferFile.objects.filter(refer=refer)
 
     context = {
         "refer": refer,
@@ -101,6 +156,7 @@ def collab_refer_detail(request, refer_id):
         "illnesses": illnesses,
         "simples": simples,
         "history": history,
+        "files": files,
     }
     return render(request, "crm/collab_refer_detail.html", context)
 
@@ -202,17 +258,6 @@ def collab_report(request, refer_id):
                 },
             )
 
-            # return HttpResponse(
-            #     status=204,
-            #     headers={
-            #         "HX-Trigger": json.dumps(
-            #             {
-            #                 "RefersChanged": None,
-            #                 "showMessage": "Report Updated.",
-            #             }
-            #         )
-            #     },
-            # )
         else:
             print(form.errors)
             return HttpResponse(

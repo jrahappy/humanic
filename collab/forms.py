@@ -2,10 +2,18 @@ from django import forms
 from django.forms import ModelForm
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 
-from collab.models import Refers, ReferHistory
+from collab.models import Refers, ReferHistory, ReferFile
 from customer.models import Company
 from utils.base_func import REFER_STATUS
 import datetime
+
+
+class ReferFileForm(ModelForm):
+    class Meta:
+        model = ReferFile
+        fields = {
+            "file",
+        }
 
 
 class CollabCompanyForm(ModelForm):
@@ -97,6 +105,7 @@ class ReportForm(ModelForm):
             "opinion2",
             "status",
             "readprice",
+            "url",
             # Add other fields as necessary
         ]
 
