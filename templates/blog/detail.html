@@ -59,17 +59,13 @@
                     <span class="label-text">첨부파일(들)</span>
                 </label>
                 <div class="flex flex-col gap-2 ">
-                {% if post_attachments %}
-                    {% for post_attachment in post_attachments %}
-
-                            <a href="{{ post_attachment.file.url }}" class="link px-2" target="_blank">
-                                {{ post_attachment.file.name|filename }}
-                            </a>
-                        
-                    {% endfor %}
-                {% else %}
-                    <div class="border bg-gray-100 p-2 w-full">첨부파일 없음</div>
-                {% endif %}
+                {% for post_attachment in post_attachments %}
+                    <a href="{{ post_attachment.file.url }}" class="link px-2" target="_blank">
+                        {{ post_attachment.file.name|filename }}
+                    </a>
+                {% empty %}
+                    <div class="border bg-gray-100 p-2 w-full">No files.</div>
+                {% endfor %}
                 </div>
             </div>
         </div>

@@ -20,86 +20,13 @@
                     stroke-width="10" />
                 <circle cx="512" cy="353.28" r="114.688" class="fill-base-100" />
             </svg>
-            휴먼영상의학센터
+            휴먼영상의학센터 
         </div>
-        <ul class="menu">
-            <li>
-                <a href="#"
-                    hx-get="{% url 'dashboard:index' %}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                    hx-indicator="#spinner" 
-                   
-                >
-                <svg data-src="https://unpkg.com/heroicons/20/solid/home.svg" class="h-5 w-5"></svg>
-                Dashboard
-                </a>
-            </li>
-            <li>
-                <a href="#"
-                    hx-get="{% url 'dashboard:board' %}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                    hx-indicator="#spinner" 
-                   
-                >
-                    <svg
-                        data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
-                        class="h-5 w-5"></svg>
-                    공지사항
-                </a>
-                
-            </li>
-            <li>
-                <a href="#"
-                    hx-get="{% url 'dashboard:stat' %}"
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                    hx-indicator="#spinner" 
-                  
-                >
-                    <svg
-                        data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
-                        class="h-5 w-5"></svg>
-                    판독 통계
-                </a>
-                
-            </li>
-
-            {% if user.username == "HIC0157" %}
-            <li>
-                <a 
-                    x-data="{ isActive: false }" :class="{ 'active': isActive }" @click="isActive = true"
-                    hx-get="{% url 'blog:home' %}" 
-                    hx-trigger="click"
-                    hx-target="#main_area"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                   {% if side_menu == "blog" %}class='active'{% endif %}
-                ><svg
-                data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
-                class="h-5 w-5"></svg>
-                증명 및 인증서 관리</a>
-            </li>
-            <li>
-                <a 
-                    href="{% url 'dashboard:workhours' %}"
-                    x-data="{ isActive: false }" :class="{ 'active': isActive }" @click="isActive = true"
-                    
-                   
-                ><svg
-                data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
-                class="h-5 w-5"></svg>
-                Working Hours</a>
-            </li>
-            {% endif %}
-        </ul>
+        {% if user.menu_id == 40 %}
+            {% include "dashboard/aside_40.html" %}
+        {% else %}
+            {% include "dashboard/aside_default.html" %}
+        {% endif %}
     </nav>
     <!-- /sidebar menu -->
 </aside>

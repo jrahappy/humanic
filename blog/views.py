@@ -38,7 +38,6 @@ def index(request):
 
 
 def create_post_admin(request):
-
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES)
         if form.is_valid():
@@ -93,8 +92,19 @@ def create_post(request):
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES)  # Pass both POST data and FILES
         if form.is_valid():
-            form.instance.author = request.user
-            form.save()
+            new_post = form.save(commit=False)
+            new_post.instance.author = request.user
+            new_post.save()
+            files = request.FILES.getlist("attachments")
+            if files:
+                for file in files:
+                    PostAttachment.objects.create(post=new_post, file=file)
+                return redirect("blog:home")
+
+            return redirect(
+                "blog:detail", pk=new_post.id
+            )  # Redirect to home after successful update
+
             return redirect("blog:home")  # Redirect to the desired URL after saving
         else:
             print(form.errors)  # Debugging: print any validation errors to the console
@@ -153,6 +163,7 @@ def detail(request, pk):
     user = request.user
     post = Post.objects.get(id=pk)
     post_attachments = PostAttachment.objects.filter(post=post)
+    print(post_attachments)
     context = {
         "post": post,
         "post_attachments": post_attachments,

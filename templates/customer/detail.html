@@ -136,15 +136,15 @@
           </div>
           <div class="flex flex-row justify-end gap-2 p-4">
             <a href="{% url 'customer:update' company.id %}" class="self-align-bottom btn btn-primary btn-sm text-white w-16">Edit</a> 
-            <!-- {% if user.username == "william" or user.username == "albert" %} -->
-            {% if company.president_name|default_if_none:"" == "" or company.office_email|default_if_none:"" == "" or company.office_phone|default_if_none:"" == "" %}
-              <div class="text-error">대표자/이메일/전화번호</div>
-            {% else %}
-              <a href="{% url 'customer:add_collab_login_user' company.id %}" class="self-align-bottom btn btn-sm btn-error text-white w-40">
-                사용자: {{ company.customuser.username }}
-              </a>
+            {% if company.is_tele or company.is_collab %}
+              {% if company.president_name|default_if_none:"" == "" or company.office_email|default_if_none:"" == "" or company.office_phone|default_if_none:"" == "" %}
+                <div class="text-error ">대표자 or 이메일 or 전화번호 누락</div>
+              {% else %}
+                <a href="{% url 'customer:add_collab_login_user' company.id %}" class="self-align-bottom btn btn-sm btn-error text-white w-40">
+                  사용자: {{ company.customuser.username }}
+                </a>
+              {% endif %}
             {% endif %}
-            <!-- {% endif %} -->
           </div>
       </div>
 		</section>

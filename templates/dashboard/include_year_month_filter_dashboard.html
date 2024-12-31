@@ -8,15 +8,9 @@
             hx-target="#stat_panel"
             hx-swap="innerHTML"
             hx-transition=""
-
-            {% if button_ym.ayear == syear and button_ym.amonth == smonth %}
-
-
+            hx-indicator="#spinner"
             class="btn btn-sm "
-            {% else %}
-            class="btn btn-sm"
-            {% endif %}
-            >
+           >
             {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
         </a>
     </div>

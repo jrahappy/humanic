@@ -1,0 +1,132 @@
+
+<ul class="menu">
+    <li>
+        <a href="{% url 'blog:index' %}">
+            <svg
+            data-src="https://unpkg.com/heroicons/20/solid/flag.svg"
+            class="h-5 w-5"></svg>
+            게시판
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'briefing:index' %}">
+            <svg data-src="https://unpkg.com/heroicons/20/solid/home.svg" class="h-5 w-5"></svg>
+            Briefing
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'customer:index' %}">
+            <svg data-src="https://unpkg.com/heroicons/20/solid/building-library.svg" class="h-5 w-5"></svg>
+            고객정보
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'provider:index' %}">
+            <svg 
+            data-src="https://unpkg.com/heroicons/20/solid/users.svg"
+            class="h-5 w-5"></svg>
+            판독의사
+        </a>
+    </li>
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/globe-alt.svg"
+                    class="h-5 w-5"></svg>
+                협진관리
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'crm:collab_kanban' %}" class="px-5">대시보드</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <a href="{% url 'crm:collab' %}" class="px-5">협진요청 보기</a>
+                </li>
+            </ul>
+            <!-- <ul>
+                <li>
+                    <a href="{% url 'crm:collab' %}" class="px-5">월별통계 보기</a>
+                </li>
+            </ul>
+             -->
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/funnel.svg"
+                    class="h-5 w-5"></svg>
+                이슈관리
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'crm:index' %}" class="px-5">이슈 대시보드</a>
+                </li>
+                <!-- <li>
+                    <a href="{% url 'crm:index' %}" class="px-5">환자영업 이슈(개발중) </a>
+                </li>
+                <li>
+                    <a href="{% url 'crm:index' %}" class="px-5">병원영업 이슈 </a>
+                </li>
+                <li>
+                    <a href="{% url 'crm:index' %}" class="px-5">판독의관련 이슈 </a>
+                </li> -->
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/bolt.svg"
+                    class="h-5 w-5"></svg>
+                판독의 관리
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'referdex:index' %}" class="px-5">근무 상황판</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <a href="{% url 'referdex:pm' %}" class="px-5">판독요청 처리</a>
+                </li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details id="reports-menu">
+            <summary>
+                <svg
+                data-src="https://unpkg.com/heroicons/20/solid/chart-pie.svg"
+                class="h-5 w-5"></svg>
+                리포트
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'report:monthly_pro_cus' %}" class="px-5">월별 순위 보기</a>
+                </li>
+                <li>
+                    <a href="{% url 'report:report_customer' %}" class="px-5">고객병원별 통계</a>
+                </li> 
+                <li>
+                    <a href="{% url 'report:report_period' %}" class="px-5">판독의별 통계</a>
+                </li>
+                <li>
+                    <a href="{% url 'report:index' %}" class="px-5">상세검색</a>
+                </li>
+                <li>
+                    <a href="{% url 'report:chart' %}" class="px-5">Chart로 보기</a>
+                </li>                                               
+                <li>
+                    <a href="{% url 'report:rad_by_subspecialty' %}" class="px-5">세부전공별 통계</a>
+                </li>
+            </ul>                              
+                
+        </details>
+    </li>
+</ul>

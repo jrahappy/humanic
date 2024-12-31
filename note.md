@@ -313,37 +313,47 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         1. "/" 로 접속하면 /web/ url.py 에서 index 로 감
         2. web:index 에서 account_login 으로 보냄
         3. account_login 
-            Success: briefing:index 감
+            Success: blog:index 감
                 user.is_staff
-                    - True: briefing:index
+                    - True: blog:index
+                        user.menu_id 로 메뉴 구성함
                     = False: 
                         user.is_doctor 
                             True: 판독의 -> dashboard:index
 
-                            False: 고객병원 -> cust:index
+                            False: 고객병원 -> collab:index
                                 로그인 user의 company.customuser 확인
                                 company.is_collab:
                                     True: 협진병원 collab:index
                                     False: 원격판독 cust:index 
-                            # 12/30/2024 부터 아래로 적용함        
-                            False: 고객병원 -> collab:index
+                            
                                
     - 협진병원과 원격판독병원의 차이는 실제 환자를 리퍼해서 내원하는 경우가 있는지 여부임.
 
     대안: 메뉴 iD로 접속자의 권한을 통제하는 방안 고민
         menu_id <= 10 :  일반근무자
         menu_id = 20 :  팀장급
-        menu_id = 30 :  부장급
-        menu_id = 40 :  임원급(파트너들)
-        menu_id = 45 :  상근의(출근)
-        menu_id = 70 :  판독의(프로바이더)
+        menu_id = 30 :  재무회계
+        menu_id = 40 :  상근의(출근)
+        menu_id = 50 :  임원급(파트너들)
+        menu_id = 70 :  판독의(프로바이더) cust: 앱에서만 처리
         menu_id = 80 :  고객병원(원격판독)
-        menu_id = 82 :  협진병원(환자내원)
-        menu_id = 84 :  원격판독+협진병원(환자내원)
-        menu_id = 86 :  외부서비스업체
+        menu_id = 82 :  협진병원(환자내원) collab: 앱에서만 처리
+        menu_id = 84 :  원격판독+협진병원(환자내원): collab 앱에서만 처리
+        menu_id = 86 :  외부서비스업체 : 아직 오픈 하지 않음
         menu_id >= 90 :  IT
 
         menu_id 별로 접속가능한 App dict 을 만들어서 url 통제함
         => 해당 user 의 menu_id의 app dict을 가져와서 접속하려는 url 를 걸러내는 방안임
 
-https://www.hpacsweb.com/referralLogin/eyJ0eXAiOiJKV1QiLCJ0eXBlIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJpc3MiOiJoZWFsdGhodWIiLCJleHAiOjE3MzU2MDQwMjEsInVzZXIiOiJ7XCJyb2xlc1wiOltcImRlZmF1bHRcIixcInRlY2huaWNpYW5cIixcImVkaXRvclwiXSxcIm5hbWVcIjpcIu2ctOuovOq0gOumrOyekFwiLFwiaWRcIjpcIjViYmRjZTZkZTRiMDQ3M2QyZDhjZDQ1MlwiLFwiZW1haWxcIjpcImhtb2ZmQGhlYWx0aGh1Yi5rclwifSJ9.DFjfackCumJnIkKtnNz54W689GWvXDym_8v-S4a8oQM/1735604021853/7144108/
+
+# 12/31/2024 #
+    - Partner 와 full-time doctor 를 각각에게 메뉴 접근성을 달리 하는 방법
+    - 로직
+
+    김성현 Partner -> Staff
+    이재희 Partner -> Staff
+
+    전용식 full-time doctor
+    전우선 full-time doctor
+    윤혜경 full-time doctor

@@ -74,6 +74,19 @@ def edit_profile(request):
 @login_required
 def index(request):
     user = request.user
+    # 일단 원격판독 고객들도 collab 에서 모두 처리하기로 함
+    if not user.is_authenticated:
+        return redirect("account_login")
+    # Check if the user is a staff member
+    if user.is_staff:
+        pass
+    else:
+        # 판독의의 경우
+        if user.is_doctor:
+            return redirect("dashboard:index")
+        # 병원(고객)의 경우
+        else:
+            return redirect("collab:index")
 
     # 연결되어 있는 병원 정보를 가져온다.
     company = Company.objects.filter(customuser=user).first()

@@ -11,9 +11,11 @@ from datetime import date
 
 @login_required
 def index(request):
+
     user = request.user
+    if not user.is_authenticated:
+        return redirect("account_login")
     # Check if the user is a staff member
-    # blog:index 에서 처리해주고 있으나.. 혹시 직접 들어오는 경우를 대비해서 추가함
     if user.is_staff:
         pass
     else:
@@ -21,9 +23,7 @@ def index(request):
         if user.is_doctor:
             return redirect("dashboard:index")
         # 병원(고객)의 경우
-        # 12/29/2024 - 병원의 경우, 무조건 Collab 으로 이동
         else:
-            # return redirect("cust:index")
             return redirect("collab:index")
 
     syear = request.GET.get("syear")

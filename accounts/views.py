@@ -88,25 +88,3 @@ def password_change(request):
 
 def password_change_done(request):
     return render(request, "accounts/password_change_done.html")
-
-
-# class CustomPasswordChangeView(PasswordChangeView):
-#     template_name = "accounts/password_change.html"
-#     form_class = CustomPasswordChangeForm
-#     success_url = "/"
-#     view_name = "change-password"
-#     success_url = "/"
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["html_left_menu"] = get_menu(1, 0, 0)  # Add this line
-#         return context
-
-#     def form_valid(self, form):
-#         messages.success(self.request, "Your password was successfully updated!")
-#         form.save(self.request)
-#         return super().form_valid(form)
-
-#     def form_invalid(self, form):
-#         messages.error(self.request, "There was an error in your password update.")
-#         return self.render_to_response(self.get_context_data(form=form))

@@ -3,7 +3,7 @@
 		<svg data-src="https://unpkg.com/heroicons/20/solid/bars-3.svg" class="h-5 w-5"></svg>
 	</label>
 	<div class="grow">
-		<h1 class="lg:text-2xl text-bold mx-2 px-4">{{ title }}</h1>
+		<h1 class="lg:text-2xl text-bold mx-2 px-4"></h1>
 	</div>
 	<!-- <div>
 		<input
@@ -82,9 +82,19 @@
 	</div> -->
 	
 	<!-- dropdown -->
-	 <div>
-		{{ user.profile.real_name }} 님
-	 </div>
+	<div>
+		<select data-choose-theme class="select select-bordered select-sm py-0">
+			<option value="">Light</option>
+			<option value="dark">Dark</option>
+			<option value="cupcake">Cupcake</option>
+			<option value="corporate">Corporate</option>
+			<option value="business">Business</option>
+			<option value="wireframe">Wireframe</option>
+		</select>
+	</div>
+	<div>
+		{{ user.first_name }}님 
+	</div>
 	<div class="dropdown-end dropdown z-10">
 		<div tabindex="0" class="avatar btn btn-circle btn-ghost">
 			<div class="w-10 rounded-full">

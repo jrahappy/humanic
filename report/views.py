@@ -1,5 +1,5 @@
 import pandas as pd
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from minibooks.models import (
     UploadHistory,
     ReportMaster,
@@ -18,9 +18,13 @@ from collections import defaultdict
 from django.http import HttpResponse
 from urllib.parse import quote
 import csv
+from django.contrib.auth import logout
 
 
 def monthly_pro_cus(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("account_login")
 
     buttons_year_month = (
         UploadHistory.objects.filter(is_deleted=False)
@@ -639,13 +643,19 @@ def partial_search_provider_t(request):
 
 
 def index(request):
-    # report_filter = ReportFilter(request.GET, queryset=rmaster)
-    # report_filter = ReportFilter(
-    #     request.GET,
-    #     # queryset=ReportMaster.objects.all().select_related("provider", "company"),
-    #     queryset=ReportMaster.objects.prefetch_related("provider", "company"),
-    # )
-    # filtered_qs = report_filter.qs.order_by("-ayear", "-amonth", "-created_at")[0:10]
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("account_login")
+    # Check if the user is a staff member
+    if user.is_staff:
+        if user.menu_id == 0 or user.menu_id == 10 or user.menu_id == 40:
+            return redirect("blog:index")
+        else:
+            pass
+    else:
+        logout(request)
+        return redirect("web:index")
+
     search_query = request.GET.get("search", "").strip()
     if search_query:
         report_qs = ReportMaster.objects.filter(

@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Profile, WorkHours, Holidays, ProductionTarget
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+from customer.models import Company
 
 CustomUser = get_user_model()
 

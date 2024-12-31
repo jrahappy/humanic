@@ -51,6 +51,8 @@ def add_collab_login_user(request, customer_id):
         existing_user.profile.save()
 
         existing_user.menu_id = menu_id
+        # 이 부분은 사용자가 엑세스를 통제하기 위한 로직
+        # existing_user.is_active = True
         existing_user.save()
 
         return redirect("customer:detail", company.id)

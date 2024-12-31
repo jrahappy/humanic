@@ -51,6 +51,22 @@ def create_collab_user(request):
 
 @login_required
 def index(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("account_login")
+    # Check if the user is a staff member
+    if user.is_staff:
+        if user.menu_id == 90:
+            pass
+        else:
+            return redirect("blog:index")
+    else:
+        # 판독의의 경우
+        if user.is_doctor:
+            return redirect("dashboard:index")
+        # 병원(고객)의 경우
+        else:
+            return redirect("collab:index")
     upload_histories = (
         UploadHistory.objects.annotate(ReportMaster_count=Count("reportmaster"))
         .filter(is_deleted=False)
