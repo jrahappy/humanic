@@ -20,7 +20,7 @@
                     >
                 {% csrf_token %}
                 <li class="flex flex-row justify-between gap-4 mb-1">
-                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.name }}">{{ rf.file}}</a>
+                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.url }}">{{ rf.file.url}}</a>
                     <button type="submit" class="btn btn-xs btn-error">x</button>
                 </li>
                 </form> 
@@ -30,6 +30,11 @@
             </ul>
         </div>
         <div>
+            <a href="{% url 'crm:dicom_viewer' refer.id %}" 
+                class="btn btn-primary btn-sm" 
+                target="_blank">
+                View DICOM</a>
+                
             <a href="#" class="btn btn-primary btn-sm" 
                 onclick="base_modal.showModal()" 
                 hx-get="{% url 'crm:collab_refer_file_upload' refer.id %}" 

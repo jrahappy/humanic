@@ -59,4 +59,5 @@ urlpatterns = [
         views.collab_refer_files,
         name="collab_refer_files",
     ),
+    path("dicom_viewer/<int:refer_id>/", views.dicom_viewer, name="dicom_viewer"),
 ]

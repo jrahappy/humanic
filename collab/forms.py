@@ -85,15 +85,12 @@ class ReferForm(ModelForm):
         validators=[
             RegexValidator(
                 regex=r"^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$",
-                message="전화번호는 숫자와 -,+ 기호만 허용됩니다.",
+                message="숫자,.,-,+,() 기호만 허용. 예) 02-1234-5678, 010-1234-5678, +82-10-1234-5678",
             )
         ],
-        error_messages={
-            "required": "Please enter the patient's phone number.",
-        },
     )
     patient_gender = forms.ChoiceField(
-        choices=[("M", "Male"), ("F", "Female")],
+        choices=[("", "선택"), ("M", "Male"), ("F", "Female")],
         required=True,
         error_messages={
             "required": "성별을 선택해주세요.",

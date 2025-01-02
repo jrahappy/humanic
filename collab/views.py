@@ -783,6 +783,9 @@ def refer_create(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     draft_refer = Refers.objects.filter(company=company, status="Draft").first()
+    if not draft_refer:
+        draft_refer = Refers.objects.create(company=company, status="Draft")
+        return redirect("collab:refer_create")
     # 오늘 날짜로 업데이트를 해준다.
     draft_refer.referred_date = datetime.date.today()
     draft_refer.save()
