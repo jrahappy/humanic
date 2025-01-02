@@ -357,3 +357,10 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
     전용식 full-time doctor
     전우선 full-time doctor
     윤혜경 full-time doctor
+
+# 1/1/2025 #
+    - Papaya web dicom viewer test
+        - resource: https://rii-mango.github.io/Papaya/
+        - dcm file을 폴더별로 저장하고 array로 경로/파일들을 반환하면 MPR 형태로 dicom set 을 웹페이지에 보여주는 것 성공
+
+        

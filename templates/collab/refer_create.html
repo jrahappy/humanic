@@ -44,21 +44,36 @@
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">의뢰일</td>
-                        <td class="align-top border-e border-gray-500">{% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}</td>
+                        <td class="align-top border-e border-gray-500">
+                            {% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}
+                            <div class="text-xs text-error">{{ form.referred_date.errors }} </div>
+                        </td>
                         <td class="align-top border-e border-gray-500">현재상태</td>
-                        <td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>
+                        <td></td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">환자명</td>
-                        <td class="align-top border-e border-gray-500">{% render_field form.patient_name class="input input-bordered input-sm w-40" %}</td>
+                        <td class="align-top border-e border-gray-500">
+                            {% render_field form.patient_name class="input input-bordered input-sm w-40" %}
+                            <div class="text-xs text-error">{{ form.patient_name.errors }} </div>
+                        </td>
                         <td class="align-top border-e border-gray-500">환자성별</td>
-                        <td>{% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}</td>
+                        <td>
+                            {% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}
+                            <div class="text-xs text-error">{{ form.patient_gender.errors }} </div>
+                        </td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">생년월일</td>
-                        <td class="align-top border-e border-gray-500">{% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}</td>
+                        <td class="align-top border-e border-gray-500">
+                            {% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}
+                            <div class="text-xs text-error">{{ form.patient_birthdate.errors }} </div>
+                        </td>
                         <td class="align-top border-e border-gray-500">연락처</td>
-                        <td>{% render_field form.patient_phone class="input input-bordered input-sm w-40" %}</td>
+                        <td>
+                            {% render_field form.patient_phone class="input input-bordered input-sm w-40" %}
+                            <div class="text-xs text-error">{{ form.patient_phone.errors }} </div>
+                        </td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">환자상병</td>
