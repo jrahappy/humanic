@@ -55,6 +55,11 @@ urlpatterns = [
         name="collab_refer_file_delete",
     ),
     path(
+        "collab_refer_file_delete_all/<int:refer_id>/",
+        views.collab_refer_file_delete_all,
+        name="collab_refer_file_delete_all",
+    ),
+    path(
         "collab_refer_files/<int:refer_id>/",
         views.collab_refer_files,
         name="collab_refer_files",

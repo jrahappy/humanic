@@ -20,6 +20,7 @@ def collab_refer_file_upload(request, refer_id):
             for file in files:
                 ReferFile.objects.create(refer=refer, file=file)
                 # referfile.objects.create(refer=refer, file=file)
+
             return HttpResponse(
                 status=204,
                 headers={
@@ -57,12 +58,30 @@ def collab_refer_file_delete(request, file_id):
     )
 
 
+def collab_refer_file_delete_all(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    files = ReferFile.objects.filter(refer=refer)
+    files.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "ReferFilesChanged": None,
+                    "showMessage": "All Files Deleted.",
+                }
+            )
+        },
+    )
+
+
 def collab_refer_files(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     files = ReferFile.objects.filter(refer=refer)
-    files_list = [{"path": file.file.path, "name": file.file.name} for file in files]
-    print(files_list, "test")
-    context = {"refer": refer, "files": files, "files_list": files_list}
+    # files_list = [{"path": file.file.path, "name": file.file.name} for file in files]
+    # print(files_list, "test")
+    # print(files)
+    context = {"refer": refer, "files": files}
     return render(request, "crm/collab_refer_files.html", context)
 
 
@@ -152,9 +171,9 @@ def collab_refer_detail(request, refer_id):
     history = refer.referhistory_set.all()
     # files = refer.referfile_set.all()
     files = ReferFile.objects.filter(refer=refer)
-    files_list = [[file.file.name] for file in files]
-    print(files_list, "test")
-
+    # files_list = [[file.file.name] for file in files]
+    # print(files_list, "test")
+    print(files)
     context = {
         "refer": refer,
         "company": company,
@@ -162,7 +181,7 @@ def collab_refer_detail(request, refer_id):
         "simples": simples,
         "history": history,
         "files": files,
-        "files_list": files_list,
+        # "files_list": files_list,
     }
     return render(request, "crm/collab_refer_detail.html", context)
 
@@ -170,16 +189,16 @@ def collab_refer_detail(request, refer_id):
 def dicom_viewer(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     files = ReferFile.objects.filter(refer=refer)
-    files_list = [f"{file.file.url}" for file in files]
+    # files_list = [f"{file.file.url}" for file in files]
     # files_list = html.unescape(str(files_list))
     # files_list = f"params = [{files_list}]"
 
-    print(files_list, "test")
+    # print(files_list, "test")
 
     context = {
         "refer": refer,
         "files": files,
-        "files_list": files_list,
+        # "files_list": files_list,
     }
     return render(request, "collab/dicom_viewer.html", context)
 

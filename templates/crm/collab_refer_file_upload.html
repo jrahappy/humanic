@@ -2,39 +2,68 @@
 <section id="refer_file_box" class="card bg-base-100 w-96 overflow-hidden shadow-sm xl:col-span-6 ">
     <div class="card-body">
         <h2 class="card-title mb-4"> 첨부파일 업로드 ({{ refer.id }})</h2>
+        <h2 class="text-sm mb-4">주의: 한번에 업로드하는 파일갯수는 50개 이하</h2>
        
         <div class="flex flex-col gap-2">
             <form 
-                
-                hx-post="{% url 'crm:collab_refer_file_upload' refer.id %}" 
-                hx-target="#refer_file_box"  
-                hx-swap="outerHTML"    
-                hx-trigger="submit"
                 id="refer_file_upload_form"
+                hx-post="{% url 'crm:collab_refer_file_upload' refer.id %}"
+                hx-encoding='multipart/form-data' 
                 enctype="multipart/form-data"
                 class = "flex flex-col gap-2"
             >
                 {% csrf_token %}
                 <div>
                     <input 
-                    type="file" 
-                    name="file" 
-                    id="file" 
-                    class="file-input file-input-bordered w-full max-w-xs file-input-sm" multiple>
-                    {% if form.file.errors %}
-                        <div class="text-red-500 text-sm mt-1">
-                            {{ form.file.errors }}
-                        </div>
-                    {% endif %}
+                        type="file" 
+                        name="file" 
+                        id="file" 
+                        class="file-input file-input-bordered w-full max-w-xs file-input-sm" 
+                        multiple
+                        accept=".dcm"
+                    >
                 </div>
                 <div class="form-control flex flex-row gap-2 justify-between">
                     <button type="submit" class="btn btn-primary btn-sm w-24">Upload</button>
-                    <button type="button" class="btn btn-sm" onclick="base_modal.close()">Cancel</button>
+                    <button type="button" class="btn btn-sm" onclick="base_modal.close()">Close</button>
                 </div>
             </form>
+            <div id="progress-container" class="h-24 overflow-hidden">
+                <progress 
+                    id='progress' 
+                    class="progress progress-primary w-full mb-1" 
+                    value="0" 
+                    max="100"
+                    
+                ></progress>
+            </div>
+            <div id="upload-status"></div>
         </div>
     </div>
     <script>
+        
+        htmx.on('#refer_file_upload_form', 'htmx:xhr:progress', function(evt) {
+            var progressElement = document.getElementById('progress');
+            if (evt.lengthComputable) {
+                var percentComplete = (evt.loaded / evt.total) * 100;
+                progressElement.value = percentComplete;
+                document.getElementById('upload-status').innerText = Math.round(percentComplete) + '% uploaded';
+            }
+        });
+    
+        htmx.on('#refer_file_upload_form', 'htmx:afterRequest', function(evt) {
+            var progressElement = document.getElementById('progress');
+            if (evt.detail.successful) {
+                progressElement.value = 100;
+                document.getElementById('upload-status').innerText = 'Upload complete!';
+            } else {
+                progressElement.value = 0;
+                progressElement.classList.add('progress-error');
+                document.getElementById('upload-status').innerText = 'Upload failed!';
+            }
+        });
+        
+        /* 
         document.getElementById('refer_file_box').addEventListener('htmx:beforeSwap', function(event) {
             if (event.detail.elt.id === 'refer_file_box') {
                 // Check if the form submission was successful
@@ -52,5 +81,6 @@
                 }
             }
         });
+        */$
     </script>
 </section>

@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "django_recaptcha",
     "ckeditor",
     "taggit",
+    "django_cleanup.apps.CleanupConfig",
     # "ckeditor_uploader",
     "dogfoot",
     "utils",

@@ -10,7 +10,8 @@
 >
     <div class="flex flex-row w-full justify-between gap-2">
         <div class="py-1 mb-4 align-top ">
-            <ul class="align-top">
+            {{ files|length }} Files
+            <!-- <ul class="align-top">
             {% for rf in files %}
                 <form 
                     hx-delete="{% url 'crm:collab_refer_file_delete' rf.id %}" 
@@ -19,28 +20,45 @@
                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                     >
                 {% csrf_token %}
-                <li class="flex flex-row justify-between gap-4 mb-1">
-                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.url }}">{{ rf.file.url}}</a>
-                    <button type="submit" class="btn btn-xs btn-error">x</button>
+                <li class="flex flex-row justify-between gap-4 mb-0">
+                    <a href="{{ rf.file.url }}" target="_blank" download="{{ rf.file.url }}">{{ rf.file}}</a>
                 </li>
                 </form> 
             {% empty %}
                 <li>No files</li>
-            {% endfor %}
-            </ul>
+            {% endfor %} 
+            </ul> -->
         </div>
-        <div>
-            <a href="{% url 'crm:dicom_viewer' refer.id %}" 
-                class="btn btn-primary btn-sm" 
-                target="_blank">
-                View DICOM</a>
-                
-            <a href="#" class="btn btn-primary btn-sm" 
-                onclick="base_modal.showModal()" 
-                hx-get="{% url 'crm:collab_refer_file_upload' refer.id %}" 
-                hx-trigger="click" 
-                hx-target="#base_modal">
-                Upload Files</a>
+        <div class="flex flex-col gap-2">
+            {% if files %}
+      
+                <a href="{% url 'crm:dicom_viewer' refer.id %}" 
+                    class="btn btn-primary btn-sm" 
+                    target="_blank">
+                    View DICOM</a>
+                <a 
+                    href="#"
+                    class="btn btn-error btn-sm text-white" 
+                    hx-get="{% url 'crm:collab_refer_file_delete_all' refer.id %}"
+                    hx-trigger="confirmed"
+                    hx-target="#collab_refer_files_box"
+                    onClick="Swal.fire({title: '확인요청', text:'삭제하시겠습니까?',showCancelButton: true}).then((result)=>{
+                        if(result.isConfirmed){
+                        htmx.trigger(this, 'confirmed');  
+                        } 
+                    })"
+                >Delete</a>
+
+            {% else %}
+
+                <a href="#" class="btn btn-primary btn-sm" 
+                    onclick="base_modal.showModal()" 
+                    hx-get="{% url 'crm:collab_refer_file_upload' refer.id %}" 
+                    hx-trigger="click" 
+                    hx-target="#base_modal">
+                    Upload Files</a>
+
+            {% endif %}
         </div>
     </div>
 </div>
