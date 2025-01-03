@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<section class="col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
-        <div class="w-full item-center">
-            <div class="card bg-base-100 w-1/2 shadow-xl">
+<section class="col-span-12 w-full rounded-2xl p-4">
+        <div class="w-full flex justify-center">
+            <div class="card bg-base-100 w-92 shadow-xl">
                 <form class="space-y-6" method="POST" action="{% url 'account_logout' %}">
                     {% csrf_token %}
                     <div class="card-body">

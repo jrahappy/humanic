@@ -146,7 +146,7 @@
       <table class="table table-zebra w-full">
         {% for rs in rs_weekday %}
         <tr>
-          <td>{{ rs.weekday|weekday_name }}</td>
+          <td>{{ rs.weekday_number|weekday_name }}</td>
           <td><p class="text-end">{{ rs.weekday_total_count|floatformat:0|intcomma }}</p></td>
         </tr>
         {% endfor %}

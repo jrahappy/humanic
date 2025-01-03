@@ -76,6 +76,7 @@
                                     {% if data.aggregated == False %}
                                       <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화</a>
                                     {% else %}
+                                    <a href="{% url 'minibooks:aggregate_data_weekday' data.id %}" class="btn btn-info btn-sm">주 통계화</a>
                                     <div class="badge badge-{{ data.aggregated|yesno:'success,error' }} text-white">{{ data.aggregated|yesno:'Done,No' }}</div>
                                         <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">재통계화</a>
                                       <a 

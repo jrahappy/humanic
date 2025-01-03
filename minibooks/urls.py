@@ -31,6 +31,11 @@ urlpatterns = [
         views.aggregate_data_result,
         name="aggregate_data_result",
     ),
+    path(
+        "aggregate_data_weekday/<int:upload_history_id>/",
+        views.aggregate_data_weekday,
+        name="aggregate_data_weekday",
+    ),
     path("agg_detail/<int:id>/", views.agg_detail, name="agg_detail"),
     path("partial_tracking/<int:id>/", views.partial_tracking, name="partial_tracking"),
     path("magam/", views.magam_list, name="magam_list"),

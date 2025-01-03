@@ -20,14 +20,6 @@ class CollabCompanyForm(ModelForm):
 
     class Meta:
         model = Company
-        # fields = [
-        #     "referred_date",
-        #     "patient_name",
-        #     "patient_gender",
-        #     "patient_birthdate",
-        #     "patient_phone",
-        #     "opinion1",
-        # ]
         fields = "__all__"
         exclude = [
             "customuser",
@@ -49,25 +41,16 @@ class CollabCompanyForm(ModelForm):
 class ReferForm(ModelForm):
     class Meta:
         model = Refers
-        fields = [
-            # "company",
-            "referred_date",
-            "patient_name",
-            "patient_gender",
-            "patient_birthdate",
-            "patient_phone",
-            "opinion1",
+        fields = "__all__"
+        exclude = [
+            "company",
+            "created_at",
+            "updated_at",
+            "provider",
+            "opinion2",
+            "opinioned_at",
+            "status",
         ]
-        # fields = "__all__"
-        # exclude = [
-        #     "company",
-        #     "created_at",
-        #     "updated_at",
-        #     "provider",
-        #     "opinion2",
-        #     "opinioned_at",
-        #     "status",
-        # ]
 
     referred_date = forms.DateField(
         input_formats=["%Y-%m-%d"],
@@ -76,7 +59,7 @@ class ReferForm(ModelForm):
         initial=datetime.date.today(),
         validators=[
             MinValueValidator(datetime.date(1900, 1, 1)),
-            MaxValueValidator(datetime.date.today(), message="날짜를 확인해주십시오"),
+            MaxValueValidator(datetime.date.today()),
         ],
     )
     patient_phone = forms.CharField(
@@ -85,30 +68,17 @@ class ReferForm(ModelForm):
         validators=[
             RegexValidator(
                 regex=r"^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$",
-                message="숫자,.,-,+,() 기호만 허용. 예) 02-1234-5678, 010-1234-5678, +82-10-1234-5678",
+                message="Phone number must be entered in the format: '+999-999-9999'. Up to 15 digits allowed.",
             )
         ],
-    )
-    patient_gender = forms.ChoiceField(
-        choices=[("", "선택"), ("M", "Male"), ("F", "Female")],
-        required=True,
         error_messages={
-            "required": "성별을 선택해주세요.",
+            "required": "Please enter the patient's phone number.",
         },
     )
-    patient_birthdate = forms.DateField(
-        input_formats=["%Y-%m-%d"],
-        widget=forms.DateInput(attrs={"type": "date"}),
-        required=True,
-        validators=[
-            MinValueValidator(datetime.date(1900, 1, 1)),
-            MaxValueValidator(datetime.date.today(), message="날짜를 확인해주십시오"),
-        ],
+    directions = forms.CharField(
+        widget=forms.Textarea(attrs={"cols": 50, "rows": 3}),
+        required=False,
     )
-    # directions = forms.CharField(
-    #     widget=forms.Textarea(attrs={"cols": 50, "rows": 3}),
-    #     required=False,
-    # )
 
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)

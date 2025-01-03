@@ -155,6 +155,26 @@ class ReportMaster(models.Model):
         db_table = "reportmaster"
         managed = True
         verbose_name = "reportmaster"
+        # indexes = [
+        #     models.Index(fields=['name']),  # 이름 필드에 인덱스 설정
+        #     models.Index(fields=['name', 'birth_date']),  # 이름과 생년월일에 복합 인덱스 설정
+        # ]
+
+
+class ReportMasterWeekday(models.Model):
+    UploadHistory = models.ForeignKey(UploadHistory, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    ayear = models.CharField("년도", max_length=4)
+    amonth = models.CharField("월", max_length=2)
+    adate = models.DateField(null=True, blank=True)
+    weekday_number = models.SmallIntegerField()
+    amodality = models.CharField(
+        "Modality", max_length=10, choices=get_amodality_choices
+    )
+    total_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.ayear}-{self.amonth} {self.company} {self.amodality} {self.weekday_number}"
 
 
 class ReportMasterStat(models.Model):

@@ -3,7 +3,12 @@ from django.db.models import Count, Sum
 from django.db.models.functions import ExtractWeekDay
 
 # from importdata.models import rawdata, UploadHistory
-from minibooks.models import UploadHistory, ReportMaster, ReportMasterStat
+from minibooks.models import (
+    UploadHistory,
+    ReportMaster,
+    ReportMasterStat,
+    ReportMasterWeekday,
+)
 from accounts.models import Profile, CustomUser
 from django.contrib.auth.decorators import login_required
 from datetime import date
@@ -90,8 +95,11 @@ def index(request):
     dr_total = dr.count()
 
     # 의뢰수 구하기
-    rp_total = ReportMaster.objects.filter(ayear=syear, amonth=smonth).aggregate(
-        report_count=Count("id")
+    # rp_total = ReportMaster.objects.filter(ayear=syear, amonth=smonth).aggregate(
+    #     report_count=Count("id")
+    # )
+    rp_total = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth).aggregate(
+        report_count=Count("total_count")
     )
     rp_total_value = rp_total["report_count"] or 0
 
@@ -145,18 +153,27 @@ def index(request):
     )
 
     # 전체 통계
-    rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
+    rs_graph = ReportMasterWeekday.objects.filter(ayear=syear, amonth=smonth)
+    # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
     # 요일별 통계
     rs_weekday = (
-        rs_graph.annotate(
-            weekday=ExtractWeekDay(
-                "requestdt"
-            )  # Extracts the weekday from the DateTimeField
-        )
-        .values("weekday")
-        .annotate(weekday_total_count=Count("id"))  # Counts rows for each weekday
-        .order_by("weekday")
+        rs_graph.values("weekday_number")
+        .annotate(
+            weekday_total_count=Sum("total_count")
+        )  # Counts rows for each weekday
+        .order_by("weekday_number")
     )
+
+    # rs_weekday = (
+    #     rs_graph.annotate(
+    #         weekday=ExtractWeekDay(
+    #             "requestdt"
+    #         )  # Extracts the weekday from the DateTimeField
+    #     )
+    #     .values("weekday")
+    #     .annotate(weekday_total_count=Count("id"))  # Counts rows for each weekday
+    #     .order_by("weekday")
+    # )
 
     # 닥터의 스페셜티별 통계
     dr_by_specialty = (
@@ -317,20 +334,32 @@ def partial_briefing(request):
     # for buttons
     # print(buttons_year_month)
 
-    # 그래프용 데이터
-    rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
-
+    # 전체 통계
+    rs_graph = ReportMasterWeekday.objects.filter(ayear=syear, amonth=smonth)
+    # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
     # 요일별 통계
     rs_weekday = (
-        rs_graph.annotate(
-            weekday=ExtractWeekDay(
-                "requestdt"
-            )  # Extracts the weekday from the DateTimeField
-        )
-        .values("weekday")
-        .annotate(weekday_total_count=Count("id"))  # Counts rows for each weekday
-        .order_by("weekday")
+        rs_graph.values("weekday_number")
+        .annotate(
+            weekday_total_count=Sum("total_count")
+        )  # Counts rows for each weekday
+        .order_by("weekday_number")
     )
+
+    # 그래프용 데이터
+    # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
+
+    # 요일별 통계
+    # rs_weekday = (
+    #     rs_graph.annotate(
+    #         weekday=ExtractWeekDay(
+    #             "requestdt"
+    #         )  # Extracts the weekday from the DateTimeField
+    #     )
+    #     .values("weekday")
+    #     .annotate(weekday_total_count=Count("id"))  # Counts rows for each weekday
+    #     .order_by("weekday")
+    # )
 
     # rs_fixtures = CustomUser.objects.filter(is_doctor=True)
     # rs_fixtures = (

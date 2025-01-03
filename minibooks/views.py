@@ -11,7 +11,7 @@ from django.db.models import (
     FloatField,
     IntegerField,
 )
-from django.db.models.functions import Cast, Ceil
+from django.db.models.functions import Cast, Ceil, ExtractWeekDay
 from django.utils import timezone
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -22,6 +22,7 @@ from .models import (
     UploadHistory,
     ReportMaster,
     ReportMasterStat,
+    ReportMasterWeekday,
     ReportMasterPerformance,
     UploadHistoryTrack,
     MagamMaster,
@@ -808,6 +809,66 @@ def aggregate_data(request, upload_history_id):
             f"Failed: An error occurred: {e}",
             UploadHistory.objects.get(id=upload_history_id),
         )
+        return redirect("minibooks:index")
+
+
+@login_required
+def aggregate_data_weekday(request, upload_history_id):
+    uh = get_object_or_404(UploadHistory, id=upload_history_id)
+    temp_year = int(uh.ayear)
+    temp_month = int(uh.amonth)
+    last_date = date(temp_year, temp_month, monthrange(temp_year, temp_month)[1])
+
+    try:
+        aggregation = (
+            ReportMaster.objects.filter(uploadhistory=upload_history_id)
+            .annotate(weekday=ExtractWeekDay("requestdt"))
+            .values("company", "ayear", "amonth", "amodality", "weekday")
+            .annotate(total_count=Count("id"))
+            .order_by("company", "amodality", "weekday")
+        )
+
+        for entry in aggregation:
+            company = Company.objects.filter(id=entry["company"]).first()
+            if not company:
+                continue  # 회사가 존재하지 않으면 다음 항목으로 넘어감
+
+            year = entry["ayear"]
+            month = entry["amonth"]
+            adate = last_date
+            amodality = entry["amodality"]
+            if amodality is None:
+                amodality = "UNKNOWN"
+            weekday_number = entry["weekday"]
+            if weekday_number is None:
+                weekday_number = -1
+            total_count = entry["total_count"]
+            if total_count is None:
+                total_count = 0
+
+            ReportMasterWeekday.objects.update_or_create(
+                company=company,
+                ayear=year,
+                amonth=month,
+                adate=adate,
+                amodality=amodality,
+                UploadHistory=uh,
+                weekday_number=weekday_number,
+                defaults={
+                    "total_count": total_count,
+                },
+            )
+
+        messages.success(request, "Data aggregated successfully.")
+        # log_uploadhistory 함수 정의 필요
+        # log_uploadhistory(request.user, "Data Aggregation by weekday", "Weekday Data aggregated successfully.", uh)
+
+        return redirect("minibooks:index")
+
+    except Exception as e:
+        messages.error(request, f"An error occurred: {e}")
+        # log_uploadhistory 함수 정의 필요
+        # log_uploadhistory(request.user, "Data Aggregation", f"Failed: An error occurred: {e}", uh)
         return redirect("minibooks:index")
 
 

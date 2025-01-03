@@ -8,25 +8,27 @@ from django.contrib.auth import logout
 import json
 
 
+@login_required
 def index(request):
     # post_list = Post.objects.all().order_by("-created_at").select_related("author")
     user = request.user
-    if not user.is_authenticated:
-        return redirect("account_login")
+    # if not user.is_authenticated:
+    #     return redirect("account_login")
     # Check if the user is a staff member
-    if user.is_staff:
-        pass
-    else:
+    if not user.is_staff:
+        #     pass
+        # else:
         # 판독의의 경우
         if user.is_doctor:
             return redirect("dashboard:index")
         # 병원(고객)의 경우
         else:
             return redirect("collab:index")
+
     post_list = (
         Post.objects.filter(is_public=True)
-        .order_by("-created_at")
         .select_related("author")
+        .order_by("-created_at")
     )
     paginator = Paginator(post_list, 10)  # Show 10 posts per page
 

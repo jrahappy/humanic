@@ -9,6 +9,7 @@ from collab.views import create_history
 import datetime
 import json
 import html
+from django.db.models import Count
 
 
 def collab_refer_file_upload(request, refer_id):
@@ -86,25 +87,43 @@ def collab_refer_files(request, refer_id):
 
 
 def collab_kanban(request):
-    refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
+    refers = (
+        Refers.objects.exclude(status="Draft")
+        .select_related("company")
+        .order_by("-created_at")
+    )
+
+    status_counts = refers.values("status").annotate(count=Count("status"))
 
     status_rq = refers.filter(status="Requested")
     status_sch = refers.filter(status="Scheduled")
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
-    status_cancelled = refers.filter(status="Cancelled")[0:5]
-    print(status_cancelled.count())
+    status_cancelled = refers.filter(status="Cancelled")[:5]
+
+    status_rq_count = next(
+        (item["count"] for item in status_counts if item["status"] == "Requested"), 0
+    )
+    status_sch_count = next(
+        (item["count"] for item in status_counts if item["status"] == "Scheduled"), 0
+    )
+    status_in_count = next(
+        (item["count"] for item in status_counts if item["status"] == "Interpreted"), 0
+    )
+    status_cosign_count = next(
+        (item["count"] for item in status_counts if item["status"] == "Cosigned"), 0
+    )
 
     context = {
         "refers": refers,
         "status_rq": status_rq,
-        "status_rq_count": status_rq.count(),
+        "status_rq_count": status_rq_count,
         "status_sch": status_sch,
-        "status_sch_count": status_sch.count(),
+        "status_sch_count": status_sch_count,
         "status_in": status_in,
-        "status_in_count": status_in.count(),
+        "status_in_count": status_in_count,
         "status_cosign": status_cosign,
-        "status_cosign_count": status_cosign.count(),
+        "status_cosign_count": status_cosign_count,
         "status_cancelled": status_cancelled,
     }
     return render(request, "crm/collab_kanban.html", context)

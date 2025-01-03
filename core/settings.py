@@ -10,10 +10,7 @@ env = environ.Env(
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
-# environ.Env.read_env(BASE_DIR / ".env")
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = "django-insecure-$#=s7cx2!peci=xpv*3dpd0@zt293hv!)q7&4bi734njg0lh3v"
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -99,7 +96,7 @@ if DEBUG:
 
 DEBUG_TOOLBAR_CONFIG = {
     # "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
-    "SHOW_TOOLBAR_CALLBACK": lambda request: False  # Show toolbar only in DEBUG mode
+    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
 }
 
 
@@ -168,7 +165,7 @@ DATABASES = {
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": env("POSTGRES_HOST"),
         "PORT": env("POSTGRES_PORT"),
-        # "CONN_MAX_AGE": 3600,  # Set the connection age to 1 hour
+        "CONN_MAX_AGE": 60,  # Set the connection age to 1 hour
         # "OPTIONS": {
         #     "connect_timeout": 3660,  # Increase the connection timeout to 30 seconds
         # },
