@@ -1,15 +1,15 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Count, Q
 from .models import Opportunity, Chance
-from customer.models import Company, CustomerLog
 from .forms import OpportunityForm, ChanceForm
+from customer.models import Company, CustomerLog
 from collab.models import Refers, ReferFile
 from collab.forms import ReportForm, ReferChangeStatus, ReferFileForm
 from collab.views import create_history
 import datetime
 import json
 import html
-from django.db.models import Count
 
 
 def collab_refer_file_upload(request, refer_id):
@@ -93,37 +93,18 @@ def collab_kanban(request):
         .order_by("-created_at")
     )
 
-    status_counts = refers.values("status").annotate(count=Count("status"))
-
     status_rq = refers.filter(status="Requested")
     status_sch = refers.filter(status="Scheduled")
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
     status_cancelled = refers.filter(status="Cancelled")[:5]
 
-    status_rq_count = next(
-        (item["count"] for item in status_counts if item["status"] == "Requested"), 0
-    )
-    status_sch_count = next(
-        (item["count"] for item in status_counts if item["status"] == "Scheduled"), 0
-    )
-    status_in_count = next(
-        (item["count"] for item in status_counts if item["status"] == "Interpreted"), 0
-    )
-    status_cosign_count = next(
-        (item["count"] for item in status_counts if item["status"] == "Cosigned"), 0
-    )
-
     context = {
         "refers": refers,
         "status_rq": status_rq,
-        "status_rq_count": status_rq_count,
         "status_sch": status_sch,
-        "status_sch_count": status_sch_count,
         "status_in": status_in,
-        "status_in_count": status_in_count,
         "status_cosign": status_cosign,
-        "status_cosign_count": status_cosign_count,
         "status_cancelled": status_cancelled,
     }
     return render(request, "crm/collab_kanban.html", context)
@@ -151,18 +132,17 @@ def partial_collab_kanban(request):
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
     status_cancelled = refers.filter(status="Cancelled")[0:5]
-    print(status_cancelled.count())
     context = {
         "refers": refers,
         "status_rq": status_rq,
-        "status_rq_count": status_rq.count(),
         "status_sch": status_sch,
-        "status_sch_count": status_sch.count(),
         "status_in": status_in,
-        "status_in_count": status_in.count(),
         "status_cosign": status_cosign,
-        "status_cosign_count": status_cosign.count(),
         "status_cancelled": status_cancelled,
+        # "status_rq_count": status_rq.count(),
+        # "status_sch_count": status_sch.count(),
+        # "status_in_count": status_in.count(),
+        # "status_cosign_count": status_cosign.count(),
     }
     return render(request, "crm/partial_collab_kanban.html", context)
 

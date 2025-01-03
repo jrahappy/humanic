@@ -665,7 +665,7 @@ def home(request):
             .exclude(status="Draft")
             .order_by("-created_at")
         )
-    paginator = Paginator(refers, 20)  # Show 10 refers per page
+    paginator = Paginator(refers, 15)  # Show 10 refers per page
     page = request.GET.get("page")
     try:
         refers = paginator.page(page)

@@ -12,21 +12,20 @@
         onclick="location.href='{% url 'crm:collab_refer_detail' refer.id %}'"
         class="hover:bg-sky-100 cursor-pointer"
     >
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:bg-sky-100" >
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium  sm:pl-6 hover:bg-sky-100" >
             <a href="#">
                 {{ refer.id }}                             
             </a>
         </td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.referred_date }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.company|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.company.office_phone|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_name|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.patient_phone|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.treatment|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.opinioned_at|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.opinioned_at|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.referred_date|date:'Y-m-d' }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.company|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.patient_name|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.patient_phone|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.treatment|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|handle_none }}</td>
 
-        <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{{ refer.status|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.status|handle_none }}</td>
         
         
     </tr>

@@ -10,7 +10,8 @@
     <div class="flex flex-col flex-shrink-0 w-64 ">
         <div class="flex items-center flex-shrink-0 h-10 px-2">
             <span class="block text-sm font-semibold">검사의뢰 접수</span>
-            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_rq_count }}</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_rq|length }}</span>
+            
         </div>
         <div class="flex flex-col pb-2 overflow-auto">
             {% for rq in status_rq %}
@@ -37,7 +38,7 @@
     <div class="flex flex-col flex-shrink-0 w-64">
         <div class="flex items-center flex-shrink-0 h-10 px-2">
             <span class="block text-sm font-semibold">환자예약 완료</span>
-            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_sch_count }}</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_sch|length }}</span>
            
         </div>
         <div class="flex flex-col pb-2 overflow-auto">
@@ -71,7 +72,7 @@
     <div class="flex flex-col flex-shrink-0 w-64">
         <div class="flex items-center flex-shrink-0 h-10 px-2">
             <span class="block text-sm font-semibold">검사/회송 완료</span>
-            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_in_count }}</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_in|length }}</span>
             
         </div>
         <div class="flex flex-col pb-2 overflow-auto">
@@ -108,7 +109,7 @@
     <div class="flex flex-col flex-shrink-0 w-64">
         <div class="flex items-center flex-shrink-0 h-10 px-2">
             <span class="block text-sm font-semibold">확인/협진 완료</span>
-            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_cosign_count }}</span>
+            <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_cosign|length }}</span>
             
         </div>
         <div class="flex flex-col pb-2 overflow-auto">

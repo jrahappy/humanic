@@ -1,11 +1,12 @@
 {% load custom_filters %}
 {% load humanize %}
 <div id="collab_kanban_dashboard" 
-    class="flex flex-grow px-10 mt-4 space-x-6 h-full overflow-hidden"
+    class="flex flex-grow px-10 mt-4 space-x-6 "
     hx-get="{% url 'crm:partial_collab_kanban' %}"
     hx-trigger="RefersChanged from:body"
     hx-target="#collab_kanban_dashboard"
     hx-swap="outerHTML"
+    
 >
     <div class="flex flex-col flex-shrink-0 w-64 ">
         <div class="flex items-center flex-shrink-0 h-10 px-2">
@@ -17,7 +18,7 @@
                 </svg>
             </button> -->
         </div>
-        <div class="flex flex-col pb-2 ">
+        <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_rq %}
             <div class="relative flex flex-col items-start p-4 mt-3 bg-yellow-100 rounded-lg bg-opacity-90">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
@@ -31,8 +32,6 @@
                 </div>
             </div>
             {% endfor %}
-            
-            
         </div>
     </div>
     <div class="flex flex-col flex-shrink-0 w-64">
@@ -41,7 +40,7 @@
             <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_sch_count }}</span>
            
         </div>
-        <div class="flex flex-col pb-2 overflow-y-auto">
+        <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_sch %}
             <div class="relative flex flex-col items-start p-4 mt-3 bg-green-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
@@ -67,7 +66,7 @@
             <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_in_count }}</span>
             
         </div>
-        <div class="flex flex-col pb-2 ">
+        <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_in %}
             <div class="relative flex flex-col items-start p-4 mt-3 bg-purple-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
@@ -91,9 +90,8 @@
         <div class="flex items-center flex-shrink-0 h-10 px-2">
             <span class="block text-sm font-semibold">확인/협진 완료</span>
             <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_cosign_count }}</span>
-            
         </div>
-        <div class="flex flex-col pb-2 overflow-y-auto">
+        <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_cosign %}
             <div class="relative flex flex-col items-start p-4 mt-3 bg-red-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">

@@ -13,15 +13,15 @@
         <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">{{ refer.cosigned_at|date:'Y-m-d' }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm text-gray-900 sm:pl-6 lg:pl-8">
             {% if refer.status == 'Cosigned' %}
-                <span class="badge badge-success text-white">{{ refer.status }}</span>
+                <span class="badge bg-red-100 ">{{ refer.status }}</span>
             {% elif refer.status == 'Interpreted' %}
-                <span class="badge badge-warning">{{ refer.status }}</span>
+                <span class="badge bg-purple-100">{{ refer.status }}</span>
             {% elif refer.status == 'Requested' %}
-                <span class="badge badge-primary">{{ refer.status }}</span>
+                <span class="badge bg-yellow-100">{{ refer.status }}</span>
             {% elif refer.status == 'Scheduled' %}
-                <span class="badge badge-secondary">{{ refer.status }}</span>
+                <span class="badge bg-green-100">{{ refer.status }}</span>
             {% elif refer.status == 'Cancelled' %}
-                <span class="badge badge-neutral">{{ refer.status }}</span>
+                <span class="badge bg-gray-100">{{ refer.status }}</span>
             {% else %}
                 <span class="badge badge-warning">{{ refer.status }}</span>
             {% endif %}
