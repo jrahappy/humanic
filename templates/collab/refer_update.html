@@ -60,7 +60,7 @@
                 <tr class="align-top border border-gray-500">
                     <td class="align-top border-e border-gray-500">의뢰일</td>
                     <td class="align-top border-e border-gray-500">
-                        {% render_field form.referred_date class="input input-bordered input-sm w-40" %}
+                        {% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}
                         <div class="text-red-500 text-sm mt-1">
                             {% for error in form.referred_date.errors %}
                                 <p>{{ error }}</p>
@@ -91,7 +91,7 @@
                     </td>
                 </tr>
                 <tr class="align-top border border-gray-500">
-                    <td class="align-top border-e border-gray-500">생년월일 </td>
+                    <td class="align-top border-e border-gray-500">생년월일</td>
                     <td class="align-top border-e border-gray-500">
                         {% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}
                         <div class="text-red-500 text-sm mt-1">

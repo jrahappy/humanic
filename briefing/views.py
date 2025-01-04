@@ -41,7 +41,7 @@ def index(request):
     briefing_data = f"briefing_data_{syear}_{smonth}"
     briefing_data = cache.get(cache_key)
 
-    print(cache_key, briefing_data)
+    # print(cache_key, briefing_data)
 
     if not briefing_data:
         # latest_upload = UploadHistory.objects.filter(is_deleted=False).latest("id")
@@ -212,8 +212,9 @@ def index(request):
             "dr_by_specialty": dr_by_specialty,
         }
         cache.set(cache_key, briefing_data, timeout=60 * 15)  # Cache for 15 minutes
-
-    return render(request, "briefing/index.html", briefing_data)
+        return render(request, "briefing/index.html", briefing_data)
+    else:
+        return render(request, "briefing/index.html", briefing_data)
 
 
 def partial_briefing(request):

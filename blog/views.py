@@ -170,7 +170,7 @@ def detail(request, pk):
     user = request.user
     post = Post.objects.get(id=pk)
     post_attachments = PostAttachment.objects.filter(post=post)
-    print(post_attachments)
+    # print(post_attachments)
     context = {
         "post": post,
         "post_attachments": post_attachments,

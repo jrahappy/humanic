@@ -62,6 +62,20 @@ class ReferForm(ModelForm):
             MaxValueValidator(datetime.date.today()),
         ],
     )
+    patient_birthdate = forms.DateField(
+        input_formats=["%Y-%m-%d"],
+        widget=forms.DateInput(attrs={"type": "date"}),
+        required=False,
+        initial=datetime.date.today(),
+        validators=[
+            MinValueValidator(datetime.date(1900, 1, 1)),
+            MaxValueValidator(datetime.date.today()),
+        ],
+        error_messages={
+            "invalid": "날짜를 확인해주세요.",
+        },
+    )
+
     patient_phone = forms.CharField(
         max_length=20,
         required=True,
