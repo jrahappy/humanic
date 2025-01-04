@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse
+from django.core.paginator import Paginator
 from django.db.models import Count, Q
+from django.http import HttpResponse
 from .models import Opportunity, Chance
 from .forms import OpportunityForm, ChanceForm
 from customer.models import Company, CustomerLog
@@ -116,11 +117,21 @@ def collab(request):
         refers = (
             Refers.objects.filter(patient_name__icontains=q)
             .exclude(status="Draft")
+            .select_related("company")
             .order_by("-created_at")
         )
     else:
-        refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
-    context = {"refers": refers}
+        refers = (
+            Refers.objects.filter(~Q(status="Draft"))
+            .select_related("company")
+            .order_by("-created_at")
+        )
+
+    paginator = Paginator(refers, 10)  # Show 10 refers per page.
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {"refers": refers, "page_obj": page_obj}
+
     return render(request, "crm/collab.html", context)
 
 
@@ -148,6 +159,7 @@ def partial_collab_kanban(request):
 
 
 def crm_refers(request):
+    refers = Refers.objects.filter(status="Requested").order_by("-created_at")
     refers = Refers.objects.all().order_by("-created_at")
     context = {"refers": refers}
     return render(request, "crm/crm_refers.html", context)

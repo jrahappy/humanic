@@ -7,7 +7,7 @@
     hx-target="this"
     hx-swap="outerHTML"
 >
-{% for refer in refers %}
+{% for refer in page_obj %}
     <tr id="{{refer.id}}"
         onclick="location.href='{% url 'crm:collab_refer_detail' refer.id %}'"
         class="hover:bg-sky-100 cursor-pointer"
@@ -24,12 +24,35 @@
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.treatment|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|handle_none }}</td>
-
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.status|handle_none }}</td>
-        
-        
     </tr>
 {% empty %}
-
+    <tr>
+        <td colspan="8" class="text-center py-4 text-sm text-gray-500">No data</td>
+    </tr>
 {% endfor %}
 </tbody>
+<tfoot>
+    <tr>
+        <td colspan="8" class="text-center py-4 text-sm text-gray-500">
+            <div class="flex flex-row justify-evenly px-6 py-3">
+                <div class="btn btn-ghost">
+                    Total: {{ page_obj.paginator.count }}
+                </div>
+                <div class="join">
+                    {% if page_obj.has_previous %}
+                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page=1" class="join-item btn">First</a>
+                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page={{ page_obj.previous_page_number }}" class="join-item btn">Previous</a>
+                    {% endif %}
+                    <span class="join-item btn">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page={{ page_obj.next_page_number }}" class="join-item btn">Next</a>
+                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page={{ page_obj.paginator.num_pages }}" class="join-item btn">Last</a>
+                    {% endif %}
+                </div>
+            </div>
+        </td>
+    </tr>
+</tfoot>

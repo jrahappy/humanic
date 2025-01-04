@@ -5,6 +5,7 @@ from .models import Post, PostAttachment
 from .forms import BlogForm
 from django.core.paginator import Paginator
 from django.contrib.auth import logout
+from django.core.cache import cache
 import json
 
 
@@ -25,17 +26,21 @@ def index(request):
         else:
             return redirect("collab:index")
 
-    post_list = (
-        Post.objects.filter(is_public=True)
-        .select_related("author")
-        .order_by("-created_at")
-    )
-    paginator = Paginator(post_list, 10)  # Show 10 posts per page
+    page_number = request.GET.get("page", 1)
+    cache_key = f"post_list_page_{page_number}"
+    post_list = cache.get(cache_key)
 
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+    if not post_list:
+        post_list = (
+            Post.objects.filter(is_public=True)
+            .select_related("author")
+            .order_by("-created_at")
+        )
+        paginator = Paginator(post_list, 10)
+        post_list = paginator.get_page(page_number)
+        cache.set(cache_key, post_list, timeout=60 * 15)  # Cache for 15 minutes
 
-    context = {"posts": page_obj}
+    context = {"posts": post_list}
     return render(request, "blog/index.html", context)
 
 

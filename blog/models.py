@@ -15,7 +15,7 @@ def upload_location_public(instance, filename):
 class Post(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     is_public = models.BooleanField(default=False)
-    category = models.CharField(max_length=50, choices=get_blog_category, default="1")
+    category = models.CharField(max_length=50, choices=get_blog_category(), default="1")
     title = models.CharField(max_length=200, help_text="200 characters max")
     # content = models.TextField(null=True, blank=True)
     content = RichTextField(null=True, blank=True)
@@ -25,6 +25,14 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["is_public"]),
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["author"]),
+        ]
 
 
 class PostAttachment(models.Model):

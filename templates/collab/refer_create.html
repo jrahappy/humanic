@@ -44,57 +44,22 @@
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">의뢰일</td>
-                        <td class="align-top border-e border-gray-500">
-                            {% render_field form.referred_date class="input input-bordered input-sm w-40" %}
-                            <div class="text-red-500 text-sm mt-1">
-                                {% for error in form.referred_date.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </td>
-                        <td class="align-top border-e border-gray-500">상태</td>
-                        <td>{{ refer.status }}</td>
+                        <td class="align-top border-e border-gray-500">{% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}</td>
+                        <td class="align-top border-e border-gray-500">현재상태</td>
+                        <td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">환자명</td>
-                        <td class="align-top border-e border-gray-500">
-                            {% render_field form.patient_name class="input input-bordered input-sm w-40" %}
-                            <div class="text-red-500 text-sm mt-1">
-                                {% for error in form.patient_name.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </td>
+                        <td class="align-top border-e border-gray-500">{% render_field form.patient_name class="input input-bordered input-sm w-40" %}</td>
                         <td class="align-top border-e border-gray-500">환자성별</td>
-                        <td>
-                            {% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}
-                            <div class="text-red-500 text-sm mt-1">
-                                {% for error in form.patient_gender.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </td>
+                        <td>{% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}</td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">생년월일</td>
-                        <td class="align-top border-e border-gray-500">
-                            {% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}
-                            <div class="text-red-500 text-sm mt-1">
-                                {% for error in form.patient_birthdate.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </td>
+                        <td class="align-top border-e border-gray-500">{% render_field form.patient_birthdate class="input input-bordered input-sm w-40" type="date" %}</td>
                         <td class="align-top border-e border-gray-500">연락처</td>
-                        <td>{% render_field form.patient_phone class="input input-bordered input-sm w-40" %}
-                            <div class="text-red-500 text-sm mt-1">
-                                {% for error in form.patient_phone.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </td>
+                        <td>{% render_field form.patient_phone class="input input-bordered input-sm w-40" %}</td>
                     </tr>
-                    
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">환자상병</td>
                         <td class="align-top border-e border-gray-500">
