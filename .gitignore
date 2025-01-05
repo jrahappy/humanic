@@ -29,3 +29,5 @@ logs
 
 # Environment variables
 .env*
+
+note.md

@@ -15,6 +15,14 @@
         </a>
     </li>
     <li>
+        <a href="{% url 'provider:index' %}">
+            <svg 
+            data-src="https://unpkg.com/heroicons/20/solid/users.svg"
+            class="h-5 w-5"></svg>
+            판독의사
+        </a>
+    </li>
+    <li>
         <details>
             <summary>
                 <svg
@@ -35,6 +43,26 @@
         </details>
     </li>
     <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/globe-alt.svg"
+                    class="h-5 w-5"></svg>
+                원격판독 관리
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'referdex:index' %}" class="px-5">부서 대시보드</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <a href="{% url 'report:rad_by_subspecialty' %}" class="px-5">부서 통계</a>
+                </li>
+            </ul>
+        </details>
+    </li>
+    <li>
         <a href="#"
             hx-get="{% url 'dashboard:stat' %}"
             hx-trigger="click"
@@ -48,7 +76,6 @@
                 class="h-5 w-5"></svg>
             판독 통계
         </a>
-        
     </li>
 
 

@@ -120,3 +120,31 @@ class ProductionMadeDetail(models.Model):
 
     def __str__(self):
         return self.provider.first_name
+
+
+class Team(models.Model):
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, null=True, blank=True
+    )
+    name = models.CharField(max_length=30)
+    specialty = models.CharField(
+        choices=get_specialty_choices, max_length=30, null=True, blank=True
+    )
+    order = models.IntegerField(null=True, blank=True, default=0)
+
+    def __str__(self):
+        return self.company.business_name + " - " + self.name
+
+
+class TeamMember(models.Model):
+    choices_role = [
+        ("chief", "Chief"),
+        ("vice_chief", "Vice chief"),
+        ("member", "Member"),
+    ]
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    provider = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    role = models.CharField(choices=choices_role, max_length=20)
+
+    def __str__(self):
+        return self.provider.first_name + " - " + self.team.name + " - " + self.role

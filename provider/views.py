@@ -12,7 +12,7 @@ from accounts.forms import (
     ProductionTargetForm,
 )
 from referdex.forms import MatchRulesForm
-from referdex.models import MatchRules
+from referdex.models import MatchRules, Team, TeamMember
 from minibooks.models import ReportMasterStat
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -33,7 +33,7 @@ import json
 
 
 def index(request):
-
+    user = request.user
     q = request.GET.get("q")
     if q:
         doctors = (
@@ -61,6 +61,10 @@ def index(request):
         # update_profile = Profile.objects.filter(specialty2="신경두경부").update(
         #     specialty2="신경두경"
         # )
+
+    is_chief = TeamMember.objects.filter(provider=user, role="chief").exists()
+    if is_chief:
+        doctors = doctors.filter(profile__specialty2=user.profile.specialty2)
 
     paginator = Paginator(doctors, 15)  # Show 10 doctors per page
     page = request.GET.get("page")

@@ -13,6 +13,7 @@ from django.db.models import Count, Sum, Q, Func
 import plotly.express as px
 from accounts.models import CustomUser
 from customer.models import Company
+from referdex.models import Team, TeamMember
 from utils.base_func import get_specialty_choices
 from collections import defaultdict
 from django.http import HttpResponse
@@ -1342,6 +1343,16 @@ def chart(request):
 
 
 def rad_by_subspecialty(request):
+    user = request.user
+    # 부분장일 경우에 해당 세부전공만 보이게 함
+    is_chief = TeamMember.objects.filter(provider=user, role="chief").exists()
+    user_specialty = user.profile.specialty2
+
+    ko_kr = Func(
+        "first_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
     # Prefetch profile with related specialties and pre-compute `total_readprice` for each user
     latest_magam = MagamMaster.objects.filter(is_completed=True).latest("created_at")
     latest_year = latest_magam.ayear
@@ -1351,9 +1362,8 @@ def rad_by_subspecialty(request):
     rads = (
         CustomUser.objects.filter(is_doctor=True, is_active=True)
         # .exclude(profile__specialty2__isnull=True)
-        .select_related(
-            "profile"
-        ).annotate(  # Ensure profile is loaded to avoid extra queries
+        .select_related("profile")
+        .annotate(  # Ensure profile is loaded to avoid extra queries
             total_readprice=Sum(
                 "reportmasterstat__total_revenue",
                 filter=Q(reportmasterstat__ayear=latest_year),
@@ -1363,7 +1373,13 @@ def rad_by_subspecialty(request):
                 filter=Q(reportmasterstat__amonth=latest_month)
                 & Q(reportmasterstat__ayear=latest_year),
             ),  # Calculate total revenue for September for each doctor
+            total_work_months=Count(
+                "reportmasterstat__amonth",
+                distinct=True,
+                filter=Q(reportmasterstat__ayear=latest_year),
+            ),
         )
+        .order_by(ko_kr.asc())
     )
 
     # Dictionary to store doctors grouped by subspecialty
@@ -1374,35 +1390,62 @@ def rad_by_subspecialty(request):
 
         latest_month_total = rad.latest_month_total_revenue or 0
         total_readprice = rad.total_readprice or 0
+        total_work_months = rad.total_work_months or 0
 
         # Avoid division by zero
         if latest_year_magam_count != 0:
-            average_revenue = total_readprice / latest_year_magam_count
+            # average_revenue = total_readprice / latest_year_magam_count
+            if total_work_months == 0:
+                average_revenue = 0
+            else:
+                average_revenue = total_readprice / total_work_months
         else:
             average_revenue = 0
 
         # Determine the trend
         if latest_month_total != 0:
-            if (average_revenue / latest_month_total) > 1.1:
-                trend = "down"
-            elif (average_revenue / latest_month_total) < 0.9:
+            trend_ratio = (
+                (latest_month_total - average_revenue) / average_revenue
+            ) * 100
+            if trend_ratio >= 1:
                 trend = "up"
+            elif trend_ratio <= -1:
+                trend = "down"
             else:
                 trend = "equal"
         else:
             trend = "equal"
+            trend_ratio = 0
 
         specialty_name = rad.profile.specialty2
-        grouped_by_subspecialty[specialty_name].append(
-            {
-                "user": rad,
-                "real_name": rad.profile.real_name,
-                "contract_status": rad.profile.contract_status,
-                "total_readprice": rad.total_readprice or 0,  # Default to 0 if null
-                "latest_month_total_revenue": rad.latest_month_total_revenue or 0,
-                "trend": trend,
-            }
-        )
+        if is_chief:
+            if specialty_name == user_specialty:
+                grouped_by_subspecialty[specialty_name].append(
+                    {
+                        "user": rad,
+                        "real_name": rad.profile.real_name,
+                        "contract_status": rad.profile.contract_status,
+                        "total_readprice": rad.total_readprice
+                        or 0,  # Default to 0 if null
+                        "average_revenue": average_revenue,
+                        "latest_month_total_revenue": rad.latest_month_total_revenue
+                        or 0,
+                        "trend": trend,
+                        "trend_ratio": trend_ratio,
+                    }
+                )
+        # grouped_by_subspecialty[specialty_name].append(
+        #     {
+        #         "user": rad,
+        #         "real_name": rad.profile.real_name,
+        #         "contract_status": rad.profile.contract_status,
+        #         "total_readprice": rad.total_readprice or 0,  # Default to 0 if null
+        #         "average_revenue": average_revenue,
+        #         "latest_month_total_revenue": rad.latest_month_total_revenue or 0,
+        #         "trend": trend,
+        #         "trend_ratio": trend_ratio,
+        #     }
+        # )
 
     # Convert defaultdict to a regular dictionary
     grouped_by_subspecialty = dict(grouped_by_subspecialty)

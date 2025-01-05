@@ -7,7 +7,7 @@ from datetime import timedelta, date, datetime
 from minibooks.models import MagamMaster, ReportMasterStat, ReportMaster
 from accounts.models import CustomUser, ProductionTarget, Profile, WorkHours, Holidays
 from utils.base_func import get_specialty_choices
-from .models import ProductionMade, ProductionMadeDetail, MatchRules
+from .models import ProductionMade, ProductionMadeDetail, MatchRules, Team, TeamMember
 from .forms import ProductionMadeForm, ProductionMadeDetailForm, MatchRulesForm
 from django.http import HttpResponse
 from django.utils import timezone
@@ -15,6 +15,11 @@ import json
 
 
 def index(request):
+    user = request.user
+    # Check if the user is a chief
+    is_chief = TeamMember.objects.filter(provider=user, role="chief").exists()
+    user_specialty = user.profile.specialty2
+
     selected_date = request.GET.get("date-picker")
     if selected_date:
         selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
@@ -30,7 +35,7 @@ def index(request):
     aggregated_pmds = pmds.values("provider", "modality").annotate(
         sum_assigned_qty=Sum("assigned_qty")
     )
-    print("Aggregated PMDs: ", aggregated_pmds)
+    # print("Aggregated PMDs: ", aggregated_pmds)
 
     ko_kr = Func(
         "profile__specialty2",
@@ -62,7 +67,14 @@ def index(request):
     )
 
     stat_values = defaultdict(dict)
+    # if is_chief:
+    #     specialties = f'[("{user_specialty}", "{user_specialty}"),]'
+    # else:
+    #     specialties = sorted(get_specialty_choices())
+
     specialties = sorted(get_specialty_choices())
+
+    print("Specialties: ", specialties)
 
     total_provider_a = CustomUser.objects.filter(
         is_doctor=True,
@@ -153,6 +165,10 @@ def index(request):
 
     # Group providers by specialty with additional data
     grouped_by_specialty = defaultdict(list)
+    if is_chief:
+        selected_providers = selected_providers.filter(
+            profile__specialty2=user_specialty
+        )
     for provider in selected_providers:
         specialty_name = provider.profile.specialty2
         grouped_by_specialty[specialty_name].append(

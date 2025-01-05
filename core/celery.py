@@ -1,21 +1,18 @@
 import os
 from celery import Celery
 
-# Set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
+# Django 설정 모듈을 Celery가 사용하도록 등록
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "your_project.settings")
 
-app = Celery("core")
+app = Celery("your_project")
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
-# - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
+# Django 설정으로부터 Celery 구성 로드
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
-# Load task modules from all registered Django apps.
+# Django의 모든 등록된 앱에서 task 모듈 로드
 app.autodiscover_tasks()
 
 
-@app.task(bind=True, ignore_result=True)
+@app.task(bind=True)
 def debug_task(self):
     print(f"Request: {self.request!r}")

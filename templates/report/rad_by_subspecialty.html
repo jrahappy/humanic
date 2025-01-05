@@ -12,7 +12,7 @@
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
             <h2 class="card-title grow">
-                세부전공별 판독의 현황 
+                {{ latest_year }}년도 세부전공별 판독의 현황 
             </h2>
            
         </div>
@@ -49,6 +49,10 @@
                                         <p class="text-lg  text-end">{{ user.total_readprice|floatformat:0|intcomma }}</p>
                                     </div>
                                     <div class="col-span-12">
+                                        <p class="text-xs text-end">월 평균매출</p>
+                                        <p class="text-lg  text-end">{{ user.average_revenue|floatformat:0|intcomma }}</p>
+                                    </div>
+                                    <div class="col-span-12">
                                         <p class="text-xs text-end">{{ latest_year }}/{{ latest_month }} 매출</p>
                                         {% if user.latest_month_total_revenue > 0 %}
                                         <p class="text-lg text-end ">{{ user.latest_month_total_revenue|floatformat:0|intcomma }}</p>
@@ -57,12 +61,14 @@
                                         {% endif %}
                                         {% if user.trend == 'down' %}
                                             <p class="text-xs text-end text-error">▼</p>
-                                        {% elif user.trend == 'up' %}
+                                            <p class="text-xs text-end">월평균 대비 {{ user.trend_ratio|floatformat:2 }}%</p>
+                                            {% elif user.trend == 'up' %}
                                             <p class="text-xs text-end text-success">▲</p>
-                                        {% else %}
+                                            <p class="text-xs text-end">월평균 대비 {{ user.trend_ratio|floatformat:2 }}%</p>
+                                            {% else %}
                                             <p class="text-xs text-end text-neutral">-</p>
+                                            <p class="text-xs text-end">{{ user.trend_ratio|floatformat:2 }}%</p>
                                         {% endif %}
-                                        <p class="text-xs text-end">{{ user.latest_month_total_revenue|div:user.total_readprice|floatformat:2 }}%</p>
                                     </div>
                                 </div>
                                 <div class="flex flex-row justify-between">
