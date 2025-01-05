@@ -1434,18 +1434,19 @@ def rad_by_subspecialty(request):
                         "trend_ratio": trend_ratio,
                     }
                 )
-        # grouped_by_subspecialty[specialty_name].append(
-        #     {
-        #         "user": rad,
-        #         "real_name": rad.profile.real_name,
-        #         "contract_status": rad.profile.contract_status,
-        #         "total_readprice": rad.total_readprice or 0,  # Default to 0 if null
-        #         "average_revenue": average_revenue,
-        #         "latest_month_total_revenue": rad.latest_month_total_revenue or 0,
-        #         "trend": trend,
-        #         "trend_ratio": trend_ratio,
-        #     }
-        # )
+        else:
+            grouped_by_subspecialty[specialty_name].append(
+                {
+                    "user": rad,
+                    "real_name": rad.profile.real_name,
+                    "contract_status": rad.profile.contract_status,
+                    "total_readprice": rad.total_readprice or 0,  # Default to 0 if null
+                    "average_revenue": average_revenue,
+                    "latest_month_total_revenue": rad.latest_month_total_revenue or 0,
+                    "trend": trend,
+                    "trend_ratio": trend_ratio,
+                }
+            )
 
     # Convert defaultdict to a regular dictionary
     grouped_by_subspecialty = dict(grouped_by_subspecialty)
