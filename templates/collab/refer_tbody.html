@@ -6,10 +6,10 @@
         <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.id }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.referred_date|date:'Y-m-d' }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.patient_name }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.patient_birthdate|date:'Y-m-d' }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.patient_phone }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.scheduled_at|date:'Y-m-d' }}</td>
-        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">{{ refer.cosigned_at|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8 hidden md:table-cell">{{ refer.patient_birthdate|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8 hidden md:table-cell">{{ refer.patient_phone }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8 hidden md:table-cell">{{ refer.scheduled_at|date:'Y-m-d' }}</td>
+        <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8 hidden md:table-cell">{{ refer.cosigned_at|date:'Y-m-d' }}</td>
         <td class="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6 lg:pl-8">
             {% if refer.status == 'Cosigned' %}
                 <span class="badge bg-red-100 ">{{ refer.status }}</span>
@@ -34,7 +34,7 @@
     <tr>
         <td colspan="9" class="">
             <div class="flex flex-row justify-between px-6 py-3">
-                <div class="">
+                <div class=" hidden md:table-cell">
                     Total: {{ refers|length }}
                 </div>
                 <div class="join">

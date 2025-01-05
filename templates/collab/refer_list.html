@@ -1,26 +1,21 @@
 {% load custom_filters %}
 {% load humanize %}
 <div id="collab_kanban_dashboard" 
-    class="flex flex-grow px-10 mt-4 space-x-6 "
+    class="flex flex-col px-10 mt-4 space-x-6 w-full md:flex-row md:flex-wrap "
     hx-get="{% url 'crm:partial_collab_kanban' %}"
     hx-trigger="RefersChanged from:body"
     hx-target="#collab_kanban_dashboard"
     hx-swap="outerHTML"
     
 >
-    <div class="flex flex-col flex-shrink-0 w-64 ">
-        <div class="flex items-center flex-shrink-0 h-10 px-2">
+    <div class="flex flex-col flex-shrink-0 p-1 w-64 ">
+        <div class="flex flex-row flex-shrink-0 p-1 w-64 ">
             <span class="block text-sm font-semibold">검사의뢰 접수</span>
             <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_rq_count }}</span>
-            <!-- <button class="flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-            </button> -->
         </div>
-        <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
+        <div class="flex flex-col pb-2 my-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_rq %}
-            <div class="relative flex flex-col items-start p-4 mt-3 bg-yellow-100 rounded-lg bg-opacity-90">
+            <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-yellow-100 rounded-lg bg-opacity-90">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
                     <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
                 </a>
@@ -34,15 +29,14 @@
             {% endfor %}
         </div>
     </div>
-    <div class="flex flex-col flex-shrink-0 w-64">
-        <div class="flex items-center flex-shrink-0 h-10 px-2">
+    <div class="flex flex-col flex-shrink-0 p-1 w-64 ">
+        <div class="flex flex-row flex-shrink-0 p-1 w-64 ">
             <span class="block text-sm font-semibold">환자예약 완료</span>
             <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{ status_sch_count }}</span>
-           
         </div>
         <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_sch %}
-            <div class="relative flex flex-col items-start p-4 mt-3 bg-green-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+            <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-green-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
                     <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
                 </a>
@@ -68,7 +62,7 @@
         </div>
         <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_in %}
-            <div class="relative flex flex-col items-start p-4 mt-3 bg-purple-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+            <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-purple-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
                     <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
                 </a>
@@ -93,7 +87,7 @@
         </div>
         <div class="flex flex-col pb-2 mb-2 overflow-y-scroll " style="max-height:70vh;scrollbar-width: thin;">
             {% for rq in status_cosign %}
-            <div class="relative flex flex-col items-start p-4 mt-3 bg-red-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
+            <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-red-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
                     <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
                 </a>
@@ -112,7 +106,7 @@
             
         </div>
     </div>
-    <div class="flex flex-col flex-shrink-0 w-64">
+    <div class="flex flex-col flex-shrink-0 w-64 hidden md:block">
         <div class="flex items-center flex-shrink-0 h-10 px-2">
             <span class="block text-sm font-semibold">검사취소</span>
         </div>
