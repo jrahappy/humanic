@@ -89,14 +89,14 @@ MIDDLEWARE = [
 ]
 
 # Debug toolbar settings
-if DEBUG:
-    INSTALLED_APPS += ["debug_toolbar"]
-    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+# if DEBUG:
+#     INSTALLED_APPS += ["debug_toolbar"]
+#     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
-DEBUG_TOOLBAR_CONFIG = {
-    # "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
-    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
-}
+# DEBUG_TOOLBAR_CONFIG = {
+#     # "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
+#     "SHOW_TOOLBAR_CALLBACK": lambda request: False  # Show toolbar only in DEBUG mode
+# }
 
 
 # Authentication settings

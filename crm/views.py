@@ -200,11 +200,11 @@ def collab_refer_detail(request, refer_id):
 def dicom_viewer(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     files = ReferFile.objects.filter(refer=refer)
-    # files_list = [f"{file.file.url}" for file in files]
+    files_list = [f"{file.file.url}" for file in files]
     # files_list = html.unescape(str(files_list))
     # files_list = f"params = [{files_list}]"
 
-    # print(files_list, "test")
+    print(files_list, "test")
 
     context = {
         "refer": refer,
