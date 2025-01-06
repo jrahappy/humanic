@@ -365,4 +365,4 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 
         
 # 1/5/2025 #
-WM Human!234
+WM info Human!234
