@@ -83,6 +83,9 @@ class ReferHistory(models.Model):
     changed_at = models.DateTimeField(auto_now_add=True)
     changed_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.refer.patient_name + " - " + self.changed_status + " - " + self.memo
+
 
 class IllnessCode(models.Model):
     code = models.CharField(max_length=10)

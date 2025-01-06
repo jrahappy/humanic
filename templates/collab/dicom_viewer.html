@@ -17,11 +17,7 @@
     
     	<script type="text/javascript">
             var params = [];
-            params["images"] = [[
-                {% for file in files %}
-                    "{{ file.file.url|safe }}"{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ]];
+            params["images"] = [{{ files_list|safe }}];
             
         </script>
 

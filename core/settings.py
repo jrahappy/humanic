@@ -15,19 +15,17 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
-# DEBUG = True
 
 ALLOWED_HOSTS = [
-    "humanrad.com",
-    "www.humanrad.com",
-    "127.0.0.1",
+    "*"
+    # "humanrad.com",
+    # "www.humanrad.com",
+    # "127.0.0.1",
 ]
 
 SITE_ID = 1
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -56,7 +54,6 @@ INSTALLED_APPS = [
     "ckeditor",
     "taggit",
     "django_cleanup.apps.CleanupConfig",
-    # "ckeditor_uploader",
     "dogfoot",
     "utils",
     "minibooks",
@@ -89,15 +86,13 @@ MIDDLEWARE = [
 ]
 
 # Debug toolbar settings
-# if DEBUG:
-#     INSTALLED_APPS += ["debug_toolbar"]
-#     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
-# DEBUG_TOOLBAR_CONFIG = {
-#     # "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
-#     "SHOW_TOOLBAR_CALLBACK": lambda request: False  # Show toolbar only in DEBUG mode
-# }
-
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
+}
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
@@ -109,20 +104,13 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 LOGIN_REDIRECT_URL = "blog:index"
 ACCOUNT_LOGOUT_REDIRECT = "web:index"
 
-# LOGOUT_REDIRECT_URL = "web:index"
-# ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-
-# ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_EMAIL_VERIFICATION = "none"
-# ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_FORMS = {
     "signup": "accounts.forms.CustomUserCreationForm",
 }
-
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -134,6 +122,7 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 TAILWIND_CSS_PATH = "css/dist/styles.css"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -152,10 +141,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -165,13 +152,8 @@ DATABASES = {
         "HOST": env("POSTGRES_HOST"),
         "PORT": env("POSTGRES_PORT"),
         "CONN_MAX_AGE": 300,
-        # Set the connection age to 1 hour
-        # "OPTIONS": {
-        #     "connect_timeout": 3660,  # Increase the connection timeout to 30 seconds
-        # },
     }
 }
-
 
 CACHES = {
     "default": {
@@ -182,7 +164,6 @@ CACHES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -198,30 +179,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-# LANGUAGE_CODE = "en-us"
 LANGUAGE_CODE = "ko-kr"
-
-# TIME_ZONE = "UTC"
 TIME_ZONE = "Asia/Seoul"
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = "/static/"  # URL for accessing static files
-STATIC_ROOT = (
-    BASE_DIR / "static/"
-)  # Folder where 'collectstatic' will store static files
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static/"
 
 # Media files (user-uploaded content)
-MEDIA_URL = "/media/"  # URL for accessing media files
-MEDIA_ROOT = BASE_DIR / "media/"  # Folder where uploaded media files will be stored
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media/"
 
 STATICFILES_DIRS = [BASE_DIR / "theme" / "static"]
 STATICFILES_FINDERS = [
@@ -239,8 +211,8 @@ STORAGES = {
     },
 }
 
+WHITENOISE_AUTOREFRESH = True
 
-# AWS_QUERYSTRING_AUTH = False
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")

@@ -200,7 +200,9 @@ def collab_refer_detail(request, refer_id):
 def dicom_viewer(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     files = ReferFile.objects.filter(refer=refer)
-    files_list = [f"{file.file.url}" for file in files]
+    files_list = [
+        f"https://humanicfiles.s3.us-east-2.amazonaws.com/{file.file}" for file in files
+    ]
     # files_list = html.unescape(str(files_list))
     # files_list = f"params = [{files_list}]"
 
@@ -209,7 +211,7 @@ def dicom_viewer(request, refer_id):
     context = {
         "refer": refer,
         "files": files,
-        # "files_list": files_list,
+        "files_list": files_list,
     }
     return render(request, "collab/dicom_viewer.html", context)
 

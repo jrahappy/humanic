@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("primrose/", admin.site.urls),
-    path("__reload__/", include("django_browser_reload.urls")),
     path("", include("web.urls")),
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),
@@ -23,6 +22,7 @@ urlpatterns = [
     path("referdex/", include("referdex.urls")),
     path("crm/", include("crm.urls")),
     path("collab", include("collab.urls")),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
 
 # Debug toolbar
