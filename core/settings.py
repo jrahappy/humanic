@@ -21,8 +21,6 @@ ALLOWED_HOSTS = [
     "humanrad.com",
     "www.humanrad.com",
     "127.0.0.1",
-    "44.220.242.249",
-    "172.26.9.185",
 ]
 
 SITE_ID = 1
@@ -40,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django_extensions",
+    "storages",
     "django_filters",
     "django_celery_results",
     "widget_tweaks",

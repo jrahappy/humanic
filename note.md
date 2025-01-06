@@ -364,3 +364,5 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         - dcm file을 폴더별로 저장하고 array로 경로/파일들을 반환하면 MPR 형태로 dicom set 을 웹페이지에 보여주는 것 성공
 
         
+# 1/5/2025 #
+WM Human!234

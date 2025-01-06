@@ -59,7 +59,7 @@
                     {% if refer.url is None %}
                         <div class="text-sm"></div>
                     {% else %}
-                        <a href="{{ refer.url }}" target="_blank">영상보기</a>
+                        <a href="{{ refer.url }}" target="_blank">Link 열기</a>
                     {% endif %}
                 </div>
             </td>
@@ -70,7 +70,6 @@
             </td>
             <td colspan="3" class="align-top border border-gray-500">
                 <div class="flex flex-row justify-between">
-                    
                     {% include 'collab/collab_refer_files.html' %}
                 </div>  
             </td>

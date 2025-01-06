@@ -302,6 +302,7 @@ def index(request):
             q = q.strip()
             companies = Company.objects.filter(
                 Q(business_name__icontains=q)
+                | Q(president_name__icontains=q)
                 | Q(contact_person__icontains=q)
                 | Q(ein__icontains=q)
             ).order_by(ko_kr.asc())

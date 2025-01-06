@@ -60,8 +60,28 @@
                 
         </details>
     </li>
-    {% if user.username == "albert" or user.username == "william" %}
-    
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/globe-alt.svg"
+                    class="h-5 w-5"></svg>
+                협진관리
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'crm:collab_kanban' %}" class="px-5">대시보드</a>
+                </li>
+           
+                <li>
+                    <a href="{% url 'crm:collab' %}" class="px-5">협진요청 보기</a>
+                </li>
+                <li>
+                    <a href="{% url 'crm:collab' %}" class="px-5">월별통계 보기</a>
+                </li>
+            </ul>
+        </details>
+    </li>
     <li>
         <details>
             <summary>
@@ -87,40 +107,6 @@
             </ul>
         </details>
     </li>
-    <li>
-        <details>
-            <summary>
-                <svg
-                    data-src="https://unpkg.com/heroicons/20/solid/globe-alt.svg"
-                    class="h-5 w-5"></svg>
-                협진관리
-            </summary>
-            <ul>
-                <li>
-                    <a href="{% url 'crm:collab_kanban' %}" class="px-5">대시보드</a>
-                </li>
-           
-                <li>
-                    <a href="{% url 'crm:collab' %}" class="px-5">협진요청 보기</a>
-                </li>
-                <li>
-                    <a href="{% url 'crm:collab' %}" class="px-5">월별통계 보기</a>
-                </li>
-                <li>
-                    <a href="{% url 'minibooks:create_collab_user' %}" class="px-5">협진병원 새 사용자</a>
-                </li>
-                <li>
-                    <a href="{% url 'collab:illness_list' %}">상병코드</a>
-                </li>
-                <li>
-                    <a href="{% url 'collab:simplecode_list' %}">검사코드(간편)</a>
-                </li>
-            </ul>
-        </details>
-    </li>
-    {% endif %}
-    {% if user.username == "william" %}
-    <hr class="my-6">
     <li>
         <details>
             <summary>
@@ -160,62 +146,60 @@
                 >마감작업</a></li>
         </ul>
     </li>
-    
-        <li>
-            <a>
-                <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
-                Messages
-                <span class="badge badge-info badge-sm">12</span>
-            </a>
-        </li>
-        <li>
-            <details>
-                <summary>
-                    <svg
-                        data-src="https://unpkg.com/heroicons/20/solid/adjustments-vertical.svg"
-                        class="h-5 w-5"></svg>
-                    Settings
-                </summary>
-                <ul>
-                    <li><a href="#"
-                        hx-get="{% url 'report:performance' %}"
-                        hx-trigger="click"
-                        hx-target="#main_area"
-                        hx-swap="outerHTML"
-                        hx-push-url="true"
-                        class="px-5"
-                        >Purformance (Draft)</a>
-                    </li>
-                    <li><a href="#"
-                        hx-get="{% url 'report:accounting' %}"
-                        hx-trigger="click"
-                        hx-target="#main_area"
-                        hx-swap="outerHTML"
-                        hx-push-url="true"
-                        class="px-5"
-                        >손익 기준 보기 (Draft)</a>
-                    </li>
-                    <li><a href="#"
-                        hx-get="{% url 'collab:illness_list' %}"
-                        hx-trigger="click"
-                        hx-target="#main_area"
-                        hx-swap="outerHTML"
-                        hx-push-url="true"
-                        class="px-5"
-                        >상병코드 관리 </a>
-                    </li>
-                    <li><a href="#"
-                        hx-get="{% url 'report:accounting' %}"
-                        hx-trigger="click"
-                        hx-target="#main_area"
-                        hx-swap="outerHTML"
-                        hx-push-url="true"
-                        class="px-5"
-                        >수가 관리 </a>
-                    </li>
-                </ul>
-                
-            </details>
-        </li>
-    {% endif %}
+    <li>
+        <a>
+            <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
+            Messages
+            <span class="badge badge-info badge-sm">12</span>
+        </a>
+    </li>
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/adjustments-vertical.svg"
+                    class="h-5 w-5"></svg>
+                Settings
+            </summary>
+            <ul>
+                <li><a href="#"
+                    hx-get="{% url 'report:performance' %}"
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    class="px-5"
+                    >Purformance (Draft)</a>
+                </li>
+                <li><a href="#"
+                    hx-get="{% url 'report:accounting' %}"
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    class="px-5"
+                    >손익 기준 보기 (Draft)</a>
+                </li>
+                <li><a href="#"
+                    hx-get="{% url 'collab:illness_list' %}"
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    class="px-5"
+                    >상병코드 관리 </a>
+                </li>
+                <li><a href="#"
+                    hx-get="{% url 'report:accounting' %}"
+                    hx-trigger="click"
+                    hx-target="#main_area"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    class="px-5"
+                    >수가 관리 </a>
+                </li>
+            </ul>
+            
+        </details>
+    </li>
 </ul>

@@ -31,8 +31,7 @@
         </div>
         <div class="flex flex-col gap-2">
             {% if files %}
-      
-                <a href="#" 
+                <a href="{% url  'crm:dicom_viewer' refer.id %}" 
                     class="btn btn-primary btn-sm" 
                     target="_blank">
                     View DICOM</a>
@@ -48,16 +47,13 @@
                         } 
                     })"
                 >Delete</a>
-
             {% else %}
-
                 <a href="#" class="btn btn-primary btn-sm" 
                     onclick="base_modal.showModal()" 
                     hx-get="{% url 'crm:collab_refer_file_upload' refer.id %}" 
                     hx-trigger="click" 
-                    hx-target="#base_modal">
-                    Upload Files</a>
-
+                    hx-target="#base_modal"
+                >Upload Files</a>
             {% endif %}
         </div>
     </div>

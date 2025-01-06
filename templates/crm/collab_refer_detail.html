@@ -67,41 +67,42 @@
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">환자상병</td>
                         <td class="align-top border-e border-gray-500">
+                            {% if illnesses %} 
                             <div class="relative">
                                 <button onclick="copyToClipboard('copyIll','btn_copy_ill')" id="btn_copy_ill" class="absolute top-0 right-0 btn btn-xs btn-secondary">C</button>
                                 {% for ill in illnesses %}
-                                    <div class="">{{ill.illness}}</div>
+                                <div class="">{{ill.illness}}</div>
                                 {% endfor %}
                             </div>
+                            {% endif %}
                         </td>
                         <td class="align-top border-e border-gray-500">외뢰할 검사</td>
                         <td class="align-top">
+                            {% if simples %}
                             <div class="relative">
                                 <button onclick="copyToClipboard('copySim','btn_copy_sim')" id="btn_copy_sim" class="absolute top-0 right-0 btn btn-xs btn-secondary">C</button>
                                 {% for sim in simples %}
                                     <div class="">{{sim.diagnosis}}</div>
                                 {% endfor %}
                             </div>
+                            {% endif %}
                         </td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td colspan="1" class="align-top border-e border-gray-500">
                             <div class="font-semibold text-sm">임상소견:</div>
-                            
                         </td>
                         <td colspan="3" class="align-top border border-gray-500">
                             <div class="h-48 max-h-60 bg-base-50">
-                                <div class="relative overflow-auto">
+                                {% if refer.opinion1 %}
+                                <div class="relative overflow-auto h-48 max-h-60 ">
                                     <button onclick="copyToClipboard('copyInput','btnCopy')" id="btnCopy" class="absolute top-0 right-0 btn btn-xs btn-secondary">C3</button>
                                     {{ refer.opinion1|linebreaks }}
                                 </div>
-                                
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
-                </table>
-
-                <table  class="table min-w-full divide-y devide-x divide-gray-900">
                     <tr class="align-top border border-gray-500">
                         <td class="w-32 align-top border-e border-gray-500">예약일시</td>
                         <td colspan="3" class="align-top border-e border-gray-500">
@@ -251,7 +252,7 @@
         <ul id="history_box" class="steps steps-vertical">
         {% for his in history %}
             <li class="step step-primary" data-content="{{ forloop.counter }}">
-                <div class="flex flex-row justify-between w-60">
+                <div class="flex flex-row justify-between w-full">
                     <div>{{ his.changed_status }} </div>
                     <span class="text-xs text-end">{{ his.changed_at|date:'Y-m-d' }}<br> by {{ his.changed_by }}</span>
                 </div>
