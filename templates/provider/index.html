@@ -1,77 +1,77 @@
 {% extends 'app_base.html' %}
 {% load custom_filters %}
+{% load widget_tweaks %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
 {% endblock %}
 
 {% block content %}
-<!-- <section class="card col-span-12 overflow-hidden shadow-sm xl:col-span-12"> -->
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0">
-        <div class="flex flex-row justify-even gap-2">
-            <h2 class="card-title me-6">
-                Radiologist List(의료진 목록)
-            </h2>
-            <div class="card-title">
-                <form action="{% url 'provider:index' %}" method="GET">
-                    <input type="text" name="q" class="input input-bordered input-sm w-80" placeholder="성명, 이메일, 전공 또는 PACS id....." value="{{ request.GET.q }}">
-                    <button type="submit" class="btn btn-primary btn-sm">Search</button>
-                </form>
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0 max-w-3xl">
+        <div class="flex justify-between gap-2 w-full">
+            <div class="flex flex-row justify-between gap-4">
+                <h2 class="card-title pl-4 me-4">
+                    판독의 목록
+                </h2>
+                <div class="flex justify-end items-center w-80 pt-2 rounded-lg">
+                    <form action="{% url 'provider:index' %}" method="GET">
+                    <div class="flex flex-row gap-2">
+                        <input type="text" name="q" class="input input-bordered input-sm w-full" placeholder="성명, 이메일, 전공 또는 PACS id....." value="{{ request.GET.q }}">
+                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <div class="text-start me-4 pt-2">
+            
             </div>
         </div>
     </div>
 </section>
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="px-6 mt-4">
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-9">
+    <div class="pl-6 mt-4">
         <table class="min-w-full divide-y divide-gray-500">
             <thead >
                 <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">RAD ID</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Radiologist</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Email</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Phone</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Specialty1</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Specialty2</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">CV3 ID</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">OnPACS ID</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Files</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">Status</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-1 text-left text-sm font-semibold sm:pl-2 lg:pl-2">RAD ID</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-2 text-left text-sm font-semibold sm:pl-2 lg:pl-2">Radiologist</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-2 text-left text-sm font-semibold sm:pl-2 lg:pl-2">Email</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-2 text-left text-sm font-semibold sm:pl-2 lg:pl-2">Phone</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-2 text-left text-sm font-semibold sm:pl-2 lg:pl-2">Specialty1</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-2 text-left text-sm font-semibold sm:pl-2 lg:pl-2">Files</th>
+                    <th scope="col" class="py-3.5 pl-2 pr-2 text-left text-sm font-semibold sm:pl-2 lg:pl-2">Status</th>
                     
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300">
             {% for data in  doctors %}
                 <tr data-company-id="{{company.id}}" class=" hover:bg-gray-500 hover:text-gray-100 hover:cursor-pointer"
-                    onclick="location.href='{% url 'provider:view_provider' data.id %}'" 
+                    onclick="location.href='{% url 'provider:view_provider' data.user.id %}'" 
                 >
-                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium  sm:pl-6">
-                        {{ data.username }}
+                    <td class="whitespace-nowrap py-2 pl-2 pr-2 text-sm font-medium  sm:pl-2">
+                        {{ data.user.username }}
                     </td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.real_name }}</td>
+                    <td class="px-2 py-2 whitespace-nowrap text-sm ">{{ data.real_name }}</td>
                     <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ data.email }}</td>
-                    <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ data.profile.cellphone|handle_none }}</td>
-                   
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.specialty2|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.specialty3|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.cv3_id|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">{{ data.profile.onpacs_id|handle_none }}</td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">
-                        {% if data.hr_files_count > 0 %}
+                    <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ data.cellphone|handle_none }}</td>
+                    <td class="px-2 py-2 whitespace-nowrap text-sm ">{{ data.specialty2|handle_none }}</td>
+                    <td class="px-2 py-2 whitespace-nowrap text-sm ">
+                        {% if data.hrfiles_count > 0 %}
                             <a href="#" class="btn btn-outline btn-xs">
-                                {{ data.hr_files_count }}
+                                {{ data.hrfiles_count }}
                             </a> 
                         {% else %}
                             -
                         {% endif %}
                     </td>
-                    <td class="px-6 py-2 whitespace-nowrap text-sm ">
-                        {% if data.profile.contract_status == 'T' %}
-                        <span class="badge badge-error">{{ data.profile.contract_status|handle_none }}</span>
-                        {% elif data.profile.contract_status == 'I' %}
-                        <span class="badge badge-warning">{{ data.profile.contract_status|handle_none }}</span>
+                    <td class="px-2 py-2 whitespace-nowrap text-sm ">
+                        {% if data.contract_status == 'T' %}
+                        <span class="badge badge-error">{{ data.contract_status|handle_none }}</span>
+                        {% elif data.contract_status == 'I' %}
+                        <span class="badge badge-warning">{{ data.contract_status|handle_none }}</span>
                         {% else %}
-                        <span class="badge badge-success">{{ data.profile.contract_status|handle_none }}</span>
+                        <span class="badge badge-success">{{ data.contract_status|handle_none }}</span>
                         {% endif %}
                        
                     </td>
@@ -84,21 +84,27 @@
             <tfoot>
                 <tr>
                     <td colspan="9" class=" ">
-                        <div class="flex flex-row justify-between px-6 py-3">
-                            <div class="badge-primary p-4 rounded-lg">
-                                Total: {{ doctors.paginator.count }}
+                        <div class="flex flex-row justify-evenly px-2 py-3">
+                            <div class="join">
+                                <span class="join-item btn">
+                                    Total: {{ doctors.paginator.count }}
+                                </span>
+                                {% if emails %}
+                                    <button id="btn_copy_emails" class="join-item btn" onclick="copyToClipboard('emails','btn_copy_emails')">Copy emails</button>
+                                {% endif %}
                             </div>
+                            <div id="emails" class="hidden">{{ emails }}</div>
                             <div class="join">
                                 {% if doctors.has_previous %}
-                                    <a href="?q={{ request.GET.q }}&page=1" class="join-item btn">First</a>
-                                    <a href="?q={{ request.GET.q }}&page={{ doctors.previous_page_number }}" class="join-item btn">Previous</a>
+                                    <a href="?q={{ request.GET.q }}&{{ request.GET.urlencode }}&page=1" class="join-item btn">First</a>
+                                    <a href="?q={{ request.GET.q }}&{{ request.GET.urlencode }}&page={{ doctors.previous_page_number }}" class="join-item btn">Previous</a>
                                 {% endif %}
                                 <span class="join-item btn">
                                     Page {{ doctors.number }} of {{ doctors.paginator.num_pages }}
                                 </span>
                                 {% if doctors.has_next %}
-                                    <a href="?q={{ request.GET.q }}&page={{ doctors.next_page_number }}" class="join-item btn">Next</a>
-                                    <a href="?q={{ request.GET.q }}&page={{ doctors.paginator.num_pages }}" class="join-item btn">Last</a>
+                                    <a href="?q={{ request.GET.q }}&{{ request.GET.urlencode }}&page={{ doctors.next_page_number }}" class="join-item btn">Next</a>
+                                    <a href="?q={{ request.GET.q }}&{{ request.GET.urlencode }}&page={{ doctors.paginator.num_pages }}" class="join-item btn">Last</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -108,8 +114,66 @@
         </table>
       
     </div>
-</section>
+    <script>
+        function copyToClipboard(vt,bt) {
+            // Select the input element
+            console.log(vt);
+            console.log(bt);
     
+            var copyText = document.getElementById(vt);
+            var btnCopy = document.getElementById(bt);
+          
+            // Create a range object
+            var range = document.createRange();
+            range.selectNode(copyText);
+          
+            // Select the text
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+          
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(copyText.innerText)
+              .then(() => {
+                // Alert the copied text
+                // alert("Copied the text: " + copyText.innerText);
+                btnCopy.innerHTML = 'Copied!';
+                btnCopy.classList.remove('btn-secondary');
+                //
+              })
+              .catch(err => {
+                console.error('Failed to copy: ', err);
+              });
+        }
+    </script>
+</section>
+<section class="card col-span-3 overflow-hidden bg-base-100 shadow-sm xl:col-span-3">
+    <div class="card-body grow-0">
+        <div class="grid grid-cols-1 gap-2">
+            
+            <div class="overflow-y-auto h-92" style="height:548px;">
+                <form action="{% url 'provider:index' %}" method="GET">
+                   
+                <div class="flex flex-col gap-2 h-92">
+                    <div>
+                        <label class="label">
+                            <span class="label-text">세부전공</span>
+                        </label>
+                        {{ filter.form.specialty2|add_class:"select select-sm select-bordered py-0" }}
+                    </div>
+                    <div class="mb-2">
+                        <label class="label">
+                            <span class="label-text">Status</span>
+                        </label>
+                        {{ filter.form.contract_status|add_class:"select select-sm select-bordered py-0" }}
+                    </div>
+                   
+                    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>    
 {% endblock %}
 
 {% block aside %}

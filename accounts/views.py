@@ -30,6 +30,30 @@ def profile(request):
     return render(request, "accounts/profile.html", {"form": form})
 
 
+def profile_update_partial(request):
+    user = request.user
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=user.profile)
+        if form.is_valid():
+            form.save()
+            real_name = form.cleaned_data.get("real_name")
+            email = form.cleaned_data.get("email")
+            user.first_name = real_name
+            user.last_name = real_name
+            user.email = email
+            user.save()
+            messages.success(request, "Profile updated.")
+            return redirect("accounts:profile")
+        else:
+            print(form.errors)
+    else:
+        form = ProfileForm(instance=user.profile)
+
+    return render(
+        request, "accounts/profile_update_partial.html", {"form": form, "user": user}
+    )
+
+
 def signup(request):
     if request.method == "POST":
         # form = SignupForm(request.POST)

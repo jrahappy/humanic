@@ -311,6 +311,18 @@ def index(request):
         else:
             companies = Company.objects.all().order_by(ko_kr.asc())
             # companies = Company.objects.all().order_by("-updated_at")
+
+    if tag_slug or q:
+        emails = (
+            companies.values_list("office_email", flat=True)
+            .filter(~Q(office_email=None))
+            .distinct()
+        )
+        email_list = ", ".join(list(emails)).replace("'", "").strip()
+
+    else:
+        email_list = []
+
     if companies.count() == 1:
         return redirect("customer:detail", companies[0].id)
     paginator = Paginator(companies, 15)  # Show 10 companies per page
@@ -318,7 +330,12 @@ def index(request):
     page_obj = paginator.get_page(page_number)
     tags = Company.tags.all()
     tags = Company.tags.annotate(num_times=Count("company")).order_by("-num_times")
-    context = {"page_obj": page_obj, "title": "Customer List", "tags": tags}
+    context = {
+        "page_obj": page_obj,
+        "title": "Customer List",
+        "tags": tags,
+        "emails": email_list,
+    }
     return render(request, "customer/index.html", context)
 
 

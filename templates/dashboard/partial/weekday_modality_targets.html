@@ -41,10 +41,10 @@
                 {% endif %}
                         <td >{{ week_day.1 }} </td>
                         <td>
-                            <div class="flex flex-row" style="height:32px;">
+                            <div class="flex flex-row" >
                                 {% for target in targets %}
                                     {% if target.work_weekday == week_day.0 %}
-                                    <div class="flex flex-row me-2 btn btn-sm">
+                                    <div class="flex flex-row me-2 btn btn-xs">
                                         <div class="w-24 bordered-1">
                                             {{ target.modality|upper }}:                  
                                             {{ target.target_value }}  +{{ target.max_value }}

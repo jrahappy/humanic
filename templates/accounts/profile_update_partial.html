@@ -1,0 +1,70 @@
+{% load widget_tweaks %}
+{% load custom_filters %}
+<div id="profile_box" class="card-body h-full">
+    <form method="post" action="{% url 'accounts:profile_update_partial' %}" >
+        {% csrf_token %}
+        {% render_field form.user class="hidden" %}
+    <div class="flex flex-col ms-4 w-full">  
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">성명</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.real_name class="input input-bordered input-sm" %}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Email address</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.email class="input input-bordered input-sm" %}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Cellphone</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.cellphone class="input input-bordered input-sm" %}
+        </dd>
+      </div>
+      {% if user.is_doctor %}
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 1st</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.specialty2 class="select select-bordered select-sm py-0" %}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 2nd</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.specialty3 class="select select-bordered select-sm py-0" %}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 3rd</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.specialty4 class="select select-bordered select-sm py-0" %}
+        </dd>
+      </div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 4th</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {% render_field form.specialty5 class="select select-bordered select-sm py-0" %}
+        </dd>
+      </div>
+      
+      {% endif %}
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Bio</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 min-h-24">
+            {% render_field form.bio class="textarea textarea-bordered" rows="2" %}
+        </dd>
+      </div>
+      <div class="divider"></div>
+      <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">
+          <button type="submit" class="btn btn-primary btn-sm text-white">Save Profile</button>
+          <a href="{% url 'accounts:profile' %}" class="btn btn-warning btn-sm text-white">Cancel</a>
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+        </dd>
+      </div>
+    </form>
+    </div>
+  </div>

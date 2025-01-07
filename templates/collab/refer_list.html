@@ -1,7 +1,7 @@
 {% load custom_filters %}
 {% load humanize %}
 <div id="collab_kanban_dashboard" 
-    class="flex flex-col px-10 mt-4 space-x-6 w-full md:flex-row md:flex-wrap "
+    class="flex flex-col px-10 mt-4 space-x-6 w-full h-full md:flex-row md:flex-wrap "
     hx-get="{% url 'crm:partial_collab_kanban' %}"
     hx-trigger="RefersChanged from:body"
     hx-target="#collab_kanban_dashboard"

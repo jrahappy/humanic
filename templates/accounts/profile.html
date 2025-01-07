@@ -7,60 +7,92 @@
 
 {% block content %}
 
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card m-8">
-        <div class="px-4 sm:px-0">
-          <h3 class="text-base font-semibold leading-7 text-gray-900">User Profile</h3>
-          <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details </p>
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+    
+    <div class="card-body h-full">
+        <div class="flex flex-col items-center justify-center p-4 space-y-4">
+            <div class="flex items-center justify-center bg-gray-200 rounded-full">
+              {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-24 h-24 rounded-full">
+              {% else %}
+                <div class="avatar online placeholder">
+                  <div class="bg-neutral text-neutral-content w-16 rounded-full">
+                    <span class="text-xl">{{ user.profile.real_name|slice:":1" }}</span>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+            <div class="flex flex-col items-center justify-center space-y-2">
+                <h2 class="text-xl font-semibold">{{ user.username }} / {{ user.profile.real_name }}</h2>
+                
+            </div>
         </div>
-        <div class="mt-6 border-t border-gray-100">
-          <dl class="divide-y divide-gray-100">
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Full name</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.real_name }}</dd>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-8 h-screen">
+    <div class="card-body ">
+        <div class="w-full">
+            <div class="flex flex-col md:flex-row justify-between w-2/3">
+                <h2 class="card-title ms-4">
+                  User Profile
+                </h2>
             </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">HumanRAD ID</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Email address</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.email }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Cellphone</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.cellphone }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Address</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.full_address }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 1st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty2 }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 2st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty3 }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 3st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty4 }}</dd>
-            </div>
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 4st</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty5 }}</dd>
-            </div>
-            
-            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium leading-6 text-gray-900">Bio</dt>
-              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.bio }}</dd>
-            </div>
-            
-          </dl>
+        </div>
+    </div>
+    <div id="profile_box" class="card-body h-full">
+      <div class="flex flex-col ms-4 w-full">  
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">성명</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.real_name }}</dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Email address</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.email }}</dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Cellphone</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.cellphone }}</dd>
+        </div>
+        {% if user.is_doctor %}
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 1st</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty2 }}</dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 2nd</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty3 }}</dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 3rd</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty4 }}</dd>
+        </div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Specialty 4th</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ user.profile.specialty5 }}</dd>
+        </div>
+        {% endif %}
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">Bio</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 min-h-24">{{ user.profile.bio }}</dd>
+        </div>
+        <div class="divider"></div>
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm font-medium leading-6 text-gray-900">
+            <a href="#" 
+              class="btn btn-primary btn-sm text-white"
+              hx-get="{% url 'accounts:profile_update_partial' %}"
+              hx-target="#profile_box"
+              hx-swap="outerHTML"
+            >Edit Profile</a>
+
+          </dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+
+          </dd>
+
         </div>
       </div>
-    
     </div>
 </section>
 {% endblock %}

@@ -49,7 +49,7 @@
             {% for specialty, stat in stat_values.items %}
             <div class="stat">
                 <div class="text-xl text-center font-bold">{{ specialty }}</div>
-                <div class="flex flex-row justify-center gap-4 bg-gray-100 p-2 mt-2 mb-2 w-full">
+                <div class="flex flex-row justify-center gap-4 bg-base-100 p-2 mt-2 mb-2 w-full">
                     <div class="bg-success text-md w-6 h-6 text-white text-center font-semibold rounded-full">
                         {{ stat.count_provider_a }} 
                     </div>
@@ -63,7 +63,7 @@
                         <div class="w-1/3 font-bold text-end">{{ stat.sum_ct_target }}</div>
                         <div class="w-1/3 font-bold text-end">0</div>
                     </div>
-                    <div class="stat-title font-bold px-2 flex flex-row bg-gray-100">
+                    <div class="stat-title font-bold px-2 flex flex-row bg-base-100">
                         <div class="w-1/3 font-bold">MR</div>
                         <div class="w-1/3 font-bold text-end">{{ stat.sum_mr_target }}</div>
                         <div class="w-1/3 font-bold text-end">0</div>
@@ -73,7 +73,7 @@
                         <div class="w-1/3 font-bold text-end">{{ stat.sum_cr_target }}</div>
                         <div class="w-1/3 font-bold text-end">0</div>
                     </div>
-                    <div class="stat-title px-2 flex flex-row bg-gray-100">
+                    <div class="stat-title px-2 flex flex-row bg-base-100">
                         <div class="w-1/3 font-bold">MG</div>
                         <div class="w-1/3 font-bold text-end">{{ stat.sum_mg_target }}</div>
                         <div class="w-1/3 font-bold text-end">0</div>

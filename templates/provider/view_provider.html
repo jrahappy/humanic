@@ -6,124 +6,121 @@
 {% endblock %}
 
 {% block content %}
-   
-<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    <div class="card-body grow-0">
-        <div class="flex flex-row justify-between gap-2">
-			<div class="flex flex-row">
-				<h2 class="card-title me-6">
-					Radiologist Detail 
-				</h2>
-				<div class="card-title">
-					<form action="{% url 'provider:index' %}" method="GET">
-						<input type="text" name="q" class="input input-bordered w-96" placeholder="성명, 이메일, 전공 또는 PACS id....." value="{{ request.GET.q }}">
-						<button type="submit" class="btn btn-primary">Search</button>
-					</form>
-				</div>
-			</div>
-			<div class="flex gap-4	">
-				<div class="flex items-end">
-					<a href="{% url 'provider:edit' provider.id %}" class="btn btn-primary w-20">Edit</a>
-				</div>
-				<div class="flex items-end">
-					<a href="{% url 'provider:index' %}" class="btn btn-primary w-20	">list</a>
-				</div>
-			</div>
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0 max-w-3xl">
+        <div class="flex flex-col justify-between gap-2 w-full md:flex-row">
+            <div class="flex flex-col justify-between gap-4 md:flex-row">
+                <h2 class="card-title pl-4 me-4">
+                    판독의 세부정보
+                </h2>
+                <div class="flex justify-start items-center w-80 pt-2 rounded-lg">
+                    <form action="{% url 'provider:index' %}" method="GET">
+                    <div class="flex flex-row gap-2">
+                        <input type="text" name="q" class="input input-bordered input-sm w-full" placeholder="성명, 전공 또는 PACS id....." value="{{ request.GET.q }}">
+                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <div class="text-start me-4 pt-2">
+				<a href="{% url 'provider:index' %}" class="btn btn-primary btn-sm w-20">list</a>
+            </div>
         </div>
     </div>
 </section>
+
 <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
 	
-	<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-		<div class="form-control col-span-3">
+	<div class="grid grid-cols-2 gap-2 px-6 mb-4 sm:grid-cols-4">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">성명(ID)</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.real_name }}/{{provider.id}}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md">{{ provider.profile.real_name }}/{{provider.id}}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">이메일</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.email }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md">{{ provider.profile.email }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">휴대폰</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.cellphone }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.cellphone }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">진료과</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty1 }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.specialty1 }}</div>
 		</div>
 	</div>
-	<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-		<div class="form-control col-span-3">
+	<div class="grid grid-cols-2 gap-2 px-6 mb-4 sm:grid-cols-4">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">면허</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.license_number|handle_none }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.license_number|handle_none }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">HumanRad ID</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.username }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.username }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">ONPACS ID</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.onpacs_id }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.onpacs_id }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">CV3 ID</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.cv3_id }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.cv3_id }}</div>
 		</div>
 	</div>
-	<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-		<div class="form-control col-span-3">
+	<div class="grid grid-cols-2 gap-2 px-6 mb-4 sm:grid-cols-4">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">세부전공1</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty2 }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.specialty2 }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">세부전공2</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty3 }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.specialty3 }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">세부전공3</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty4 }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.specialty4 }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">세부전공4</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.specialty5 }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.specialty5 }}</div>
 		</div>
 	</div>
-	<div class="grid grid-cols-12 gap-2 px-6 mb-4">
-		<div class="form-control col-span-3">
+	<div class="grid grid-cols-2 gap-2 px-6 mb-4 sm:grid-cols-4">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">Fee Rate</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">{{ provider.profile.fee_rate }}</div>
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">{{ provider.profile.fee_rate }}</div>
 		</div>
-		<div class="form-control col-span-3">
+		<div class="form-control">
 			<label class="label">
 				<span class="label-text">계약상태</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 rounded">
+			<div class="flex flex-row p-2 font-semibold rounded-lg text-md"">
 				{% if provider.profile.contract_status == 'I' %}
 					Inactive
 				{% elif provider.profile.contract_status == 'A' %}
@@ -133,11 +130,11 @@
 				{% endif %}
 			</div>
 		</div>
-		<div class="form-control col-span-6">
+		<div class="form-control col-span-2" md:col-span-1>
 			<label class="label">
 				<span class="label-text">메모</span>
 			</label>
-			<div class="text-start px-2 py-3 bg-base-200 h-24 rounded">{{ provider.profile.bio }}</div>
+			<div class="text-start px-2 py-3 h-24 rounded">{{ provider.profile.bio }}</div>
 		</div>
 	</div>
 	
@@ -176,14 +173,14 @@
 						<td>
 							<button 
 								onclick="base_modal.showModal()"
-								class="btn btn-sm btn-info" 
+								class="btn btn-xs btn-info" 
 								hx-get="{% url 'report:report_period_month_radiologist' rs.ayear rs.amonth provider.id %}"
 								hx-trigger="click"
 								hx-target="#base_modal"
 								hx-swap="innerHTML"                                      
-							>Detail</button>
+							>세부</button>
 							<a href="{% url 'report:report_period_month_radiologist_csv' rs.ayear rs.amonth provider.id %}"
-								class="btn btn-sm btn-secondary"
+								class="btn btn-xs btn-secondary"
 								target="_blank"                                   
 							>CSV</a>
 						</td>

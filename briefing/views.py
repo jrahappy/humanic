@@ -116,7 +116,7 @@ def index(request):
         # )
         rp_total = ReportMasterStat.objects.filter(
             ayear=syear, amonth=smonth
-        ).aggregate(report_count=Count("total_count"))
+        ).aggregate(report_count=Sum("total_count"))
         rp_total_value = rp_total["report_count"] or 0
 
         # 응급의뢰수 구하기 (Get the count of emergency reports)
@@ -262,7 +262,7 @@ def partial_briefing(request):
         # 의뢰수 구하기
         rp_total = ReportMasterStat.objects.filter(
             ayear=syear, amonth=smonth
-        ).aggregate(report_count=Count("total_count"))
+        ).aggregate(report_count=Sum("total_count"))
         rp_total_value = rp_total["report_count"] or 0
 
         # 응급의뢰수 구하기 (Get the count of emergency reports)

@@ -21,6 +21,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import HttpResponse
 from .forms import ProviderForm
+from .filters import ProfileFilter
+
 
 from utils.base_func import (
     get_amodality_choices,
@@ -37,35 +39,36 @@ def index(request):
     q = request.GET.get("q")
     if q:
         doctors = (
-            CustomUser.objects.filter(
-                Q(profile__real_name__icontains=q)
-                | Q(profile__specialty2__icontains=q)
-                | Q(profile__email__icontains=q)
-                | Q(profile__cv3_id__icontains=q)
-                | Q(profile__onpacs_id__icontains=q)
+            Profile.objects.filter(
+                Q(real_name__icontains=q)
+                | Q(email__icontains=q)
+                # | Q(user__is_staff=False)
+                & Q(user__is_doctor=True)
             )
-            .filter(is_staff=False, is_doctor=True)
-            .select_related("profile")
-            .annotate(hr_files_count=Count("hrfiles__id"))
-            .order_by("profile__real_name")
+            .select_related("user")
+            .annotate(user__hr_files_count=Count("user__hrfiles__id"))
+            .order_by("real_name")
         )
         if doctors.count() == 1:
             return redirect("provider:view_provider", doctors[0].id)
     else:
         doctors = (
-            CustomUser.objects.filter(is_staff=False, is_doctor=True)
-            .select_related("profile")
-            .annotate(hr_files_count=Count("hrfiles__id"))
-            .order_by("-username")
+            Profile.objects.filter(user__is_doctor=True)
+            .select_related("user")
+            .annotate(hrfiles_count=Count("user__hrfiles"))
+            .order_by("real_name")
         )
-        # update_profile = Profile.objects.filter(specialty2="신경두경부").update(
-        #     specialty2="신경두경"
-        # )
+
+    profile_filter = ProfileFilter(request.GET, queryset=doctors)
+    doctors = profile_filter.qs
+    emails = doctors.values_list("email", flat=True).filter(~Q(email=None)).distinct()
+    email_list = ", ".join(list(emails)).replace("'", "").strip()
 
     is_chief = TeamMember.objects.filter(provider=user, role="chief").exists()
     if is_chief:
-        doctors = doctors.filter(profile__specialty2=user.profile.specialty2)
+        doctors = doctors.filter(specialty2=user.profile.specialty2)
 
+    # print(doctors.query)
     paginator = Paginator(doctors, 15)  # Show 10 doctors per page
     page = request.GET.get("page")
 
@@ -76,7 +79,12 @@ def index(request):
     except EmptyPage:
         doctors = paginator.page(paginator.num_pages)
 
-    context = {"doctors": doctors}
+    context = {
+        "doctors": doctors,
+        "emails": email_list,
+        "filter": profile_filter,
+        "q": q,
+    }
     return render(request, "provider/index.html", context)
 
 

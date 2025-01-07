@@ -5,6 +5,11 @@ app_name = "accounts"
 
 urlpatterns = [
     path("profile/", views.profile, name="profile"),
+    path(
+        "profile_update_partial/",
+        views.profile_update_partial,
+        name="profile_update_partial",
+    ),
     path("user_update", views.user_update, name="user-update"),
     path("password_change/", views.password_change, name="password_change"),
     path(

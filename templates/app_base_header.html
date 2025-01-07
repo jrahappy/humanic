@@ -97,12 +97,13 @@
 	<div>
 		{{ user.username }} ({{ user.menu_id }})
 	</div>
-	<div class="dropdown-end dropdown z-10">
-		<div tabindex="0" class="avatar btn btn-circle btn-ghost">
-			<div class="w-10 rounded-full">
-				<img src="https://picsum.photos/80/80?5" />
+	<div class="dropdown-end dropdown z-10 mx-4">
+		<div tabindex="0" class="avatar online placeholder">
+			<div class="bg-neutral text-neutral-content w-8 rounded-full cursor-pointer	">
+			  	<span class="text-xs">{{ user.profile.real_name|slice:":1" }}</span>
 			</div>
 		</div>
+		
 		<ul
 			tabindex="0"
 			class="menu dropdown-content mt-3 w-52 rounded-box bg-base-100 p-2 shadow-2xl">
@@ -110,13 +111,8 @@
 				<a href="{% url 'accounts:profile' %}">Profile</a>
 			</li>
 			<li>
-				<a 
-				 href="#"
-				 hx-get="{% url 'accounts:password_change' %}"
-				 hx-trigger="click"
-				 hx-target="#main_area"
-				 hx-swap="outerHTML"
-				 >Change Password </a>
+				<a href="{% url 'accounts:password_change' %}">Change Password</a>
+				
 			</li>
 
 			<!-- <li>

@@ -365,4 +365,9 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
 
         
 # 1/5/2025 #
+humanrad 이메일 세팅
 WM info Human!234
+
+# 1/6/2025 #
+    - refer 에 refer_doctor 필드 추가. 최초 검사의뢰서 만들 때에 의뢰 의사를 수정할 수 있도록 함.
+    
