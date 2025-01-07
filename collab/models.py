@@ -6,6 +6,8 @@ from utils.base_func import GENDER, REFER_STATUS
 
 class Refers(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    # 의뢰하는 의사명
+    refer_doctor = models.CharField(max_length=50, null=True, blank=True)
     referred_date = models.DateField(null=True, blank=True)
     patient_name = models.CharField(max_length=50)
     patient_gender = models.CharField(choices=GENDER, max_length=1)

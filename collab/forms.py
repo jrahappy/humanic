@@ -89,6 +89,7 @@ class ReferForm(ModelForm):
             "required": "Please enter the patient's phone number.",
         },
     )
+
     # opinion1 = forms.CharField(
     #     widget=forms.Textarea(attrs={"cols": 50, "rows": 3}),
     #     required=False,
