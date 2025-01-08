@@ -43,14 +43,14 @@
                 <div class="font-semibold text-sm">향후치료<br>의견:</div>
             </td>
             <td colspan="3" class="align-top border border-gray-500">
-                <div class="h-32 max-h-80 bg-base-50">위와 같이 의견을 보내드립니다.<br>
-                    <div class="text-sm">
+                <div class="min-h-32 bg-base-50">위와 같이 의견을 보내드립니다.<br>
+                    <div class="min-h-32 text-sm">
                     {{ refer.opinion2|handle_none|linebreaks }}
                     </div>
                 </div>
             </td>
         </tr>
-        <tr class="align-top border border-gray-500">
+        <!-- <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
                 <div class="font-semibold text-sm">PACS Link</div>
             </td>
@@ -63,14 +63,13 @@
                     {% endif %}
                 </div>
             </td>
-        </tr>
+        </tr> -->
         <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
                 <div class="font-semibold text-sm">첨부파일</div>
             </td>
             <td colspan="3" class="align-top border border-gray-500">
                 <div class="flex flex-row justify-between">
-                    
                     {% include 'crm/collab_refer_files.html' %}
                 </div>  
             </td>
@@ -86,7 +85,7 @@
                     <div class="w-24">의사명:</div>
                     <div>
                         {% if refer.provider is None %}
-                            휴먼
+                            {{ refer.radio_doctor }}
                         {% else %}
                             {{ refer.provider }}
                         {% endif %}

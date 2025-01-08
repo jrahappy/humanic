@@ -29,7 +29,7 @@ class Refers(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     # 아래는 진효 회송서 정보
     chart_number = models.CharField(max_length=20, null=True, blank=True)
-    manage_number = models.CharField(max_length=20, null=True, blank=True)
+    radio_doctor = models.CharField(max_length=20, null=True, blank=True)
     provider = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, null=True, blank=True
     )

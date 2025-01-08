@@ -2,15 +2,8 @@
 {% load custom_filters %}
 
 {% load widget_tweaks %}
-<div id="report_create_box" class="modal-box card-body w-1/2 max-w-2xl">
-    <div class="modal-action justify-between  flex flex-row gap-2">
-        <div class="ms-2 ">
-            <h2 class="text-lg font-bold"> 진료회송서 </h2>
-        </div>
-        <div class="flex flex-row gap-2">
-          
-        </div>
-    </div>
+<div id="report_create_box" class="modal-box card-body w-2/3 h-full max-w-3xl">
+    
     <div class="w-full">
         <form 
           hx-post="{% url 'crm:collab_report' refer.id %}" 
@@ -37,21 +30,24 @@
                 <td>연락처</td><td>{{refer.patient_phone}} </td>
             </tr>
             <tr>
-                <td colspan="1">향후치료<br>의견</td>
-                <td colspan="3">{% render_field form.opinion2 class="textarea textarea-bordered w-full" cols=50 rows=3 %}</td>
+                <td colspan="1" class="align-top">향후치료<br>의견</td>
+                <td colspan="3">{% render_field form.opinion2 class="textarea textarea-bordered w-full" cols=50 rows=14 %}</td>
             </tr>
             <tr>
-                <td>회송일</td><td>{{form.opinioned_at }}</td>                    
+                <td>회송일</td><td>{% render_field form.opinioned_at class="input input-bordered input-sm" type="date"%}}</td>                    
                 <td>현재상태</td><td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>                
             </tr>
             <tr>
-                <td colspan="1">판독비</td>
-                <td colspan="3">{% render_field form.readprice class="input input-bordered input-sm w-32 py-0" %}</td>               
+                <td colspan="1">판독의</td>
+                <td colspan="3">
+                    {% if refer.provider is None %}
+                        {% render_field form.radio_doctor class="input input-bordered input-sm w-32 py-0" value="휴먼" %}
+                    {% else %}
+                        {% render_field form.radio_doctor class="input input-bordered input-sm w-32 py-0" %}
+                    {% endif %}
+                </td>               
             </tr>
-            <tr>
-                <td colspan="1">URL</td>
-                <td colspan="3">{% render_field form.url class="input input-bordered input-sm w-full py-0" %}</td>               
-            </tr>
+            
         </table>
 
         <div class="divider"></div>

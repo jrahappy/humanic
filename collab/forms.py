@@ -108,12 +108,9 @@ class ReportForm(ModelForm):
     class Meta:
         model = Refers
         fields = [
-            # "opinioned_at",
             "opinion2",
             "status",
-            "readprice",
-            "url",
-            # Add other fields as necessary
+            "radio_doctor",
         ]
 
     opinioned_at = forms.DateField(
@@ -132,6 +129,7 @@ class ReportForm(ModelForm):
         ]
         # Apply the filtered choices to the 'status' field
         self.fields["status"].choices = filtered_choices
+        self.fields["radio_doctor"].initial = "휴먼영상"
 
 
 class ReferChangeStatus(ModelForm):

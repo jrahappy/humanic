@@ -286,13 +286,20 @@ def collab_report_one(request, refer_id):
 
 
 def collab_report(request, refer_id):
+    user = request.user
+    is_doctor = user.is_doctor
     refer = get_object_or_404(Refers, id=refer_id)
     if request.method == "POST":
         form = ReportForm(request.POST, instance=refer)
         if form.is_valid():
             report = form.save(commit=False)
-            report.provider = request.user
-            report.collab_price = form.cleaned_data["readprice"] / 2
+            if is_doctor:
+                report.provider = request.user
+                report.radio_doctor = request.user.first_name
+            else:
+                report.provider = None
+
+            # report.collab_price = form.cleaned_data["readprice"] / 2
             report.opinioned_at = datetime.datetime.now()
             report.updated_at = datetime.datetime.now()
             report.save()

@@ -38,9 +38,9 @@
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="w-24 align-top border-e border-gray-500">의뢰병원</td>
-                        <td class="w-48 align-top border-e border-gray-500">{{company.business_name}} </td>
+                        <td class="w-64 align-top border-e border-gray-500">{{company.business_name}} </td>
                         <td class="w-24 align-top border-e border-gray-500">의사명</td>
-                        <td class="w-48">{% render_field form.refer_doctor class="input input-bordered input-sm w-32 py-0" value=company.president_name %}</td>
+                        <td class="">{% render_field form.refer_doctor class="input input-bordered input-sm w-32 py-0" value=company.president_name %}</td>
                     </tr>
                     <tr class="align-top border border-gray-500">
                         <td class="align-top border-e border-gray-500">의뢰일</td>
@@ -73,7 +73,7 @@
                             >상병 추가</a>
                             {% include 'collab/partial_illness_list.html' %}
                         </td>
-                        <td class="align-top border-e border-gray-500">외뢰할 검사</td>
+                        <td class="align-top border-e border-gray-500">외뢰검사</td>
                         <td class="align-top">
                             <a 
                                 href="#" 
