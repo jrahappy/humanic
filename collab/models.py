@@ -95,7 +95,7 @@ class IllnessCode(models.Model):
     eng_name = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
-        return self.code + " - " + self.name
+        return self.code + " - " + self.name + " - " + self.eng_name
 
     class Meta:
         verbose_name = "질병코드"
