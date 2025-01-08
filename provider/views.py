@@ -50,7 +50,7 @@ def index(request):
             .order_by("real_name")
         )
         if doctors.count() == 1:
-            return redirect("provider:view_provider", doctors[0].id)
+            return redirect("provider:view_provider", doctors[0].user.id)
     else:
         doctors = (
             Profile.objects.filter(user__is_doctor=True)
@@ -111,6 +111,8 @@ def new_provider(request):
 
 def view_provider(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
+    profile = provider.profile
+
     rs = ReportMasterStat.objects.filter(provider=provider)
     hr_files = HRFiles.objects.filter(user=provider)
     match_rules = MatchRules.objects.filter(provider=provider)
