@@ -22,7 +22,7 @@
 		<script type="text/javascript">
 			// Initialize Papaya viewer with DICOM file URL
 			var params = [];
-			params["images"] = [{{ files_list|safe }}];
+			// params["images"] = [{{ files_list|safe }}]; 
 			papaya.Container.addViewer("papayaContainer", params);
 		</script>
 		
