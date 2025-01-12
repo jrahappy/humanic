@@ -91,7 +91,7 @@ if DEBUG:
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG  # Show toolbar only in DEBUG mode
+    "SHOW_TOOLBAR_CALLBACK": lambda request: False  # Show toolbar only in DEBUG mode
 }
 
 # Authentication settings
@@ -193,18 +193,11 @@ STATIC_ROOT = BASE_DIR / "static/"
 
 # Media files (user-uploaded content)
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# MEDIA_ROOT = BASE_DIR / "media/"
 # MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-# STATIC_URL = "/static/"
-# MEDIA_URL = "/media/"
-
-# if DEBUG:
-#     STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-#     STATIC_ROOT = BASE_DIR / "static/"
-# else:
-#     STATIC_ROOT = os.path.join(BASE_DIR, "static")
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % env("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_FILE_OVERWRITE = False
 
 STATICFILES_DIRS = [BASE_DIR / "theme" / "static"]
 STATICFILES_FINDERS = [
