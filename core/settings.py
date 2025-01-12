@@ -241,6 +241,8 @@ CKEDITOR_CONFIGS = {
 
 TAGGIT_CASE_INSENSITIVE = True
 
+DATA_UPLOAD_MAX_NUMBER_FILES = 500
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
