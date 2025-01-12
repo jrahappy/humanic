@@ -1,4 +1,4 @@
-{% load static %}
+{% load static tailwind_tags %} 
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -10,22 +10,21 @@
     	<meta name="apple-mobile-web-app-capable" content="yes">
     	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-		<link rel="stylesheet" type="text/css" href="{% static 'papaya.css' %}" />
-    	<script type="text/javascript" src="{% static 'papaya.js' %}"></script>
-    
+		<!-- <link rel="stylesheet" type="text/css" href="{% static 'papaya.css' %}" />
+    	<script type="text/javascript" src="{% static 'papaya.js' %}"></script> -->
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/papaya@1.0.0/release/current/min/papaya.css">
+    	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/papaya@1.0.0/release/current/min/papaya.js"></script>
     	<title>Papaya Viewer</title>
-    
-    	<script type="text/javascript">
-            var params = [];
-            //params["images"] = [{{ files_list|safe }}];
-            
-        </script>
 	</head>
 
 	<body>
-		<div>{{refer}}</div>
-		<div>{{files_list|safe}}</div>
-		<div class="papaya" data-params="params"></div>
+		<div id="papayaContainer"></div>
+		<script type="text/javascript">
+			// Initialize Papaya viewer with DICOM file URL
+			var params = [];
+			params["images"] = [{{ files_list|safe }}];
+			papaya.Container.addViewer("papayaContainer", params);
+		</script>
 		
 	</body>
 </html>
