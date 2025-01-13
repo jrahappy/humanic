@@ -96,7 +96,7 @@
                             <div class="h-48 bg-base-50">
                                 {% if refer.opinion1 %}
                                 <div class="relative overflow-auto h-48 max-h-60 ">
-                                    <button onclick="copyToClipboard('copyInput','btnCopy')" id="btnCopy" class="absolute top-0 right-0 btn btn-xs btn-secondary">C3</button>
+                                    <button onclick="copyToClipboard('copyInput','btnCopy')" id="btnCopy" class="absolute transpa bottom-0 right-0 btn btn-xs btn-secondary opacity-50 hover:opacity-100 transition-opacity duration-300">C All</button>
                                     {{ refer.opinion1|linebreaks }}
                                 </div>
                                 {% endif %}
@@ -112,6 +112,10 @@
                 </table>
                 <!-- 숨겨진 부분(클립보드로 복사하기 위함) -->
                 <div class="w-0 h-0 text-base-0 overflow-hidden" id="copyInput">
+                    <span>병원명:<br/>
+                    <span>&nbsp;{{company.business_name}}</span><br>
+                    <span>환자명:<br/>
+                    <span>&nbsp;{{refer.patient_name}}({{ refer.patient_gender }})</span><br>
                     <span>상병명:<br/>
                     {% for ill in illnesses %}
                         <span>&nbsp;{{ill.illness}}</span><br>
@@ -284,7 +288,7 @@
           .then(() => {
             // Alert the copied text
             // alert("Copied the text: " + copyText.innerText);
-            btnCopy.innerHTML = 'D';
+            btnCopy.innerHTML = 'Copied';
             btnCopy.classList.remove('btn-secondary');
             //
           })
