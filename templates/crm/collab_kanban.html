@@ -14,11 +14,14 @@
                 검사의뢰서 대시보드
             </h2>
             <div class="flex-auto">
-                <form method="get" action="{% url 'crm:collab' %}" class="flex flex-row gap-2 align-bottom">
+                <form method="get" action="{% url 'crm:collab_kanban' %}" class="flex flex-row gap-2 align-bottom">
                     <label class="input input-bordered input-sm flex items-center gap-2">
-                        <input type="text" class="grow input input-sm" placeholder="Search" name="q" />
+                        <input type="text" class="grow input input-sm" placeholder="Search" name="q" value="{{q}}" />
                     </label>
-                    <button class="btn btn-primary btn-sm">검색</button>
+                    <button type="submit" class="btn btn-primary btn-sm">검색</button>
+                    <button type="button" class="btn btn-sm"
+                        onclick="window.location.href='{% url 'crm:collab_kanban' %}'"
+                    >초기화</button>
                 </form>
             </div>
         </div>

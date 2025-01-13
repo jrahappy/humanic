@@ -15,6 +15,12 @@ class ReferFileForm(ModelForm):
             "file",
         ]
 
+    def clean_files(self):
+        file = self.cleaned_data.get("file")
+        if len(file) > 200:  # Set your desired limit
+            raise ValidationError("You can upload a maximum of 200 files.")
+        return file
+
 
 class CollabCompanyForm(ModelForm):
 

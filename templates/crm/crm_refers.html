@@ -22,8 +22,8 @@
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.patient_name|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.patient_phone|handle_none }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.treatment|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|handle_none }}</td>
-        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|handle_none }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.scheduled_at|date:'Y-m-d' }}</td>
+        <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.opinioned_at|date:'Y-m-d' }}</td>
         <td class="whitespace-nowrap px-3 py-2 text-sm ">{{ refer.status|handle_none }}</td>
     </tr>
 {% empty %}

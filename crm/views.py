@@ -8,6 +8,7 @@ from customer.models import Company, CustomerLog
 from collab.models import Refers, ReferFile
 from collab.forms import ReportForm, ReferChangeStatus, ReferFileForm
 from collab.views import create_history
+from .filters import RefersFilter
 import datetime
 import json
 import html
@@ -19,6 +20,17 @@ def collab_refer_file_upload(request, refer_id):
         form = ReferFileForm(request.POST, request.FILES)
         if form.is_valid():
             files = request.FILES.getlist("file")
+            if len(files) > 200:
+                return HttpResponse(
+                    status=400,
+                    headers={
+                        "HX-Trigger": json.dumps(
+                            {
+                                "showMessage": "You can upload a maximum of 200 files.",
+                            }
+                        )
+                    },
+                )
             for file in files:
                 ReferFile.objects.create(refer=refer, file=file)
                 # referfile.objects.create(refer=refer, file=file)
@@ -88,11 +100,20 @@ def collab_refer_files(request, refer_id):
 
 
 def collab_kanban(request):
-    refers = (
-        Refers.objects.exclude(status="Draft")
-        .select_related("company")
-        .order_by("-created_at")
-    )
+    q = request.GET.get("q", "")
+    if q:
+        refers = (
+            Refers.objects.filter(patient_name__icontains=q)
+            .exclude(status="Draft")
+            .select_related("company")
+            .order_by("-created_at")
+        )
+    else:
+        refers = (
+            Refers.objects.exclude(status="Draft")
+            .select_related("company")
+            .order_by("-created_at")
+        )
 
     status_rq = refers.filter(status="Requested")
     status_sch = refers.filter(status="Scheduled")
@@ -107,30 +128,35 @@ def collab_kanban(request):
         "status_in": status_in,
         "status_cosign": status_cosign,
         "status_cancelled": status_cancelled,
+        "q": q,
     }
     return render(request, "crm/collab_kanban.html", context)
 
 
 def collab(request):
-    q = request.GET.get("q", "")
-    if q:
-        refers = (
-            Refers.objects.filter(patient_name__icontains=q)
-            .exclude(status="Draft")
-            .select_related("company")
-            .order_by("-created_at")
-        )
-    else:
-        refers = (
-            Refers.objects.filter(~Q(status="Draft"))
-            .select_related("company")
-            .order_by("-created_at")
-        )
+    # q = request.GET.get("q", "")
+    # if q:
+    #     refers = (
+    #         Refers.objects.filter(patient_name__icontains=q)
+    #         .exclude(status="Draft")
+    #         .select_related("company")
+    #         .order_by("-created_at")
+    #     )
+    # else:
+    #     refers = (
+    #         Refers.objects.filter(~Q(status="Draft"))
+    #         .select_related("company")
+    #         .order_by("-created_at")
+    #     )
 
-    paginator = Paginator(refers, 10)  # Show 10 refers per page.
+    refers = Refers.objects.all().exclude(status="Draft").order_by("-created_at")
+    refers_filter = RefersFilter(request.GET, queryset=refers)
+    refers = refers_filter.qs
+
+    paginator = Paginator(refers, 15)  # Show 10 refers per page.
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    context = {"refers": refers, "page_obj": page_obj}
+    context = {"refers": refers, "page_obj": page_obj, "filter": refers_filter}
 
     return render(request, "crm/collab.html", context)
 

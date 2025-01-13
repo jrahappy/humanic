@@ -1,5 +1,7 @@
 {% extends 'app_base.html' %}
 {% load custom_filters %}
+{% load widget_tweaks %}
+{% load widget_tweaks %}
 {% load humanize %}
 
 {% block header %}
@@ -14,17 +16,12 @@
                 검사의뢰서 관리
             </h2>
             <div class="flex-auto">
-                <form method="get" action="{% url 'crm:collab' %}" class="flex flex-row gap-2 align-bottom">
-                    <label class="input input-bordered input-sm flex items-center gap-2">
-                        <input type="text" class="grow input input-sm" placeholder="Search" name="q" />
-                    </label>
-                    <button class="btn btn-primary btn-sm">검색</button>
-                </form>
+                
             </div>
         </div>
     </div>
 </section>
-<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-9">
     <div class="card-body grow-0">
 
         <table class="min-w-full divide-y divide-gray-500">
@@ -37,7 +34,7 @@
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">환자연락처</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">요청검사</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">예약일</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">진료일</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">회송일</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">현재상태</th>
                     
                 </tr>
@@ -48,7 +45,62 @@
       
     </div>
 </section>
-
+<section class="card card-compact col-span-3 overflow-hidden bg-base-100 shadow-sm xl:col-span-3">
+    <div class="card-body grow-0">
+        <div class="grid grid-cols-1 gap-2">
+            
+            <div class="overflow-y-auto h-92" style="height:548px;">
+                <form action="{% url 'crm:collab' %}" method="GET" id="filter-form">
+                {% csrf_token %}
+                <div class="flex flex-col gap-2 h-92">
+                    <div>
+                        <label class="label">
+                            <span class="label-text">환자명</span>
+                        </label>
+                        {% render_field filter.form.patient_name__icontains class="input input-sm input-bordered py-0" %}
+                    </div>
+                    <div class="mb-2">
+                        <label class="label">
+                            <span class="label-text" for="id_company__business_name__icontains">병원명</span>
+                        </label>
+                        {% render_field filter.form.company__business_name__icontains class="input input-sm input-bordered py-0" %}
+                    </div>
+                    <div class="mb-2">
+                        <label class="label">
+                            <span class="label-text">Status</span>
+                        </label>
+                        {{ filter.form.status|add_class:"select select-sm select-bordered py-0" }}
+                    </div>
+                    <div class="mb-2">
+                        <label class="label">
+                            <span class="label-text" >의뢰일</span>
+                        </label>
+                        <fieldset>
+                            {% render_field filter.form.referred_date class="input input-sm input-bordered py-0" %}
+                        </fieldset>
+                    </div>
+                    <div class="mb-2">
+                        <label class="label">
+                            <span class="label-text" >회송일</span>
+                        </label>
+                        <fieldset>
+                            {% render_field filter.form.opinioned_at class="input input-sm input-bordered py-0" %}                            
+                        </fieldset>
+                    </div>
+                    <div class="divide-y divide-gray-500"></div>
+                        
+                    <div class="mb-2 flex flex-row gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm w-24">Filter</button>
+                        <button type="button" class="btn btn-secondary btn-sm w-24"
+                            onclick="window.location.href='{% url 'crm:collab' %}'"
+                        >Reset</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>    
     
 {% endblock %}
 
