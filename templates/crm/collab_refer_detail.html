@@ -161,7 +161,7 @@
                     </a>
                     <a href="{% url 'crm:collab_schedule_one' refer.id %}" class="btn btn-success btn-sm text-white">간편 예약완료 처리</a>
                         
-                </div>
+               
 
                 {% elif refer.status == 'Scheduled' %}
                 <div id="return_report"></div>
@@ -188,7 +188,7 @@
                     진료회송서 작성
                     </a>
                     <a href="{% url 'crm:collab_report_one' refer.id %}" class="btn btn-success btn-sm text-white">간편 진료회송서 처리</a>
-                </div>
+               
 
                 {% elif refer.status == 'Interpreted' %}
                     <div id="return_report">
@@ -206,14 +206,13 @@
                         >
                         진료회송서 수정
                         </a>
-                    </div>
+                  
 
                 {% elif refer.status == 'Cancelled' %}
                     
                     <div class="flex justify-end gap-2 mt-4">
                         <a href="{% url 'crm:collab_kanban' %}" class="btn btn-primary btn-sm text-white ">대시보드로 돌아가기</a>
-                    </div>
-                
+                    
                     
                 {% else %}
                     <div id="return_report">
@@ -243,10 +242,20 @@
                             }
                         </script>
                         <a href="{% url 'crm:collab_kanban' %}" class="btn btn-primary btn-sm text-white ">대시보드로 돌아가기</a>
-                    </div>
+                    
                     
                 {% endif %}
-                
+                    <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
+                    <script>
+                        function openPopup(url) {
+                            // Define the window features
+                            var windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes';
+                        
+                            // Open the new window with the specified URL and features
+                            window.open(url, '_blank', windowFeatures);
+                        }
+                    </script>
+                </div>
             </div>  
         </div>
     </div>
