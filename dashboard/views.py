@@ -628,41 +628,46 @@ def index(request):
     smonth = request.GET.get("smonth")
 
     if not syear or not smonth:
-        # Fetch the latest available record from the database
-        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth").first()
-        # temp_rs = ReportMasterStat.objects.all().order_by("-ayear", "-amonth")[:2]
-        temp_rs = UploadHistory.objects.filter(is_deleted=False).order_by("-id")[:1]
-        # Check if any records exist in the database
+        # # Fetch the latest available record from the database
+        # temp_rs = UploadHistory.objects.filter(is_deleted=False).order_by("-id")[:1]
+        # # Check if any records exist in the database
+        # if temp_rs:
+        #     if temp_rs.count() == 2:
+        #         syear = temp_rs[0].ayear
+        #         smonth = temp_rs[0].amonth
+        #         if smonth == "1":
+        #             pre_month = "12"
+        #             pre_year = temp_rs[0].ayear - 1
+        #         else:
+        #             pre_year = temp_rs[1].ayear
+        #             pre_month = temp_rs[1].amonth
+        #     else:
+        #         syear = temp_rs[0].ayear
+        #         smonth = temp_rs[0].amonth
+        #         pre_year = temp_rs[0].ayear
+        #         pre_month = temp_rs[0].amonth
+        # else:
+        #     # If no records exist, use the current year and month as fallback
+        #     syear = date.today().year
+        #     smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
+        temp_rs = MagamMaster.objects.filter(is_opened=True).order_by("-adate")[:1]
         if temp_rs:
-            if temp_rs.count() == 2:
-                syear = temp_rs[0].ayear
-                smonth = temp_rs[0].amonth
-                if smonth == "1":
-                    pre_month = "12"
-                    pre_year = temp_rs[0].ayear - 1
-                else:
-                    pre_year = temp_rs[1].ayear
-                    pre_month = temp_rs[1].amonth
-            else:
-                syear = temp_rs[0].ayear
-                smonth = temp_rs[0].amonth
-                pre_year = temp_rs[0].ayear
-                pre_month = temp_rs[0].amonth
+            syear = temp_rs[0].ayear
+            smonth = temp_rs[0].amonth
         else:
-            # If no records exist, use the current year and month as fallback
             syear = date.today().year
-            smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
+            smonth = str(date.today().month).zfill(2)
 
     else:
         # If syear and smonth are provided, ensure proper formatting
         syear = str(syear)
         smonth = str(smonth)
-        if smonth == "1":
-            pre_month = "12"
-            pre_year = temp_rs[0].ayear - 1
-        else:
-            pre_year = temp_rs[0].ayear
-            pre_month = temp_rs[0].amonth
+        # if smonth == "1":
+        #     pre_month = "12"
+        #     pre_year = temp_rs[0].ayear - 1
+        # else:
+        #     pre_year = temp_rs[0].ayear
+        #     pre_month = temp_rs[0].amonth
 
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, provider=user)
@@ -778,16 +783,22 @@ def index(request):
     )
 
     # 월단위 버튼 만들기
+    # buttons_year_month = (
+    #     UploadHistory.objects.filter(is_deleted=False)
+    #     .values("ayear", "amonth")
+    #     .distinct()
+    #     .order_by("-ayear", "-amonth")
+    # )
+    # buttons_year_month = sorted(
+    #     buttons_year_month,
+    #     key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+    #     reverse=True,
+    # )
     buttons_year_month = (
-        UploadHistory.objects.filter(is_deleted=False)
+        MagamMaster.objects.filter(is_opened=True)
         .values("ayear", "amonth")
         .distinct()
-        .order_by("-ayear", "-amonth")
-    )
-    buttons_year_month = sorted(
-        buttons_year_month,
-        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
-        reverse=True,
+        .order_by("-adate")
     )
     # 그래프용 데이터
     rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth, provider=user)
@@ -1020,16 +1031,22 @@ def user_logout(request):
 def stat(request):
     user = request.user
 
+    # buttons_year_month = (
+    #     UploadHistory.objects.filter(is_deleted=False)
+    #     .values("ayear", "amonth")
+    #     .distinct()
+    #     .order_by("-ayear", "-amonth")
+    # )
+    # buttons_year_month = sorted(
+    #     buttons_year_month,
+    #     key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+    #     reverse=True,
+    # )
     buttons_year_month = (
-        UploadHistory.objects.filter(is_deleted=False)
+        MagamMaster.objects.filter(is_opened=True)
         .values("ayear", "amonth")
         .distinct()
-        .order_by("-ayear", "-amonth")
-    )
-    buttons_year_month = sorted(
-        buttons_year_month,
-        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
-        reverse=True,
+        .order_by("-adate")
     )
 
     context = {

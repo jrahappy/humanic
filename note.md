@@ -187,10 +187,11 @@ ht-get="{% url 'report:report_period_month_radiologist' ayear amonth rpm.provide
         - Company 입력/수정 부분이 더 보강되어야 함. 
         - Comments, Trackings, 영업단계별 진행 상태에 대한 정보를 정의해야 함.
         
-        
     
 # 11/9/204 
     - 의사별(사용자) 업무시간, 휴일 등록 기능 완료
+
+    
 # 11/10/2024
     - 리퍼체크 리스트 검토
     - 예
