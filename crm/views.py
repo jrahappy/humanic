@@ -8,7 +8,7 @@ from customer.models import Company, CustomerLog
 from collab.models import Refers, ReferFile
 from collab.forms import ReportForm, ReferChangeStatus, ReferFileForm
 from collab.views import create_history
-from .filters import RefersFilter
+from .filters import RefersFilter, LogsFilter
 import datetime
 import json
 import html
@@ -492,19 +492,24 @@ def index(request):
         .order_by("-created_at")[:20]
     )
     chs = Chance.objects.all().order_by("-created_at")[:20]
+
     c_logs = (
         CustomerLog.objects.filter(
-            created_at__gte=datetime.date.today() - datetime.timedelta(days=2),
+            # created_at__gte=datetime.date.today() - datetime.timedelta(days=2),
             deleted_at=None,
         )
         .prefetch_related("company", "updated_by")
         .order_by("-created_at")
     )
 
+    log_filter = LogsFilter(request.GET, queryset=c_logs)
+    c_logs = log_filter.qs[:50]
+
     context = {
         "opps": opps,
         "chs": chs,
         "c_logs": c_logs,
+        "filter": log_filter,
     }
 
     return render(request, "crm/index.html", context)

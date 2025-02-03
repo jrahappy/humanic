@@ -27,21 +27,25 @@
                     <button type="submit" class="btn btn-primary btn-sm w-24">Upload</button>
                     <button type="button" class="btn btn-sm" onclick="base_modal.close()">Close</button>
                 </div>
-            </form>
-            <div id="progress-container" class="h-24 overflow-hidden">
-                <progress 
+                <div id="progress-container" class="h-24 overflow-hidden">
+                    <progress 
                     id='progress' 
                     class="progress progress-primary w-full mb-1" 
                     value="0" 
                     max="100"
-                    
-                ></progress>
-            </div>
-            <div id="upload-status"></div>
+                    ></progress>
+                </div>
+                <div id="upload-status"></div>
+            </form>
         </div>
     </div>
     <script>
-        
+   
+        htmx.on('#refer_file_upload_form', 'htmx:xhr:progress', function(evt) {
+            htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+        });
+       
+         /* 
         htmx.on('#refer_file_upload_form', 'htmx:xhr:progress', function(evt) {
             var progressElement = document.getElementById('progress');
             if (evt.lengthComputable) {
@@ -63,7 +67,7 @@
             }
         });
         
-        /* 
+       
         document.getElementById('refer_file_box').addEventListener('htmx:beforeSwap', function(event) {
             if (event.detail.elt.id === 'refer_file_box') {
                 // Check if the form submission was successful
@@ -81,6 +85,6 @@
                 }
             }
         });
-        */$
+        */
     </script>
 </section>

@@ -1,11 +1,12 @@
 {% load custom_filters %}
+{% load widget_tweaks %}
 {% load humanize %}
 
 <div class="grid grid-cols-12 grid-rows-[min-content] gap-y-6 lg:gap-x-6 lg:gap-y-6">
   <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-6">
       <div class="card-body grow-0 flex flex-row justify-between">
         <h2 class="card-title">
-          <a class="link-hover link">병원관련 이슈관리</a>
+          <a class="link-hover link">이슈관리</a>
         </h2>
         <div>
          
@@ -62,16 +63,16 @@
   <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-6">
     <div class="card-body grow-0">
       <h2 class="card-title">
-        <a class="link-hover link">최근 소통들</a>
+        <a class="link-hover link">최근 소통들(50개까지)</a>
       </h2>
     </div>
-    <div class="overflow-x-auto px-4">
-   
-        <table class="table table-zebra w-full">
-          {% for rs in c_logs %}
-          <tr>
-            <td>
-              <p><a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a></p>
+    <div class="grid grid-cols-12 gap-4 overflow-x-auto px-2">
+      <div class="col-span-8 px-2">
+        {% for rs in c_logs %}
+          <div class="card card-compact bg-base-100 shadow-xl mb-4">
+            <div class="card-body">
+              <h3 class="font-semibold"><a href="{% url 'customer:detail' rs.company.id %}" class="link">{{ rs.company }}</a></h3>
+              
               {% if rs.level == 'INFO' %}
                 <span class="badge badge-info mt-1">{{ rs.level }}</span>
               {% elif rs.level == 'WARNING' %}
@@ -79,16 +80,57 @@
               {% else %}
                 <span class="badge badge-error mt-1">{{ rs.level }}</span>
               {% endif %}
-            </td>
-            <td><p class="text-start">{{ rs.log|truncatechars:30 }}</p></td>
-            <td><p class="text-start">{{ rs.updated_by }}</p>
-              <p class="text-end">{{ rs.created_at|naturaltime }}</p>
-            </td>
-          </tr>
-          {% endfor %}
+     
+              <p class="text-start">{{ rs.log|truncatechars:100 }}</p>
+              <div class="flex flex-row justify-between mt-2">
+                <span><i>{{ rs.updated_by }}</i></span>
+                <span>{{ rs.created_at}}</span>
+              </div>
+            </div>
          
-        </table>
-       
+            </div>
+        {% endfor %}
+         
+       </div>
+       <div class="col-span-4">
+        <div class="overflow-y-auto h-92 shadow-lg" style="height:548px;">
+          <form action="{% url 'crm:index' %}" method="GET" id="filter-form">
+          {% csrf_token %}
+          <div class="flex flex-col gap-2 h-92">
+              <div>
+                  <label class="label">
+                      <span class="label-text">작성자</span>
+                  </label>
+                  {% render_field filter.form.updated_by__first_name__icontains class="input input-sm input-bordered py-0" %}
+              </div>
+              <div class="mb-2">
+                  <label class="label">
+                      <span class="label-text" for="id_company__business_name__icontains">고객명</span>
+                  </label>
+                  
+                  {% render_field filter.form.company__business_name__icontains class="input input-sm input-bordered py-0" %}
+              </div>
+              <div class="mb-2">
+                  <label class="label">
+                      <span class="label-text" >날짜</span>
+                  </label>
+                  <fieldset>
+                      {% render_field filter.form.created_at class="input input-sm input-bordered py-0" %}
+                  </fieldset>
+              </div>
+             
+              <div class="divide-y divide-gray-500"></div>
+                  
+              <div class="mb-2 flex flex-row gap-2">
+                  <button type="submit" class="btn btn-primary btn-sm w-24">Filter</button>
+                  <button type="button" class="btn btn-secondary btn-sm w-24"
+                      onclick="window.location.href='{% url 'crm:index' %}'"
+                  >Reset</button>
+              </div>
+          </div>
+          </form>
+      </div>
+       </div> 
     </div>
   </section>
 </div>
