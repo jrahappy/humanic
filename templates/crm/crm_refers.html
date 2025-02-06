@@ -41,15 +41,15 @@
                 </div>
                 <div class="join">
                     {% if page_obj.has_previous %}
-                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page=1" class="join-item btn">First</a>
-                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page={{ page_obj.previous_page_number }}" class="join-item btn">Previous</a>
+                        <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page=1" class="join-item btn">&laquo; First</a>
+                        <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"  class="join-item btn">Previous</a>
                     {% endif %}
                     <span class="join-item btn">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     </span>
                     {% if page_obj.has_next %}
-                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page={{ page_obj.next_page_number }}" class="join-item btn">Next</a>
-                        <a href="?q={{ request.GET.q }}&tag_slug={{ request.GET.tag_slug }}&page={{ page_obj.paginator.num_pages }}" class="join-item btn">Last</a>
+                        <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="join-item btn">Next</a>
+                        <a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}" class="join-item btn">Last &raquo;</a>
                     {% endif %}
                 </div>
             </div>

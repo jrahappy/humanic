@@ -153,7 +153,7 @@ def collab(request):
     refers_filter = RefersFilter(request.GET, queryset=refers)
     refers = refers_filter.qs
 
-    paginator = Paginator(refers, 15)  # Show 10 refers per page.
+    paginator = Paginator(refers, 25)  # Show 10 refers per page.
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {"refers": refers, "page_obj": page_obj, "filter": refers_filter}

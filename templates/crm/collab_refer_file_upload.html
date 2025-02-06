@@ -27,7 +27,7 @@
                     <button type="submit" class="btn btn-primary btn-sm w-24">Upload</button>
                     <button type="button" class="btn btn-sm" onclick="base_modal.close()">Close</button>
                 </div>
-                <div id="progress-container" class="h-24 overflow-hidden">
+                <div id="progress-container" class="h-12 mt-4 overflow-hidden">
                     <progress 
                     id='progress' 
                     class="progress progress-primary w-full mb-1" 
@@ -35,56 +35,28 @@
                     max="100"
                     ></progress>
                 </div>
-                <div id="upload-status"></div>
+                <div id="upload-status">0 files uploaded</div>
             </form>
         </div>
     </div>
     <script>
    
+        document.getElementById('file').addEventListener('change', function() {
+            const fileInput = document.getElementById('file');
+            const maxFiles = 50;
+            const numFiles = fileInput.files.length;
+
+            if (numFiles > maxFiles) {
+                alert(`You have selected ${numFiles} files. The maximum allowed is ${maxFiles}.`);
+                fileInput.value = ''; // Clear the input
+            }
+        });
+
         htmx.on('#refer_file_upload_form', 'htmx:xhr:progress', function(evt) {
             htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+            htmx.find('#upload-status').innerText = Math.round(evt.detail.loaded/evt.detail.total * 100) + '% uploaded';
         });
        
-         /* 
-        htmx.on('#refer_file_upload_form', 'htmx:xhr:progress', function(evt) {
-            var progressElement = document.getElementById('progress');
-            if (evt.lengthComputable) {
-                var percentComplete = (evt.loaded / evt.total) * 100;
-                progressElement.value = percentComplete;
-                document.getElementById('upload-status').innerText = Math.round(percentComplete) + '% uploaded';
-            }
-        });
-    
-        htmx.on('#refer_file_upload_form', 'htmx:afterRequest', function(evt) {
-            var progressElement = document.getElementById('progress');
-            if (evt.detail.successful) {
-                progressElement.value = 100;
-                document.getElementById('upload-status').innerText = 'Upload complete!';
-            } else {
-                progressElement.value = 0;
-                progressElement.classList.add('progress-error');
-                document.getElementById('upload-status').innerText = 'Upload failed! Less than 200 files';
-            }
-        });
         
-       
-        document.getElementById('refer_file_box').addEventListener('htmx:beforeSwap', function(event) {
-            if (event.detail.elt.id === 'refer_file_box') {
-                // Check if the form submission was successful
-                if (event.detail.xhr.status === 204) {
-                    const form = document.querySelector('refer_file_upload_form');
-                    if (form) {
-                        form.reset();  // Reset the form fields
-                    }
-                    // If successful, close the modal
-                    base_modal.close();
-                    console.log("Form submission successful");
-                } else {
-                    // Handle other status codes or failed submission
-                    console.log("Form submission failed or other status");
-                }
-            }
-        });
-        */
     </script>
 </section>

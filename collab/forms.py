@@ -15,12 +15,6 @@ class ReferFileForm(ModelForm):
             "file",
         ]
 
-    def clean_files(self):
-        file = self.cleaned_data.get("file")
-        if len(file) > 200:  # Set your desired limit
-            raise ValidationError("You can upload a maximum of 200 files.")
-        return file
-
 
 class CollabCompanyForm(ModelForm):
 
@@ -65,7 +59,7 @@ class ReferForm(ModelForm):
         initial=datetime.date.today(),
         validators=[
             MinValueValidator(datetime.date(1900, 1, 1)),
-            # MaxValueValidator(datetime.date.today()),
+            MaxValueValidator(datetime.date.today()),
         ],
     )
     patient_birthdate = forms.DateField(
@@ -95,7 +89,6 @@ class ReferForm(ModelForm):
             "required": "Please enter the patient's phone number.",
         },
     )
-
     # opinion1 = forms.CharField(
     #     widget=forms.Textarea(attrs={"cols": 50, "rows": 3}),
     #     required=False,
@@ -114,9 +107,12 @@ class ReportForm(ModelForm):
     class Meta:
         model = Refers
         fields = [
+            # "opinioned_at",
             "opinion2",
             "status",
-            "radio_doctor",
+            "readprice",
+            "url",
+            # Add other fields as necessary
         ]
 
     opinioned_at = forms.DateField(
@@ -135,7 +131,6 @@ class ReportForm(ModelForm):
         ]
         # Apply the filtered choices to the 'status' field
         self.fields["status"].choices = filtered_choices
-        self.fields["radio_doctor"].initial = "휴먼영상"
 
 
 class ReferChangeStatus(ModelForm):

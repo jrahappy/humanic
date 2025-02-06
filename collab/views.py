@@ -360,34 +360,19 @@ def delete_refer_illness(request, refer_illness_id):
 def create_refer_illness(request, refer_id, illness_id):
     refer = Refers.objects.get(id=refer_id)
     illness = IllnessCode.objects.get(id=illness_id)
-    is_exist = ReferIllness.objects.filter(refer=refer, illness=illness)
-    if is_exist:
-        print("Already exists")
-        return HttpResponse(
-            status=204,
-            headers={
-                "HX-Trigger": json.dumps(
-                    {
-                        "IllnessChanged": None,
-                        "showMessage": "Illness already exists",
-                    }
-                )
-            },
-        )
-    else:
-        new_one = ReferIllness.objects.create(refer=refer, illness=illness)
-        print(new_one)
-        return HttpResponse(
-            status=204,
-            headers={
-                "HX-Trigger": json.dumps(
-                    {
-                        "IllnessChanged": None,
-                        "showMessage": "Illness added",
-                    }
-                )
-            },
-        )
+    new_one = ReferIllness.objects.create(refer=refer, illness=illness)
+    print(new_one)
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "IllnessChanged": None,
+                    "showMessage": "Illness added",
+                }
+            )
+        },
+    )
 
 
 def partial_illness_code_search(request, refer_id):
@@ -443,38 +428,22 @@ def delete_simple_diagnosis(request, simple_id):
 def create_simple_diagnosis(request, refer_id, simple_id):
     refer_id = int(refer_id)
     simple_id = int(simple_id)
-    # print(refer_id, simple_id)
-    is_exist = ReferSimpleDiagnosis.objects.filter(refer=refer_id, diagnosis=simple_id)
-    if is_exist:
-        print("Already exists")
-        # messages.error(request, "Already exists")
-        return HttpResponse(
-            status=204,
-            headers={
-                "HX-Trigger": json.dumps(
-                    {
-                        "SimpleDiagnosisChanged": None,
-                        "showMessage": "Simple Diagnosis already exists",
-                    }
-                )
-            },
-        )
-    else:
-        refer = Refers.objects.get(id=refer_id)
-        simple = SimpleDiagnosis.objects.get(id=simple_id)
-        new_one = ReferSimpleDiagnosis.objects.create(refer=refer, diagnosis=simple)
-        print(new_one)
-        return HttpResponse(
-            status=204,
-            headers={
-                "HX-Trigger": json.dumps(
-                    {
-                        "SimpleDiagnosisChanged": None,
-                        "showMessage": "Simple Diagnosis added",
-                    }
-                )
-            },
-        )
+    print(refer_id, simple_id)
+    refer = Refers.objects.get(id=refer_id)
+    simple = SimpleDiagnosis.objects.get(id=simple_id)
+    new_one = ReferSimpleDiagnosis.objects.create(refer=refer, diagnosis=simple)
+    print(new_one)
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "SimpleDiagnosisChanged": None,
+                    "showMessage": "Simple Diagnosis added",
+                }
+            )
+        },
+    )
 
 
 def partial_simple_list(request, refer_id):
