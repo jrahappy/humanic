@@ -1,0 +1,5 @@
+<div class="flex flex-row flex-wrap gap-2 h-92" id="tag_list">
+    {% for tag in tags %}
+    <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral cursor-pointer ">{{ tag.name }} ({{tag.num_times}})</a>
+    {% endfor %}
+</div>

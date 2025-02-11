@@ -124,19 +124,21 @@
     <div class="card-body grow-0">
         <div class="grid grid-cols-1 gap-2">
             <div class="flex flex-row justify-between">
-                <label class="label">
-                    <span class="label-text">Tags</span>
-                </label>
-                <label class="label">
-                    <a class="label-text">Manage</a>
-                </label>
+                <input 
+                    id="tag_search" 
+                    name="q"
+                    type="search" 
+                    class="input input-bordered input-xs rounded-lg" 
+                    placeholder="Search tags" 
+                    hx-get="{% url 'customer:tag_search' %}?q={{ request.GET.q }}"
+                    hx-target="#tag_list"
+                    hx-trigger="keyup changed delay:500ms, search" 
+                    hx-swap="outerHTML"
+                    hx-sync="this:replace"
+                />
             </div>
             <div class="overflow-y-auto h-92" style="height:548px;">
-                <div class="flex flex-row flex-wrap gap-2 h-92">
-                    {% for tag in tags %}
-                    <a href="{% url 'customer:index' %}?tag_slug={{ tag.slug }}" class="badge badge-neutral cursor-pointer ">{{ tag.name }} ({{tag.num_times}})</a>
-                    {% endfor %}
-                </div>
+                {% include 'customer/partial_search_tag.html' %}
             </div>
         </div>
     </div>

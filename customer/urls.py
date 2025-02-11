@@ -67,4 +67,9 @@ urlpatterns = [
         views.tag_delete,
         name="tag_delete",
     ),
+    path(
+        "tag_search/",
+        views.tag_search,
+        name="tag_search",
+    ),
 ]

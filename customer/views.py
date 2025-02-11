@@ -328,7 +328,7 @@ def index(request):
     paginator = Paginator(companies, 15)  # Show 10 companies per page
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    tags = Company.tags.all()
+    # tags = Company.tags.all()
     tags = Company.tags.annotate(num_times=Count("company")).order_by("-num_times")
     context = {
         "page_obj": page_obj,
@@ -347,6 +347,20 @@ def filter_by_tag(request, tag_slug):
     page_obj = paginator.get_page(page_number)
     context = {"page_obj": page_obj, "title": "Customer List", "tag": tag}
     return render(request, "customer/index.html", context)
+
+
+def tag_search(request):
+    if request.method == "GET":
+        q = request.GET["q"].strip()
+        print(q)
+        tags = Company.tags.filter(name__icontains=q)
+        tags = tags.annotate(num_times=Count("company")).order_by("-num_times")
+        # if companies.count() == 1:
+        #     return redirect("customer:detail", companies[0].id)
+        context = {"tags": tags, "q": q}
+        return render(request, "customer/partial_search_tag.html", context)
+    else:
+        return render(request, "customer/partial_search_tag.html")
 
 
 def search_company(request):
