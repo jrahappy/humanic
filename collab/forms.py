@@ -50,6 +50,7 @@ class ReferForm(ModelForm):
             "opinion2",
             "opinioned_at",
             "status",
+            # "referred_date",
         ]
 
     referred_date = forms.DateField(

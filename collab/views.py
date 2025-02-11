@@ -652,6 +652,19 @@ def simplecode_import(request):
 def home(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
+
+    # Draft refer를 무조건 하나 만들어둔다. 추가함.
+    draft_exists = Refers.objects.filter(company=company, status="Draft").exists()
+    if not draft_exists:
+        # referred_date = datetime.date.today()
+        Refers.objects.create(
+            company=company,
+            status="Draft",
+            # referred_date=referred_date,
+            # patient_birthdate=patient_birthdate,
+        )
+        print("Draft refer created")
+
     q = request.GET.get("q")
     if q:
         refers = (
@@ -786,6 +799,7 @@ def refer_create(request):
     # 오늘 날짜로 업데이트를 해준다.
     draft_refer.referred_date = datetime.date.today()
     draft_refer.save()
+
     # print(draft_refer.id)
     if request.method == "POST":
         form = ReferForm(request.POST, instance=draft_refer)
