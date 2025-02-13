@@ -32,6 +32,7 @@ import csv
 import io
 import datetime
 from django.contrib.auth import logout
+from django.utils import timezone
 
 
 @login_required
@@ -360,8 +361,13 @@ def delete_refer_illness(request, refer_illness_id):
 def create_refer_illness(request, refer_id, illness_id):
     refer = Refers.objects.get(id=refer_id)
     illness = IllnessCode.objects.get(id=illness_id)
-    new_one = ReferIllness.objects.create(refer=refer, illness=illness)
-    print(new_one)
+    if ReferIllness.objects.filter(refer=refer, illness=illness).exists():
+        # message = "Already exists"
+        print("Already exists")
+        # messages.error(request, "Already exists")
+    else:
+        new_one = ReferIllness.objects.create(refer=refer, illness=illness)
+    # print(new_one)
     return HttpResponse(
         status=204,
         headers={
@@ -428,11 +434,16 @@ def delete_simple_diagnosis(request, simple_id):
 def create_simple_diagnosis(request, refer_id, simple_id):
     refer_id = int(refer_id)
     simple_id = int(simple_id)
-    print(refer_id, simple_id)
+    # print(refer_id, simple_id)
     refer = Refers.objects.get(id=refer_id)
     simple = SimpleDiagnosis.objects.get(id=simple_id)
-    new_one = ReferSimpleDiagnosis.objects.create(refer=refer, diagnosis=simple)
-    print(new_one)
+    if ReferSimpleDiagnosis.objects.filter(refer=refer, diagnosis=simple).exists():
+        # message = "Already exists"
+        print("Already exists")
+        # messages.error(request, "Already exists")
+    else:
+        new_one = ReferSimpleDiagnosis.objects.create(refer=refer, diagnosis=simple)
+    # print(new_one)
     return HttpResponse(
         status=204,
         headers={
@@ -447,10 +458,10 @@ def create_simple_diagnosis(request, refer_id, simple_id):
 
 
 def partial_simple_list(request, refer_id):
-    print(refer_id)
+    # print(refer_id)
     refer = Refers.objects.get(id=refer_id)
     simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
-    print(simples.count())
+    # print(simples.count())
     context = {"simples": simples, "draft_refer": refer}
     return render(request, "collab/partial_simple_list.html", context)
 
@@ -513,12 +524,12 @@ def partial_simple_diagnosis_list(request, refer_id):
             f"<div class='flex flex-row justify-end items-center gap-2'>"
             f"<a href='#' class='btn btn-xs btn-primary' "
             f"hx-target='#simple_diagonosis_list_box' "
-            f"hx-get='/collabcreate_simple_diagnosis/{refer.id}/{sim.id}'>검사추가</a>"
+            f"hx-get='/collab/create_simple_diagnosis/{refer.id}/{sim.id}'>검사추가</a>"
         )
         temp_header += (
             f"<a href='#' class='btn btn-xs btn-secondary' "
             f"hx-target='#my_simple_list'"
-            f"hx-get='/collabadd_my_simple_code/{refer.id}/{sim.id}'>+</a>"
+            f"hx-get='/collab/add_my_simple_code/{refer.id}/{sim.id}'>+</a>"
         )
 
         temp_header += "</div></div>"
@@ -797,7 +808,9 @@ def refer_create(request):
     company = Company.objects.filter(customuser=user).first()
     draft_refer = Refers.objects.filter(company=company, status="Draft").first()
     # 오늘 날짜로 업데이트를 해준다.
-    draft_refer.referred_date = datetime.date.today()
+    # draft_refer.referred_date = datetime.date.today()
+    # draft_refer.referred_date = datetime.datetime.now(tz=datetime.UTC).date()
+    draft_refer.referred_date = timezone.localtime(timezone.now()).date()
     draft_refer.save()
 
     # print(draft_refer.id)
@@ -805,12 +818,12 @@ def refer_create(request):
         form = ReferForm(request.POST, instance=draft_refer)
         simples = ReferSimpleDiagnosis.objects.filter(refer=draft_refer)
         illnesses = ReferIllness.objects.filter(refer=draft_refer)
-
-        print("valid form?")
+        # print("valid form?")
         if form.is_valid():
             new_status = "Requested"
             form.save(commit=False)
             form.instance.company = company
+            # form.instance.refer_doctor = company.president_name
             form.instance.status = new_status
             form.save()
             create_history(request, draft_refer.id, new_status, "Refer created")

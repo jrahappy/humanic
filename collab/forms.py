@@ -41,25 +41,35 @@ class CollabCompanyForm(ModelForm):
 class ReferForm(ModelForm):
     class Meta:
         model = Refers
-        fields = "__all__"
-        exclude = [
-            "company",
-            "created_at",
-            "updated_at",
-            "provider",
-            "opinion2",
-            "opinioned_at",
-            "status",
-            # "referred_date",
+        # fields = "__all__"
+        # exclude = [
+        #     "company",
+        #     "created_at",
+        #     "updated_at",
+        #     "provider",
+        #     "opinion2",
+        #     "opinioned_at",
+        #     "status",
+        #     # "referred_date",
+        # ]
+        fields = [
+            "refer_doctor",
+            "referred_date",
+            "patient_name",
+            "patient_gender",
+            "patient_birthdate",
+            "patient_phone",
+            "opinion1",
         ]
 
     referred_date = forms.DateField(
         input_formats=["%Y-%m-%d"],
         widget=forms.DateInput(attrs={"type": "date"}),
         required=True,
-        initial=datetime.date.today(),
+        # initial=datetime.date.today(),
         validators=[
             MinValueValidator(datetime.date(1900, 1, 1)),
+            # MaxValueValidator(datetime.date.today() + datetime.timedelta(days=1)),
             # MaxValueValidator(datetime.date.today()),
         ],
     )

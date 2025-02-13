@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "crm",
     "collab",
     "task",
+    "web",
 ]
 
 MIDDLEWARE = [

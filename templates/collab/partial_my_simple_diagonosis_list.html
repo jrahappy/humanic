@@ -8,7 +8,7 @@
         <div class="flex flex-row gap-2 justify-between w-full mb-2 overflow-y-auto border-b border-gray-300 hover:bg-gray-200">
             <p class="text-xs">{{ sim }}</p>
             <a href="#" class="btn btn-primary btn-xs"
-                hx-get="/collabcreate_simple_diagnosis/{{draft_refer.id}}/{{sim.simple_diagnosis.id}}"
+                hx-get="/collab/create_simple_diagnosis/{{draft_refer.id}}/{{sim.simple_diagnosis.id}}"
                 hx-trigger="click"
                 hx-target="#simple_diagonosis_list_box"
                 >

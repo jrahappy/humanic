@@ -27,7 +27,8 @@ urlpatterns = [
     path("cust/", include("cust.urls")),
     path("referdex/", include("referdex.urls")),
     path("crm/", include("crm.urls")),
-    path("collab", include("collab.urls")),
+    path("collab/", include("collab.urls")),
+    path("web/", include("web.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
 ]
 

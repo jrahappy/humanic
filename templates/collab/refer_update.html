@@ -53,14 +53,14 @@
                 </tr>
                 <tr class="align-top border border-gray-500">
                     <td class="w-24 align-top border-e border-gray-500">의뢰병원</td>
-                    <td class="w-64 align-top border-e border-gray-500">{{company.business_name}} </td>
+                    <td class="w-48 align-top border-e border-gray-500">{{company.business_name}} </td>
                     <td class="w-24 align-top border-e border-gray-500">의사명</td>
-                    <td class="">
+                    <td class="w-48">
                         {% render_field form.refer_doctor class="input input-bordered input-sm w-40" %}
                     </td>
                 </tr>
                 <tr class="align-top border border-gray-500">
-                    <td class="align-top border-e border-gray-500">의뢰일</td>
+                    <td class="align-top border-e border-gray-500">의뢰일 *</td>
                     <td class="align-top border-e border-gray-500">
                         {% render_field form.referred_date class="input input-bordered input-sm w-40" type="date" %}
                         <div class="text-red-500 text-sm mt-1">
@@ -70,10 +70,10 @@
                         </div>
                     </td>
                     <td class="align-top border-e border-gray-500">상태</td>
-                    <td>{{ refer.status }}</td>
+                    <td>{{ draft_refer.status }}</td>
                 </tr>
                 <tr class="align-top border border-gray-500">
-                    <td class="align-top border-e border-gray-500">환자명</td>
+                    <td class="align-top border-e border-gray-500">환자명 *</td>
                     <td class="align-top border-e border-gray-500">
                         {% render_field form.patient_name class="input input-bordered input-sm w-40" %}
                         <div class="text-red-500 text-sm mt-1">
@@ -82,7 +82,7 @@
                             {% endfor %}
                         </div>
                     </td>
-                    <td class="align-top border-e border-gray-500">환자성별</td>
+                    <td class="align-top border-e border-gray-500">환자성별 *</td>
                     <td>
                         {% render_field form.patient_gender class="select select-bordered select-sm w-32 py-0" %}
                         <div class="text-red-500 text-sm mt-1">
@@ -102,7 +102,7 @@
                             {% endfor %}
                         </div>
                     </td>
-                    <td class="align-top border-e border-gray-500">연락처</td>
+                    <td class="align-top border-e border-gray-500">연락처 *</td>
                     <td>{% render_field form.patient_phone class="input input-bordered input-sm w-40" %}
                         <div class="text-red-500 text-sm mt-1">
                             {% for error in form.patient_phone.errors %}
@@ -139,12 +139,13 @@
                 </tr>
                 <tr class="align-top border border-gray-500">
                     <td colspan="1" class="align-top border-e border-gray-500">
-                        <div class="font-semibold text-sm">임상소견:</div>
+                        임상소견*
                     </td>
                     <td colspan="3" class="align-top border border-gray-500">{% render_field form.opinion1 class="textarea textarea-bordered w-full" cols=50 rows=3 %}</td>
                 </tr>
                
             </table>
+            <legend class="text-bold text-sm">* 항목은 필수입력 정보입니다.</legend>
             <div class="flex flex-row justify-between gap-2 mt-4">
                 <a href="#"
                     data-delete-url="{% url 'collab:refer_delete' draft_refer.id %}"

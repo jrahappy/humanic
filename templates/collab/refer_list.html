@@ -17,7 +17,9 @@
             {% for rq in status_rq %}
             <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-yellow-100 rounded-lg bg-opacity-90">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
-                    <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                    <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">
+                        {{ rq.patient_name }} ( {{ rq.patient_gender|handle_none}} {{ rq.patient_birthdate|handle_none}})
+                    </span>
                 </a>
                 <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
                 <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
@@ -38,7 +40,10 @@
             {% for rq in status_sch %}
             <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-green-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
-                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                    
+                    <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">
+                        {{ rq.patient_name }} ( {{ rq.patient_gender|handle_none}} {{ rq.patient_birthdate|handle_none}})
+                    </span>
                 </a>
                 <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
                 <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
@@ -64,7 +69,9 @@
             {% for rq in status_in %}
             <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-purple-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
-                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                    <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">
+                        {{ rq.patient_name }} ( {{ rq.patient_gender|handle_none}} {{ rq.patient_birthdate|handle_none}})
+                    </span>
                 </a>
                 <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
                 <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
@@ -89,9 +96,12 @@
             {% for rq in status_cosign %}
             <div class="relative flex flex-col items-start p-4 mt-3 me-1 shadow-lg bg-red-100 rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                 <a href="{% url 'collab:refer_detail' rq.id %}">
-                    <span class="flex items-center h-6 px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">{{ rq.patient_name }} ({{ rq.patient_gender|handle_none}} / {{ rq.patient_birthdate|handle_none}})</span>
+                    <span class="flex items-center px-0 text-sm font-semibold text-gray-700 link hover:text-red-500">
+                        {{ rq.patient_name }} ( {{ rq.patient_gender|handle_none}} {{ rq.patient_birthdate|handle_none}})
+                    </span>
                 </a>
                 <span class="flex items-center h-6 px-1 mt-2 text-xs font-semibold text-gray-700 ">Phone: {{ rq.patient_phone}}</span>
+                
                 <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-500">
                     <div class="flex flex-col gap-1 items-start">
                         <span class="ml-1 leading-none">의뢰일: {{ rq.referred_date|date:'Y-m-d'}}</span>
