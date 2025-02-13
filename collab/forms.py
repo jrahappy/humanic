@@ -60,7 +60,7 @@ class ReferForm(ModelForm):
         initial=datetime.date.today(),
         validators=[
             MinValueValidator(datetime.date(1900, 1, 1)),
-            MaxValueValidator(datetime.date.today()),
+            # MaxValueValidator(datetime.date.today()),
         ],
     )
     patient_birthdate = forms.DateField(
