@@ -116,7 +116,7 @@ def index(request):
         # )
         rp_total = ReportMasterStat.objects.filter(
             ayear=syear, amonth=smonth
-        ).aggregate(report_count=Count("total_count"))
+        ).aggregate(report_count=Sum("total_count"))
         rp_total_value = rp_total["report_count"] or 0
 
         # 응급의뢰수 구하기 (Get the count of emergency reports)
@@ -141,7 +141,7 @@ def index(request):
 
         # 병원별 통계
         rs_cm = (
-            rs.values("company__business_name")
+            rs.values("company__business_name", "company")
             .annotate(
                 company_count=Sum("total_count"),  # Summing total_count per modality
                 company_total=Sum("total_revenue"),
@@ -150,7 +150,7 @@ def index(request):
         )
         # 판독의별 통계
         rs_dr = (
-            rs.values("provider__profile__real_name")
+            rs.values("provider__profile__real_name", "provider")
             .annotate(
                 provider_count=Sum("total_count"),  # Summing total_count per modality
                 provider_total=Sum("total_revenue"),
@@ -262,7 +262,7 @@ def partial_briefing(request):
         # 의뢰수 구하기
         rp_total = ReportMasterStat.objects.filter(
             ayear=syear, amonth=smonth
-        ).aggregate(report_count=Count("total_count"))
+        ).aggregate(report_count=Sum("total_count"))
         rp_total_value = rp_total["report_count"] or 0
 
         # 응급의뢰수 구하기 (Get the count of emergency reports)
@@ -287,16 +287,18 @@ def partial_briefing(request):
 
         # 병원별 통계
         rs_cm = (
-            rs.values("company__business_name")
+            rs.values("company__business_name", "company")
             .annotate(
                 company_count=Sum("total_count"),  # Summing total_count per modality
                 company_total=Sum("total_revenue"),
             )
             .order_by("-company_total")[0:10]
         )
+
+        # print(rs_cm)
         # 판독의별 통계
         rs_dr = (
-            rs.values("provider__profile__real_name")
+            rs.values("provider__profile__real_name", "provider")
             .annotate(
                 provider_count=Sum("total_count"),  # Summing total_count per modality
                 provider_total=Sum("total_revenue"),

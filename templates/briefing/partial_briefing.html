@@ -41,7 +41,11 @@
           <tbody>
             {% for rs in rs_cm %}
             <tr>
-              <td>{{ rs.company__business_name }}</td>
+              <td>
+                <a href="{% url 'customer:detail' rs.company %}" class="link">
+                    {{ rs.company__business_name }}
+                </a>
+              </td>
               <td><p class="text-end">{{ rs.company_count|floatformat:0|intcomma }}</p></td>
               <td><p class="text-end">{{ rs.company_total|floatformat:0|intcomma }}</p></td>
               
@@ -66,7 +70,11 @@
           <tbody>
             {% for rs in rs_dr %}
               <tr>
-                <td>{{ rs.provider__profile__real_name }}</td>
+                <td>
+                  <a href="{% url 'provider:view_provider' rs.provider %}" class="link">
+                    {{ rs.provider__profile__real_name }}
+                  </a>    
+                </td>
                 <td><p class="text-end">{{ rs.provider_count|floatformat:0|intcomma }}</p></td>
                 <td><p class="text-end">{{ rs.provider_total|floatformat:0|intcomma }}</p></td>
                 
