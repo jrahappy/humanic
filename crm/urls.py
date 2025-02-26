@@ -35,6 +35,11 @@ urlpatterns = [
         "collab_schedule/<int:refer_id>/", views.collab_schedule, name="collab_schedule"
     ),
     path(
+        "collab_reschedule/<int:refer_id>/",
+        views.collab_reschedule,
+        name="collab_reschedule",
+    ),
+    path(
         "collab_schedule_one/<int:refer_id>/",
         views.collab_schedule_one,
         name="collab_schedule_one",

@@ -187,7 +187,9 @@
                     >
                     진료회송서 작성
                     </a>
-                    <a href="{% url 'crm:collab_report_one' refer.id %}" class="btn btn-success btn-sm text-white">간편 진료회송서 처리</a>
+                    <a href="{% url 'crm:collab_report_one' refer.id %}" class="btn btn-success btn-sm text-white">
+                        간편 진료회송서 처리
+                    </a>
                
 
                 {% elif refer.status == 'Interpreted' %}
@@ -196,6 +198,9 @@
                     </div>
                     <div class="flex justify-end gap-2 mt-4">
                         <a href="{% url 'crm:collab_kanban' %}" class="btn btn-primary btn-sm text-white ">대시보드로 돌아가기</a>
+                        <a href="{% url 'crm:collab_reschedule' refer.id %}" class="btn btn-error btn-sm text-white">
+                            재 예약 처리
+                        </a>
                         <a 
                             class="btn btn-secondary btn-sm" 
                             onclick="base_modal.showModal()"
@@ -206,6 +211,7 @@
                         >
                         진료회송서 수정
                         </a>
+
                   
 
                 {% elif refer.status == 'Cancelled' %}

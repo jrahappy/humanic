@@ -242,6 +242,16 @@ def dicom_viewer(request, refer_id):
     return render(request, "collab/dicom_viewer.html", context)
 
 
+def collab_reschedule(request, refer_id):
+    refer = get_object_or_404(Refers, id=refer_id)
+    refer.status = "Scheduled"
+    # refer.opinioned_at = datetime.datetime.now()
+    # refer.updated_at = datetime.datetime.now()
+    refer.save()
+    create_history(request, refer.id, "Scheduled", "재 예약처리")
+    return redirect("crm:collab_kanban")
+
+
 def collab_schedule_one(request, refer_id):
     refer = get_object_or_404(Refers, id=refer_id)
     refer.status = "Scheduled"
