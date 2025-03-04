@@ -889,6 +889,22 @@ def refer_print(request, refer_id):
     return render(request, "collab/refer_print.html", context)
 
 
+def return_report_print(request, refer_id):
+    refer = Refers.objects.get(id=refer_id)
+    company = refer.company
+    # history = ReferHistory.objects.filter(refer=refer)
+    simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
+    illnesses = ReferIllness.objects.filter(refer=refer)
+    context = {
+        "refer": refer,
+        "simples": simples,
+        "illnesses": illnesses,
+        "company": company,
+        # "history": history,
+    }
+    return render(request, "collab/return_report_print.html", context)
+
+
 def refer_update(request, refer_id):
     draft_refer = Refers.objects.get(id=refer_id)
     company = draft_refer.company

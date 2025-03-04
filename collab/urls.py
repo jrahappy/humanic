@@ -17,6 +17,11 @@ urlpatterns = [
     path("refer_create/", views.refer_create, name="refer_create"),
     path("refer_detail/<int:refer_id>/", views.refer_detail, name="refer_detail"),
     path("refer_print/<int:refer_id>/", views.refer_print, name="refer_print"),
+    path(
+        "return_report_print/<int:refer_id>/",
+        views.return_report_print,
+        name="return_report_print",
+    ),
     path("refer_update/<int:refer_id>/", views.refer_update, name="refer_update"),
     path("refer_delete/<int:refer_id>/", views.refer_delete, name="refer_delete"),
     path(

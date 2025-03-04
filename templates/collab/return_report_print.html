@@ -1,0 +1,169 @@
+
+{% load static tailwind_tags %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Gothic+A1:100,400,700" rel="stylesheet">
+
+    {% tailwind_css %}
+    <title></title>
+    
+    <!-- Styling for Print -->
+    <style>
+        /* General Reset */
+        body {
+            font-size: 10px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Screen-specific styles */
+        @media screen {
+            .print-button {
+                display: block;
+                margin: 10px 0;
+                text-align: center;
+            }
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .print-button {
+                display: none; /* Hide buttons or navigation during print */
+            }
+
+            /* Ensure full-page usage for print */
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            thead {
+                display: table-header-group; /* Ensure table header repeats on each page */
+            }
+
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .no-print {
+                display: none; /* Hide any elements not meant for print */
+            }
+        }
+    </style>
+    <script>
+        // Automatically trigger print dialog when the page loads
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</head>
+<body>
+    <!-- Print Button (Visible on Screen Only) -->
+    <div class="print-button " style="text-align:right;width:800px;">
+        <button onclick="window.print()">Print Report</button>
+    </div>
+    <div id="report" style="text-align:center; width:800px;">
+        <table class="table min-w-full divide-y devide-x divide-gray-900">
+            <tr class="align-top border border-gray-500">
+                <td colspan="4">
+                    <div class="text-bold text-2xl text-center mt-1 mb-1">진  료  회  송  서</div>
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="w-24 align-top border-e border-gray-500">생년월일</td>
+                <td class="w-48 align-top border-e border-gray-500">{{ refer.patient_birthdate }}</td>
+                <td class="w-24 align-top border-e border-gray-500">연락처</td>
+                <td class="w-48">{{ refer.patient_phone }}</td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td class="align-top border-e border-gray-500">의뢰일</td>
+                <td class="align-top border-e border-gray-500">{{ refer.referred_date }}</td>
+                <td class="align-top border-e border-gray-500">상태</td>
+                <td>{{ refer.status }}</td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td colspan="1" class="align-top border-e border-gray-500">
+                    <div class="text-sm">병명:</div>
+                </td>
+                <td colspan="3" class="align-top border border-gray-500 p-0">
+                    <div class="bg-base-50 flex flex-row border-b border-gray-500 px-4 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                        </svg>
+                        <span class="me-4">임상적추정</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        <span>최종판단</span>
+                    </div>
+                    <div class="h-32 max-h-48 bg-base-50 px-4 py-2">
+                        {% for ill in illnesses %}
+                            <div class="">{{ill.illness}}</div>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td colspan="1" class="align-top border-e border-gray-500">
+                    <div class="font-semibold text-sm">향후치료<br>의견:</div>
+                </td>
+                <td colspan="3" class="align-top border border-gray-500">
+                    <div class="min-h-32 bg-base-50">위와 같이 의견을 보내드립니다.<br>
+                        <div class="min-h-32 text-sm">
+                            {{ refer.opinion2|linebreaks }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="align-top border border-gray-500">
+                <td colspan="4" class="align-top border-e border-gray-500 p-8">
+                    <div class="font-semibold text-lg mb-4">위 와 같 이  소견함</div>
+                    <div class="flex flex-row font-semibold text-sm">
+                        <div class="w-24">발행일:</div>
+                        <div>{{ refer.opinioned_at|date:'Y-m-d'}}</div>
+                    </div>
+
+                    <div class="flex flex-row font-semibold text-sm">
+                        <div class="w-24">의사명:</div>
+                        <div>
+                            {% if refer.provider is None %}
+                                휴먼영상의학센터
+                            {% else %}
+                                휴먼영상의학센터 {{refer.provider }}
+                            {% endif %}
+                             </div>
+                    </div>
+                    <div class="flex flex-row font-semibold text-sm">
+                        <div class="w-24">주소:</div>
+                        <div>서울시 서초구 강남대로 621 K-Tower 3층</div>
+                    </div>
+                    <div class="flex flex-row font-semibold text-sm">
+                        <div class="w-24">전화번호:</div>
+                        <div>02-3014-3601</div>
+                    </div>
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+</body>
+</html>

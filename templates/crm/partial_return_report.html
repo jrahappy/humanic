@@ -85,11 +85,11 @@
                     <div class="w-24">의사명:</div>
                     <div>
                         {% if refer.provider is None %}
-                            {{ refer.radio_doctor }}
+                            휴먼영상의학센터
                         {% else %}
-                            {{ refer.provider }}
+                            휴먼영상의학센터 {{ refer.radio_doctor }}
                         {% endif %}
-                         </div>
+                    </div>
                 </div>
                 <div class="flex flex-row font-semibold text-sm">
                     <div class="w-24">주소:</div>

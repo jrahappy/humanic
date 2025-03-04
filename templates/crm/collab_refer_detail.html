@@ -211,7 +211,9 @@
                         >
                         진료회송서 수정
                         </a>
-
+                        <a href="{% url 'collab:return_report_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">
+                            진료회송서 인쇄
+                        </a>
                   
 
                 {% elif refer.status == 'Cancelled' %}
@@ -251,7 +253,9 @@
                     
                     
                 {% endif %}
-                    <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
+                    <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">
+                        검사의뢰서 인쇄
+                    </a>
                     <script>
                         function openPopup(url) {
                             // Define the window features
