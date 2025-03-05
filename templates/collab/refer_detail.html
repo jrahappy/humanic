@@ -78,7 +78,7 @@
                                 <div class="">{{ill.illness}}</div>
                             {% endfor %}
                         </td>
-                        <td class="align-top border-e border-gray-500">외뢰검사</td>
+                        <td class="align-top border-e border-gray-500">의뢰검사</td>
                         <td class="align-top">
                             {% for sim in simples %}
                                 <div class="">{{sim.diagnosis}}</div>
@@ -105,7 +105,9 @@
                     <div id="printSection" style="display:none"></div>
                     <div class="flex justify-end gap-2 mt-4">
                         {% if refer.status == 'Interpreted' %}
-
+                            <a href="{% url 'collab:return_report_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">
+                                진료회송서 인쇄
+                            </a>
                             <a  href="#" 
                                 class="btn btn-primary btn-sm"
                                 data-confirm-url="{% url 'collab:refer_completed' refer.id %}"
@@ -130,7 +132,9 @@
                             </script>
 
                         {% else %}
-
+                            <a href="{% url 'collab:return_report_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">
+                                진료회송서 인쇄
+                            </a>
                             <a  href="#" 
                                 class="btn btn-primary btn-sm"
                                 data-archive-url="{% url 'collab:refer_archive' refer.id %}"
@@ -155,7 +159,7 @@
                             </script>
                             
                         {% endif %}
-
+                       
                         <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
 
                         
@@ -168,21 +172,19 @@
                     {% endif %}
                     <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
                     <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
-
-                    <script>
-                        function openPopup(url) {
-                            // Define the window features
-                            var windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes';
-                        
-                            // Open the new window with the specified URL and features
-                            window.open(url, '_blank', windowFeatures);
-                        }
-                    </script>
                 </div>
                                     
                 {% endif %}
 
-                
+                <script>
+                    function openPopup(url) {
+                        // Define the window features
+                        var windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes';
+                    
+                        // Open the new window with the specified URL and features
+                        window.open(url, '_blank', windowFeatures);
+                    }
+                </script>
                 
             </div>  
         </div>
