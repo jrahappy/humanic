@@ -7,10 +7,10 @@ from django.utils import timezone
 def get_year_calendar(year):
     months = []
     today = timezone.now().date()
+
     current_month = int(today.month)
-    # 향후 3개월 달력만 보여주기
-    current_12_months = range(current_month, current_month + 6)
-    # print(current_12_months)
+    current_12_months = range(1, 13)  # Full year (January to December)
+
     flag_year = False
     for month in current_12_months:
         if month > 12:
@@ -20,11 +20,13 @@ def get_year_calendar(year):
                 flag_year = True
 
         month_days = []
-        _, num_days = calendar.monthrange(year, month)
-        start_day = calendar.monthrange(year, month)[0]
+        start_day, num_days = calendar.monthrange(year, month)
+
+        # Fix: Adjust start_day (Move Monday=0 → Sunday=0)
+        adjusted_start_day = (start_day + 1) % 7  # Now Sunday is 0
 
         # Create padding for the start of the month
-        start_day_padding = [""] * start_day
+        start_day_padding = [""] * adjusted_start_day
 
         for day in range(1, num_days + 1):
             date = datetime(year, month, day).date()
@@ -48,12 +50,13 @@ def get_month_calendar(year, month):
     # Initialize the list for the current month
     amonth = []
 
-    # Get the number of days and the starting weekday for the month
-    _, num_days = calendar.monthrange(year, month)
-    start_day = calendar.monthrange(year, month)[0]
+    start_day, num_days = calendar.monthrange(year, month)
+
+    # Fix: Adjust start_day (Move Monday=0 → Sunday=0)
+    adjusted_start_day = (start_day + 1) % 7  # Now Sunday is 0
 
     # Create padding for the start of the month
-    start_day_padding = [""] * start_day
+    start_day_padding = [""] * adjusted_start_day
 
     # Collect day information
     month_days = []
