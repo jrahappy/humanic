@@ -49,8 +49,8 @@
                 
             </li>
 
-            {% if user.username == "HIC0157" %}
-            <li>
+           
+            <!-- <li>
                 <a 
                     x-data="{ isActive: false }" :class="{ 'active': isActive }" @click="isActive = true"
                     hx-get="{% url 'blog:home' %}" 
@@ -63,7 +63,7 @@
                 data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
                 class="h-5 w-5"></svg>
                 증명 및 인증서 관리</a>
-            </li>
+            </li> -->
             <li>
                 <a 
                     href="{% url 'dashboard:workhours' %}"
@@ -73,8 +73,9 @@
                 ><svg
                 data-src="https://unpkg.com/heroicons/20/solid/credit-card.svg"
                 class="h-5 w-5"></svg>
-                Working Hours</a>
+                근무시간/휴무일</a>
             </li>
-            {% endif %}
+            <!-- {% if user.username == "HIC0157" %} -->
+            <!-- {% endif %} -->
         </ul>
    

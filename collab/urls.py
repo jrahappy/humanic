@@ -120,4 +120,9 @@ urlpatterns = [
     path(
         "password/change/done/", views.password_change_done, name="password_change_done"
     ),
+    path("working_setting/", views.working_setting, name="working_setting"),
+    path("workhour_create/<int:id>/", views.workhour_create, name="workhour_create"),
+    path("workhour_remove/<int:id>/", views.workhour_remove, name="workhour_remove"),
+    path("holiday_create/", views.holiday_create, name="holiday_create"),
+    path("holiday_remove/", views.holiday_remove, name="holiday_remove"),
 ]

@@ -32,25 +32,29 @@
                                     {% if day|stringformat:"s" in selected_workhours_dict|keys %}
                                         
                                         {% for x, y in workhours %}
+                                            
                                             {% if x|stringformat:"s" in selected_workhours_dict|get_item:day %}
-                                                <a class="btn btn-xs btn-primary"
-                                                hx-get="{% url 'dashboard:workhour_remove' provider.id %}?day={{ day }}&hour={{ x }}"
-                                                hx-trigger="click"
-                                                hx-target="#workhours_{{ day }}"
-                                                hx-swap="outerHTML">{{ y}}</a>
+                                                <a  class="btn btn-xs btn-primary"
+                                                    hx-get="{% url 'collab:workhour_remove' company.id %}?day={{ day }}&hour={{ x }}"
+                                                    hx-trigger="click"
+                                                    hx-target="#workhours_{{ day }}"
+                                                    hx-swap="outerHTML"
+                                                >{{ y }}</a>
                                             {% else %}
-                                                
-                                                <a class="btn btn-xs"
-                                                hx-get="{% url 'dashboard:workhour_create' provider.id %}?day={{ day }}&hour={{ x }}"
-                                                hx-trigger="click"
-                                                hx-target="#workhours_{{ day }}"
-                                                hx-swap="outerHTML">{{ y }}</a>
+                                                <a  class="btn btn-xs"
+                                                    hx-get="{% url 'collab:workhour_create' company.id %}?day={{ day }}&hour={{ x }}"
+                                                    hx-trigger="click"
+                                                    hx-target="#workhours_{{ day }}"
+                                                    hx-swap="outerHTML"
+                                                >{{ y }}</a>
                                             {% endif %}
+                                    
                                         {% endfor %}
                                     {% else %}
+                                        
                                         {% for x, y in workhours %}
                                             <a class="btn btn-xs"
-                                            hx-get="{% url 'dashboard:workhour_create' provider.id %}?day={{ day }}&hour={{ x }}"
+                                            hx-get="{% url 'collab:workhour_create' company.id %}?day={{ day }}&hour={{ x }}"
                                             hx-trigger="click"
                                             hx-target="#workhours_{{ day }}"
                                             hx-swap="outerHTML">{{ y }}</a>

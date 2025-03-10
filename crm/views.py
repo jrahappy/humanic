@@ -168,14 +168,14 @@ def partial_collab_kanban(request):
     status_sch = refers.filter(status="Scheduled")
     status_in = refers.filter(status="Interpreted")
     status_cosign = refers.filter(status="Cosigned")
-    status_cancelled = refers.filter(status="Cancelled")[0:5]
+    # status_cancelled = refers.filter(status="Cancelled")[0:5]
     context = {
         "refers": refers,
         "status_rq": status_rq,
         "status_sch": status_sch,
         "status_in": status_in,
         "status_cosign": status_cosign,
-        "status_cancelled": status_cancelled,
+        # "status_cancelled": status_cancelled,
         # "status_rq_count": status_rq.count(),
         # "status_sch_count": status_sch.count(),
         # "status_in_count": status_in.count(),

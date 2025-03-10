@@ -1,4 +1,83 @@
+import calendar
+from datetime import datetime, timedelta, date
 from .models import ChoiceMaster
+from django.utils import timezone
+
+
+def get_year_calendar(year):
+    months = []
+    today = timezone.now().date()
+    current_month = int(today.month)
+    # 향후 3개월 달력만 보여주기
+    current_12_months = range(current_month, current_month + 6)
+    # print(current_12_months)
+    flag_year = False
+    for month in current_12_months:
+        if month > 12:
+            month -= 12
+            if not flag_year:
+                year += 1
+                flag_year = True
+
+        month_days = []
+        _, num_days = calendar.monthrange(year, month)
+        start_day = calendar.monthrange(year, month)[0]
+
+        # Create padding for the start of the month
+        start_day_padding = [""] * start_day
+
+        for day in range(1, num_days + 1):
+            date = datetime(year, month, day).date()
+            month_days.append({"day": day, "date": date, "is_today": date == today})
+
+        months.append(
+            {
+                "name": calendar.month_name[month],
+                "start_day_padding": start_day_padding,
+                "days": month_days,
+            }
+        )
+    return months
+
+
+# 한달 달력 만들기 (해당 월만 업데이트하기 위해서 만듬)
+def get_month_calendar(year, month):
+    # Get today's date
+    today = timezone.now().date()
+
+    # Initialize the list for the current month
+    amonth = []
+
+    # Get the number of days and the starting weekday for the month
+    _, num_days = calendar.monthrange(year, month)
+    start_day = calendar.monthrange(year, month)[0]
+
+    # Create padding for the start of the month
+    start_day_padding = [""] * start_day
+
+    # Collect day information
+    month_days = []
+    for day in range(1, num_days + 1):
+        date = datetime(year, month, day).date()
+        month_days.append(
+            {
+                "day": day,
+                "date": date,
+                "is_today": date == today,
+                "is_past": date < today,
+            }
+        )
+
+    # Create the month structure with name and padding
+    amonth.append(
+        {
+            "name": calendar.month_name[month],
+            "start_day_padding": start_day_padding,
+            "days": month_days,
+        }
+    )
+
+    return amonth
 
 
 def mychoices(choice_name):

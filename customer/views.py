@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Count, Sum, Func, F, Q
 from minibooks.models import ReportMasterStat
 from crm.models import Opportunity
-from accounts.models import CustomUser, Profile
+from accounts.models import CustomUser, Profile, Holidays, WorkHours
 from .models import Company, ServiceFee, CustomerLog, CustomerContact, CustomerFiles
 from .forms import (
     CompanyForm,
@@ -15,6 +15,12 @@ from .forms import (
     CustomerFilesForm,
 )
 import json
+from utils.base_func import (
+    APPT_DAYS,
+    HOLIDAY_CATEGORY,
+    TERM_CATEGORY,
+    WORKHOURS,
+)
 
 
 # 중요함 협진병원/고객병원 사용자 생성기능
@@ -437,6 +443,23 @@ def detail(request, customer_id):
     contacts = CustomerContact.objects.filter(company=company).order_by("name")
     cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
     opps = Opportunity.objects.filter(company=company).order_by("-created_at")[:20]
+
+    # Holiday information
+    holidays = Holidays.objects.filter(company=company, user__isnull=True).order_by(
+        "id"
+    )
+
+    # Work hours information
+    week_days = APPT_DAYS
+    workhours = WORKHOURS
+    selected_workhours = WorkHours.objects.filter(company=company).order_by(
+        "work_weekday"
+    )
+    selected_workhours_dict = {
+        item["work_weekday"]: item["work_hour"]
+        for item in selected_workhours.values("work_weekday", "work_hour")
+    }
+
     # sys_users = CustomUser.objects.filter(id=company.customuser).first()
     print(company.customuser)
     context = {

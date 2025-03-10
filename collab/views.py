@@ -15,7 +15,7 @@ from .models import (
     ReferFile,
 )
 from .forms import ReferForm, CollabCompanyForm
-from accounts.models import CustomUser, Profile
+from accounts.models import CustomUser, Profile, Holidays, WorkHours
 from customer.models import Company, CustomerContact
 from customer.forms import CompanyForm
 from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory
@@ -33,6 +33,210 @@ import io
 import datetime
 from django.contrib.auth import logout
 from django.utils import timezone
+from utils.base_func import (
+    get_amodality_choices,
+    get_year_calendar,
+    get_month_calendar,
+    APPT_DAYS,
+    HOLIDAY_CATEGORY,
+    TERM_CATEGORY,
+    WORKHOURS,
+)
+
+
+def working_setting(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    # 요일별 근무시간
+    selected_workhours = WorkHours.objects.filter(company=company).order_by(
+        "work_weekday"
+    )
+    selected_workhours_dict = {
+        item["work_weekday"]: item["work_hour"]
+        for item in selected_workhours.values("work_weekday", "work_hour")
+    }
+    # 휴일 OFF 등록
+    selected_holidays = Holidays.objects.filter(company=company)
+    selected_holidays_dict = {
+        item["holiday_category"]: item["holidays"]
+        for item in selected_holidays.values("holiday_category", "holidays")
+    }
+    # print(selected_holidays_dict)
+    week_days = APPT_DAYS
+    workhours = WORKHOURS
+
+    year = timezone.now().year
+    months = get_year_calendar(year)
+
+    context = {
+        "company": company,
+        "week_days": week_days,
+        "workhours": workhours,
+        "selected_workhours_dict": selected_workhours_dict,
+        "months": months,
+        "today_date": timezone.now().date(),
+        "selected_holidays_dict": selected_holidays_dict,
+    }
+
+    return render(request, "collab/working_setting.html", context)
+
+
+def workhour_create(request, id):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    week_day = request.GET.get("day")
+    work_hour = request.GET.get("hour")
+
+    is_workhour = WorkHours.objects.filter(
+        company=company, work_weekday=week_day
+    ).exists()
+
+    if is_workhour:
+        workhour = WorkHours.objects.get(company=company, work_weekday=week_day)
+        wh_list = workhour.work_hour if isinstance(workhour.work_hour, list) else []
+        # All day 처리
+        if work_hour == "99":
+            wh_list = [work_hour]
+        else:
+            if "99" in wh_list:
+                wh_list.remove("99")
+            if work_hour not in wh_list:
+                wh_list.append(work_hour)
+        workhour.work_hour = wh_list
+        workhour.save()
+        # print("old")
+    else:
+        workhour = WorkHours()
+        workhour.company = company
+        workhour.work_weekday = week_day
+        wh_list = [work_hour]
+        workhour.work_hour = wh_list
+        workhour.save()
+    # print(wh_list)
+    selected_workhours = wh_list
+
+    context = {
+        "company": company,
+        "week_day": week_day,
+        "week_days": APPT_DAYS,
+        "workhours": WORKHOURS,
+        "selected_workhours": selected_workhours,
+        "today_date": timezone.now().date(),
+    }
+
+    return render(request, "collab/partial/week_day_hours.html", context)
+
+
+def workhour_remove(request, id):
+    user = request.user
+    company = Company.objects.get(id=id)
+    # print(company)
+    week_day = request.GET.get("day")
+    work_hour = request.GET.get("hour")
+
+    workhour = WorkHours.objects.get(company=company, work_weekday=week_day)
+    wh_list = workhour.work_hour
+    wh_list.remove(work_hour)
+    if wh_list == []:
+        workhour.delete()
+    else:
+        workhour.work_hour = wh_list
+        workhour.save()
+    # print("removed")
+    selected_workhours = wh_list
+
+    context = {
+        "company": company,
+        "week_day": week_day,
+        "week_days": APPT_DAYS,
+        "workhours": WORKHOURS,
+        "selected_workhours": selected_workhours,
+        "today_date": timezone.now().date(),
+    }
+
+    return render(request, "collab/partial/week_day_hours.html", context)
+
+
+# 휴무일 추가(사용자별)
+def holiday_create(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    holiday_category = request.GET.get("category")
+    # 병의원 휴일등록 'o' 는 병의원 휴일, 'p'는 닥터공휴일
+    holiday_category = "o"
+    holiday_name = request.GET.get("name")
+    holiday_name = "Office"
+    month_name = request.GET.get("month_name")
+    # 선택된 날짜
+    hdate = request.GET.get("hdate")
+    month_number = hdate.split("-")[1]
+    year_number = hdate.split("-")[0]
+    week_days = APPT_DAYS
+
+    is_holiday = Holidays.objects.filter(company=company).exists()
+
+    if is_holiday:
+        holiday = Holidays.objects.get(company=company)
+        holidays = holiday.holidays if isinstance(holiday.holidays, list) else []
+        if hdate not in holidays:
+            holidays.append(hdate)
+        holiday.holidays = holidays
+        # print("max", max(holidays))
+        holiday.save()
+    else:
+        holiday = Holidays()
+        holiday.company = company
+        holiday.holiday_category = holiday_category
+        holiday.holiday_name = holiday_name
+        hdate_list = [hdate]
+        holiday.holidays = hdate_list
+        holiday.save()
+
+    selected_holidays = holiday.holidays
+    amonth = get_month_calendar(int(year_number), int(month_number))
+    # print(selected_holidays)
+    # print(amonth)
+
+    context = {
+        "company": company,
+        "amonth": amonth,
+        "week_days": week_days,
+        "selected_holidays": selected_holidays,
+        "today_date": timezone.now().date(),
+    }
+
+    return render(request, "collab/partial/month_calendar.html", context)
+
+
+def holiday_remove(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    month_name = request.GET.get("month_name")
+    # 선택된 날짜
+    hdate = request.GET.get("hdate")
+    month_number = hdate.split("-")[1]
+    year_number = hdate.split("-")[0]
+    week_days = APPT_DAYS
+
+    holiday = Holidays.objects.get(company=company)
+    holidays = holiday.holidays if isinstance(holiday.holidays, list) else []
+    if hdate in holidays:
+        holidays.remove(hdate)
+    holiday.holidays = holidays
+    holiday.save()
+
+    selected_holidays = holiday.holidays
+    amonth = get_month_calendar(int(year_number), int(month_number))
+
+    context = {
+        "company": company,
+        "amonth": amonth,
+        "week_days": week_days,
+        "selected_holidays": selected_holidays,
+        "today_date": timezone.now().date(),
+    }
+
+    return render(request, "collab/partial/month_calendar.html", context)
 
 
 @login_required
@@ -710,6 +914,8 @@ def index(request):
         return redirect("web:index")
     # Archive old refers
     # go_archive(request, company.id)
+
+    print(user.menu_id)
 
     q = request.GET.get("q")
     if q:

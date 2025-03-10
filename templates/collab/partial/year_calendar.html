@@ -1,5 +1,7 @@
 {% load custom_filters %}
-
+<!-- <div>
+    {{ selected_holidays_dict }}
+</div> -->
 <div class="calendar grid grid-cols-3 gap-6 py-2" style="width:960px;">
     {% for month in months %}
     
@@ -7,7 +9,6 @@
             <h3 class="text-center font-bold">{{ month.name }}</h3>
             <div class="grid grid-cols-7 gap-1 mt-2 text-center">
                 {% for day_num, day_name in week_days %}
-                    
                     {% if day_num == "0" %}
                         <span class="font-semibold bg-red-200">{{ day_name|slice:":1"|title }}</span>
                     {% elif day_num == "6" %}
@@ -24,11 +25,11 @@
 
                 {% for day in month.days %}
                     
-                    {% if day.date|date:'Y-m-d' in selected_holidays_dict|get_item:"p" %}
+                    {% if day.date|date:'Y-m-d' in selected_holidays_dict|get_item:"o" %}
                         <button class="btn btn-sm btn-primary w-full h-10 rounded bg-red-500 text-white"
                             data-date="{{ day.date|date:'Y-m-d' }}"
                             {% if day.date < today_date %} disabled {% endif %}
-                            hx-get="{% url 'dashboard:holiday_remove' %}?month_name={{month.name}}&hdate={{ day.date|date:'Y-m-d' }}"
+                            hx-get="{% url 'collab:holiday_remove' %}?month_name={{month.name}}&hdate={{ day.date|date:'Y-m-d' }}"
                             hx-trigger="click"
                             hx-target="#month_{{month.name}}"
                             hx-swap="outerHTML"
@@ -39,7 +40,7 @@
                         <button class="btn btn-sm w-full h-10 rounded {{ day.is_today|yesno:'bg-blue-500 text-white,text-gray-700' }}"
                             data-date="{{ day.date|date:'Y-m-d' }}"
                             {% if day.date < today_date %} disabled {% endif %}
-                            hx-get="{% url 'dashboard:holiday_create' %}?month_name={{month.name}}&hdate={{ day.date|date:'Y-m-d' }}"
+                            hx-get="{% url 'collab:holiday_create' %}?month_name={{month.name}}&hdate={{ day.date|date:'Y-m-d' }}"
                             hx-trigger="click"
                             hx-target="#month_{{month.name}}"
                             hx-swap="outerHTML"

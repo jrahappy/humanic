@@ -1,9 +1,8 @@
-{% extends 'dashboard/base.html' %}
+{% extends 'collab/base.html' %}
 {% load custom_filters %}
-{% load humanize %}
 
 {% block header %}
-    {% include 'dashboard/header_dashboard.html' %}
+    {% include 'collab/header.html' %}
 {% endblock %}
 
 {% block content %}
@@ -11,12 +10,12 @@
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
             <h2 class="card-title grow">
-                근무시간/휴무일 설정
+                휴무일/근무시간 설정
             </h2>
         </div>
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {% include 'dashboard/partial/work_hours.html' %}
+                {% include 'collab/partial/work_hours.html' %}
             </div>
         </div>
     </div>
@@ -32,20 +31,17 @@
         </div>
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class=" min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {% include 'dashboard/partial/year_calendar.html' %}
+                {% include 'collab/partial/year_calendar.html' %}
             </div>
         </div>
     </div>
 </section>
-<!-- <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
-    {% include 'dashboard/partial/weekday_modality_targets.html' %}    
-</section> -->
     
 {% endblock %}
 
-
 {% block aside %}
 
-	{% include 'dashboard/aside.html' %}
+	{% include 'collab/aside.html' %}
 	
 {% endblock %}
+

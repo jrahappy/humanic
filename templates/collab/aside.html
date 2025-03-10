@@ -45,6 +45,15 @@
                     검사의뢰통계 보기
                 </a>
             </li>
+
+            <li>
+                <a href="{% url 'collab:working_setting' %}" {% if side_menu == "stat" %}class='active'{% endif %}>
+                    <svg
+                        data-src="https://unpkg.com/heroicons/20/solid/squares-2x2.svg"
+                        class="h-5 w-5"></svg>
+                    휴무일/근무시간
+                </a>
+            </li>
             {% if user.menu_id == 84 or user.menu_id == 80 %}
             <li>
                 <a href="{% url 'collab:stat_tele' %}">

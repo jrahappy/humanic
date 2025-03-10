@@ -3,14 +3,14 @@
 
         {% if x|stringformat:"s" in selected_workhours %}
             <a  class="btn btn-xs btn-primary"
-                hx-get="{% url 'dashboard:workhour_remove' provider.id %}?day={{ week_day }}&hour={{ x }}"
+                hx-get="{% url 'collab:workhour_remove' company.id %}?day={{ week_day }}&hour={{ x }}"
                 hx-trigger="click"
                 hx-target="#workhours_{{ week_day }}"
                 hx-swap="outerHTML"
             >{{ y }}</a>
         {% else %}
             <a  class="btn btn-xs"
-                hx-get="{% url 'dashboard:workhour_create' provider.id %}?day={{ week_day }}&hour={{ x }}"
+                hx-get="{% url 'collab:workhour_create' company.id %}?day={{ week_day }}&hour={{ x }}"
                 hx-trigger="click"
                 hx-target="#workhours_{{ week_day }}"
                 hx-swap="outerHTML"
