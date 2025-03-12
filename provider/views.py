@@ -22,8 +22,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from .forms import ProviderForm
 from .filters import ProfileFilter
-
-
+from django.contrib.auth.decorators import login_required
 from utils.base_func import (
     get_amodality_choices,
     APPT_DAYS,
@@ -34,6 +33,7 @@ from utils.base_func import (
 import json
 
 
+@login_required
 def index(request):
     user = request.user
     q = request.GET.get("q")
@@ -88,6 +88,7 @@ def index(request):
     return render(request, "provider/index.html", context)
 
 
+@login_required
 def new_provider(request):
     form = ProviderForm()
     if request.method == "POST":
@@ -109,6 +110,7 @@ def new_provider(request):
     return render(request, "provider/new_provider.html")
 
 
+@login_required
 def view_provider(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
     profile = provider.profile
@@ -156,6 +158,7 @@ def view_provider(request, id):
     return render(request, "provider/view_provider.html", context)
 
 
+@login_required
 def edit_provider(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
     form = ProviderForm(instance=provider.profile)
@@ -172,6 +175,7 @@ def edit_provider(request, id):
     )
 
 
+@login_required
 def edit(request, id):
     provider = CustomUser.objects.select_related("profile").get(pk=id)
     form = ProviderForm(instance=provider.profile)

@@ -217,6 +217,7 @@ def index(request):
         return render(request, "briefing/index.html", briefing_data)
 
 
+@login_required
 def partial_briefing(request):
     syear = request.GET.get("syear")
     smonth = request.GET.get("smonth")

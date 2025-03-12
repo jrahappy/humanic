@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -24,6 +25,7 @@ from utils.base_func import (
 
 
 # 중요함 협진병원/고객병원 사용자 생성기능
+@login_required
 def add_collab_login_user(request, customer_id):
     company = get_object_or_404(Company, pk=customer_id)
     menu_id = 0
@@ -79,6 +81,7 @@ def add_collab_login_user(request, customer_id):
         return redirect("customer:detail", company.id)
 
 
+@login_required
 def tag_delete(request, company_id, tag_id):
     company = get_object_or_404(Company, pk=company_id)
     print(tag_id)
@@ -88,6 +91,7 @@ def tag_delete(request, company_id, tag_id):
     return redirect("customer:detail", company_id)
 
 
+@login_required
 def cfiles(request, company_id):
     company = get_object_or_404(Company, pk=company_id)
     cfiles = CustomerFiles.objects.filter(company=company).order_by("id")
@@ -95,6 +99,7 @@ def cfiles(request, company_id):
     return render(request, "customer/cfiles.html", context)
 
 
+@login_required
 def cfile_upload(request, company_id):
     company = get_object_or_404(Company, pk=company_id)
     if request.method == "POST":
@@ -133,6 +138,7 @@ def cfile_upload(request, company_id):
     )
 
 
+@login_required
 def cfile_delete(request, company_id, cfile_id):
     company = get_object_or_404(Company, pk=company_id)
     cfile = get_object_or_404(CustomerFiles, pk=cfile_id)
@@ -157,6 +163,7 @@ def contacts(request, company_id):
     return render(request, "customer/contacts.html", context)
 
 
+@login_required
 def new_contact(request, company_id):
     company = get_object_or_404(Company, pk=company_id)
     if request.method == "POST":
@@ -293,6 +300,7 @@ def delete_clog(request, company_id, clog_id):
     )
 
 
+@login_required
 def index(request):
     ko_kr = Func(
         "business_name",
@@ -311,6 +319,7 @@ def index(request):
                 | Q(president_name__icontains=q)
                 | Q(contact_person__icontains=q)
                 | Q(ein__icontains=q)
+                | Q(id=int(q) if q.isdigit() else None)
             ).order_by(ko_kr.asc())
             if companies.count() == 1:
                 return redirect("customer:detail", companies[0].id)
@@ -369,6 +378,7 @@ def tag_search(request):
         return render(request, "customer/partial_search_tag.html")
 
 
+@login_required
 def search_company(request):
     if request.method == "GET":
         q = request.GET["q"].strip()
@@ -382,6 +392,7 @@ def search_company(request):
         return render(request, "customer/partial_search_company.html")
 
 
+@login_required
 def new(request):
     if request.method == "POST":
         form = CompanyForm(request.POST)
@@ -414,6 +425,7 @@ def new(request):
 #     return error_message
 
 
+@login_required
 def new_customer(request):
     if request.method == "POST":
         # Process the form data
@@ -427,6 +439,7 @@ def new_customer(request):
         return render(request, "customer/new_customer.html")
 
 
+@login_required
 def detail(request, customer_id):
     company = Company.objects.get(pk=customer_id)
     cm_refers = (
@@ -475,6 +488,7 @@ def detail(request, customer_id):
     return render(request, "customer/detail.html", context)
 
 
+@login_required
 def update(request, customer_id):
     company = Company.objects.get(pk=customer_id)
     if request.method == "POST":
@@ -495,6 +509,7 @@ def update(request, customer_id):
     return render(request, "customer/update.html", context)
 
 
+@login_required
 def edit_customer(request, customer_id):
     company = Company.objects.get(pk=customer_id)
     if request.method == "POST":

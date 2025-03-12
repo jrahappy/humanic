@@ -42,7 +42,12 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                sans: ['Noto Sans KR', 'sans-serif'],  // Adding the font
+                // pretendard: ['Pretendard', 'sans-serif'], // Example for another font
+            },
+        },
     },
     daisyui: {
         themes: ["light", "dark", "cupcake", "corporate", "business", "wireframe"],

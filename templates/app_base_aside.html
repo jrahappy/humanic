@@ -20,7 +20,7 @@
                     stroke-width="10" />
                 <circle cx="512" cy="353.28" r="114.688" class="fill-base-100" />
             </svg>
-            휴먼영상의학센터 
+            <a href="{% url 'web:home' %}" class="text-2xl">HumanRad</a>
         </div>
         {% if user.menu_id == 10 or user.menu_id == 0 %}
             {% include "aside_10.html" %}

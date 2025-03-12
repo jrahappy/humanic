@@ -15,13 +15,13 @@
                 고객 세부정보 수정
               </h2>
               <div class="flex justify-end items-center w-80 pt-2 rounded-lg">
-                  <form method="get" action="{% url 'customer:index' %}">
-                  <div class="flex flex-row gap-2">
-                    <input type="text" class="w-full input-sm rounded-lg me-1" placeholder="병원명, 병원장, 사업자번호 검색" name="q" />
-                      <input type="submit" class="btn btn-primary btn-sm" value="검색" />
-                  </div>
-                  </form>
-              </div>
+                <form method="get" action="{% url 'customer:index' %}">
+                <div class="flex flex-row gap-2">
+                    <input type="text" class="w-full input-sm rounded-lg me-1" placeholder="병원,대표,담당, ID,사업자번호.." name="q" />
+                    <input type="submit" class="btn btn-primary btn-sm" value="검색" />
+                </div>
+                </form>
+            </div>
           </div>
           <div class="text-start me-4 pt-2">
             <a href="{% url 'customer:index' %}" class="btn btn-sm btn-primary w-16">List</a>

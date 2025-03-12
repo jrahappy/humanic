@@ -20,8 +20,10 @@ from django.http import HttpResponse
 from urllib.parse import quote
 import csv
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def monthly_pro_cus(request):
     user = request.user
     if not user.is_authenticated:
@@ -44,6 +46,7 @@ def monthly_pro_cus(request):
     return render(request, "report/report_monthly_pro_cus.html", context)
 
 
+@login_required
 def report_pro_cus(request, ayear, amonth):
 
     # rs = ReportMasterStat.objects.all()
@@ -96,6 +99,7 @@ def report_pro_cus(request, ayear, amonth):
     return render(request, "report/partial_pro_cus.html", context)
 
 
+@login_required
 def partial_customer_by_month(request, ayear, company):
 
     # 년도별 그래프 자료
@@ -157,6 +161,7 @@ def partial_customer_by_month(request, ayear, company):
     return render(request, "report/partial_customer_by_month.html", context)
 
 
+@login_required
 def partial_provider_by_month(request, ayear, provider):
 
     # 년도별 그래프 자료
@@ -218,6 +223,7 @@ def partial_provider_by_month(request, ayear, provider):
     return render(request, "report/partial_provider_by_month.html", context)
 
 
+@login_required
 def partial_provider_by_month_pivot(request, ayear, amonth, provider):
 
     rpms = (
@@ -280,6 +286,7 @@ def partial_provider_by_month_pivot(request, ayear, amonth, provider):
     return render(request, "report/partial_provider_by_month_pivot.html", context)
 
 
+@login_required
 def report_customer_detail(request, id):
     ko_kr = Func(
         "provider__profile__real_name",
@@ -340,6 +347,7 @@ def report_customer_detail(request, id):
     return render(request, "report/report_customer_detail.html", context)
 
 
+@login_required
 def partial_customer_month(request, company_id):
     ko_kr = Func(
         "provider__profile__real_name",
@@ -399,6 +407,7 @@ def partial_customer_month(request, company_id):
     return render(request, "report/partial_customer_month.html", context)
 
 
+@login_required
 def customer_month_csv(request, company_id, adate):
     company = Company.objects.get(id=company_id)
     business_name = company.business_name
@@ -447,6 +456,7 @@ def customer_month_csv(request, company_id, adate):
     return response
 
 
+@login_required
 def customer_month_print(request, company_id, adate):
     ko_kr = Func(
         "provider__profile__real_name",
@@ -485,6 +495,7 @@ def customer_month_print(request, company_id, adate):
     return render(request, "report/report_customer_month_print.html", context)
 
 
+@login_required
 def report_customer(request):
     ko_kr = Func(
         "company__business_name",
@@ -508,6 +519,7 @@ def report_customer(request):
     return render(request, "report/report_customer.html", context)
 
 
+@login_required
 def partial_search_customer(request):
     q = request.GET.get("q", "").strip()
     ko_kr = Func(
@@ -545,6 +557,7 @@ def partial_search_customer(request):
     return render(request, "report/partial_search_customer.html", context)
 
 
+@login_required
 def partial_search_provider(request):
     ayear = request.GET.get("ayear")
     amonth = request.GET.get("amonth")
@@ -594,6 +607,7 @@ def partial_search_provider(request):
     return render(request, "report/partial_search_provider.html", context)
 
 
+@login_required
 def partial_search_provider_t(request):
     ayear = request.GET.get("ayear")
     amonth = request.GET.get("amonth")
@@ -643,6 +657,7 @@ def partial_search_provider_t(request):
     return render(request, "report/partial_search_provider_t.html", context)
 
 
+@login_required
 def index(request):
     user = request.user
     if not user.is_authenticated:
@@ -679,6 +694,7 @@ def index(request):
     return render(request, "report/index.html", context)
 
 
+@login_required
 def report_period(request):
 
     buttons_year_month = (
@@ -698,6 +714,7 @@ def report_period(request):
     return render(request, "report/report_period.html", context)
 
 
+@login_required
 def report_period_month(request, ayear, amonth):
 
     ko_kr = Func(
@@ -751,6 +768,7 @@ def report_period_month(request, ayear, amonth):
     return render(request, "report/report_period_month.html", context)
 
 
+@login_required
 def report_period_month_table(request, ayear, amonth):
     ko_kr = Func(
         "provider__profile__real_name",
@@ -807,6 +825,7 @@ def report_period_month_table(request, ayear, amonth):
     return render(request, "report/report_period_month_table.html", context)
 
 
+@login_required
 def report_period_month_csv(request, ayear, amonth):
     ko_kr = Func(
         "provider__profile__real_name",
@@ -878,6 +897,7 @@ def report_period_month_csv(request, ayear, amonth):
     return response
 
 
+@login_required
 def report_period_month_radiologist(request, ayear, amonth, radio):
     rpms = (
         ReportMaster.objects.filter(ayear=ayear, amonth=amonth, provider=radio)
