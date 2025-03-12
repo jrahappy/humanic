@@ -2,5 +2,8 @@ from django.apps import AppConfig
 
 
 class CollabConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'collab'
+    name = "collab"
+
+    def ready(self):
+        # Avoid database queries here
+        pass
