@@ -12,5 +12,9 @@ def home(request):
     return render(request, "web/home.html")
 
 
-def terms(request):
-    return render(request, "web/terms.html")
+def customer(request):
+    return render(request, "web/customer.html")
+
+
+def provider(request):
+    return render(request, "web/provider.html")
