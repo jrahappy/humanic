@@ -39,6 +39,7 @@ from calendar import monthrange
 from django.http import HttpResponse
 
 
+@login_required
 def create_collab_user(request):
     if request.method == "POST":
         form = CollabUserSignupForm(request.POST)
@@ -969,7 +970,7 @@ def apply_rule(request, magam_id, rule_id):
         target_rows.update(
             pay_to_provider=1000, pay_to_human=F("readprice" - 1000), is_completed=True
         )
-
+    # 사용하지 않음
     elif selected_rule == "CTCHESTLOW":
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
@@ -1189,6 +1190,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             ayear=syear,
             amonth=smonth,
             amodality="CT",
+            bodypart="CHEST",  # 흉부만
             readprice__lt=19600,
             is_human_outpatient=False,
             is_take=False,

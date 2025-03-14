@@ -1,4 +1,5 @@
 {% extends "web/base.html" %}
+{% load static %}
 
 <div class="bg-white">
 
@@ -49,27 +50,27 @@
             <div class="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
               <div class="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-80">
                 <div class="relative">
-                  <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
+                  <img src="{% static 'img/101.jpg' %}" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
                   <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10"></div>
                 </div>
               </div>
               <div class="mr-auto w-44 flex-none space-y-8 sm:mr-0 sm:pt-52 lg:pt-36">
                 <div class="relative">
-                  <img src="https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
+                  <img src="{% static 'img/104.jpg' %}" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
                   <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10"></div>
                 </div>
                 <div class="relative">
-                  <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=focalpoint&fp-x=.4&w=396&h=528&q=80" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
+                  <img src="{% static 'img/102.jpg' %}" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
                   <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10"></div>
                 </div>
               </div>
               <div class="w-44 flex-none space-y-8 pt-32 sm:pt-0">
                 <div class="relative">
-                  <img src="https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=left&w=400&h=528&q=80" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
+                  <img src="{% static 'img/200.png' %}" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
                   <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10"></div>
                 </div>
                 <div class="relative">
-                  <img src="https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
+                  <img src="{% static 'img/doc04.png' %}" alt="" class="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg">
                   <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10"></div>
                 </div>
               </div>
@@ -194,7 +195,7 @@
         <ul role="list" class="grid gap-x-8 gap-y-12 sm:grid-cols-2 sm:gap-y-16 xl:col-span-2">
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-abdo-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
@@ -203,7 +204,7 @@
           </li>
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-chest-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
@@ -212,7 +213,7 @@
           </li>
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-heart-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
@@ -221,7 +222,7 @@
           </li>
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-mamo-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
@@ -230,7 +231,7 @@
           </li>
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-neuro-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
@@ -239,7 +240,7 @@
           </li>
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-ped-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
@@ -248,7 +249,7 @@
           </li>
           <li>
             <div class="flex items-center gap-x-6">
-              <img class="size-16 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+              <img class="size-16 rounded-full" src="{% static 'img/c-inter-1.jpg' %}" alt="">
               <div>
                 <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
                 <p class="text-sm/6 font-semibold text-indigo-600">Co-Founder / CEO</p>
