@@ -12,9 +12,9 @@ def home(request):
     return render(request, "web/home.html")
 
 
-def customer(request):
-    return render(request, "web/customer.html")
+def clinicContact(request):
+    return render(request, "web/clinicContact.html")
 
 
-def provider(request):
-    return render(request, "web/provider.html")
+def doctorContact(request):
+    return render(request, "web/doctorContact.html")
