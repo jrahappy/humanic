@@ -5,10 +5,10 @@
             <td colspan="4" class="w-24 text-bold text-2xl text-center">진 료 회 송 서</td>
         </tr>
         <tr class="align-top border border-gray-500">
-            <td class="align-top border-e border-gray-500">환자명</td>
-            <td class="align-top border-e border-gray-500">{{ refer.patient_name }}</td>
-            <td class="align-top border-e border-gray-500">환자성별</td>
-            <td>{{ refer.patient_gender }}</td>
+            <td class="w-24 align-top border-e border-gray-500">환자명</td>
+            <td class="w-48 align-top border-e border-gray-500">{{ refer.patient_name }}</td>
+            <td class="w-24 align-top border-e border-gray-500">환자성별</td>
+            <td class="w-48">{{ refer.patient_gender }}</td>
         </tr>
         <tr class="align-top border border-gray-500">
             <td class="align-top border-e border-gray-500">생년월일</td>
@@ -40,30 +40,44 @@
         </tr>
         <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
-                <div class="font-semibold text-sm">향후치료<br>의견:</div>
+                <div class="font-semibold text-sm">향후치료<br>의견 1:</div>
             </td>
             <td colspan="3" class="align-top border border-gray-500">
-                <div class="min-h-32 bg-base-50">위와 같이 의견을 보내드립니다.<br>
+                <div class="min-h-32 bg-base-50">다음과 같이 의견을 보내드립니다.<br>
                     <div class="min-h-32 text-sm">
                     {{ refer.opinion2|handle_none|linebreaks }}
                     </div>
                 </div>
             </td>
         </tr>
-        <!-- <tr class="align-top border border-gray-500">
+        {% if refer.opinion3 %}
+        <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
-                <div class="font-semibold text-sm">PACS Link</div>
+                <div class="font-semibold text-sm">향후치료<br>의견 2:</div>
             </td>
             <td colspan="3" class="align-top border border-gray-500">
-                <div class="bg-base-50">
-                    {% if refer.url is None %}
-                        <div class="text-sm"></div>
-                    {% else %}
-                        <a href="{{ refer.url }}" target="_blank">영상보기</a>
-                    {% endif %}
+                <div class="min-h-32 bg-base-50">
+                    <div class="min-h-32 text-sm">
+                    {{ refer.opinion3|handle_none|linebreaks }}
+                    </div>
                 </div>
             </td>
-        </tr> -->
+        </tr>
+        {% endif %}
+        {% if refer.opinion4 %}
+        <tr class="align-top border border-gray-500">
+            <td colspan="1" class="align-top border-e border-gray-500">
+                <div class="font-semibold text-sm">향후치료<br>의견 3:</div>
+            </td>
+            <td colspan="3" class="align-top border border-gray-500">
+                <div class="min-h-32 bg-base-50">
+                    <div class="min-h-32 text-sm">
+                    {{ refer.opinion4|handle_none|linebreaks }}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
         <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
                 <div class="font-semibold text-sm">첨부파일</div>

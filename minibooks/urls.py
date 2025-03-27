@@ -53,6 +53,11 @@ urlpatterns = [
         name="apply_rule_progress",
     ),
     path(
+        "magam/apply_rule_progress_target/<int:magam_id>/<int:rule_id>/",
+        views.apply_rule_progress_target,
+        name="apply_rule_progress_target",
+    ),
+    path(
         "magam/apply_rule_progress_check/<int:magam_id>/<int:rule_id>/",
         views.apply_rule_progress_check,
         name="apply_rule_progress_check",

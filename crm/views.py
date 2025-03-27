@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from .models import Opportunity, Chance
 from .forms import OpportunityForm, ChanceForm
 from customer.models import Company, CustomerLog
-from collab.models import Refers, ReferFile
+from collab.models import Refers, ReferFile, ReferSimpleDiagnosis
 from collab.forms import ReportForm, ReferChangeStatus, ReferFileForm
 from collab.views import create_history
 from .filters import RefersFilter, LogsFilter
@@ -325,6 +325,10 @@ def collab_report(request, refer_id):
     user = request.user
     is_doctor = user.is_doctor
     refer = get_object_or_404(Refers, id=refer_id)
+    simples = ReferSimpleDiagnosis.objects.filter(refer=refer)
+    count_simples = simples.count()
+    print(count_simples, "count_simples")
+
     if request.method == "POST":
         form = ReportForm(request.POST, instance=refer)
         if form.is_valid():
@@ -373,6 +377,7 @@ def collab_report(request, refer_id):
         context = {
             "form": form,
             "refer": refer,
+            "count_simples": count_simples,
         }
 
     return render(request, "crm/collab_report.html", context)

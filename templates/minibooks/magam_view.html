@@ -87,8 +87,15 @@
                             class="btn btn-sm btn-info" 
                             hx-get="{% url 'minibooks:apply_rule_progress' magam.id rule.id %}"
                             hx-trigger="click"
-                            hx-target="#base_modal"                                          
+                            hx-target="#base_modal"                                         
                         >적용계산</button>
+                        <button 
+                            onclick="base_modal.showModal()"
+                            class="btn btn-sm btn-info" 
+                            hx-get="{% url 'minibooks:apply_rule_progress_target' magam.id rule.id %}"
+                            hx-trigger="click"
+                            hx-target="#base_modal"                                          
+                        >해당데이터</button>
                     </td>
                 </tr>
             {% empty %}

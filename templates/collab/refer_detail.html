@@ -91,7 +91,9 @@
                            임상소견
                         </td>
                         <td colspan="3" class="align-top border border-gray-500">
-                            <div class="h-48 max-h-60 bg-base-50">{{ refer.opinion1|linebreaks }}</div>
+                            <div class="relative overflow-auto h-48 max-h-60 ">
+                                {{ refer.opinion1|linebreaks }}
+                            </div>
                         </td>
                     </tr>
                     
@@ -169,9 +171,14 @@
                 <div class="flex justify-end gap-2 mt-4">
                     {% if refer.status == 'Requested' %}
                         <a href="{% url 'collab:refer_update' refer.id %}" class="btn btn-primary btn-sm">수정하기</a>
+                        <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
+                        <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
+                    {% else %}
+                        <a href="{% url 'collab:refer_update' refer.id %}" class="btn btn-primary btn-sm">수정하기</a>
+                        <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
+                        <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
                     {% endif %}
-                    <a href="{% url 'collab:index' %}" class="btn btn-primary btn-sm text-white ">돌아가기</a>
-                    <a href="{% url 'collab:refer_print' refer.id %}" class="btn btn-neutral btn-sm" onclick="openPopup(this.href); return false;">인쇄하기</a>
+
                 </div>
                                     
                 {% endif %}

@@ -76,7 +76,7 @@ class ReferForm(ModelForm):
     patient_birthdate = forms.DateField(
         input_formats=["%Y-%m-%d"],
         widget=forms.DateInput(attrs={"type": "date"}),
-        required=False,
+        required=True,
         initial=datetime.date.today(),
         validators=[
             MinValueValidator(datetime.date(1900, 1, 1)),
@@ -120,6 +120,8 @@ class ReportForm(ModelForm):
         fields = [
             # "opinioned_at",
             "opinion2",
+            "opinion3",
+            "opinion4",
             "status",
             "readprice",
             "url",

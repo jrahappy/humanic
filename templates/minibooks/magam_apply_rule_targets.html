@@ -1,0 +1,114 @@
+    {% load humanize %}
+{% load custom_filters %}
+
+<div class="modal-box max-w-5xl">
+    <div class="modal-action justify-between  flex flex-row gap-2">
+        <div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <form method="dialog">  
+                <button class="btn btn-warning">Close</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap flex-col gap-2">
+        <div class="card card-sm shadow-sm bg-neutral text-neutral-content w-full ">
+            <div class="card-body">
+                <h2 class="card-title">{{ selected_rule.name }} 적용 대상 건수: {{ i }}건 </h2>
+                <div class="flex justify-center flex-wrap mt-4">
+                    <div class="badge badge-outline badge-primary">Rule ID: {{ selected_rule.id }}</div>
+                    <div class="badge badge-outline badge-primary">Magam ID: {{ magam.id }}</div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="card card-sm shadow-sm w-full overflow-x-auto">
+        <table class="table table-xs table-zebra w-full">
+            <thead class="bg-gray-300">
+                <tr>
+                    <th>ID</th>
+                    <th>병원명</th>
+                    <th>Case ID</th>
+                    <th>환자명</th>
+                    <th>Modality</th>
+                    <th>Body part</th>
+                    <th>매출</th>
+                    <th>판독의</th>
+                    <th>판독료</th>
+                    <th>Requested</th>
+                    <th>Approved</th>
+                    <th>TAT</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+            {% for data in target_rows %}
+                <tr>
+                    <td >{{ data.id }}</td>
+                    <td>{{ data.apptitle }}</td>
+                    <td>{{ data.case_id }}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.equipment }}</td>
+                    <td>{{ data.bodypart }}</td>
+                    <td>{{ data.readprice|floatformat:0|intcomma }}</td>
+                    <td>{{ data.provider}}</td>
+                    <td>{{ data.pay_to_provider|floatformat:0|intcomma }}</td>
+                    <td>{{ data.requestdt|date:"Y/m/d H/i/s" }}</td>
+                    <td>{{ data.approvedt|date:"Y/m/d H/i/s" }}</td>
+                    <td>{{ data.time_to_complete|divide_by_60  }}</td>
+                    
+                </tr>
+            {% empty %}
+
+            {% endfor %}
+
+                
+            </tbody>
+            <tfoot class="bg-gray-300">
+                <tr>
+                    <td colspan="13" class="text-center">
+                        <div class="join">
+                            {% if target_rows.has_previous %}
+                                <button class="join-item btn btn-xs" 
+                                    hx-get="{% url 'minibooks:apply_rule_progress_target' magam.id selected_rule.id %}?page={{ target_rows.previous_page_number }}"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML">
+                                    <span class="material-symbols-outlined">Previous</span>
+                                </button>
+                            
+                            {% endif %}
+                            {% for page_num in target_rows.paginator.page_range %}
+                                {% if page_num >= target_rows.number|add:"-5" and page_num <= target_rows.number|add:"5" %}
+                                    {% if page_num == target_rows.number %}
+                                        <button class="join-item btn btn-xs btn-active">{{ page_num }}</button>
+                                    {% else %}
+                                        <button class="join-item btn btn-xs"
+                                            hx-get="{% url 'minibooks:apply_rule_progress_target' magam.id selected_rule.id %}?page={{ page_num }}"
+                                            hx-target="#base_modal"
+                                            hx-swap="innerHTML"
+                                        >{{ page_num }}</button>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if target_rows.has_next %}
+                                <button 
+                                    class="join-item btn btn-xs"
+                                    hx-get="{% url 'minibooks:apply_rule_progress_target' magam.id selected_rule.id %}?page={{ target_rows.next_page_number }}"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML">
+                                    <span class="material-symbols-outlined">Next</span>
+                                    
+                                </button>
+                            
+                            {% endif %}
+                            
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        </div>
+    </div>
+</div>
+
+

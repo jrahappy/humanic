@@ -30,9 +30,21 @@
                 <td>연락처</td><td>{{refer.patient_phone}} </td>
             </tr>
             <tr>
-                <td colspan="1" class="align-top">향후치료<br>의견</td>
-                <td colspan="3">{% render_field form.opinion2 class="textarea textarea-bordered w-full" cols=50 rows=14 %}</td>
+                <td colspan="1" class="align-top">향후치료<br>의견 1</td>
+                <td colspan="3">{% render_field form.opinion2 class="textarea textarea-bordered w-full" cols=50 rows=10 %}</td>
             </tr>
+            {% if count_simples > 1 %}
+            <tr>
+                <td colspan="1" class="align-top">향후치료<br>의견 2</td>
+                <td colspan="3">{% render_field form.opinion3 class="textarea textarea-bordered w-full" cols=50 rows=10 %}</td>
+            </tr>
+            {% endif %}
+            {% if count_simples > 2 %}
+            <tr>
+                <td colspan="1" class="align-top">향후치료<br>의견 3</td>
+                <td colspan="3">{% render_field form.opinion4 class="textarea textarea-bordered w-full" cols=50 rows=10 %}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td>회송일</td><td>{% render_field form.opinioned_at class="input input-bordered input-sm" type="date"%}}</td>                    
                 <td>현재상태</td><td>{% render_field form.status class="select select-bordered select-sm w-32 py-0" %}</td>                

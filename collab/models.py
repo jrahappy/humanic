@@ -35,6 +35,8 @@ class Refers(models.Model):
     )
     illness2 = models.CharField(max_length=100, null=True, blank=True)
     opinion2 = models.TextField(null=True, blank=True)
+    opinion3 = models.TextField(null=True, blank=True)
+    opinion4 = models.TextField(null=True, blank=True)
     opinioned_at = models.DateTimeField(null=True, blank=True)
     cosigned_at = models.DateTimeField(null=True, blank=True)
     # url = models.URLField(null=True, blank=True)
