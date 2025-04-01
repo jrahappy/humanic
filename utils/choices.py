@@ -33,13 +33,13 @@ APPT_RULES = [
     ("Dayhour", "Dayhour"),
 ]
 APPT_DAYS = [
-    (0, "Sunday"),
-    (1, "Monday"),
-    (2, "Tuesday"),
-    (3, "Wednesday"),
-    (4, "Thursday"),
-    (5, "Friday"),
-    (6, "Saturday"),
+    ("0", "Sunday"),
+    ("1", "Monday"),
+    ("2", "Tuesday"),
+    ("3", "Wednesday"),
+    ("4", "Thursday"),
+    ("5", "Friday"),
+    ("6", "Saturday"),
 ]
 
 APPT_HOURS = [
@@ -279,4 +279,75 @@ PAYMENT_METHOD_CHOICES = [
     ("Check", "Check"),
     ("BankTransfer", "Bank Transfer"),
     ("Others", "Others"),
+]
+
+HOLIDAY_CATEGORY = [
+    ("N", "National"),
+    ("C", "Company"),
+    ("P", "Personal"),
+]
+
+TERM_CATEGORY = [
+    ("D", "Daily"),
+    ("W", "Weekly"),
+    ("M", "Monthly"),
+    ("Y", "Yearly"),
+]
+
+WORKHOURS = [
+    (9, "9"),
+    (10, "10"),
+    (11, "11"),
+    (12, "12PM"),
+    (13, "1"),
+    (14, "2"),
+    (15, "3"),
+    (16, "4"),
+    (17, "5"),
+    (99, "All Day"),
+]
+
+CONTRACT_STATUS = [
+    ("A", "Active"),
+    ("P", "PartTime"),
+    ("I", "Inactive"),
+    ("T", "Terminated"),
+]
+
+OPPORTUNITY_CATEGORY = [
+    ("Sale", "Sale"),
+    ("Support", "Support"),
+    ("Issue", "Issue"),
+]
+
+OPPORTUNITY_STAGE = [
+    ("Potential", "Potential"),
+    ("Qualified", "Qualified"),
+    ("Working", "Working"),
+    ("Won", "Won"),
+    ("Pending", "Pending"),
+    ("Lost", "Lost"),
+]
+
+GENDER = [
+    ("M", "Male"),
+    ("F", "Female"),
+    ("O", "Other"),
+]
+
+REFER_STATUS = [
+    ("Draft", "Draft"),
+    ("Requested", "검사요청"),
+    ("Scheduled", "검사예약"),
+    ("Cancelled", "검사취소"),
+    ("Interpreted", "1차판독완료"),
+    ("Cosigned", "2차판독완료"),
+    ("Archive", "정산완료"),
+]
+
+TASK_STATUS = [
+    ("Todo", "Todo"),
+    ("Doing", "Doing"),
+    ("Done", "Done"),
+    ("Cancelled", "Cancelled"),
 ]

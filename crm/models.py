@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from accounts.models import CustomUser
 from customer.models import Company
-from utils.base_func import OPPORTUNITY_STAGE, OPPORTUNITY_CATEGORY
+from utils.choices import OPPORTUNITY_STAGE, OPPORTUNITY_CATEGORY
 
 
 # 병원고객들을 상담하는 곳임
