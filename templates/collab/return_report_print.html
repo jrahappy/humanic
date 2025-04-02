@@ -124,7 +124,7 @@
             </tr>
             <tr class="align-top border border-gray-500">
                 <td colspan="1" class="align-top border-e border-gray-500">
-                    <div class="font-semibold text-sm">향후치료<br>의견:</div>
+                    <div class="font-semibold text-sm">향후치료<br>의견 1:</div>
                 </td>
                 <td colspan="3" class="align-top border border-gray-500">
                     <div class="min-h-32 bg-base-50">위와 같이 의견을 보내드립니다.<br>
@@ -134,6 +134,34 @@
                     </div>
                 </td>
             </tr>
+            {% if refer.opinion3 %}
+            <tr class="align-top border border-gray-500">
+                <td colspan="1" class="align-top border-e border-gray-500">
+                    <div class="font-semibold text-sm">향후치료<br>의견 2:</div>
+                </td>
+                <td colspan="3" class="align-top border border-gray-500">
+                    <div class="min-h-32 bg-base-50">
+                        <div class="min-h-32 text-sm">
+                        {{ refer.opinion3|handle_none|linebreaks }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+            {% if refer.opinion4 %}
+            <tr class="align-top border border-gray-500">
+                <td colspan="1" class="align-top border-e border-gray-500">
+                    <div class="font-semibold text-sm">향후치료<br>의견 3:</div>
+                </td>
+                <td colspan="3" class="align-top border border-gray-500">
+                    <div class="min-h-32 bg-base-50">
+                        <div class="min-h-32 text-sm">
+                        {{ refer.opinion4|handle_none|linebreaks }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
             <tr class="align-top border border-gray-500">
                 <td colspan="4" class="align-top border-e border-gray-500 p-8">
                     <div class="font-semibold text-lg mb-4">위 와 같 이  소견함</div>

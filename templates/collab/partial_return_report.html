@@ -50,20 +50,34 @@
                 </div>
             </td>
         </tr>
-        <!-- <tr class="align-top border border-gray-500">
+        {% if refer.opinion3 %}
+        <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
-                <div class="font-semibold text-sm">PACS Link</div>
+                <div class="font-semibold text-sm">향후치료<br>의견 2:</div>
             </td>
             <td colspan="3" class="align-top border border-gray-500">
-                <div class="bg-base-50">
-                    {% if refer.url is None %}
-                        <div class="text-sm"></div>
-                    {% else %}
-                        <a href="{{ refer.url }}" target="_blank">Link 열기</a>
-                    {% endif %}
+                <div class="min-h-32 bg-base-50">
+                    <div class="min-h-32 text-sm">
+                    {{ refer.opinion3|handle_none|linebreaks }}
+                    </div>
                 </div>
             </td>
-        </tr> -->
+        </tr>
+        {% endif %}
+        {% if refer.opinion4 %}
+        <tr class="align-top border border-gray-500">
+            <td colspan="1" class="align-top border-e border-gray-500">
+                <div class="font-semibold text-sm">향후치료<br>의견 3:</div>
+            </td>
+            <td colspan="3" class="align-top border border-gray-500">
+                <div class="min-h-32 bg-base-50">
+                    <div class="min-h-32 text-sm">
+                    {{ refer.opinion4|handle_none|linebreaks }}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
         <tr class="align-top border border-gray-500">
             <td colspan="1" class="align-top border-e border-gray-500">
                 <div class="font-semibold text-sm">첨부파일</div>
