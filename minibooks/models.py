@@ -60,6 +60,9 @@ class ReportMaster(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     department = models.CharField(max_length=100, null=True, blank=True)
     bodypart = models.CharField(max_length=100, null=True, blank=True)
+    # 2025년 3월부터 추가(Section/sub_specialty)
+    specialty2 = models.CharField(max_length=30, null=True, blank=True)
+
     modality = models.CharField(max_length=100, null=True, blank=True)
     equipment = models.CharField(max_length=100, null=True, blank=True)
     amodality = models.CharField(
@@ -98,7 +101,8 @@ class ReportMaster(models.Model):
 
     approveddttm = models.CharField(max_length=100, null=True, blank=True)
     approvedt = models.DateTimeField(null=True, blank=True)
-
+    # 2025년 3월부터 추가(의미는 모르겠음)
+    child = models.CharField(max_length=10, null=True, blank=True)
     pacs = models.CharField(max_length=100, null=True, blank=True)
     requestdttm = models.CharField(max_length=100, null=True, blank=True)
     requestdt = models.DateTimeField(null=True, blank=True)

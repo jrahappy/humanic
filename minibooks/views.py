@@ -187,6 +187,7 @@ def clean_data(request, id):
     )
 
     v_rawdata_count = v_rawdata.count()
+    print("target rows:", v_rawdata_count)
     messages.info(request, f"Data cleaning started for {v_rawdata_count} rows.")
 
     ayear = v_uploadhistory.ayear
@@ -430,31 +431,34 @@ def create_reportmaster(request, id):
                         name=str(data[3]).strip() if data[3] else "",
                         department=str(data[4]).strip() if data[4] else "",
                         bodypart=str(data[5]).strip() if data[5] else "",
-                        modality=str(data[6]).strip() if data[6] else "",
-                        equipment=str(data[7]).strip() if data[7] else "",
-                        studydescription=str(data[8]).strip() if data[8] else "",
-                        imagecount=data[9],
-                        accessionnumber=str(data[10]).strip() if data[10] else "",
-                        readprice=data[11],
-                        reader=str(data[12]).strip() if data[12] else "",
-                        approver=str(data[13]).strip() if data[13] else "",
+                        # 섹션 추가: 2025년 3월부터
+                        specialty2=str(data[6]).strip() if data[6] else "",
+                        modality=str(data[7]).strip() if data[7] else "",
+                        equipment=str(data[8]).strip() if data[8] else "",
+                        studydescription=str(data[9]).strip() if data[9] else "",
+                        imagecount=data[10],
+                        accessionnumber=str(data[11]).strip() if data[11] else "",
+                        readprice=data[12],
+                        reader=str(data[13]).strip() if data[13] else "",
+                        approver=str(data[14]).strip() if data[14] else "",
                         radiologist=(
-                            str(data[14]).strip().replace("\n", "").replace("\t", "")
-                            if data[14]
+                            str(data[15]).strip().replace("\n", "").replace("\t", "")
+                            if data[15]
                             else ""
                         ),
-                        radiologist_license=str(data[15]).strip() if data[15] else "",
-                        studydate=str(data[16]).strip() if data[16] else "",
-                        approveddttm=str(data[17]).strip() if data[17] else "",
-                        stat=str(data[18]).strip() if data[18] else "",
-                        pacs=str(data[19]).strip() if data[19] else "",
-                        requestdttm=str(data[20]).strip() if data[20] else "",
-                        ecode=str(data[21]).strip() if data[21] else "",
-                        sid=str(data[22]).strip() if data[22] else "",
-                        # X column
-                        patientid=str(data[23]).strip() if data[23] else "",
+                        radiologist_license=str(data[16]).strip() if data[16] else "",
+                        studydate=str(data[17]).strip() if data[17] else "",
+                        approveddttm=str(data[18]).strip() if data[18] else "",
+                        stat=str(data[19]).strip() if data[19] else "",
+                        # 2025년 3월부터
+                        child=str(data[20]).strip() if data[20] else "",
+                        pacs=str(data[21]).strip() if data[21] else "",
+                        requestdttm=str(data[22]).strip() if data[22] else "",
+                        ecode=str(data[23]).strip() if data[23] else "",
+                        sid=str(data[24]).strip() if data[24] else "",
+                        patientid=str(data[25]).strip() if data[25] else "",
                         # Y 휴먼결제하기로 함
-                        human_paid_all=str(data[24]).strip() if data[24] else "",
+                        human_paid_all=str(data[26]).strip() if data[26] else "",
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
                         adate=last_date,
@@ -472,31 +476,32 @@ def create_reportmaster(request, id):
                         name=str(data[3]).strip() if data[3] else "",
                         department=str(data[4]).strip() if data[4] else "",
                         bodypart=str(data[5]).strip() if data[5] else "",
-                        modality=str(data[6]).strip() if data[6] else "",
-                        equipment=str(data[7]).strip() if data[7] else "",
-                        studydescription=str(data[8]).strip() if data[8] else "",
-                        imagecount=data[9],
-                        accessionnumber=str(data[10]).strip() if data[10] else "",
-                        readprice=data[11],
-                        reader=str(data[12]).strip() if data[12] else "",
-                        approver=str(data[13]).strip() if data[13] else "",
+                        # 섹션 추가: 2025년 3월부터
+                        specialty2=str(data[6]).strip() if data[6] else "",
+                        modality=str(data[7]).strip() if data[7] else "",
+                        equipment=str(data[8]).strip() if data[8] else "",
+                        studydescription=str(data[9]).strip() if data[9] else "",
+                        imagecount=data[10],
+                        accessionnumber=str(data[11]).strip() if data[11] else "",
+                        readprice=data[12],
+                        reader=str(data[13]).strip() if data[13] else "",
+                        approver=str(data[14]).strip() if data[14] else "",
                         radiologist=(
-                            str(data[14]).strip().replace("\n", "").replace("\t", "")
-                            if data[14]
+                            str(data[15]).strip().replace("\n", "").replace("\t", "")
+                            if data[15]
                             else ""
                         ),
-                        radiologist_license=str(data[15]).strip() if data[15] else "",
-                        studydate=str(data[16]).strip() if data[16] else "",
-                        approveddttm=str(data[17]).strip() if data[17] else "",
-                        stat=str(data[18]).strip() if data[18] else "",
-                        pacs=str(data[19]).strip() if data[19] else "",
-                        requestdttm=str(data[20]).strip() if data[20] else "",
-                        ecode=str(data[21]).strip() if data[21] else "",
-                        sid=str(data[22]).strip() if data[22] else "",
-                        # X column
-                        patientid=str(data[23]).strip() if data[23] else "",
-                        # 24번 칼럼은 보라매, 건보일산 파일에는 존재하지 않음
-                        # human_paid_all=str(data[24]).strip() if data[24] else "",
+                        radiologist_license=str(data[16]).strip() if data[16] else "",
+                        studydate=str(data[17]).strip() if data[17] else "",
+                        approveddttm=str(data[18]).strip() if data[18] else "",
+                        stat=str(data[19]).strip() if data[19] else "",
+                        pacs=str(data[21]).strip() if data[21] else "",
+                        requestdttm=str(data[22]).strip() if data[22] else "",
+                        ecode=str(data[23]).strip() if data[23] else "",
+                        sid=str(data[24]).strip() if data[24] else "",
+                        patientid=str(data[25]).strip() if data[25] else "",
+                        # 26번 휴먼 칼럼
+                        human_paid_all=str(data[26]).strip() if data[26] else "",
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
                         adate=last_date,
@@ -525,26 +530,27 @@ def create_reportmaster(request, id):
                 # )
 
                 else:
+                    # 휴먼영상의학센터 전용 엑셀파일 순서 바뀜(2024년 3월부터)
                     ReportMaster.objects.create(
                         apptitle="휴먼영상의학센터",
                         company=humanic,
-                        case_id=data[8],
-                        name=data[14],
-                        bodypart=data[11],
-                        equipment=data[9],
-                        studydescription=data[15],
-                        imagecount=data[17],
-                        accessionnumber=data[12],
-                        readprice=data[16] if data[16] else 0,
-                        approver=data[7],
-                        radiologist=data[5],
-                        radiologist_license=data[6],
+                        case_id=data[6],
+                        name=data[12],
+                        bodypart=data[9],
+                        equipment=data[7],
+                        studydescription=data[16],
+                        imagecount=data[18],
+                        accessionnumber=data[10],
+                        readprice=data[17] if data[17] else 0,
+                        approver=data[5],
+                        radiologist=data[3],
+                        radiologist_license=data[4],
                         studydate=data[1],
                         approveddttm=data[2],
                         pacs="HPACS",
                         # platform=humanic_platform,
-                        requestdttm=data[4],
-                        patientid=data[13],
+                        requestdttm=data[1],
+                        patientid=data[11],
                         ayear=str(ayear).strip() if ayear else "",
                         amonth=str(amonth).strip() if amonth else "",
                         adate=last_date,
@@ -1191,6 +1197,7 @@ def apply_rule_progress(request, magam_id, rule_id):
             amonth=smonth,
             amodality="CT",
             bodypart="CHEST",  # 흉부만
+            specialty2="흉부",
             readprice__lt=19600,
             is_human_outpatient=False,
             is_take=False,
@@ -1946,6 +1953,7 @@ def apply_rule_progress_target(request, magam_id, rule_id):
             amonth=smonth,
             amodality="CT",
             bodypart="CHEST",  # 흉부만
+            specialty2="흉부",
             readprice__lt=19600,
             is_human_outpatient=False,
             is_take=False,
