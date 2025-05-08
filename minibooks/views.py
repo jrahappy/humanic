@@ -1195,8 +1195,9 @@ def apply_rule_progress(request, magam_id, rule_id):
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
+            company=11,  # 강서솔병원
             amodality="CT",
-            bodypart="CHEST",  # 흉부만
+            # bodypart="CHEST",  # 흉부만
             specialty2="흉부",
             readprice__lt=19600,
             is_human_outpatient=False,
@@ -1951,8 +1952,9 @@ def apply_rule_progress_target(request, magam_id, rule_id):
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
+            company=11,  # 강서솔병원
             amodality="CT",
-            bodypart="CHEST",  # 흉부만
+            # bodypart="CHEST",  # 흉부만
             specialty2="흉부",
             readprice__lt=19600,
             is_human_outpatient=False,
