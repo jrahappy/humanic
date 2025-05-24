@@ -83,36 +83,38 @@
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
-              <span class="label-text">주소</span>
-            </label>
-            {% render_field form.address  class='input input-bordered font-mono input-sm' %}
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">호</span>
-            </label>
-            {% render_field form.suite  class='input input-bordered font-mono input-sm' %}
-          </div>
-          <div class="form-control">
-            <label class="label">
               <span class="label-text">시/도</span>
             </label>
             {% render_field form.city  class='input input-bordered font-mono input-sm' %}
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">우편번호</span>
+              <span class="label-text">주소</span>
             </label>
-            {% render_field form.zipcode  class='input input-bordered font-mono input-sm' %}
+            {% render_field form.address  class='input input-bordered font-mono input-sm' %}
           </div>
-        </div>
-        <div class="grid grid-cols-4 gap-2">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">호</span>
+              </label>
+              {% render_field form.suite  class='input input-bordered font-mono input-sm' %}
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">우편번호</span>
+              </label>
+              {% render_field form.zipcode  class='input input-bordered font-mono input-sm' %}
+            </div>
+          </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">대표전화번호</span>
+              <span class="label-text">대표전화</span>
             </label>
             {% render_field form.office_phone  class='input input-bordered font-mono input-sm' %}
           </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자</span>
@@ -127,7 +129,13 @@
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">담당자번호</span>
+              <span class="label-text">담당자휴대폰</span>
+            </label>
+            {% render_field form.office_cellphone  class='input input-bordered font-mono input-sm' %}
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">대표팩스</span>
             </label>
             {% render_field form.office_fax  class='input input-bordered font-mono input-sm' %}
           </div>

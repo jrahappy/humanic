@@ -8,11 +8,13 @@ from minibooks.models import (
     ReportMaster,
     ReportMasterStat,
     ReportMasterWeekday,
+    MagamMaster,
 )
 from accounts.models import Profile, CustomUser
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from datetime import date
+from collections import defaultdict
 
 
 @login_required
@@ -170,6 +172,19 @@ def index(request):
             reverse=True,
         )
 
+        # Transform to nested structure
+        year_month_map = defaultdict(list)
+        for item in buttons_year_month:
+            year = int(item["ayear"])
+            month = int(item["amonth"])
+            year_month_map[year].append(month)
+
+        data_array = [
+            {"year": year, "months": sorted(months, reverse=True)}
+            for year, months in year_month_map.items()
+        ]
+        data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
+
         # 전체 통계
         rs_graph = ReportMasterWeekday.objects.filter(ayear=syear, amonth=smonth)
         # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
@@ -194,6 +209,11 @@ def index(request):
             .order_by("-provider_count")
         )
 
+        # 관리데이터들
+        magam = MagamMaster.objects.filter(ayear=syear, amonth=smonth).first()
+        magam_id = magam.id
+        # print("magam_id", magam_id)
+
         # print(dr_by_specialty)
         briefing_data = {
             "cm_total": cm_total,
@@ -208,8 +228,10 @@ def index(request):
             "rs_cm": rs_cm,
             "rs_dr": rs_dr,
             "buttons_year_month": buttons_year_month,
+            "btn_y_m": data_array,
             "rs_weekday": rs_weekday,
             "dr_by_specialty": dr_by_specialty,
+            "magam_id": magam_id,
         }
         cache.set(cache_key, briefing_data, timeout=60 * 15)  # Cache for 15 minutes
         return render(request, "briefing/index.html", briefing_data)
@@ -319,6 +341,19 @@ def partial_briefing(request):
             reverse=True,
         )
 
+        # Transform to nested structure
+        year_month_map = defaultdict(list)
+        for item in buttons_year_month:
+            year = int(item["ayear"])
+            month = int(item["amonth"])
+            year_month_map[year].append(month)
+
+        data_array = [
+            {"year": year, "months": sorted(months, reverse=True)}
+            for year, months in year_month_map.items()
+        ]
+        data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
+
         # 전체 통계
         rs_graph = ReportMasterWeekday.objects.filter(ayear=syear, amonth=smonth)
         # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
@@ -343,6 +378,11 @@ def partial_briefing(request):
             .order_by("-provider_count")
         )
 
+        # 관리데이터들
+        magam = MagamMaster.objects.filter(ayear=syear, amonth=smonth).first()
+        magam_id = magam.id
+        # print("magam_id", magam_id)
+
         # print(dr_by_specialty)
         briefing_data = {
             "cm_total": cm_total,
@@ -357,8 +397,10 @@ def partial_briefing(request):
             "rs_cm": rs_cm,
             "rs_dr": rs_dr,
             "buttons_year_month": buttons_year_month,
+            "btn_y_m": data_array,
             "rs_weekday": rs_weekday,
             "dr_by_specialty": dr_by_specialty,
+            "magam_id": magam_id,
         }
         cache.set(cache_key, briefing_data, timeout=60 * 15)
         return render(request, "briefing/partial_briefing.html", briefing_data)

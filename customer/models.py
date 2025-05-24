@@ -17,6 +17,7 @@ class Company(models.Model):
     zipcode = models.CharField(max_length=10, null=True, blank=True)
     office_phone = models.CharField(max_length=20, null=True, blank=True)
     office_fax = models.CharField(max_length=20, null=True, blank=True)
+    office_cellphone = models.CharField(max_length=20, null=True, blank=True)
     office_email = models.EmailField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     ein = models.CharField(max_length=20, null=True, blank=True)

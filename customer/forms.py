@@ -42,6 +42,7 @@ class CompanyForm(ModelForm):
             "country",
             "zipcode",
             "office_phone",
+            "office_cellphone",
             "office_fax",
             "office_email",
             "website",

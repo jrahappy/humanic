@@ -75,21 +75,21 @@
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 gap-2">
-          <div class="form-control">
+        <div class="grid grid-cols-4 gap-2">
+          <div class="col-span-3 form-control">
             <label class="label">
               <span class="label-text">주소</span>
             </label>
             <p class="p-3 h-10">{{ company.full_address|handle_none}}</p>
           </div>
-        </div>
-        <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
               <span class="label-text">대표번호</span>
             </label>
             <p class="p-3 h-10">{{ company.office_phone|handle_none}}</p>
           </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
               <span class="label-text">담당자</span>
@@ -104,9 +104,15 @@
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">담당자 전화번호</span>
+              <span class="label-text">담당자 휴대폰</span>
             </label>
-            <p class="p-2 font-semibold rounded-lg text-md">{{ company.office_fax|handle_none}}</p>
+            <p class="p-2 font-semibold rounded-lg text-md">{{ company.office_cellphone|handle_none}}</p>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">대표팩스</span>
+            </label>
+            <p class="p-3 h-10">{{ company.office_fax|handle_none}}</p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2 ">

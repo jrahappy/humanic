@@ -1,33 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django
+db.sqlite3
+migrations/
+*.log
+logs/
+logs/
+*.pid
+*.pid.lock
+# Project-specific
+dogfoot/
+
 # Node.js
 node_modules/
+package-lock.json
+yarn.lock
 
-# pycache
-__pycache__/
+docker-compose.override.yml
+docker-compose.yml
+Dockerfile
+# Build artifacts
+build/
+dist/
 
-# Logs
-logs
-*.log
-npm-debug.log*
+# Environment
+.env
+.env.*
+.venv/
+venv/
+.venv/
+venv/
+.humanic/
+humanic/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
 
-humunic/
-
-# Dependency directories
-pids
-logs
-*.pid
-*.seed
-*.pid.lock
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional REPL history
-.node_repl_history
-
-# Environment variables
-.env*
-
+# Notes and documentation
 note.md
+*.md.bak

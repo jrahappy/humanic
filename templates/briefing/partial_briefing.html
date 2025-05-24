@@ -5,7 +5,7 @@
   <section class="stats stats-vertical col-span-12 w-full mb-4 shadow-sm xl:stats-horizontal">
     <div class="stat">
       <div class="stat-title">현재</div>
-      <div class="stat-value">{{syear}}. {{smonth}}</div>
+      <div class="stat-value" id="nomeans">{{syear}}. {{smonth}}</div>
       <div class="stat-desc"></div>
     </div>
     <div class="stat">
@@ -192,5 +192,38 @@
       &nbsp;
     </div>
   </section>
- 
+  <section class="card col-span-12 bg-base-100 shadow-sm xl:col-span-4">
+    <div class="card-body grow-0">
+      <h2 class="card-title">
+        <a class="link-hover link">관리데이터</a>
+      </h2>
+    </div>
+    <div class="overflow-x-auto px-4">
+      <table class="table table-zebra w-full">
+        <tr>
+          <td>CT 저가판독료 Cases</td>
+          <td>
+            <button onclick="base_modal.showModal()" class="btn btn-xs btn-info" hx-get="/minibooks/magam/apply_rule_progress_target/{{magam_id}}/2/" hx-trigger="click" hx-target="#base_modal">보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td>일반요청->응급판독 Cases</td>
+          <td>
+            <button onclick="base_modal.showModal()" class="btn btn-xs btn-info" hx-get="/minibooks/magam/apply_rule_progress_target/{{magam_id}}/19/" hx-trigger="click" hx-target="#base_modal">보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td>휴먼전체 부담 Cases</td>
+          <td>
+            <button onclick="base_modal.showModal()" class="btn btn-xs btn-info" hx-get="/minibooks/magam/apply_rule_progress_target/{{magam_id}}/20/" hx-trigger="click" hx-target="#base_modal">보기</button>
+          </td>
+        </tr>
+        
+      </table>
+         
+    </div>
+    <div>
+      &nbsp;
+    </div>
+  </section>
 </div>
