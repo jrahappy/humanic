@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "storages",
     "django_filters",
     "django_celery_results",
+    "django_celery_beat",
     "widget_tweaks",
     "allauth",
     "allauth.account",
@@ -240,6 +241,15 @@ CKEDITOR_CONFIGS = {
 }
 
 TAGGIT_CASE_INSENSITIVE = True
+
+CELERY_REDIS_PASSWORD = "dustpeogkrryvkfcl"
+CELERY_BROKER_URL = f"redis://:{CELERY_REDIS_PASSWORD}@44.220.242.249:6379/0"
+CELERY_RESULT_BACKEND = f"redis://:{CELERY_REDIS_PASSWORD}@44.220.242.249:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Seoul"
+
 
 LOGGING = {
     "version": 1,

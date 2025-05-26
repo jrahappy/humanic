@@ -15,7 +15,7 @@ services:
 
   celery:
     build: .
-    command: celery -A your_project_name worker --loglevel=info
+    command: celery -A core worker --loglevel=info
     volumes:
       - .:/code
     depends_on:
