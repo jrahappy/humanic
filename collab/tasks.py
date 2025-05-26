@@ -1,6 +1,6 @@
 from celery import shared_task
-from .models import Refers
-from collab.views import create_history
+from accounts.models import CustomUser
+from .models import Refers, ReferHistory
 import datetime
 import logging
 
@@ -14,6 +14,7 @@ def update_refer_status(self):
     It cycles the status through PENDING -> IN_PROGRESS -> COMPLETED -> FAILED -> PENDING.
     Includes basic logging and error handling.
     """
+    HumanIC = CustomUser.objects.get(username="HumanIC")
 
     refers = Refers.objects.filter(
         status__in=["Requested"],
@@ -34,7 +35,14 @@ def update_refer_status(self):
             refer.status = next_status
             refer.updated_at = datetime.datetime.now()
             refer.save()
-            create_history(request, refer.id, "Archived", "Archived")
+            ReferHistory.objects.create(
+                refer=refer,
+                changed_status="Cancelled",
+                memo="Refer cancelled due to inactivity.",
+                changed_by=HumanIC,
+                changed_at=datetime.datetime.now(),
+            )
+
             updated_count += 1
             logger.info(
                 f"Refer '{refer.patient_name}' (ID: {refer.id}) "

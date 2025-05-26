@@ -342,7 +342,7 @@ REFER_STATUS = [
     ("Cancelled", "검사취소"),
     ("Interpreted", "1차판독완료"),
     ("Cosigned", "2차판독완료"),
-    ("Archive", "정산완료"),
+    ("Archived", "정산완료"),
 ]
 
 TASK_STATUS = [
