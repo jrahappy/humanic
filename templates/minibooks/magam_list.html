@@ -63,6 +63,7 @@
                                   <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-right text-gray-900">
                                       <a href="{% url 'minibooks:magam_view' data.id %}"
                                           class="btn btn-primary btn-sm">Detail</a>
+                                      <a href="{% url 'minibooks:magam_update' data.id %}" class="btn btn-info btn-sm">Update</a>
                                       <!-- <a href="{% url 'minibooks:re_cal_magam' data.id %}" class="btn btn-primary btn-sm">ReCal</a> -->
                                       {% if data.is_opened %}
                                         <a href="{% url 'minibooks:get_open' data.id data.is_opened %}" class="btn btn-primary btn-sm">Close</a>

@@ -40,6 +40,7 @@ urlpatterns = [
     path("partial_tracking/<int:id>/", views.partial_tracking, name="partial_tracking"),
     path("magam/", views.magam_list, name="magam_list"),
     path("magam/new/", views.magam_new, name="magam_new"),
+    path("magam/update/<int:id>/", views.magam_update, name="magam_update"),
     path("re_cal_magam/<int:id>/", views.re_cal_magam, name="re_cal_magam"),
     path("magam/view/<int:id>/", views.magam_view, name="magam_view"),
     path(

@@ -1282,7 +1282,7 @@ def apply_rule_progress(request, magam_id, rule_id):
         target_rows = ReportMaster.objects.filter(
             ayear=syear,
             amonth=smonth,
-            company=11,  # 강서솔병원
+            # company=11,  # 강서솔병원
             amodality="CT",
             # bodypart="CHEST",  # 흉부만
             specialty2="흉부",
@@ -2713,6 +2713,17 @@ def magam_new(request):
         context = {"form": form, "user": user}
 
     return render(request, "minibooks/magam_new.html", context)
+
+
+@login_required
+def magam_update(request, id):
+    user = request.user
+    magam = MagamMaster.objects.get(id=id)
+    target_rows = ReportMaster.objects.filter(ayear=magam.ayear, amonth=magam.amonth)
+    magam.target_rows = target_rows.count()
+    magam.save()
+    messages.success(request, "New Magam created successfully.")
+    return redirect("minibooks:magam_list")
 
 
 def re_cal_magam(request, id):
