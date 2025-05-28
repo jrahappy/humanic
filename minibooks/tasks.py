@@ -8,7 +8,9 @@ from calendar import monthrange
 from tablib import Dataset
 from .models import UploadHistory, Company, ReportMaster
 from accounts.models import Profile, CustomUser
+from django.db.models import Q
 import logging
+
 
 logger = logging.getLogger(__name__)
 
