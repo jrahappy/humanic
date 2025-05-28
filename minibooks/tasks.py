@@ -7,6 +7,7 @@ from datetime import date
 from calendar import monthrange
 from tablib import Dataset
 from .models import UploadHistory, Company, ReportMaster
+from accounts.models import Profile, CustomUser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -27,6 +28,176 @@ def update_is_onsite(self, row_id, is_onsite):
     # print(f"Updated is_onsite for row_id: {row_id} to {is_onsite}")
 
     return "Done"
+
+
+@shared_task(bind=True, soft_time_limit=25 * 60, time_limit=30 * 60, max_retries=3)
+def clean_data_task(self, uploadhistory_id, user_id):
+    try:
+        v_uploadhistory = UploadHistory.objects.get(id=uploadhistory_id)
+        v_rawdata = (
+            ReportMaster.objects.filter(
+                uploadhistory_id=uploadhistory_id, verified=False
+            )
+            .filter(Q(company=None) | Q(provider=None))
+            .order_by("id")
+        )
+
+        v_rawdata_count = v_rawdata.count()
+        # logger.info(f"Data cleaning started for {v_rawdata_count} rows for UploadHistory ID {uploadhistory_id}")
+
+        ayear = v_uploadhistory.ayear
+        amonth = v_uploadhistory.amonth
+
+        def get_verified_object(model, field, value):
+            obj = model.objects.filter(**{field: value}).first()
+            return obj, obj is not None
+
+        i = 0
+        for data in v_rawdata:
+            # logger.info(f"Processing ReportMaster ID {data.id}")
+            company, company_verified = get_verified_object(
+                Company, "business_name", data.apptitle
+            )
+
+            radiologist = data.radiologist
+            radiologist = (
+                radiologist.replace(" ", "").replace("\n", "").replace("\t", "")
+            )
+            if radiologist == "김수진(유방)":
+                radiologist = "김수진"
+            elif radiologist == "김수진(신경두경부)":
+                radiologist = "김수진B"
+
+            radiologist_profile, radiologist_verified = get_verified_object(
+                Profile, "real_name", radiologist
+            )
+            radiologist = radiologist_profile.user if radiologist_verified else None
+
+            equipment = data.equipment
+            if equipment == "DR":
+                amodality = "CR"
+            elif equipment == "DT":
+                amodality = "CR"
+            else:
+                amodality = equipment
+
+            is_human_outpatient = data.apptitle == "휴먼영상의학센터"
+
+            if data.requestdttm:
+                try:
+                    requestdt = timezone.make_aware(
+                        timezone.datetime.strptime(
+                            data.requestdttm, "%Y-%m-%d %H:%M:%S"
+                        )
+                    )
+                    requestdt_verified = True
+                except (ValueError, TypeError):
+                    requestdt = None
+                    requestdt_verified = data.pacs == "ONSITE"
+            else:
+                requestdt = None
+                requestdt_verified = True
+
+            if data.approveddttm:
+                try:
+                    approvedt = timezone.make_aware(
+                        timezone.datetime.strptime(
+                            data.approveddttm, "%Y-%m-%d %H:%M:%S"
+                        )
+                    )
+                    approvedt_verified = True
+                except (ValueError, TypeError):
+                    approvedt = None
+                    approvedt_verified = data.pacs == "ONSITE"
+            else:
+                approvedt = None
+                approvedt_verified = True
+
+            verified = all(
+                [
+                    company_verified,
+                    radiologist_verified,
+                    requestdt_verified,
+                    approvedt_verified,
+                ]
+            )
+
+            if verified and isinstance(data.id, int):
+                ReportMaster.objects.filter(id=data.id).update(
+                    company=company,
+                    provider=radiologist,
+                    amodality=amodality,
+                    is_human_outpatient=is_human_outpatient,
+                    requestdt=requestdt,
+                    approvedt=approvedt,
+                    verified=True,
+                )
+                # logger.info(f"Data for ReportMaster ID {data.id} / {i} verified")
+                i += 1
+            else:
+                unverified_message = ""
+                if not company_verified:
+                    unverified_message += (
+                        f"Company verification failed for ID {data.id}\n"
+                    )
+                if not radiologist_verified:
+                    unverified_message += (
+                        f"Radiologist verification failed for ID {data.id}\n"
+                    )
+                if not requestdt_verified:
+                    unverified_message += (
+                        f"Request date verification failed for ID {data.id}\n"
+                    )
+                if not approvedt_verified:
+                    unverified_message += (
+                        f"Approval date verification failed for ID {data.id}\n"
+                    )
+
+                ReportMaster.objects.filter(id=data.id).update(
+                    verified=False,
+                    unverified_message=unverified_message,
+                )
+                logger.warning(
+                    f"Unverified data for ReportMaster ID {data.id}: {unverified_message}"
+                )
+                break
+
+            # self.update_state(
+            #     state="PROGRESS", meta={"current": i, "total": v_rawdata_count}
+            # )
+
+        v_rawdata = ReportMaster.objects.filter(
+            uploadhistory_id=uploadhistory_id, verified=False
+        )
+        total_rows = v_rawdata.count()
+        if total_rows == 0:
+            v_uploadhistory.verified = True
+            v_uploadhistory.save(update_fields=["verified"])
+            # v_uploadhistory.log_uploadhistory(
+            #     user_id=user_id,
+            #     action="Data Cleaning",
+            #     description="Data cleaned successfully.",
+            # )
+            # logger.info("Data cleaning completed successfully")
+            return {"status": "Success", "rows_processed": i}
+        else:
+            # v_uploadhistory.log_uploadhistory(
+            #     user_id=user_id,
+            #     action="Data Cleaning",
+            #     description=f"Failed: Data for ReportMaster ID {data.id} not verified.",
+            # )
+            # logger.error("Data cleaning failed due to unverified records")
+            return {
+                "status": "Failure",
+                "rows_processed": i,
+                "error": "Unverified records remain",
+            }
+    except Exception as e:
+        logger.error(f"Task failed for UploadHistory ID {uploadhistory_id}: {e}")
+        # v_uploadhistory.log_uploadhistory(
+        #     user_id=user_id, action="Data Cleaning", description=f"Failed: {e}"
+        # )
+        raise self.retry(countdown=60, exc=e)
 
 
 @shared_task(bind=True, soft_time_limit=25 * 60, time_limit=30 * 60, max_retries=3)
