@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django_extensions",
+    "rest_framework",
     "storages",
     "django_filters",
     "django_celery_results",
@@ -70,6 +71,7 @@ INSTALLED_APPS = [
     "collab",
     "task",
     "web",
+    "api",
 ]
 
 MIDDLEWARE = [

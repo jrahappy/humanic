@@ -372,3 +372,10 @@ WM info Human!234
 # 1/6/2025 #
     - refer 에 refer_doctor 필드 추가. 최초 검사의뢰서 만들 때에 의뢰 의사를 수정할 수 있도록 함.
     
+# 5/26/2025 #
+    - Celery, Redis-server, Beat, Flower 설치 완료
+    - 서버에는 supervisor 설치 완료. Celery, Beat 를 데몬에 등록함 
+    - sudo supervisorctl start humanic:*
+    - sudo supervisorctl reread
+    - sudo supervisorctl update
+    - sudo supervisorctl status 
