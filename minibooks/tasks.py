@@ -119,8 +119,8 @@ def clean_data_task(self, uploadhistory_id, user_id):
                 [
                     company_verified,
                     radiologist_verified,
-                    requestdt_verified,
-                    approvedt_verified,
+                    # requestdt_verified,
+                    # approvedt_verified,
                 ]
             )
 
@@ -130,8 +130,8 @@ def clean_data_task(self, uploadhistory_id, user_id):
                     provider=radiologist,
                     amodality=amodality,
                     is_human_outpatient=is_human_outpatient,
-                    requestdt=requestdt,
-                    approvedt=approvedt,
+                    # requestdt=requestdt,
+                    # approvedt=approvedt,
                     verified=True,
                 )
                 # logger.info(f"Data for ReportMaster ID {data.id} / {i} verified")
