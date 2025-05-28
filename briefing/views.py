@@ -35,7 +35,11 @@ def index(request):
     smonth = request.GET.get("smonth")
 
     if not syear or not smonth:
-        latest_upload = UploadHistory.objects.filter(is_deleted=False).latest("id")
+        latest_upload = (
+            UploadHistory.objects.filter(is_deleted=False)
+            .order_by("-ayear", "-amonth")
+            .first()
+        )
         syear = latest_upload.ayear
         smonth = latest_upload.amonth
 
@@ -185,6 +189,7 @@ def index(request):
         ]
         data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
 
+        print("data_array", data_array)
         # 전체 통계
         rs_graph = ReportMasterWeekday.objects.filter(ayear=syear, amonth=smonth)
         # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)

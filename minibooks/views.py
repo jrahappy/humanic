@@ -37,6 +37,8 @@ from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 from calendar import monthrange
 from django.http import HttpResponse
+from .tasks import create_reportmaster_task
+from django.http import JsonResponse
 
 
 @login_required
@@ -381,251 +383,264 @@ def current_progress(request, id):
     return render(request, "minibooks/current_progress.html", data)
 
 
-@login_required
+# @login_required
+# def create_reportmaster(request, id):
+
+#     a_raw = UploadHistory.objects.get(id=id)
+#     platform = a_raw.platform
+#     ayear = int(a_raw.ayear)
+#     amonth = int(a_raw.amonth)
+#     # 해달월의 마지막 날짜를 구함
+#     last_date = date(ayear, amonth, monthrange(ayear, amonth)[1])
+#     a_file = a_raw.afile
+#     # 상수들 준비
+#     humanic = Company.objects.get(id=1)
+#     # not use on Nov 2024
+#     # humanic_platform = Platform.objects.filter(name="HPACS").first()
+
+#     # rawdata_resource = rawdataResource()
+#     dataset = Dataset()
+#     new_rawdata = a_file
+#     imported_data = dataset.load(new_rawdata.read(), format="xlsx")
+#     total_rows = len(imported_data)
+#     print(
+#         "Total rows: "
+#         + str(total_rows)
+#         + "/File: "
+#         + str(a_file)
+#         + "/Platform: "
+#         + str(platform)
+#     )
+#     # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
+
+#     check_pre_work_count = ReportMaster.objects.filter(uploadhistory=id).count()
+#     starting_row = check_pre_work_count
+
+#     # if not imported_data.has_errors():
+#     i = starting_row + 1
+#     for data in imported_data:
+#         if data[0] == None:
+#             print("Skip empty rows" + str(i))
+#             i += 1
+#         else:
+#             try:
+#                 print(i)
+#                 if platform == "ONPACS":
+#                     ReportMaster.objects.create(
+#                         apptitle=str(data[0]).strip() if data[0] else "",
+#                         ein=str(data[1]).strip() if data[1] else "",
+#                         case_id=str(data[2]).strip() if data[2] else "",
+#                         name=str(data[3]).strip() if data[3] else "",
+#                         department=str(data[4]).strip() if data[4] else "",
+#                         bodypart=str(data[5]).strip() if data[5] else "",
+#                         # 섹션 추가: 2025년 3월부터
+#                         specialty2=str(data[6]).strip() if data[6] else "",
+#                         modality=str(data[7]).strip() if data[7] else "",
+#                         equipment=str(data[8]).strip() if data[8] else "",
+#                         studydescription=str(data[9]).strip() if data[9] else "",
+#                         imagecount=data[10],
+#                         accessionnumber=str(data[11]).strip() if data[11] else "",
+#                         readprice=data[12],
+#                         reader=str(data[13]).strip() if data[13] else "",
+#                         approver=str(data[14]).strip() if data[14] else "",
+#                         radiologist=(
+#                             str(data[15]).strip().replace("\n", "").replace("\t", "")
+#                             if data[15]
+#                             else ""
+#                         ),
+#                         radiologist_license=str(data[16]).strip() if data[16] else "",
+#                         studydate=str(data[17]).strip() if data[17] else "",
+#                         approveddttm=str(data[18]).strip() if data[18] else "",
+#                         stat=str(data[19]).strip() if data[19] else "",
+#                         # 2025년 3월부터
+#                         child=str(data[20]).strip() if data[20] else "",
+#                         pacs=str(data[21]).strip() if data[21] else "",
+#                         requestdttm=str(data[22]).strip() if data[22] else "",
+#                         ecode=str(data[23]).strip() if data[23] else "",
+#                         sid=str(data[24]).strip() if data[24] else "",
+#                         patientid=str(data[25]).strip() if data[25] else "",
+#                         # Y 휴먼결제하기로 함
+#                         human_paid_all=str(data[26]).strip() if data[26] else "",
+#                         ayear=str(ayear).strip() if ayear else "",
+#                         amonth=str(amonth).strip() if amonth else "",
+#                         adate=last_date,
+#                         is_take=False,
+#                         created_at=date.today(),
+#                         # verified=False,
+#                         uploadhistory=a_raw,
+#                         excelrownum=i,
+#                     )
+#                 elif platform == "TAKE":
+#                     ReportMaster.objects.create(
+#                         apptitle=str(data[0]).strip() if data[0] else "",
+#                         ein=str(data[1]).strip() if data[1] else "",
+#                         case_id=str(data[2]).strip() if data[2] else "",
+#                         name=str(data[3]).strip() if data[3] else "",
+#                         department=str(data[4]).strip() if data[4] else "",
+#                         bodypart=str(data[5]).strip() if data[5] else "",
+#                         # 섹션 추가: 2025년 3월부터
+#                         specialty2=str(data[6]).strip() if data[6] else "",
+#                         modality=str(data[7]).strip() if data[7] else "",
+#                         equipment=str(data[8]).strip() if data[8] else "",
+#                         studydescription=str(data[9]).strip() if data[9] else "",
+#                         imagecount=data[10],
+#                         accessionnumber=str(data[11]).strip() if data[11] else "",
+#                         readprice=data[12],
+#                         reader=str(data[13]).strip() if data[13] else "",
+#                         approver=str(data[14]).strip() if data[14] else "",
+#                         radiologist=(
+#                             str(data[15]).strip().replace("\n", "").replace("\t", "")
+#                             if data[15]
+#                             else ""
+#                         ),
+#                         radiologist_license=str(data[16]).strip() if data[16] else "",
+#                         studydate=str(data[17]).strip() if data[17] else "",
+#                         approveddttm=str(data[18]).strip() if data[18] else "",
+#                         stat=str(data[19]).strip() if data[19] else "",
+#                         pacs=str(data[21]).strip() if data[21] else "",
+#                         requestdttm=str(data[22]).strip() if data[22] else "",
+#                         ecode=str(data[23]).strip() if data[23] else "",
+#                         sid=str(data[24]).strip() if data[24] else "",
+#                         patientid=str(data[25]).strip() if data[25] else "",
+#                         # 26번 휴먼 칼럼
+#                         human_paid_all=str(data[26]).strip() if data[26] else "",
+#                         ayear=str(ayear).strip() if ayear else "",
+#                         amonth=str(amonth).strip() if amonth else "",
+#                         adate=last_date,
+#                         is_take=True,
+#                         created_at=date.today(),
+#                         # verified=False,
+#                         uploadhistory=a_raw,
+#                         excelrownum=i,
+#                     )
+
+#                 # 아주 예전 엑셀파일 처리를 위해 사용된 것들 12/20/2024
+#                 # elif platform == "ETC":
+#                 # ReportMaster.objects.create(
+#                 #     apptitle=data[0],
+#                 #     case_id=data[1],
+#                 #     equipment=data[2],
+#                 #     studydescription=data[3],
+#                 #     readprice=data[4],
+#                 #     radiologist=data[5],
+#                 #     ayear=str(ayear).strip() if ayear else "",
+#                 #     amonth=str(amonth).strip() if amonth else "",
+#                 #     created_at=date.today(),
+#                 #     verified=False,
+#                 #     uploadhistory=a_raw,
+#                 #     excelrownum=i,
+#                 # )
+
+#                 else:
+#                     # 휴먼영상의학센터 전용 엑셀파일 순서 바뀜(2024년 3월부터)
+#                     # 2023년 Excel파일포맷
+#                     if ayear == 2023:
+
+#                         ReportMaster.objects.create(
+#                             apptitle="휴먼영상의학센터",
+#                             company=humanic,
+#                             case_id=data[6],
+#                             name=data[12],
+#                             bodypart=data[9],
+#                             equipment=data[7],
+#                             accessionnumber=data[10],
+#                             # studydescription=data[16],
+#                             # imagecount=data[18],
+#                             # readprice=data[17] if data[17] else 0,
+#                             studydescription=data[9],
+#                             imagecount=data[15],
+#                             readprice=data[14] if data[14] else 0,
+#                             approver=data[5],
+#                             radiologist=data[3],
+#                             radiologist_license=data[4],
+#                             studydate=data[1],
+#                             approveddttm=data[2],
+#                             pacs="HPACS",
+#                             # platform=humanic_platform,
+#                             requestdttm=data[1],
+#                             patientid=data[11],
+#                             ayear=str(ayear).strip() if ayear else "",
+#                             amonth=str(amonth).strip() if amonth else "",
+#                             adate=last_date,
+#                             is_human_outpatient=True,
+#                             is_take=False,
+#                             created_at=date.today(),
+#                             verified=False,
+#                             uploadhistory=a_raw,
+#                             excelrownum=i,
+#                         )
+
+#                     ## 2024/2025년 Excel파일포맷 ##
+#                     else:
+
+#                         ReportMaster.objects.create(
+#                             apptitle="휴먼영상의학센터",
+#                             company=humanic,
+#                             case_id=data[6],
+#                             name=data[12],
+#                             bodypart=data[9],
+#                             equipment=data[7],
+#                             accessionnumber=data[10],
+#                             studydescription=data[16],
+#                             imagecount=data[18],
+#                             readprice=data[17] if data[17] else 0,
+#                             approver=data[5],
+#                             radiologist=data[3],
+#                             radiologist_license=data[4],
+#                             studydate=data[1],
+#                             approveddttm=data[2],
+#                             pacs="HPACS",
+#                             # platform=humanic_platform,
+#                             requestdttm=data[1],
+#                             patientid=data[11],
+#                             ayear=str(ayear).strip() if ayear else "",
+#                             amonth=str(amonth).strip() if amonth else "",
+#                             adate=last_date,
+#                             is_human_outpatient=True,
+#                             is_take=False,
+#                             created_at=date.today(),
+#                             verified=False,
+#                             uploadhistory=a_raw,
+#                             excelrownum=i,
+#                         )
+
+#                 # a_raw.save()
+#                 # Call the Celery task
+#                 # test_celery.delay(i)
+#                 i += 1
+#             except Exception as e:
+#                 print(f"An error occurred during file upload: {e}")
+#                 messages.error(request, f"An error occurred: {e}")
+#                 log_uploadhistory(
+#                     request.user,
+#                     "Data Import",
+#                     f"Failed: An error occurred at row#{i}: {e}",
+#                     a_raw,
+#                 )
+#                 return redirect("minibooks:index")
+
+#     UploadHistory.objects.filter(id=id).update(imported=True)
+#     messages.success(request, str(i) + " rows imported successfully.")
+#     log_uploadhistory(
+#         request.user,
+#         "Data Import",
+#         "Data imported successfully.",
+#         a_raw,
+#     )
+#     return redirect("minibooks:index")
+
+
 def create_reportmaster(request, id):
-
-    a_raw = UploadHistory.objects.get(id=id)
-    platform = a_raw.platform
-    ayear = int(a_raw.ayear)
-    amonth = int(a_raw.amonth)
-    # 해달월의 마지막 날짜를 구함
-    last_date = date(ayear, amonth, monthrange(ayear, amonth)[1])
-    a_file = a_raw.afile
-    # 상수들 준비
-    humanic = Company.objects.get(id=1)
-    # not use on Nov 2024
-    # humanic_platform = Platform.objects.filter(name="HPACS").first()
-
-    # rawdata_resource = rawdataResource()
-    dataset = Dataset()
-    new_rawdata = a_file
-    imported_data = dataset.load(new_rawdata.read(), format="xlsx")
-    total_rows = len(imported_data)
-    print(
-        "Total rows: "
-        + str(total_rows)
-        + "/File: "
-        + str(a_file)
-        + "/Platform: "
-        + str(platform)
-    )
-    # imported_data = rawdata_resource.import_data(dataset, dry_run=True)
-
-    check_pre_work_count = ReportMaster.objects.filter(uploadhistory=id).count()
-    starting_row = check_pre_work_count
-
-    # if not imported_data.has_errors():
-    i = starting_row + 1
-    for data in imported_data:
-        if data[0] == None:
-            print("Skip empty rows" + str(i))
-            i += 1
-        else:
-            try:
-                print(i)
-                if platform == "ONPACS":
-                    ReportMaster.objects.create(
-                        apptitle=str(data[0]).strip() if data[0] else "",
-                        ein=str(data[1]).strip() if data[1] else "",
-                        case_id=str(data[2]).strip() if data[2] else "",
-                        name=str(data[3]).strip() if data[3] else "",
-                        department=str(data[4]).strip() if data[4] else "",
-                        bodypart=str(data[5]).strip() if data[5] else "",
-                        # 섹션 추가: 2025년 3월부터
-                        specialty2=str(data[6]).strip() if data[6] else "",
-                        modality=str(data[7]).strip() if data[7] else "",
-                        equipment=str(data[8]).strip() if data[8] else "",
-                        studydescription=str(data[9]).strip() if data[9] else "",
-                        imagecount=data[10],
-                        accessionnumber=str(data[11]).strip() if data[11] else "",
-                        readprice=data[12],
-                        reader=str(data[13]).strip() if data[13] else "",
-                        approver=str(data[14]).strip() if data[14] else "",
-                        radiologist=(
-                            str(data[15]).strip().replace("\n", "").replace("\t", "")
-                            if data[15]
-                            else ""
-                        ),
-                        radiologist_license=str(data[16]).strip() if data[16] else "",
-                        studydate=str(data[17]).strip() if data[17] else "",
-                        approveddttm=str(data[18]).strip() if data[18] else "",
-                        stat=str(data[19]).strip() if data[19] else "",
-                        # 2025년 3월부터
-                        child=str(data[20]).strip() if data[20] else "",
-                        pacs=str(data[21]).strip() if data[21] else "",
-                        requestdttm=str(data[22]).strip() if data[22] else "",
-                        ecode=str(data[23]).strip() if data[23] else "",
-                        sid=str(data[24]).strip() if data[24] else "",
-                        patientid=str(data[25]).strip() if data[25] else "",
-                        # Y 휴먼결제하기로 함
-                        human_paid_all=str(data[26]).strip() if data[26] else "",
-                        ayear=str(ayear).strip() if ayear else "",
-                        amonth=str(amonth).strip() if amonth else "",
-                        adate=last_date,
-                        is_take=False,
-                        created_at=date.today(),
-                        # verified=False,
-                        uploadhistory=a_raw,
-                        excelrownum=i,
-                    )
-                elif platform == "TAKE":
-                    ReportMaster.objects.create(
-                        apptitle=str(data[0]).strip() if data[0] else "",
-                        ein=str(data[1]).strip() if data[1] else "",
-                        case_id=str(data[2]).strip() if data[2] else "",
-                        name=str(data[3]).strip() if data[3] else "",
-                        department=str(data[4]).strip() if data[4] else "",
-                        bodypart=str(data[5]).strip() if data[5] else "",
-                        # 섹션 추가: 2025년 3월부터
-                        specialty2=str(data[6]).strip() if data[6] else "",
-                        modality=str(data[7]).strip() if data[7] else "",
-                        equipment=str(data[8]).strip() if data[8] else "",
-                        studydescription=str(data[9]).strip() if data[9] else "",
-                        imagecount=data[10],
-                        accessionnumber=str(data[11]).strip() if data[11] else "",
-                        readprice=data[12],
-                        reader=str(data[13]).strip() if data[13] else "",
-                        approver=str(data[14]).strip() if data[14] else "",
-                        radiologist=(
-                            str(data[15]).strip().replace("\n", "").replace("\t", "")
-                            if data[15]
-                            else ""
-                        ),
-                        radiologist_license=str(data[16]).strip() if data[16] else "",
-                        studydate=str(data[17]).strip() if data[17] else "",
-                        approveddttm=str(data[18]).strip() if data[18] else "",
-                        stat=str(data[19]).strip() if data[19] else "",
-                        pacs=str(data[21]).strip() if data[21] else "",
-                        requestdttm=str(data[22]).strip() if data[22] else "",
-                        ecode=str(data[23]).strip() if data[23] else "",
-                        sid=str(data[24]).strip() if data[24] else "",
-                        patientid=str(data[25]).strip() if data[25] else "",
-                        # 26번 휴먼 칼럼
-                        human_paid_all=str(data[26]).strip() if data[26] else "",
-                        ayear=str(ayear).strip() if ayear else "",
-                        amonth=str(amonth).strip() if amonth else "",
-                        adate=last_date,
-                        is_take=True,
-                        created_at=date.today(),
-                        # verified=False,
-                        uploadhistory=a_raw,
-                        excelrownum=i,
-                    )
-
-                # 아주 예전 엑셀파일 처리를 위해 사용된 것들 12/20/2024
-                # elif platform == "ETC":
-                # ReportMaster.objects.create(
-                #     apptitle=data[0],
-                #     case_id=data[1],
-                #     equipment=data[2],
-                #     studydescription=data[3],
-                #     readprice=data[4],
-                #     radiologist=data[5],
-                #     ayear=str(ayear).strip() if ayear else "",
-                #     amonth=str(amonth).strip() if amonth else "",
-                #     created_at=date.today(),
-                #     verified=False,
-                #     uploadhistory=a_raw,
-                #     excelrownum=i,
-                # )
-
-                else:
-                    # 휴먼영상의학센터 전용 엑셀파일 순서 바뀜(2024년 3월부터)
-                    # 2023년 Excel파일포맷
-                    if ayear == 2023:
-
-                        ReportMaster.objects.create(
-                            apptitle="휴먼영상의학센터",
-                            company=humanic,
-                            case_id=data[6],
-                            name=data[12],
-                            bodypart=data[9],
-                            equipment=data[7],
-                            accessionnumber=data[10],
-                            # studydescription=data[16],
-                            # imagecount=data[18],
-                            # readprice=data[17] if data[17] else 0,
-                            studydescription=data[9],
-                            imagecount=data[15],
-                            readprice=data[14] if data[14] else 0,
-                            approver=data[5],
-                            radiologist=data[3],
-                            radiologist_license=data[4],
-                            studydate=data[1],
-                            approveddttm=data[2],
-                            pacs="HPACS",
-                            # platform=humanic_platform,
-                            requestdttm=data[1],
-                            patientid=data[11],
-                            ayear=str(ayear).strip() if ayear else "",
-                            amonth=str(amonth).strip() if amonth else "",
-                            adate=last_date,
-                            is_human_outpatient=True,
-                            is_take=False,
-                            created_at=date.today(),
-                            verified=False,
-                            uploadhistory=a_raw,
-                            excelrownum=i,
-                        )
-
-                    ## 2024/2025년 Excel파일포맷 ##
-                    else:
-
-                        ReportMaster.objects.create(
-                            apptitle="휴먼영상의학센터",
-                            company=humanic,
-                            case_id=data[6],
-                            name=data[12],
-                            bodypart=data[9],
-                            equipment=data[7],
-                            accessionnumber=data[10],
-                            studydescription=data[16],
-                            imagecount=data[18],
-                            readprice=data[17] if data[17] else 0,
-                            approver=data[5],
-                            radiologist=data[3],
-                            radiologist_license=data[4],
-                            studydate=data[1],
-                            approveddttm=data[2],
-                            pacs="HPACS",
-                            # platform=humanic_platform,
-                            requestdttm=data[1],
-                            patientid=data[11],
-                            ayear=str(ayear).strip() if ayear else "",
-                            amonth=str(amonth).strip() if amonth else "",
-                            adate=last_date,
-                            is_human_outpatient=True,
-                            is_take=False,
-                            created_at=date.today(),
-                            verified=False,
-                            uploadhistory=a_raw,
-                            excelrownum=i,
-                        )
-
-                # a_raw.save()
-                # Call the Celery task
-                # test_celery.delay(i)
-                i += 1
-            except Exception as e:
-                print(f"An error occurred during file upload: {e}")
-                messages.error(request, f"An error occurred: {e}")
-                log_uploadhistory(
-                    request.user,
-                    "Data Import",
-                    f"Failed: An error occurred at row#{i}: {e}",
-                    a_raw,
-                )
-                return redirect("minibooks:index")
-
-    UploadHistory.objects.filter(id=id).update(imported=True)
-    messages.success(request, str(i) + " rows imported successfully.")
-    log_uploadhistory(
-        request.user,
-        "Data Import",
-        "Data imported successfully.",
-        a_raw,
-    )
-    return redirect("minibooks:index")
+    try:
+        upload = UploadHistory.objects.get(id=id)
+        task = create_reportmaster_task.delay(id, request.user.id)
+        return JsonResponse({"status": "Task started", "task_id": task.id})
+    except UploadHistory.DoesNotExist:
+        return JsonResponse(
+            {"status": "Error", "message": "Upload not found"}, status=404
+        )
+    except Exception as e:
+        return JsonResponse({"status": "Error", "message": str(e)}, status=500)
 
 
 def dry_run(request, id):

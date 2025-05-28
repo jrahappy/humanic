@@ -379,3 +379,7 @@ WM info Human!234
     - sudo supervisorctl reread
     - sudo supervisorctl update
     - sudo supervisorctl status 
+
+where uploadhistory_id=96 and id>=3197720
+
+where uploadhistory_id=96 and case_id='70184898'
