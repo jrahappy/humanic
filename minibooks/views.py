@@ -426,6 +426,12 @@ def current_progress(request, id):
 #             try:
 #                 print(i)
 #                 if platform == "ONPACS":
+#                     # Calculate imagecount before creating the object
+#                     try:
+#                         imagecount = int(data[10]) if data[10] else 0
+#                     except Exception:
+#                         imagecount = 0
+
 #                     ReportMaster.objects.create(
 #                         apptitle=str(data[0]).strip() if data[0] else "",
 #                         ein=str(data[1]).strip() if data[1] else "",
@@ -438,7 +444,7 @@ def current_progress(request, id):
 #                         modality=str(data[7]).strip() if data[7] else "",
 #                         equipment=str(data[8]).strip() if data[8] else "",
 #                         studydescription=str(data[9]).strip() if data[9] else "",
-#                         imagecount=data[10],
+#                         imagecount=imagecount,
 #                         accessionnumber=str(data[11]).strip() if data[11] else "",
 #                         readprice=data[12],
 #                         reader=str(data[13]).strip() if data[13] else "",

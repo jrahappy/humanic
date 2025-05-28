@@ -37,6 +37,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
         uploadhistory_id: ID of the UploadHistory record.
         user_id: ID of the user who initiated the task.
     """
+    a_raw = None
     try:
         # Fetch UploadHistory
         a_raw = UploadHistory.objects.get(id=uploadhistory_id)
@@ -73,13 +74,19 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
             try:
                 # Update progress
                 total_processed += 1
-                self.update_state(
-                    state="PROGRESS",
-                    meta={"current": total_processed, "total": total_rows},
-                )
-                logger.info(f"Processing row {i}")
+                # self.update_state(
+                #     state="PROGRESS",
+                #     meta={"current": total_processed, "total": total_rows},
+                # )
+                # logger.info(f"Processing row {i}")
 
                 if platform == "ONPACS":
+                    # Calculate imagecount before creating the object
+                    try:
+                        imagecount = int(data[10]) if data[10] else 0
+                    except Exception:
+                        imagecount = 0
+
                     ReportMaster.objects.create(
                         apptitle=str(data[0]).strip() if data[0] else "",
                         ein=str(data[1]).strip() if data[1] else "",
@@ -91,7 +98,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
                         modality=str(data[7]).strip() if data[7] else "",
                         equipment=str(data[8]).strip() if data[8] else "",
                         studydescription=str(data[9]).strip() if data[9] else "",
-                        imagecount=data[10] or 0,
+                        imagecount=imagecount,
                         accessionnumber=str(data[11]).strip() if data[11] else "",
                         readprice=data[12] or 0,
                         reader=str(data[13]).strip() if data[13] else "",
@@ -226,28 +233,28 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
             except Exception as e:
                 logger.error(f"Error at row {i}: {e}")
                 # Log to UploadHistory
-                a_raw.log_uploadhistory(
-                    user_id=user_id,
-                    action="Data Import",
-                    description=f"Failed: Error at row {i}: {e}",
-                )
+                # a_raw.log_uploadhistory(
+                #     user_id=user_id,
+                #     action="Data Import",
+                #     description=f"Failed: Error at row {i}: {e}",
+                # )
                 raise  # Retry the task
 
         # Mark as imported
         a_raw.imported = True
         a_raw.save()
-        a_raw.log_uploadhistory(
-            user_id=user_id,
-            action="Data Import",
-            description=f"Success: {i} rows imported",
-        )
+        # a_raw.log_uploadhistory(
+        #     user_id=user_id,
+        #     action="Data Import",
+        #     description=f"Success: {i} rows imported",
+        # )
         logger.info(f"Task completed: {i} rows imported")
 
         return {"status": "Success", "rows_imported": i}
-
     except Exception as e:
         logger.error(f"Task failed: {e}")
-        a_raw.log_uploadhistory(
-            user_id=user_id, action="Data Import", description=f"Failed: {e}"
-        )
-        raise self.retry(countdown=60, exc=e)  # Retry after 60 seconds
+        if a_raw is not None:
+            # a_raw.log_uploadhistory(
+            #     user_id=user_id, action="Data Import", description=f"Failed: {e}"
+            # )
+            raise self.retry(countdown=60, exc=e)  # Retry after 60 seconds
