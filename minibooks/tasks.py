@@ -83,7 +83,11 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
                 if platform == "ONPACS":
                     # Calculate imagecount before creating the object
                     try:
-                        imagecount = int(data[10]) if data[10] else 0
+                        imagecount = (
+                            int(data[10].strip())
+                            if data[10] and str(data[10]).strip() != ""
+                            else 0
+                        )
                     except Exception:
                         imagecount = 0
 
