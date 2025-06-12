@@ -9,33 +9,49 @@
 
 <section class="card-compact col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
     <div class="card-body grow-0">
-        <div class="flex justify-between gap-2">
-            <h2 class="card-title grow">
+        <div class="flex justify-start gap-2">
+            <h2 class="card-title">
                 <a class="link-hover link">월별 병원, 판독의 매출 순위</a>
             </h2>
-        </div>
-    </div>
-    <div class="card-body grow-0">
-        <div class="flex flex-column gap-4">
-            {% for button_ym in buttons_year_month %}
-            <div class="">
-                <a href="#"
-                    hx-get="{% url 'report:report_pro_cus' button_ym.ayear button_ym.amonth %}"
-                    hx-trigger="click"
-                    hx-target="#general_modal"
-                    hx-swap="innerHTML"
-                    hx-indicator="#spinner"
-                    class="btn btn-primary">
-                    {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
-                </a>
-            </div>
+            <div class="flex flex-row gap-4 px-4">
+            {% for item in data_array %}
+                <div class="dropdown dropdown-hover">
+                    <!-- Year button (dropdown trigger) -->
+                    <div tabindex="0" role="button" class="btn m-1">{{ item.year }}년</div>
+                    <!-- Month dropdown -->
+                    <ul class="dropdown-content menu bg-base-100 rounded-box z-50 w-120 p-2 shadow flex flex-col flex-wrap gap-2" id="dropdown-{{ item.year }}">
+                        {% for month in item.months %}
+                            <li class="inline-flex">
+                                <a href="#"
+                                hx-get="{% url 'report:report_pro_cus' item.year month %}"
+                                hx-trigger="click"
+                                hx-target="#general_modal"
+                                hx-swap="innerHTML"
+                                hx-transition=""
+                                hx-indicator="#spinner"
+                                class="btn btn-sm"
+                                hx-on:click="document.getElementById('de_btn').focus()"
+                                >
+                                    {{ month }}월
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% empty %}
+                <div class="text-center text-gray-500">데이터가 없습니다.</div>
             {% endfor %}
-           
+                <div class="flex-1"><button class="de_btn" id='de_btn'></button></div>
+            </div>
         </div>
+        <div> </div>
     </div>
-</section>
-<div id="general_modal" class="col-span-12 w-full">
     
+</section>
+<div id="general_modal" class="col-span-12 w-full min-h-screen">
+    <!-- This is where the modal content will be loaded -->
+   
+   
 </div>  
     
 {% endblock %}

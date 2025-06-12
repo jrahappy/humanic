@@ -1,6 +1,6 @@
 <div class="flex flex-row gap-4 px-6">
     {% for item in btn_y_m %}
-        <div class="dropdown">
+        <div class="dropdown dropdown-hover">
             <!-- Year button (dropdown trigger) -->
             <div tabindex="0" role="button" class="btn m-1">{{ item.year }}년</div>
             <!-- Month dropdown -->
@@ -15,7 +15,7 @@
                            hx-transition=""
                            hx-indicator="#spinner"
                            class="btn btn-sm"
-                           hx-on:click="document.getElementById('dropdown-{{ item.year }}').blur()"
+                           hx-on:click="document.getElementById('de_btn').focus()"
                         >
                             {{ month }}월
                         </a>
@@ -26,4 +26,5 @@
     {% empty %}
         <div class="text-center text-gray-500">데이터가 없습니다.</div>
     {% endfor %}
+    <div class="flex-1"><button class="de_btn" id='de_btn'></button></div>
 </div>

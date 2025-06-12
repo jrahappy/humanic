@@ -29,6 +29,8 @@ class UploadHistory(models.Model):
     aggregated = models.BooleanField(default=False, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False, null=True, blank=True)
+    adate = models.DateField(null=True, blank=True)
+    row_count = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -41,7 +41,19 @@ def monthly_pro_cus(request):
         reverse=True,
     )
 
-    context = {"buttons_year_month": buttons_year_month}
+    year_month_map = defaultdict(list)
+    for item in buttons_year_month:
+        year = int(item["ayear"])
+        month = int(item["amonth"])
+        year_month_map[year].append(month)
+
+    data_array = [
+        {"year": year, "months": sorted(months, reverse=True)}
+        for year, months in year_month_map.items()
+    ]
+    data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
+
+    context = {"buttons_year_month": buttons_year_month, "data_array": data_array}
 
     return render(request, "report/report_monthly_pro_cus.html", context)
 
@@ -708,8 +720,19 @@ def report_period(request):
         key=lambda x: (int(x["ayear"]), int(x["amonth"])),
         reverse=True,
     )
+    year_month_map = defaultdict(list)
+    for item in buttons_year_month:
+        year = int(item["ayear"])
+        month = int(item["amonth"])
+        year_month_map[year].append(month)
 
-    context = {"buttons_year_month": buttons_year_month}
+    data_array = [
+        {"year": year, "months": sorted(months, reverse=True)}
+        for year, months in year_month_map.items()
+    ]
+    data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
+
+    context = {"buttons_year_month": buttons_year_month, "data_array": data_array}
 
     return render(request, "report/report_period.html", context)
 

@@ -74,11 +74,21 @@ def index(request):
         # 병원(고객)의 경우
         else:
             return redirect("collab:index")
+
     upload_histories = (
-        UploadHistory.objects.annotate(ReportMaster_count=Count("reportmaster"))
-        .filter(is_deleted=False)
-        .order_by("-created_at")
+        # UploadHistory.objects.annotate(ReportMaster_count=Count("reportmaster"))
+        UploadHistory.objects.filter(is_deleted=False).order_by("-adate")
+        # .order_by("ayear", "amonth", "-created_at")
     )
+
+    page = request.GET.get("page", 1)
+    paginator = Paginator(upload_histories, 20)
+    try:
+        upload_histories = paginator.page(page)
+    except PageNotAnInteger:
+        upload_histories = paginator.page(1)
+    except EmptyPage:
+        upload_histories = paginator.page(paginator.num_pages)
 
     context = {"upload_histories": upload_histories}
 
@@ -119,6 +129,15 @@ def new_upload(request):
 
         if form.is_valid():
             upload_history = form.save(commit=False)
+            # adate 자동 입력
+            uh = form.cleaned_data
+            temp_year = int(uh.ayear)
+            temp_month = int(uh.amonth)
+            last_date = date(
+                temp_year, temp_month, monthrange(temp_year, temp_month)[1]
+            )
+            upload_history.adate = last_date
+
             upload_history.user = user
             upload_history.created_at = timezone.now()
             upload_history.save()
@@ -1776,46 +1795,72 @@ def apply_rule_progress(request, magam_id, rule_id):
     # 함수를 하나 실행할 때 사용
     elif selected_rule == "UTILITY":
 
-        companies = ReportMaster.objects.all().values("company").distinct()
-        i = 0
-        for com in companies:
-            company = Company.objects.get(id=com["company"])
+        # UploadHistory에 각 엑셀파일에 있는 row 들을 ReportMaster에 입력된 row coount 업데이트
+        uh = UploadHistory.objects.filter(
+            # ayear=syear,
+            # amonth=smonth,
+            is_deleted=False,
+        )
 
-            # is_exist = CustomUser.objects.filter(username=f"user{company.id}").exists()
-            # if is_exist:
-            #     existing_user = CustomUser.objects.get(username=f"user{company.id}")
-            #     company.is_collab = True
-            #     company.customuser = existing_user
-            #     company.save()
+        for upload_history in uh:
+            # Get the count of rows in ReportMaster for the given UploadHistory
+            row_count = ReportMaster.objects.filter(
+                uploadhistory=upload_history
+            ).count()
+            # Update the UploadHistory with the row count
+            upload_history.row_count = row_count
 
-            #     existing_user.profile.email = existing_user.email
-            #     existing_user.profile.real_name = existing_user.first_name
-            #     existing_user.profile.cellphone = company.office_phone
-            #     existing_user.profile.save()
+            last_day = monthrange(
+                int(upload_history.ayear), int(upload_history.amonth)
+            )[1]
+            adate = f"{upload_history.ayear}-{upload_history.amonth}-{last_day}"
+            upload_history.adate = adate  # Update adate field
 
-            #     existing_user.menu_id = menu_id
-            #     existing_user.save()
+            upload_history.save()
+            print(
+                f"UploadHistory {upload_history.afile} ID updated with row count: {row_count}"
+            )
 
-            #     return redirect("customer:detail", company.id)
-            # else:
-            #     new_user = CustomUser.objects.create_user(
-            #         username=f"user{company.id}",
-            #         email=company.office_email,
-            #         password=f"human{company.id}",
-            #         first_name=company.president_name,
-            #         last_name=company.president_name,
-            #         menu_id=menu_id,
-            #         is_privacy=True,
-            #         is_active=True,
-            #     )
-            #     company.is_collab = True
-            #     company.customuser = new_user
-            #     company.save()
+        # companies = ReportMaster.objects.all().values("company").distinct()
+        # i = 0
+        # for com in companies:
+        #     company = Company.objects.get(id=com["company"])
 
-            company.is_tele = True
-            company.save()
-            i += 1
-        print(i, "개의 회사에 대해 적용되었습니다.")
+        #     # is_exist = CustomUser.objects.filter(username=f"user{company.id}").exists()
+        #     # if is_exist:
+        #     #     existing_user = CustomUser.objects.get(username=f"user{company.id}")
+        #     #     company.is_collab = True
+        #     #     company.customuser = existing_user
+        #     #     company.save()
+
+        #     #     existing_user.profile.email = existing_user.email
+        #     #     existing_user.profile.real_name = existing_user.first_name
+        #     #     existing_user.profile.cellphone = company.office_phone
+        #     #     existing_user.profile.save()
+
+        #     #     existing_user.menu_id = menu_id
+        #     #     existing_user.save()
+
+        #     #     return redirect("customer:detail", company.id)
+        #     # else:
+        #     #     new_user = CustomUser.objects.create_user(
+        #     #         username=f"user{company.id}",
+        #     #         email=company.office_email,
+        #     #         password=f"human{company.id}",
+        #     #         first_name=company.president_name,
+        #     #         last_name=company.president_name,
+        #     #         menu_id=menu_id,
+        #     #         is_privacy=True,
+        #     #         is_active=True,
+        #     #     )
+        #     #     company.is_collab = True
+        #     #     company.customuser = new_user
+        #     #     company.save()
+
+        #     company.is_tele = True
+        #     company.save()
+        #     i += 1
+        # print(i, "개의 회사에 대해 적용되었습니다.")
 
         # 사업자 번호 넎기(초기정보입력)
         # data1 = ReportMaster.objects.filter(ayear=syear, amonth=smonth)

@@ -49,14 +49,15 @@
                           </thead>
                           <tbody class="divide-y divide-gray-200 bg-white">
                           {% for data in upload_histories %}
-                              <tr>
+                              <tr class="hover:bg-gray-500 hover:text-gray-100 hover:cursor-pointer">
                                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ayear }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amonth }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
                                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile.name|filename }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ReportMaster_count|intcomma }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.row_count|intcomma }}</td>
+                                  <!-- <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ReportMaster_count|intcomma }}</td> -->
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.imported == False %}
                                         <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">생성</a>
@@ -76,18 +77,19 @@
                                     {% if data.aggregated == False %}
                                       <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">통계화</a>
                                     {% else %}
-                                    <a href="{% url 'minibooks:aggregate_data_weekday' data.id %}" class="btn btn-info btn-sm">주 통계화</a>
+                                    
                                     <div class="badge badge-{{ data.aggregated|yesno:'success,error' }} text-white">{{ data.aggregated|yesno:'Done,No' }}</div>
                                         <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">재통계화</a>
-                                      <a 
-                                        hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
-                                        hx-target="#general_modal" 
-                                        hx-swap="outerHTML" 
-                                        hx-trigger="click" 
-                                        hx-class="block" 
-                                        class="btn btn-sm btn-info">맛보기</a>
+                                        <a 
+                                            hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
+                                            hx-target="#general_modal" 
+                                            hx-swap="outerHTML" 
+                                            hx-trigger="click" 
+                                            hx-class="block" 
+                                            class="btn btn-sm btn-info">맛보기</a>
                                     
                                     {% endif %}  
+                                    <a href="{% url 'minibooks:aggregate_data_weekday' data.id %}" class="btn btn-info btn-sm">Weekly Stat</a>
                                   </td>
                                   <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                       <button 
@@ -122,6 +124,40 @@
               
                               <!-- More people... -->
                           </tbody>
+                          <tfoot>
+                              <tr>
+                                  <td colspan="11" class="text-center text-gray-500 py-4">
+                                    {% if upload_histories.has_other_pages %}
+                                        <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                            {% if upload_histories.has_previous %}
+                                                <a href="?page={{ upload_histories.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" aria-label="Previous">
+                                                    &laquo;
+                                                </a>
+                                            {% else %}
+                                                <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400" aria-disabled="true">
+                                                    &laquo;
+                                                </span>
+                                            {% endif %}
+                                            {% for num in upload_histories.paginator.page_range %}
+                                                {% if upload_histories.number == num %}
+                                                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary text-white text-sm font-medium">{{ num }}</span>
+                                                {% elif num > upload_histories.number|add:'-3' and num < upload_histories.number|add:'3' %}
+                                                    <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">{{ num }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if upload_histories.has_next %}
+                                                <a href="?page={{ upload_histories.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" aria-label="Next">
+                                                    &raquo;
+                                                </a>
+                                            {% else %}
+                                                <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400" aria-disabled="true">
+                                                    &raquo;
+                                                </span>
+                                            {% endif %}
+                                        </nav>
+                                    {% endif %}
+                                  </td>
+                              </tr>
                       </table>
                   </div>
                   

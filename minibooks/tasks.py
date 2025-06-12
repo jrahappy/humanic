@@ -246,7 +246,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
 
             try:
                 # Update progress
-                total_processed += 1
+
                 # self.update_state(
                 #     state="PROGRESS",
                 #     meta={"current": total_processed, "total": total_rows},
@@ -406,6 +406,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
                             uploadhistory=a_raw,
                             excelrownum=i,
                         )
+                    total_processed += 1
                 i += 1
             except Exception as e:
                 logger.error(f"Error at row {i}: {e}")
@@ -419,6 +420,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
 
         # Mark as imported
         a_raw.imported = True
+        a_raw.row_count = total_processed
         a_raw.save()
         # a_raw.log_uploadhistory(
         #     user_id=user_id,
