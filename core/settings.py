@@ -274,18 +274,57 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Seoul"
 
 
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "file": {
+#             "level": "DEBUG",
+#             "class": "logging.FileHandler",
+#             "filename": "/home/ubuntu/logs/humanrad.log",
+#         },
+#         "console": {
+#             "level": "INFO",
+#             "class": "logging.StreamHandler",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["file", "console"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#     },
+# }
+
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+# Ensure log directory exists
+os.makedirs(LOG_DIR, exist_ok=True)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "file": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "/home/ubuntu/logs/humanrad.log",
+            "filename": os.path.join(LOG_DIR, "humanrad.log"),
+            "formatter": "verbose",
         },
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
     },
     "loggers": {
@@ -293,6 +332,16 @@ LOGGING = {
             "handlers": ["file", "console"],
             "level": "DEBUG",
             "propagate": True,
+        },
+        "humanrad": {  # Custom logger for your app
+            "handlers": ["file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "": {  # Root logger for uncaught logs
+            "handlers": ["file", "console"],
+            "level": "WARNING",
+            "propagate": False,
         },
     },
 }
