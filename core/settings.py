@@ -281,7 +281,7 @@ LOGGING = {
         "file": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "/path/to/logs/humanrad.log",
+            "filename": "/home/ubuntu/logs/humanrad.log",
         },
         "console": {
             "level": "INFO",
