@@ -19,6 +19,7 @@ from collections import defaultdict
 
 @login_required
 def index(request):
+    title = "Briefing Dashboard"
     user = request.user
     # # Check if the user is a staff member
     if user.is_staff:
@@ -189,7 +190,7 @@ def index(request):
         ]
         data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
 
-        print("data_array", data_array)
+        # print("data_array", data_array)
         # 전체 통계
         rs_graph = ReportMasterWeekday.objects.filter(ayear=syear, amonth=smonth)
         # rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth)
@@ -221,6 +222,7 @@ def index(request):
 
         # print(dr_by_specialty)
         briefing_data = {
+            "title": title,
             "cm_total": cm_total,
             "dr_total": dr_total,
             "rp_total": rp_total_value,

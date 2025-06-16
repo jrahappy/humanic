@@ -5,7 +5,9 @@
 <html data-theme="cupcake">
 	<head>
 		<meta charset="utf-8" />
+		{% block title %}
 		<title>{{ title }} | Humanrad </title>
+		{% endblock %}
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!-- <link href="https://fonts.googleapis.com/css?family=Gothic+A1:100,400,700" rel="stylesheet"> -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -165,6 +167,6 @@
 		
 		{% block aside %}
 		{% endblock %}
-		<script src="{% static 'js/side_menu.js' %}"></script>
+		<script src="{% static 'static/js/side_menu.js' %}"></script>
     </body>
 </html>
