@@ -1,4 +1,5 @@
-{% load static tailwind_tags %} 
+{% load static %} 
+{% load django_vite %} 
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -9,11 +10,13 @@
     	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
     	<meta name="apple-mobile-web-app-capable" content="yes">
     	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-		<link rel="stylesheet" type="text/css" href="https://humanrad.com/static/papaya.css" />
-    	<script type="text/javascript" src="https://humanrad.com/static/papaya.js"></script> -->
 		<title>Papaya Viewer</title>
-        {% tailwind_css %}
-    	<script type="text/javascript">
+        {% vite_hmr_client %}
+		{% vite_asset 'static/js/main.js' %}
+		<link rel="stylesheet" type="text/css" href="{% static 'static/papaya.css' %}" />
+		<script type="text/javascript" src="{% static 'static/papaya.js' %}"></script> -->
+    	
+		<script type="text/javascript">
             var params = [];
             params["images"] = [{{ files_list|safe }}];
             
