@@ -8,6 +8,7 @@ export default defineConfig({
     manifest: "manifest.json",
     outDir: resolve("./assets"),
     assetsDir: "django-assets",
+    // assetsDir: "static",
     rollupOptions: {
       input: {
         test: resolve("./static/js/main.js"),
