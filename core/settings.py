@@ -31,10 +31,11 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
+    # "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django_extensions",
+    "django_vite",
     "rest_framework",
     "storages",
     "django_filters",
@@ -44,11 +45,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "django_htmx",
-    "tailwind",
-    "theme",
-    "django_browser_reload",
-    "crispy_forms",
-    "crispy_tailwind",
+    # "tailwind",
+    # "theme",
+    # "django_browser_reload",
+    # "crispy_forms",
+    # "crispy_tailwind",
     "import_export",
     "celery_progress",
     "django_recaptcha",
@@ -82,9 +83,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]
 
@@ -119,12 +120,13 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 ROOT_URLCONF = "core.urls"
 
-TAILWIND_APP_NAME = "theme"
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-TAILWIND_CSS_PATH = "css/dist/styles.css"
+
+# NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+# TAILWIND_APP_NAME = "theme"
+# TAILWIND_CSS_PATH = "css/dist/styles.css"
 
 TEMPLATES = [
     {
@@ -195,23 +197,40 @@ MEDIA_ROOT = BASE_DIR / "media/"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static/"
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATICFILES_DIRS = [BASE_DIR / "theme" / "static"]
+STATICFILES_DIRS = [
+    BASE_DIR / "assets",
+    BASE_DIR / "static",
+]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",  # Keep S3 for media files if desired
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",  # For static files
+        "BACKEND": "storages.backends.s3.S3Storage",  # For static files (or keep ManifestStaticFilesStorage)
     },
+    # "staticfiles": {
+    #     "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",  # For static files
+    # },
+}
+
+# DJANGO_VITE = {"default": {"dev_mode": False}}
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": False,  # Use Vite dev server in development
+        # "dev_server_protocol": "http",
+        # "dev_server_host": "localhost",
+        # "dev_server_port": 5173,
+        # "assets_path": BASE_DIR / "assets",
+        # "manifest_path": BASE_DIR / "assets/manifest.json",
+    }
 }
 
 # Adjust file upload size
@@ -226,8 +245,8 @@ AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
-CRISPY_TEMPLATE_PACK = "tailwind"
+# CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+# CRISPY_TEMPLATE_PACK = "tailwind"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

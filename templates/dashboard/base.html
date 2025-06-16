@@ -1,5 +1,6 @@
 {% load humanize %}
-{% load static tailwind_tags %} 
+{% load static %} 
+{% load django_vite %} 
 <!-- <html data-theme="corporate" data-leftbar-hide> -->
 <html data-theme="cupcake">
 	<head>
@@ -12,17 +13,16 @@
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 
 
-        {% tailwind_css %}
+        {% vite_hmr_client %}
 		
 		<!-- svg loader for icons -->
 		<script src="https://cdn.jsdelivr.net/npm/external-svg-loader@1.6.10/svg-loader.min.js"async></script>
-		<script src="//unpkg.com/alpinejs" defer></script>
-		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
-		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		
+		{% vite_asset 'static/js/main.js' %}
 		<style>
 			#spinner {
 				position: fixed;
@@ -30,116 +30,7 @@
 				left: 50%;
 				transform: translate(-50%, -50%);
 			}
-			article blockquote {
-				border-left: 4px solid #e2e8f0;
-				padding-left: 1rem;
-				padding-top: 1rem;
-				padding-bottom: 1rem;
-				margin-left: 0;
-				background-color: #f7fafc;
-			}
-			article ul {
-				list-style-type: disc;
-				margin-left: 2rem;
-			}
-			article ol {
-				list-style-type: decimal;
-			}
-			article h1 {
-				font-size: 2rem;
-				margin-bottom: 1rem;
-			}
-			article h2 {
-				font-size: 1.5rem;
-				margin-bottom: 1rem;
-			}
-			article h3 {
-				font-size: 1.25rem;
-				margin-bottom: 1rem;
-			}
-			article ul li {
-				margin-bottom: 0.5rem;
-			}
-			article ol li {
-				margin-bottom: 0.5rem;
-			}
-			article img {
-				max-width: 100%;
-				height: auto;
-				margin-left: 40px;
-				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
-			}
-			article div {
-				margin-bottom: 1rem;
-			}
-			article pre {
-				background-color: #f7fafc;
-				padding: 1rem;
-				border-radius: 0.5rem;
-				overflow-x: auto;
-			}
-			article hr {
-				margin-top: 1rem;
-				margin-bottom: 1rem;
-			}
-			article table {
-				margin-bottom: 1rem;
-				margin-left: 40px;
-			}
-			article table td{
-				border: 1px solid #e2e8f0;
-				border-collapse: collapse;
-				background-color: #f7fafc;
-				
-			}
-			article p a {
-				color: #3182ce;
-				
-			}
-			@keyframes fade-in {
-			from { opacity: 0; }
-			}
-		
-			@keyframes fade-out {
-			to { opacity: 0; }
-			}
-		
-			@keyframes slide-from-right {
-			from { transform: translateX(90px); }
-			}
-		
-			@keyframes slide-to-left {
-			to { transform: translateX(-90px); }
-			}
-		
-			/* define animations for the old and new content */
-			::view-transition-old(slide-it) {
-			animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-			600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
-			}
-			::view-transition-new(slide-it) {
-			animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
-			600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
-			}
-		
-			/* tie the view transition to a given CSS class */
-			.report-transition {
-				view-transition-name: slide-it;
-			}
-			:root {
-				--my-color: #fff;
-				/* or any other variables/style */
-			}
-			[data-theme='dark'] {
-			--my-color: #000;
-			}
-			[data-theme='pink'] {
-			--my-color: #ffabc8;
-			}
-			   
 		</style>
-
 	</head>
     <body class="drawer min-h-screen bg-base-200 lg:drawer-open">
 		{% include 'messages.html' %}

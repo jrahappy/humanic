@@ -1,92 +1,89 @@
 {% load custom_filters %}
 {% load humanize %}
 
-        <div class="card-body w-11/12 max-w-5xl">
-        
-            <div class="card-body grow-0 ">
-                <div class="flex flex-wrap flex-col gap-4 ">
-                    <div class="card w-full shadow-xl">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
-                            <div class="flex flex-row justify-between mb-2">
-                                <div>
-                                    고객병원: 총 {{ count_rpms }} 곳
-                                </div>
-                                <div>
-                                    <a 
-                                        class="btn btn-sm btn-secondary"
-                                        href="{% url 'dashboard:export_csv_provider' ayear amonth provider.id %}"                                        
-                                    >
-                                        Download Data as CSV
-                                    </a>
-                                   
-                                </div>
-                                
-                            </div>
-                            <div class="divider"></div>
-                            <div>
-                                {{ pivot_html|safe }}
-                            </div>
-                           
-                        </div>
-                    </div>
-                    
-                    {% for company in companies %}
-                    <div class="card bg-base-100  shadow-xl">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ forloop.counter0|add:1 }}. {{ company.company__business_name }}</h2>
-                            <div class="mb-2">
-                                <table class="table table-sm table-zebra w-full">
-                                    <thead>
-                                        <tr class="bg-base-200">
-                                            <th class="w-24">Modality</th>
-                                            <th class="w-24">건수</th>
-                                            <th class="w-24">OnSite</th>
-                                            <th class="w-24">판독료</th>
-                                            <th class="w-24">-</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for rpm in rpms %}
-                                        {% if rpm.company__business_name == company.company__business_name %}
-                                        <tr>
-                                            
-                                            <td>{{ rpm.amodality }}</td>
-                                            <td>
-                                            {{ rpm.r_total_cases|intcomma  }}
-                                            </td>
-                                            <td>{{ rpm.is_onsite }}</td>
-                                            <td>{{ rpm.r_total_provider|floatformat:0|intcomma }}</td>
-                                            <td>
-                                                <a href="#"
-                                                    onclick="base_modal.showModal()"
-                                                    hx-get="{% url 'dashboard:report_period_month_radiologist_detail' ayear amonth provider.id rpm.company__business_name rpm.amodality %}"
-                                                    hx-trigger="click"
-                                                    hx-target="#base_modal"
-                                                    hx-swap="innerHTML"
-                                                    class="btn btn-sm btn-info"
-                                                >Detail
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        {% else %}
-                                        <!-- <tr>
-                                            <td colspan="7">{{ rpm.company__business_name }}/{{ company.company__business_name }}</td>
-                                        </tr>
-                                    -->
-                                        {% endif %}
-                                        {% endfor %}
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+<div class="flex flex-wrap flex-col gap-4 ">
+    <div class="card w-full shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">{{ provider.profile.real_name }}님 {{ayear}}년 {{amonth}}월 판독업무내역</h2>
+            <div class="flex flex-row justify-between mb-2">
+                <div>
+                    고객병원: 총 {{ count_rpms }} 곳
+                </div>
+                <div>
+                    <a 
+                        class="btn btn-sm btn-secondary"
+                        href="{% url 'dashboard:export_csv_provider' ayear amonth provider.id %}"                                        
+                    >
+                        Download Data as CSV
+                    </a>
                     
                 </div>
+                
+            </div>
+            <div class="divider"></div>
+            <div>
+                {{ pivot_html|safe }}
+            </div>
             
+        </div>
+    </div>
+    
+    {% for company in companies %}
+    <div class="card bg-base-100  shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">{{ forloop.counter0|add:1 }}. {{ company.company__business_name }}</h2>
+            <div class="mb-2">
+                <table class="table table-sm table-zebra w-full">
+                    <thead>
+                        <tr class="bg-base-200">
+                            <th class="w-24">Modality</th>
+                            <th class="w-24">건수</th>
+                            <th class="w-24">OnSite</th>
+                            <th class="w-24">판독료</th>
+                            <th class="w-24">-</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rpm in rpms %}
+                        {% if rpm.company__business_name == company.company__business_name %}
+                        <tr>
+                            
+                            <td>{{ rpm.amodality }}</td>
+                            <td>
+                            {{ rpm.r_total_cases|intcomma  }}
+                            </td>
+                            <td>{{ rpm.is_onsite }}</td>
+                            <td>{{ rpm.r_total_provider|floatformat:0|intcomma }}</td>
+                            <td>
+                                <a href="#"
+                                    onclick="base_modal.showModal()"
+                                    hx-get="{% url 'dashboard:report_period_month_radiologist_detail' ayear amonth provider.id rpm.company__business_name rpm.amodality %}"
+                                    hx-trigger="click"
+                                    hx-target="#base_modal"
+                                    hx-swap="innerHTML"
+                                    class="btn btn-sm btn-info"
+                                >Detail
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <!-- <tr>
+                            <td colspan="7">{{ rpm.company__business_name }}/{{ company.company__business_name }}</td>
+                        </tr>
+                    -->
+                        {% endif %}
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
+    {% endfor %}
+    
+</div>
+            
+        
+        
        
 

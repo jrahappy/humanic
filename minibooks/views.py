@@ -2807,8 +2807,11 @@ def magam_view(request, id):
 
     magam_details = MagamDetail.objects.filter(magammaster=magam).order_by("-id")
     humanrules = HumanRules.objects.all().order_by("rules_order")
-    result_humanrules = MagamDetail.objects.filter(magammaster=magam).order_by(
-        "-created_at"
+
+    result_humanrules = (
+        MagamDetail.objects.filter(magammaster=magam)
+        .prefetch_related("humanrule")
+        .order_by("-created_at")
     )
 
     context = {

@@ -30,7 +30,7 @@ urlpatterns = [
     path("collab/", include("collab.urls")),
     path("web/", include("web.urls")),
     path("api/", include("api.urls")),
-    path("__reload__/", include("django_browser_reload.urls")),
+    # path("__reload__/", include("django_browser_reload.urls")),
 ]
 
 # Debug toolbar

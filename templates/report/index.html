@@ -1,6 +1,5 @@
 {% extends 'app_base.html' %}
 {% load custom_filters %}
-{% load crispy_forms_tags %}
 
 
 {% block header %}
@@ -13,7 +12,7 @@
     <div class="card-body grow-0">
         <div class="grid grid-col-2 gap-2">
             <h2 class="card-title grow ">
-                <a class="link-hover link">리포트 찾기</a>
+                <a class="link-hover link">의뢰건(Case) 찾기</a>
             </h2>
             <form method="get">
             <div class="flex flex-row gap-2 ">
@@ -29,7 +28,7 @@
         <div class="mt-4 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                    <div class="overflow-hidden sm:rounded-lg">
                         <table class="table table-sm">
                             <thead class="bg-gray-50">
                                 <tr>

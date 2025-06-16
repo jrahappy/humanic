@@ -1,5 +1,6 @@
 {% load humanize %}
-{% load static tailwind_tags %} 
+{% load static %}
+{% load django_vite %} 
 <!-- <html data-theme="corporate" data-leftbar-hide> -->
 <html data-theme="cupcake">
 	<head>
@@ -11,18 +12,15 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 
-        {% tailwind_css %}
+        {% vite_hmr_client %}
 		
 		<!-- svg loader for icons -->
 		<script src="https://cdn.jsdelivr.net/npm/external-svg-loader@1.6.10/svg-loader.min.js"async></script>
-		<script src="//unpkg.com/alpinejs" defer></script>
-		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
-		<!-- <script src="https://unpkg.com/hyperscript.org@0.9.12"></script> -->
-		<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+		{% vite_asset 'static/js/main.js' %}
 		<style>
 			#spinner {
 				position: fixed;
@@ -168,6 +166,5 @@
 		{% block aside %}
 		{% endblock %}
 		<script src="{% static 'js/side_menu.js' %}"></script>
-		
     </body>
 </html>

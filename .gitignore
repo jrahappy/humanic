@@ -31,6 +31,7 @@ build/
 dist/
 
 # Environment
+node_modules/
 .env
 .env.*
 .venv/

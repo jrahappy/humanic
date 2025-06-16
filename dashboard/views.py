@@ -31,6 +31,7 @@ from .forms import ProductionTargetForm
 from urllib.parse import quote
 import json
 import csv
+from collections import defaultdict
 
 
 def export_csv_provider(request, ayear, amonth, provider_id):
@@ -554,28 +555,6 @@ def index(request):
     smonth = request.GET.get("smonth")
 
     if not syear or not smonth:
-        # # Fetch the latest available record from the database
-        # temp_rs = UploadHistory.objects.filter(is_deleted=False).order_by("-id")[:1]
-        # # Check if any records exist in the database
-        # if temp_rs:
-        #     if temp_rs.count() == 2:
-        #         syear = temp_rs[0].ayear
-        #         smonth = temp_rs[0].amonth
-        #         if smonth == "1":
-        #             pre_month = "12"
-        #             pre_year = temp_rs[0].ayear - 1
-        #         else:
-        #             pre_year = temp_rs[1].ayear
-        #             pre_month = temp_rs[1].amonth
-        #     else:
-        #         syear = temp_rs[0].ayear
-        #         smonth = temp_rs[0].amonth
-        #         pre_year = temp_rs[0].ayear
-        #         pre_month = temp_rs[0].amonth
-        # else:
-        #     # If no records exist, use the current year and month as fallback
-        #     syear = date.today().year
-        #     smonth = str(date.today().month).zfill(2)  # Ensuring month is two digits
         temp_rs = MagamMaster.objects.filter(is_opened=True).order_by("-adate")[:1]
         if temp_rs:
             syear = temp_rs[0].ayear
@@ -585,15 +564,8 @@ def index(request):
             smonth = str(date.today().month).zfill(2)
 
     else:
-        # If syear and smonth are provided, ensure proper formatting
         syear = str(syear)
         smonth = str(smonth)
-        # if smonth == "1":
-        #     pre_month = "12"
-        #     pre_year = temp_rs[0].ayear - 1
-        # else:
-        #     pre_year = temp_rs[0].ayear
-        #     pre_month = temp_rs[0].amonth
 
     # rs = ReportMasterStat.objects.all()
     rs = ReportMasterStat.objects.filter(ayear=syear, amonth=smonth, provider=user)
@@ -726,6 +698,25 @@ def index(request):
         .distinct()
         .order_by("-adate")
     )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
+
+    # Transform to nested structure
+    year_month_map = defaultdict(list)
+    for item in buttons_year_month:
+        year = int(item["ayear"])
+        month = int(item["amonth"])
+        year_month_map[year].append(month)
+
+    data_array = [
+        {"year": year, "months": sorted(months, reverse=True)}
+        for year, months in year_month_map.items()
+    ]
+    data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
+
     # 그래프용 데이터
     rs_graph = ReportMaster.objects.filter(ayear=syear, amonth=smonth, provider=user)
     rs_weekday = (
@@ -752,6 +743,7 @@ def index(request):
         "rs_modality": rs_modality,
         "rs_cm": rs_cm,
         "buttons_year_month": buttons_year_month,
+        "btn_y_m": data_array,
         "rs_weekday": rs_weekday,
         "side_menu": "dashboard",
         "chart": chart,
@@ -974,9 +966,28 @@ def stat(request):
         .distinct()
         .order_by("-adate")
     )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
+
+    # Transform to nested structure
+    year_month_map = defaultdict(list)
+    for item in buttons_year_month:
+        year = int(item["ayear"])
+        month = int(item["amonth"])
+        year_month_map[year].append(month)
+
+    data_array = [
+        {"year": year, "months": sorted(months, reverse=True)}
+        for year, months in year_month_map.items()
+    ]
+    data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
 
     context = {
         "buttons_year_month": buttons_year_month,
+        "btn_y_m": data_array,
         "radio": user,
         "side_menu": "stat",
     }

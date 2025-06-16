@@ -7,7 +7,6 @@ from .models import (
     ReferHistory,
     IllnessCode,
     ReferIllness,
-    ReferTreatment,
     ReferSimpleDiagnosis,
     SimpleDiagnosis,
     MyIllnessCode,
@@ -18,7 +17,7 @@ from .forms import ReferForm, CollabCompanyForm
 from accounts.models import CustomUser, Profile, Holidays, WorkHours
 from customer.models import Company, CustomerContact
 from customer.forms import CompanyForm
-from minibooks.models import ReportMaster, ReportMasterStat, UploadHistory
+from minibooks.models import ReportMaster, ReportMasterStat, MagamMaster
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from tablib import Dataset
@@ -28,11 +27,13 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 import json
-import csv
-import io
+import os
 import datetime
 from django.contrib.auth import logout
 from django.utils import timezone
+from collections import defaultdict
+from django.conf import settings
+import calendar
 from utils.base_func import (
     get_amodality_choices,
     get_year_calendar,
@@ -42,6 +43,7 @@ from utils.base_func import (
     TERM_CATEGORY,
     WORKHOURS,
 )
+from .tasks import customer_month_csv
 
 
 def working_setting(request):
@@ -392,29 +394,71 @@ def stat(request):
     return render(request, "collab/stat.html", context)
 
 
+@login_required
 def stat_tele(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
     rpms = ReportMasterStat.objects.filter(company=company)
     year_month_list = rpms.values_list("adate", flat=True).distinct().order_by("-adate")
 
+    buttons_year_month = (
+        MagamMaster.objects.filter(is_opened=True)
+        .values("ayear", "amonth")
+        .distinct()
+        .order_by("-adate")
+    )
+    buttons_year_month = sorted(
+        buttons_year_month,
+        key=lambda x: (int(x["ayear"]), int(x["amonth"])),
+        reverse=True,
+    )
+
+    # Transform to nested structure
+    year_month_map = defaultdict(list)
+    for item in buttons_year_month:
+        year = int(item["ayear"])
+        month = int(item["amonth"])
+        year_month_map[year].append(month)
+
+    data_array = [
+        {"year": year, "months": sorted(months, reverse=True)}
+        for year, months in year_month_map.items()
+    ]
+    data_array = sorted(data_array, key=lambda x: x["year"], reverse=True)
+
     context = {
         "rpms": "",
         "company": company,
         "year_month_list": year_month_list,
+        "btn_y_m": data_array,
     }
     return render(request, "collab/stat_tele.html", context)
 
 
 def partial_stat_tele(request):
     user = request.user
+    syear = request.GET.get("syear")
+    smonth = request.GET.get("smonth")
+
+    # Calculate the last date of the given year and month
+    last_day = calendar.monthrange(int(syear), int(smonth))[1]
+    adate = f"{syear}-{smonth.zfill(2)}-{str(last_day).zfill(2)}"
+
     company = Company.objects.filter(customuser=user).first()
-    year_month = request.GET.get("year_month")
-    ayear = int(year_month.split("-")[0])
-    amonth = int(year_month.split("-")[1])
+
+    business_name = company.business_name
+    file_name = f"{adate}_{business_name}.csv"
+    csv_dir = os.path.join(settings.MEDIA_ROOT, "csv_files")
+    file_path = os.path.join(csv_dir, file_name)
+
+    # Check if the file already exists
+    if os.path.exists(file_path):
+        csv_ox = True
+    else:
+        csv_ox = False
 
     rpms = (
-        ReportMaster.objects.filter(adate=year_month, company=company)
+        ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
         .values(
             # "platform",
             "provider__profile__real_name",
@@ -427,12 +471,16 @@ def partial_stat_tele(request):
         )
         .order_by("provider__profile__real_name", "amodality")
     )
+
+    # Calculate the last date of the given year and month
+    last_day = calendar.monthrange(int(syear), int(smonth))[1]
+    adate = f"{syear}-{smonth.zfill(2)}-{str(last_day).zfill(2)}"
+
     count_rpms = rpms.count()
 
     # 일반 판독금액 합계
     total_by_onsite = (
-        ReportMaster.objects.filter(adate=year_month, company=company)
-        .values("is_take")
+        rpms.values("is_take")
         .annotate(
             total_price=Sum("readprice"),
             total_cases=Count("case_id"),
@@ -441,8 +489,7 @@ def partial_stat_tele(request):
     )
 
     total_by_amodality = (
-        ReportMaster.objects.filter(adate=year_month, company=company)
-        .values("amodality")
+        rpms.values("amodality")
         .annotate(
             total_price=Sum("readprice"),
             total_cases=Count("case_id"),
@@ -450,10 +497,11 @@ def partial_stat_tele(request):
         .order_by("amodality")
     )
 
+    providers = ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
     providers = (
-        ReportMaster.objects.filter(adate=year_month, company=company)
-        .values("provider__profile__real_name")
+        providers.values("provider__profile__real_name")
         .distinct()
+        .order_by("provider__profile__real_name")
     )
 
     count_providers = providers.count()
@@ -464,15 +512,46 @@ def partial_stat_tele(request):
         "rpms": rpms,
         "count_rpms": count_rpms,
         "count_providers": count_providers,
-        "adate": year_month,
-        "ayear": ayear,
-        "amonth": amonth,
+        "adate": adate,
+        "ayear": syear,
+        "amonth": smonth,
         "providers": providers,
         "total_by_onsite": total_by_onsite,
         "total_by_amodality": total_by_amodality,
+        "csv_ox": csv_ox,
     }
 
     return render(request, "collab/partial_stat_tele.html", context)
+
+
+@login_required
+def make_csv_tele(request, company_id, date):
+    try:
+        customer_month_csv.delay(company_id, date)
+        return HttpResponse(
+            status=202,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "showMessage": "CSV generation started",
+                        "CSVGenerationStarted": None,
+                    }
+                )
+            },
+        )
+    except Exception as e:
+        print(f"Error generating CSV: {e}")
+        return HttpResponse(
+            status=500,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "showMessage": "Error generating CSV",
+                        "CSVGenerationError": None,
+                    }
+                )
+            },
+        )
 
 
 def partial_stat_filtered(request, company_id):

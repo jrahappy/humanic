@@ -1,13 +1,13 @@
-{% load static tailwind_tags %}
+{% load static %}
+{% load django_vite %} 
 <!DOCTYPE html>
 <html class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    {% tailwind_css %}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
-    
+    {% vite_hmr_client %}
+    {% vite_asset 'static/js/main.js' %}
     
 </head>
 <body class="h-full w-full">

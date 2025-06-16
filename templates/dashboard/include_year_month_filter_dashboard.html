@@ -1,19 +1,30 @@
-<div class="flex flex-column gap-4 px-6">
-    
-    {% for button_ym in buttons_year_month %}
-    <div class="">
-        <a href="#"
-            hx-get="{% url 'dashboard:partial_dashboard' %}?syear={{ button_ym.ayear }}&smonth={{ button_ym.amonth }}"
-            hx-trigger="click"
-            hx-target="#stat_panel"
-            hx-swap="innerHTML"
-            hx-transition=""
-            hx-indicator="#spinner"
-            class="btn btn-sm "
-           >
-            {{ button_ym.ayear}}년 {{ button_ym.amonth }}월 
-        </a>
-    </div>
+<div class="flex flex-row gap-4 px-2">
+    {% for item in btn_y_m %}
+        <div class="dropdown dropdown-hover">
+            <!-- Year button (dropdown trigger) -->
+            <div tabindex="0" role="button" class="btn btn-primary m-1">{{ item.year }}년</div>
+            <!-- Month dropdown -->
+            <ul class="dropdown-content menu bg-base-100 rounded-box z-50 w-24 p-2 shadow flex flex-col flex-wrap gap-2" id="dropdown-{{ item.year }}">
+                {% for month in item.months %}
+                    <li class="inline-flex w-16">
+                        <a href="#"
+                            hx-get="{% url 'dashboard:partial_dashboard' %}?syear={{ item.year }}&smonth={{ month }}"
+                            hx-trigger="click"
+                            hx-target="#stat_panel"
+                            hx-swap="innerHTML"
+                            hx-transition=""
+                            hx-indicator="#spinner"
+                            class="btn btn-sm btn-primary m-1 "
+                            hx-on:click="document.getElementById('de_btn').focus()"
+                        >
+                            {{ month }}월
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% empty %}
+        <div class="text-center text-gray-500">데이터가 없습니다.</div>
     {% endfor %}
-   
+    <div class="flex-1"><button class="de_btn" id='de_btn'></button></div>
 </div>

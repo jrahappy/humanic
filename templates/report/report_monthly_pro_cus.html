@@ -17,11 +17,11 @@
             {% for item in data_array %}
                 <div class="dropdown dropdown-hover">
                     <!-- Year button (dropdown trigger) -->
-                    <div tabindex="0" role="button" class="btn m-1">{{ item.year }}년</div>
+                    <div tabindex="0" role="button" class="btn btn-primary m-1">{{ item.year }}년</div>
                     <!-- Month dropdown -->
-                    <ul class="dropdown-content menu bg-base-100 rounded-box z-50 w-120 p-2 shadow flex flex-col flex-wrap gap-2" id="dropdown-{{ item.year }}">
+                    <ul class="dropdown-content menu bg-base-100 rounded-box z-50 w-24 p-2 shadow flex flex-col flex-wrap gap-2" id="dropdown-{{ item.year }}">
                         {% for month in item.months %}
-                            <li class="inline-flex">
+                            <li class="inline-flex w-16">
                                 <a href="#"
                                 hx-get="{% url 'report:report_pro_cus' item.year month %}"
                                 hx-trigger="click"
@@ -29,7 +29,7 @@
                                 hx-swap="innerHTML"
                                 hx-transition=""
                                 hx-indicator="#spinner"
-                                class="btn btn-sm"
+                                class="btn btn-sm btn-primary m-1 "
                                 hx-on:click="document.getElementById('de_btn').focus()"
                                 >
                                     {{ month }}월

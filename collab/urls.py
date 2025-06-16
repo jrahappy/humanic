@@ -7,7 +7,7 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("stat/", views.stat, name="stat"),
     path("stat_tele/", views.stat_tele, name="stat_tele"),
-    path("partial_stat_tele/", views.partial_stat_tele, name="partial_stat_tele"),
+    path("partial_stat_tele", views.partial_stat_tele, name="partial_stat_tele"),
     path(
         "partial_stat_filtered/<int:company_id>/",
         views.partial_stat_filtered,
@@ -125,4 +125,9 @@ urlpatterns = [
     path("workhour_remove/<int:id>/", views.workhour_remove, name="workhour_remove"),
     path("holiday_create/", views.holiday_create, name="holiday_create"),
     path("holiday_remove/", views.holiday_remove, name="holiday_remove"),
+    path(
+        "make_csv_tele/<int:company_id>/<str:date>/",
+        views.make_csv_tele,
+        name="make_csv_tele",
+    ),
 ]

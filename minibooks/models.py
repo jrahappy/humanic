@@ -161,6 +161,9 @@ class ReportMaster(models.Model):
         db_table = "reportmaster"
         managed = True
         verbose_name = "reportmaster"
+        indexes = [
+            models.Index(fields=["ayear", "amonth", "is_completed"]),
+        ]
         # indexes = [
         #     models.Index(fields=['name']),  # 이름 필드에 인덱스 설정
         #     models.Index(fields=['name', 'birth_date']),  # 이름과 생년월일에 복합 인덱스 설정

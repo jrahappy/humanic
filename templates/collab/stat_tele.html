@@ -6,45 +6,53 @@
 {% endblock %}
 
 {% block content %}
-<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+
+<section class="card-compact col-span-12 w-full shadow-sm bg-base-100 rounded-2xl p-4">
     <div class="card-body grow-0">
-        <div class="flex justify-between gap-2 w-full">
-            <div class="flex flex-row justify-between w-full">
-                <h2 class="card-title w-80">
-                    년/월을 선택하세요.
-                </h2>
-                <div class="flex flex-row w-80">
-                    <span class="p-2 me-2 text-gray-700">   </span>
-                         
-                    <select
-                        name="year_month"
-                        class="select select-bordered select-sm w-40 max-w-xs py-0 px-4" 
-                        hx-get="{% url 'collab:partial_stat_tele' %}" 
-                        hx-include="[name=year_month]" 
-                        hx-trigger="change"
-                        hx-target="#stat_tele_box" 
-                        hx-swap="innerHTML" 
-                    >
-                        <option value="-">---</option>
-                        {% for ym in year_month_list %}
-                            <option value="{{ ym|date:'Y-m-d' }}">{{ ym }}</option>
-                        {% endfor %}
-                    </select>
-                   
-                </div>
-            </div>
-            <div class="text-end me-4 w-1/3">
-                
+        <div class="flex justify-start gap-2">
+            <h2 class="card-title">
+                <a class="link-hover link">기간(년,월)으로 보기</a>
+            </h2>
+            <div class="flex flex-row gap-4 px-4">
+                {% for item in btn_y_m %}
+                    <div class="dropdown dropdown-hover">
+                        <!-- Year button (dropdown trigger) -->
+                        <div tabindex="0" role="button" class="btn btn-primary m-1">
+                            {{ item.year }}년
+                            <svg data-src="https://unpkg.com/heroicons/20/solid/arrow-down.svg" class="h-5 w-5"></svg>
+                        </div>
+                        <!-- Month dropdown -->
+                        <ul class="dropdown-content menu bg-base-100 rounded-box z-50 w-24 p-2 shadow flex flex-col flex-wrap gap-2" id="dropdown-{{ item.year }}">
+                            {% for month in item.months %}
+                                <li class="inline-flex w-20 pl-4">
+                                    <a href="#"
+                                        hx-get="{% url 'collab:partial_stat_tele' %}?syear={{ item.year }}&smonth={{ month }}"
+                                        hx-trigger="click"
+                                        hx-target="#stat_panel"
+                                        hx-swap="innerHTML"
+                                        hx-transition=""
+                                        hx-indicator="#spinner"
+                                        class="btn btn-sm btn-primary m-1 "
+                                        hx-on:click="document.getElementById('de_btn').focus()"
+                                    >
+                                        {{ month }}월
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% empty %}
+                    <div class="text-center text-gray-500">데이터가 없습니다.</div>
+                {% endfor %}
+                <div class="flex-1"><button class="de_btn" id='de_btn'></button></div>
             </div>
         </div>
     </div>
 </section>
-<section class="card col-span-12 overflow-hidden h-full bg-base-100 shadow-sm xl:col-span-12">
-    <div id="stat_tele_box" class="card-body w-11/12 max-w-5xl">
-        
-        
-    </div>
+<div id="stat_panel" class="col-span-12 min-h-screen w-11/12 max-w-5xl">
+
 </section>
+               
     
 {% endblock %}
 

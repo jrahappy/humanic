@@ -49,15 +49,15 @@
                           </thead>
                           <tbody class="divide-y divide-gray-200 bg-white">
                           {% for data in upload_histories %}
-                              <tr class="hover:bg-gray-500 hover:text-gray-100 hover:cursor-pointer">
-                                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ data.id }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ayear }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.amonth }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.name }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.platform }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.afile.name|filename }}</td>
-                                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.row_count|intcomma }}</td>
-                                  <!-- <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ data.ReportMaster_count|intcomma }}</td> -->
+                              <tr class="hover:bg-gray-500 hover:cursor-pointer hover:text-gray-100">
+                                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:text-gray-100">{{ data.id }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 ">{{ data.ayear }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 ">{{ data.amonth }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 ">{{ data.name }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 ">{{ data.platform }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 ">{{ data.afile.name|filename }}</td>
+                                  <td class="whitespace-nowrap px-3 py-4 ">{{ data.row_count|intcomma }}</td>
+                                  <!-- <td class="whitespace-nowrap px-3 py-4 ">{{ data.ReportMaster_count|intcomma }}</td> -->
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.imported == False %}
                                         <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">생성</a>
@@ -110,7 +110,7 @@
                                       
                                       <button
                                         onclick="base_modal.showModal()"
-                                        class="btn btn-sm btn-warning"
+                                        class="btn btn-sm btn-error"
                                         hx-get="{% url 'minibooks:history_delete' data.id %}"
                                         hx-trigger="click"
                                         hx-target="#base_modal"

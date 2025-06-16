@@ -77,7 +77,7 @@
             </thead>
             <tbody>
             {% for rule in rules %}
-                <tr>
+                <tr class="hover:bg-gray-100">
                     <td>{{ rule.def_name }}</td>
                     <td>{{ rule.name }}</td>
                     <td style="width:500px;">{{ rule.description }}</td>
@@ -130,7 +130,7 @@
             </thead>
             <tbody>
             {% for result in result_humanrules %}
-                <tr>
+                <tr class="hover:bg-gray-100">
                     <td>{{ result.id }}</td>
                     <td>{{ result.humanrule.name }}</td>
                     <td>{{ result.affected_rows }}</td>

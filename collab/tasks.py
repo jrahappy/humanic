@@ -1,8 +1,17 @@
+import csv
+import os
+from urllib.parse import quote
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+from django.contrib import messages
 from celery import shared_task
+from customer.models import Company
+from minibooks.models import ReportMaster
 from accounts.models import CustomUser
 from .models import Refers, ReferHistory
 import datetime
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -64,3 +73,93 @@ def update_refer_status(self):
                 logger.critical(
                     f"Refer ID {refer.id}: Max retries exceeded for task update."
                 )
+
+
+@shared_task(bind=True, soft_time_limit=25 * 60, time_limit=30 * 60, max_retries=3)
+def customer_month_csv(company_id, adate):
+    try:
+        # Fetch company and prepare file name
+        company = Company.objects.get(id=company_id)
+
+        business_name = company.business_name
+        file_name = f"{adate}_{business_name}.csv"
+        encoded_file_name = quote(file_name)
+
+        # Define the path to save the CSV in media/csv_files
+        csv_dir = os.path.join(settings.MEDIA_ROOT, "csv_files")
+        os.makedirs(csv_dir, exist_ok=True)  # Create directory if it doesn't exist
+        file_path = os.path.join(csv_dir, file_name)
+
+        # Create the HttpResponse for download
+        response = HttpResponse(content_type="text/csv; charset=utf-8")
+        response["Content-Disposition"] = (
+            f"attachment; filename*=UTF-8''{encoded_file_name}"
+        )
+        response.write("\ufeff")  # BOM for Excel compatibility
+
+        # Create CSV writer for the response
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "Customer",
+                "CaseID",
+                "Patient",
+                "Modality",
+                "Emergency",
+                "Price",
+                "Requestd",
+                "Radiologist",
+                "Approved",
+            ]
+        )
+
+        # Also write to a file in the media directory
+        with open(file_path, "w", newline="", encoding="utf-8-sig") as csv_file:
+            file_writer = csv.writer(csv_file)
+            file_writer.writerow(
+                [
+                    "Customer",
+                    "CaseID",
+                    "Patient",
+                    "Modality",
+                    "Emergency",
+                    "Price",
+                    "Requestd",
+                    "Radiologist",
+                    "Approved",
+                ]
+            )
+
+            # Fetch data (up to 2000 records)
+            rpms = ReportMaster.objects.filter(company=company, adate=adate).order_by(
+                "case_id"
+            )
+
+            # Write data to both response and file
+            for rpm in rpms:
+                row = [
+                    rpm.company.business_name,
+                    rpm.case_id,
+                    rpm.name,
+                    rpm.modality,
+                    rpm.stat,
+                    rpm.readprice,
+                    rpm.requestdttm,
+                    rpm.radiologist,
+                    rpm.approveddttm,
+                ]
+                writer.writerow(row)
+                file_writer.writerow(row)
+
+        # Log the successful creation of the CSV file
+        logger.info(f"CSV file created successfully: {file_path}")
+        # Add a notice message for the user
+        messages.success(
+            None,
+            f"CSV file for {company.business_name} on {adate} created successfully.",
+        )
+        return response
+
+    except Exception as e:
+        # Handle exceptions and retry if necessary
+        return JsonResponse({"status": "Error", "message": str(e)}, status=500)
