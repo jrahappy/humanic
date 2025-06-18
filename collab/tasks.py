@@ -224,12 +224,16 @@ def customer_month_csv(self, company_id, adate):
             output.close()
 
         # Log success
-        logger.info(f"CSV file created successfully: {file_path}")
+        logger.info(f"CSV file saved to S3: {s3_path}")
+
+        # Generate S3 URL
+        file_url = default_storage.url(s3_path)
 
         # Return result
         return {
             "status": "success",
-            "file_path": file_path,
+            "file_path": s3_path,  # S3 key
+            "file_url": file_url,  # Public URL
             "file_name": file_name,
             "company": business_name,
             "adate": adate,
