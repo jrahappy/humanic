@@ -383,3 +383,7 @@ WM info Human!234
 where uploadhistory_id=96 and id>=3197720
 
 where uploadhistory_id=96 and case_id='70184898'
+
+# 6/16/2025 
+
+    - CSV file 만들기 기능을 Celery task 로 백그라안드로 구현함

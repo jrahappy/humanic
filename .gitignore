@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.pyc
 .Python
 pip-log.txt
 pip-delete-this-directory.txt
@@ -50,3 +51,4 @@ Thumbs.db
 # Notes and documentation
 note.md
 *.md.bak
+*.md

@@ -525,7 +525,7 @@ def partial_stat_tele(request):
 
 
 @login_required
-def make_csv_tele(_request, company_id, date):
+def make_csv_tele(company_id, date):
     try:
         task = customer_month_csv.delay(company_id, date)
         print(f"CSV generation task started: {task.id}")
