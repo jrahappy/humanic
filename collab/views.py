@@ -26,6 +26,7 @@ from .resources import IllnessCodeResource, SimpleDiagnosisResource
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+import logging
 import json
 import os
 import datetime
