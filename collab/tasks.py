@@ -3,9 +3,13 @@ import csv
 import datetime
 import logging
 import re
+import io
 from urllib.parse import quote
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from celery import shared_task
 from customer.models import Company
@@ -163,25 +167,35 @@ def customer_month_csv(self, company_id, adate):
             c for c in company.business_name if c.isalnum() or c in (" ", "_")
         ).replace(" ", "_")
         file_name = f"{adate}_{business_name}.csv"
-        encoded_file_name = quote(file_name)
-
-        # Define CSV path
-        csv_dir = os.path.join(settings.MEDIA_ROOT, "csv_files")
-        os.makedirs(csv_dir, exist_ok=True)
-        file_path = os.path.join(csv_dir, file_name)
+        s3_path = f"customer_csv_files/{file_name}"  # Store in S3 under csv_files/
 
         # Fetch data
         try:
             rpms = (
                 ReportMaster.objects.filter(company=company, adate=adate)
                 .select_related("company")
-                .order_by("case_id")[:2000]
+                .order_by("case_id")
             )
         except DatabaseError as e:
             logger.error(f"Database error fetching ReportMaster: {e}")
             raise self.retry(countdown=60)
 
-        # Create CSV content
+        # Create CSV content in memory
+        output = io.StringIO()
+        writer = csv.writer(output, lineterminator="\n")
+        writer.writerow(
+            [
+                "Customer",
+                "CaseID",
+                "Patient",
+                "Modality",
+                "Emergency",
+                "Price",
+                "Requestd",
+                "Radiologist",
+                "Approved",
+            ]
+        )
         rows = [
             [
                 rpm.company.business_name,
@@ -196,28 +210,18 @@ def customer_month_csv(self, company_id, adate):
             ]
             for rpm in rpms
         ]
+        writer.writerows(rows)
 
-        # Write to file
+        # Save to S3
         try:
-            with open(file_path, "w", newline="", encoding="utf-8-sig") as csv_file:
-                writer = csv.writer(csv_file)
-                writer.writerow(
-                    [
-                        "Customer",
-                        "CaseID",
-                        "Patient",
-                        "Modality",
-                        "Emergency",
-                        "Price",
-                        "Requestd",
-                        "Radiologist",
-                        "Approved",
-                    ]
-                )
-                writer.writerows(rows)
-        except PermissionError as e:
-            logger.error(f"Permission denied writing to {file_path}: {e}")
+            default_storage.save(
+                s3_path, io.BytesIO(output.getvalue().encode("utf-8-sig"))
+            )
+        except Exception as e:
+            logger.error(f"Error saving to S3: {s3_path}, error={str(e)}")
             raise self.retry(countdown=60)
+        finally:
+            output.close()
 
         # Log success
         logger.info(f"CSV file created successfully: {file_path}")
