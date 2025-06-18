@@ -235,7 +235,7 @@ def customer_month_csv(self, company_id, adate):
             "file_path": s3_path,  # S3 key
             "file_url": file_url,  # Public URL
             "file_name": file_name,
-            "company": business_name,
+            "company": company.business_name,
             "adate": adate,
         }
 
