@@ -30,6 +30,7 @@ import logging
 import json
 import os
 import datetime
+import re
 from django.contrib.auth import logout
 from django.utils import timezone
 from collections import defaultdict
@@ -535,7 +536,7 @@ def make_csv_tele(request, company_id, date):
         try:
             company_id = int(company_id)  # Ensure company_id is an integer
             # Validate date format (e.g., 'YYYY-MM-DD')
-            if not isinstance(date, str) or not date.match(r"^\d{4}-\d{2}-\d{2}$"):
+            if not isinstance(date, str) or not re.match(r"^\d{4}-\d{2}-\d{2}$", date):
                 raise ValueError("Date must be in YYYY-MM-DD format")
         except (ValueError, TypeError) as e:
             logger.error(
