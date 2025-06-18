@@ -43,6 +43,7 @@ from utils.base_func import (
     TERM_CATEGORY,
     WORKHOURS,
 )
+from celery.exceptions import CeleryError
 from .tasks import customer_month_csv
 
 
