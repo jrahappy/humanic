@@ -163,11 +163,11 @@ def customer_month_csv(self, company_id, adate):
             raise self.retry(countdown=60)
 
         # Sanitize business_name
-        business_name = "".join(
-            c for c in company.business_name if c.isalnum() or c in (" ", "_")
-        ).replace(" ", "_")
-        file_name = f"{adate}_{business_name}.csv"
-        s3_path = f"customer_csv_files/{file_name}"  # Store in S3 under csv_files/
+        # business_name = "".join(
+        #     c for c in company.business_name if c.isalnum() or c in (" ", "_")
+        # ).replace(" ", "_")
+        file_name = f"{adate}_{company.id}.csv"
+        s3_path = f"customer_csv_files/{company.id}/{file_name}"  # Store in S3 under csv_files/
 
         # Fetch data
         try:

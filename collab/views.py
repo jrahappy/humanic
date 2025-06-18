@@ -451,13 +451,18 @@ def partial_stat_tele(request):
     adate = f"{syear}-{smonth.zfill(2)}-{str(last_day).zfill(2)}"
     company = Company.objects.filter(customuser=user).first()
 
-    # Sanitize business_name
-    business_name = "".join(
-        c for c in company.business_name if c.isalnum() or c in (" ", "_")
-    ).replace(" ", "_")
-    file_name = f"{adate}_{business_name}.csv"
-    s3_path = f"customer_csv_files/{file_name}"  # Store in S3 under csv_files/
+    # # Sanitize business_name
+    # business_name = "".join(
+    #     c for c in company.business_name if c.isalnum() or c in (" ", "_")
+    # ).replace(" ", "_")
+    file_name = f"{adate}_{company.id}.csv"
+    print(f"File name: {file_name}")
+    s3_path = (
+        f"customer_csv_files/{company.id}/{file_name}"  # Store in S3 under csv_files/
+    )
     file_full_path = ""
+
+    print(default_storage.url(s3_path))
 
     # Check if the file already exists
     if default_storage.exists(s3_path):
@@ -466,6 +471,8 @@ def partial_stat_tele(request):
     else:
         csv_ox = False
         file_full_path = "#"
+
+    print(f"CSV file path: {file_full_path}")
 
     rpms = (
         ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
