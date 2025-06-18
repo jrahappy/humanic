@@ -9,7 +9,7 @@
                         <h2 class="card-title">{{ company.business_name }} {{ayear}}년 {{amonth}}월 판독의뢰 내역</h2>
                         <div class="flex flex-row justify-end gap-2">
                             {% if csv_ox %}
-                                <a href="#" class="btn btn-xs btn-secondary">Download</a>
+                                <a href="{{file_full_path}}" class="btn btn-xs btn-secondary" download>Download</a>
                             {% else %}
                                 <a href="{% url 'collab:make_csv_tele' company.id adate %}" class="btn btn-xs btn-secondary">Make CSV (Async)</a>
                             {% endif %}

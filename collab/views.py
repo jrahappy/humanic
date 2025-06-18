@@ -47,6 +47,7 @@ from utils.base_func import (
 )
 from celery.exceptions import CeleryError
 from .tasks import customer_month_csv
+from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
 
@@ -448,19 +449,23 @@ def partial_stat_tele(request):
     # Calculate the last date of the given year and month
     last_day = calendar.monthrange(int(syear), int(smonth))[1]
     adate = f"{syear}-{smonth.zfill(2)}-{str(last_day).zfill(2)}"
-
     company = Company.objects.filter(customuser=user).first()
 
-    business_name = company.business_name
+    # Sanitize business_name
+    business_name = "".join(
+        c for c in company.business_name if c.isalnum() or c in (" ", "_")
+    ).replace(" ", "_")
     file_name = f"{adate}_{business_name}.csv"
-    csv_dir = os.path.join(settings.MEDIA_ROOT, "csv_files")
-    file_path = os.path.join(csv_dir, file_name)
+    s3_path = f"customer_csv_files/{file_name}"  # Store in S3 under csv_files/
+    file_full_path = ""
 
     # Check if the file already exists
-    if os.path.exists(file_path):
+    if default_storage.exists(s3_path):
         csv_ox = True
+        file_full_path = default_storage.url(s3_path)
     else:
         csv_ox = False
+        file_full_path = "#"
 
     rpms = (
         ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
@@ -524,6 +529,7 @@ def partial_stat_tele(request):
         "total_by_onsite": total_by_onsite,
         "total_by_amodality": total_by_amodality,
         "csv_ox": csv_ox,
+        "file_full_path": file_full_path,
     }
 
     return render(request, "collab/partial_stat_tele.html", context)
