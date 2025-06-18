@@ -47,6 +47,8 @@ from utils.base_func import (
 from celery.exceptions import CeleryError
 from .tasks import customer_month_csv
 
+logger = logging.getLogger(__name__)
+
 
 def working_setting(request):
     user = request.user
