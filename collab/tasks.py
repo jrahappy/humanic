@@ -1,5 +1,8 @@
-import csv
 import os
+import csv
+import datetime
+import logging
+import re
 from urllib.parse import quote
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
@@ -10,8 +13,7 @@ from minibooks.models import ReportMaster
 from accounts.models import CustomUser
 from .models import Refers, ReferHistory
 from django.utils import timezone
-import datetime
-import logging
+from django.db import DatabaseError
 
 
 logger = logging.getLogger(__name__)
@@ -138,28 +140,46 @@ def update_cosigend_refer_status(self):
 @shared_task(bind=True, soft_time_limit=25 * 60, time_limit=30 * 60, max_retries=3)
 def customer_month_csv(self, company_id, adate):
     try:
-        # Fetch company with select_related to reduce queries
+        # Validate inputs
+        try:
+            company_id = int(company_id)
+        except (ValueError, TypeError):
+            logger.error(f"Invalid company_id: {company_id}")
+            return {"status": "error", "message": "Invalid company ID"}
+
+        if not isinstance(adate, str) or not re.match(r"^\d{4}-\d{2}-\d{2}$", adate):
+            logger.error(f"Invalid adate format: {adate}")
+            return {"status": "error", "message": "Date must be YYYY-MM-DD"}
+
+        # Fetch company
         try:
             company = Company.objects.get(id=company_id)
         except Company.DoesNotExist:
             logger.error(f"Company with id {company_id} not found")
-            raise self.retry(countdown=60)  # Retry after 60 seconds
+            raise self.retry(countdown=60)
 
-        business_name = company.business_name
+        # Sanitize business_name
+        business_name = "".join(
+            c for c in company.business_name if c.isalnum() or c in (" ", "_")
+        ).replace(" ", "_")
         file_name = f"{adate}_{business_name}.csv"
         encoded_file_name = quote(file_name)
 
-        # Define the path to save the CSV in media/csv_files
+        # Define CSV path
         csv_dir = os.path.join(settings.MEDIA_ROOT, "csv_files")
-        os.makedirs(csv_dir, exist_ok=True)  # Create directory if it doesn't exist
+        os.makedirs(csv_dir, exist_ok=True)
         file_path = os.path.join(csv_dir, file_name)
 
-        # Fetch data efficiently with select_related
-        rpms = (
-            ReportMaster.objects.filter(company=company, adate=adate)
-            .select_related("company")
-            .order_by("case_id")[:2000]
-        )  # Limit to 2000 records
+        # Fetch data
+        try:
+            rpms = (
+                ReportMaster.objects.filter(company=company, adate=adate)
+                .select_related("company")
+                .order_by("case_id")[:2000]
+            )
+        except DatabaseError as e:
+            logger.error(f"Database error fetching ReportMaster: {e}")
+            raise self.retry(countdown=60)
 
         # Create CSV content
         rows = [
@@ -202,7 +222,7 @@ def customer_month_csv(self, company_id, adate):
         # Log success
         logger.info(f"CSV file created successfully: {file_path}")
 
-        # Return serializable result
+        # Return result
         return {
             "status": "success",
             "file_path": file_path,
@@ -220,4 +240,4 @@ def customer_month_csv(self, company_id, adate):
         logger.exception(
             f"Error in customer_month_csv: company_id={company_id}, adate={adate}, error={str(e)}"
         )
-        raise self.retry(countdown=60)  # Retry after 60 seconds
+        raise self.retry(countdown=60)
