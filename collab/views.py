@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Value, CharField, Q, Sum, Count
 from django.db.models.functions import Concat, ExtractYear, ExtractMonth
 from .models import (
@@ -525,32 +525,24 @@ def partial_stat_tele(request):
 
 
 @login_required
-def make_csv_tele(request, company_id, date):
+def make_csv_tele(_request, company_id, date):
     try:
-        customer_month_csv.delay(company_id, date)
-        return HttpResponse(
-            status=202,
-            headers={
-                "HX-Trigger": json.dumps(
-                    {
-                        "showMessage": "CSV generation started",
-                        "CSVGenerationStarted": None,
-                    }
-                )
-            },
+        task = customer_month_csv.delay(company_id, date)
+        print(f"CSV generation task started: {task.id}")
+        return JsonResponse(
+            {
+                "status": "success",
+            }
         )
+
     except Exception as e:
         print(f"Error generating CSV: {e}")
-        return HttpResponse(
-            status=500,
-            headers={
-                "HX-Trigger": json.dumps(
-                    {
-                        "showMessage": "Error generating CSV",
-                        "CSVGenerationError": None,
-                    }
-                )
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": str(e),
             },
+            status=500,
         )
 
 
