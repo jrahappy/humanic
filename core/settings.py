@@ -235,7 +235,7 @@ STORAGES = {
 # DJANGO_VITE = {"default": {"dev_mode": False}}
 DJANGO_VITE = {
     "default": {
-        "dev_mode": False,  # Use Vite dev server in development
+        "dev_mode": env("DEBUG"),  # Use Vite dev server in development
         # "dev_server_protocol": "http",
         # "dev_server_host": "localhost",
         # "dev_server_port": 5173,
