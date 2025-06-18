@@ -525,27 +525,77 @@ def partial_stat_tele(request):
 
 
 @login_required
-def make_csv_tele(company_id, date):
+def make_csv_tele(request, company_id, date):
     try:
+        # Validate inputs
+        try:
+            company_id = int(company_id)  # Ensure company_id is an integer
+            # Validate date format (e.g., 'YYYY-MM-DD')
+            if not isinstance(date, str) or not date.match(r"^\d{4}-\d{2}-\d{2}$"):
+                raise ValueError("Date must be in YYYY-MM-DD format")
+        except (ValueError, TypeError) as e:
+            logger.error(
+                f"Invalid input: company_id={company_id}, date={date}, error={str(e)}"
+            )
+            return HttpResponse(
+                status=400,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "showMessage": "Invalid company ID or date format (YYYY-MM-DD required)."
+                        }
+                    )
+                },
+            )
+
+        # Trigger the Celery task
         task = customer_month_csv.delay(company_id, date)
-        print(f"CSV generation task started: {task.id}")
-        return JsonResponse(
-            {
-                "status": "success",
-            }
+        logger.info(
+            f"CSV generation task started: task_id={task.id}, company_id={company_id}, date={date}"
         )
 
-    except Exception as e:
-        print(f"Error generating CSV: {e}")
-        return JsonResponse(
-            {
-                "status": "error",
-                "message": str(e),
+        return HttpResponse(
+            status=202,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "CSVGenerated": None,
+                        "showMessage": "CSV 생성이 시작되었습니다.",
+                        "CSVTaskId": task.id,
+                    }
+                )
             },
+        )
+
+    except CeleryError as e:
+        logger.exception(
+            f"Celery error generating CSV: company_id={company_id}, date={date}, error={str(e)}"
+        )
+        return HttpResponse(
+            status=503,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "showMessage": "Celery 서비스에 연결할 수 없습니다. 나중에 다시 시도하세요."
+                    }
+                )
+            },
+        )
+    except Exception as e:
+        logger.exception(
+            f"Error generating CSV: company_id={company_id}, date={date}, error={str(e)}"
+        )
+        return HttpResponse(
             status=500,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {"showMessage": "CSV 생성 중 오류가 발생했습니다."}
+                )
+            },
         )
 
 
+@login_required
 def partial_stat_filtered(request, company_id):
     company = Company.objects.get(id=company_id)
     year_month = request.GET.get("year_month")
