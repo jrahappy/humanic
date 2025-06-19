@@ -453,7 +453,7 @@ def partial_stat_tele(request):
 
     file_name = f"{adate}_{company.id}.csv"
     s3_path = f"customer_csv_files/{company.id}/{file_name}"
-    s3_path = s3_path.lstrip("/")  # Ensure no leading slash for default_storage
+    # s3_path = s3_path.lstrip("/")  # Ensure no leading slash for default_storage
     file_full_path = default_storage.url(
         s3_path
     )  # This generates the URL, doesn't check existence
@@ -469,6 +469,10 @@ def partial_stat_tele(request):
         csv_ox = False
 
     print(f"DEBUG: CSV file exist: {csv_ox}")
+
+    logger.info(f"Checking existence for s3_path: {s3_path}")
+    csv_exists = default_storage.exists(s3_path)
+    logger.info(f"Exists result: {csv_exists}")
 
     rpms = (
         ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)

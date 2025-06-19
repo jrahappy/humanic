@@ -96,62 +96,118 @@ def get_month_calendar(year, month):
 
 def mychoices(choice_name):
     from .models import ChoiceMaster
-    return ChoiceMaster.objects.filter(choice_name=choice_name).values_list("choice_value", "choice_label")
+
+    return ChoiceMaster.objects.filter(choice_name=choice_name).values_list(
+        "choice_value", "choice_label"
+    )
 
 
 def get_specialty_choices():
-    from .models import ChoiceMaster
-    cho = ChoiceMaster.objects.filter(choice_name="SPECIALTY2").order_by("choice_order")
-    choices = []
-    for c in cho:
-        choices.append((c.choice_key, c.choice_value))
+    # from .models import ChoiceMaster
+
+    # cho = ChoiceMaster.objects.filter(choice_name="SPECIALTY2").order_by("choice_order")
+    # choices = []
+    # for c in cho:
+    #     choices.append((c.choice_key, c.choice_value))
+    choices = [
+        ("복부비뇨", "복부/비뇨생식기"),
+        ("신경두경", "신경두경부"),
+        ("흉부심장", "흉부심장"),
+        ("심장혈관", "심장혈관"),
+        ("근골격", "근골격"),
+        ("유방갑상", "유방/갑상선"),
+        ("소아", "소아"),
+        ("인터벤션", "인터벤션"),
+    ]
+
     return choices
 
 
 def get_platform_choices():
-    from .models import ChoiceMaster
-    cho = ChoiceMaster.objects.filter(choice_name="PLATFORM").order_by("choice_order")
-    choices = []
-    for c in cho:
-        choices.append((c.choice_key, c.choice_value))
+    # from .models import ChoiceMaster
+
+    # cho = ChoiceMaster.objects.filter(choice_name="PLATFORM").order_by("choice_order")
+    # choices = []
+    # for c in cho:
+    #     choices.append((c.choice_key, c.choice_value))
+    choices = [
+        ("HPACS", "휴먼영상"),
+        ("ONPACS", "ONPACS"),
+        ("TAKE", "차감적용대상"),
+    ]
+
     return choices
 
 
 def get_amodality_choices():
-    from .models import ChoiceMaster
-    cho = ChoiceMaster.objects.filter(choice_name="AMODALITY").order_by("choice_order")
-    choices = []
-    for c in cho:
-        choices.append((c.choice_key, c.choice_value))
+    # from .models import ChoiceMaster
+
+    # cho = ChoiceMaster.objects.filter(choice_name="AMODALITY").order_by("choice_order")
+    # choices = []
+    # for c in cho:
+    #     choices.append((c.choice_key, c.choice_value))
+    choices = [
+        ("ct", "CT"),
+        ("mri", "MRI"),
+        ("cr", "CR"),
+        ("mg", "MG"),
+        ("us", "US"),
+        ("rf", "RF"),
+    ]
     return choices
 
 
 def get_ayear_choices():
-    from .models import ChoiceMaster
-    cho = ChoiceMaster.objects.filter(choice_name="AYEAR").order_by("choice_order")
-    choices = []
-    for c in cho:
-        choices.append((c.choice_key, c.choice_value))
+    # from .models import ChoiceMaster
+    # cho = ChoiceMaster.objects.filter(choice_name="AYEAR").order_by("choice_order")
+    # choices = []
+    # for c in cho:
+    #     choices.append((c.choice_key, c.choice_value))
+    choices = [
+        ("2023", "2023"),
+        ("2024", "2024"),
+        ("2025", "2025"),
+        ("2026", "2026"),
+    ]
     return choices
 
 
 def get_amonth_choices():
-    from .models import ChoiceMaster
-    cho = ChoiceMaster.objects.filter(choice_name="AMONTH").order_by("choice_order")
-    choices = []
-    for c in cho:
-        choices.append((c.choice_key, c.choice_value))
+    # from .models import ChoiceMaster
+    # cho = ChoiceMaster.objects.filter(choice_name="AMONTH").order_by("choice_order")
+    # choices = []
+    # for c in cho:
+    #     choices.append((c.choice_key, c.choice_value))
+    choices = [
+        ("1", "1"),
+        ("2", "2"),
+        ("4", "4"),
+        ("5", "5"),
+        ("6", "6"),
+        ("7", "7"),
+        ("8", "8"),
+        ("9", "9"),
+        ("10", "10"),
+        ("11", "11"),
+        ("12", "12"),
+    ]
     return choices
 
 
 def get_blog_category():
-    from .models import ChoiceMaster
-    cho = ChoiceMaster.objects.filter(choice_name="BLOG_CATEGORY").order_by(
-        "choice_order"
-    )
-    choices = []
-    for c in cho:
-        choices.append((c.choice_key, c.choice_value))
+    # from .models import ChoiceMaster
+    # cho = ChoiceMaster.objects.filter(choice_name="BLOG_CATEGORY").order_by(
+    #     "choice_order"
+    # )
+    # choices = []
+    # for c in cho:
+    #     choices.append((c.choice_key, c.choice_value))
+
+    choices = [
+        ("All", "전체"),
+        ("Doctor", "Doctor"),
+        ("Staff", "Staff"),
+    ]
     return choices
 
 

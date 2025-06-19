@@ -304,6 +304,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
                         uploadhistory=a_raw,
                         excelrownum=i,
                     )
+                    total_processed += 1
                 elif platform == "TAKE":
                     ReportMaster.objects.create(
                         apptitle=str(data[0]).strip() if data[0] else "",
@@ -344,6 +345,8 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
                         uploadhistory=a_raw,
                         excelrownum=i,
                     )
+                    total_processed += 1
+
                 else:
                     # Human Medical Center Excel format
                     if ayear == 2023:
@@ -430,6 +433,7 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
         logger.info(f"Task completed: {i} rows imported")
 
         return {"status": "Success", "rows_imported": i}
+
     except Exception as e:
         logger.error(f"Task failed: {e}")
         if a_raw is not None:

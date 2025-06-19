@@ -129,10 +129,11 @@ def new_upload(request):
 
         if form.is_valid():
             upload_history = form.save(commit=False)
+
             # adate 자동 입력
             uh = form.cleaned_data
-            temp_year = int(uh.ayear)
-            temp_month = int(uh.amonth)
+            temp_year = int(uh["ayear"])
+            temp_month = int(uh["amonth"])
             last_date = date(
                 temp_year, temp_month, monthrange(temp_year, temp_month)[1]
             )
@@ -141,6 +142,7 @@ def new_upload(request):
             upload_history.user = user
             upload_history.created_at = timezone.now()
             upload_history.save()
+
             messages.success(request, "File uploaded successfully.")
             # tracking the upload history
             log_uploadhistory(

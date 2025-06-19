@@ -266,7 +266,7 @@ CKEDITOR_CONFIGS = {
 TAGGIT_CASE_INSENSITIVE = True
 
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
+CELERY_RESULT_BACKEND = "django-db"  # Use Django database for storing task results
 CELERY_BROKER_TRANSPORT_OPTIONS = {
     "visibility_timeout": 3600,  # 1 hour
 }
@@ -274,7 +274,10 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Seoul"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
+
+# CRISPY_TEMPLATE_PACK = "tailwind"  # Use Tailwind CSS for crispy forms
 
 # LOGGING = {
 #     "version": 1,
@@ -323,25 +326,25 @@ LOGGING = {
             "filename": os.path.join(LOG_DIR, "humanrad.log"),
             "formatter": "verbose",
         },
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-        },
+        # "console": {
+        #     "level": "INFO",
+        #     "class": "logging.StreamHandler",
+        #     "formatter": "simple",
+        # },
     },
     "loggers": {
         "django": {
-            "handlers": ["file", "console"],
+            "handlers": ["file"],
             "level": "DEBUG",
             "propagate": True,
         },
         "humanrad": {  # Custom logger for your app
-            "handlers": ["file", "console"],
+            "handlers": ["file"],
             "level": "INFO",
             "propagate": False,
         },
         "": {  # Root logger for uncaught logs
-            "handlers": ["file", "console"],
+            "handlers": ["file"],
             "level": "WARNING",
             "propagate": False,
         },

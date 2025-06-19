@@ -1,6 +1,5 @@
 {% extends 'app_base.html' %}
 {% load widget_tweaks %}
-{% load crispy_forms_tags %}
 
 {% block header %}
     {% include 'app_base_header.html' %}
@@ -23,7 +22,7 @@
         </div>
         <form method="post" action="{% url 'minibooks:magam_new' %}">
             {% csrf_token %}
-            {{ form|crispy }}    
+            {{ form.as_div }}    
         
         <div class="form-control py-4 ">
             <div class="form-control py-4">
