@@ -106,7 +106,7 @@ def update_cosigend_refer_status(self):
             current_status = refer.status
             # Determine the next status in the cycle
 
-            next_status = "Cancelled"
+            next_status = "Archived"
             refer.status = next_status
             refer.updated_at = timezone.now()
             refer.save()

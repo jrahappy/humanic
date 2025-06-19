@@ -4,6 +4,7 @@ from . import views
 app_name = "collab"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("clean_refer/", views.clean_refer, name="clean_refer"),
     path("home/", views.home, name="home"),
     path("stat/", views.stat, name="stat"),
     path("stat_tele/", views.stat_tele, name="stat_tele"),

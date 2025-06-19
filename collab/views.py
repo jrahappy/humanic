@@ -46,7 +46,7 @@ from utils.base_func import (
     WORKHOURS,
 )
 from celery.exceptions import CeleryError
-from .tasks import customer_month_csv
+from .tasks import customer_month_csv, update_refer_status, update_cosigend_refer_status
 from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
@@ -1040,7 +1040,6 @@ def home(request):
     return render(request, "collab/home.html", context)
 
 
-@login_required
 def index(request):
     user = request.user
     company = Company.objects.filter(customuser=user).first()
@@ -1142,6 +1141,43 @@ def refer_list(request, company_id):
 #     refer_simples = ReferSimpleDiagnosis.objects.filter(refer=refer_id)
 #     context = {"refer_simples": refer_simples}
 #     return render(request, "collab/partial_simple_list.html", context)
+
+
+def clean_refer(request):
+    user = request.user
+    # update_refer_status.delay()
+    HumanIC = CustomUser.objects.get(username="HumanIC")
+
+    refers = Refers.objects.filter(
+        status__in=["Cosigned"],
+        referred_date__lt=timezone.now() - datetime.timedelta(days=7),
+    ).order_by("referred_date")
+
+    updated_count = 0
+    for refer in refers:
+
+        next_status = "Archived"
+        refer.status = next_status
+        refer.updated_at = timezone.now()
+        refer.save()
+        ReferHistory.objects.create(
+            refer=refer,
+            changed_status="Cancelled",
+            memo="Refer archived.",
+            changed_by=HumanIC,
+            changed_at=timezone.now(),
+        )
+
+        updated_count += 1
+
+    print(
+        f"DEBUG: {updated_count} refers updated to 'Cancelled' status due to inactivity."
+    )
+    messages.success(
+        request,
+        f"{updated_count} refers updated to 'Cancelled' status due to inactivity.",
+    )
+    return redirect("crm:collab_kanban")
 
 
 def refer_create(request):

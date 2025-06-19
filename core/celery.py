@@ -1,25 +1,26 @@
 import os
 from celery import Celery
 
-# Set the correct Django settings module for the 'celery' program.
-os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE", "core.settings"
-)  # Ensure 'core.settings' is correct.
+# Set the Django settings module
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
+# Create Celery app
 app = Celery("core")
 
-# Load Celery configuration from Django settings.
+# Load settings with CELERY_ namespace
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
-# Celery's result backend using Django's database.
+# Update configuration
 app.conf.update(
     result_backend="django-db",
+    beat_scheduler="django_celery_beat.schedulers:DatabaseScheduler",  # Use django-celery-beat
 )
 
-# Autodiscover tasks from all registered Django app configs.
+# Autodiscover tasks
 app.autodiscover_tasks()
 
 
-@app.task(bind=True)
+# Debug task
+@app.task(bind=True, ignore_result=True)
 def debug_task(self):
     print(f"Request: {self.request!r}")
