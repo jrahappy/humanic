@@ -451,28 +451,24 @@ def partial_stat_tele(request):
     adate = f"{syear}-{smonth.zfill(2)}-{str(last_day).zfill(2)}"
     company = Company.objects.filter(customuser=user).first()
 
-    # # Sanitize business_name
-    # business_name = "".join(
-    #     c for c in company.business_name if c.isalnum() or c in (" ", "_")
-    # ).replace(" ", "_")
     file_name = f"{adate}_{company.id}.csv"
-    print(f"File name: {file_name}")
-    s3_path = (
-        f"customer_csv_files/{company.id}/{file_name}"  # Store in S3 under csv_files/
-    )
-    file_full_path = ""
+    s3_path = f"customer_csv_files/{company.id}/{file_name}"
+    s3_path = s3_path.lstrip("/")  # Ensure no leading slash for default_storage
+    file_full_path = default_storage.url(
+        s3_path
+    )  # This generates the URL, doesn't check existence
 
-    print(default_storage.url(s3_path))
+    print(f"DEBUG: s3_path being checked: '{s3_path}'")
+    print(f"DEBUG: URL: '{file_full_path}'")
 
-    # Check if the file already exists
+    # https://humanicfiles.s3.us-east-2.amazonaws.com/customer_csv_files/1/2025-02-28_1.csv
+
     if default_storage.exists(s3_path):
         csv_ox = True
-        file_full_path = default_storage.url(s3_path)
     else:
         csv_ox = False
-        file_full_path = "#"
 
-    print(f"CSV file path: {file_full_path}")
+    print(f"DEBUG: CSV file exist: {csv_ox}")
 
     rpms = (
         ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
