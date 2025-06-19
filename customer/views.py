@@ -493,11 +493,11 @@ def update(request, customer_id):
     company = Company.objects.get(pk=customer_id)
     if request.method == "POST":
         form = CompanyForm(request.POST, instance=company)
-
         if form.is_valid():
             form.save()
             # print("form saved")
-            return render(request, "customer/detail.html", {"company": company})
+            # return render(request, "customer/detail.html", {"company": company})
+            return redirect("customer:detail", company.id)
         else:
             print(form.errors)
             context = {"form": form, "company": company}
@@ -516,7 +516,7 @@ def edit_customer(request, customer_id):
         form = CompanyForm(request.POST, instance=company)
         if form.is_valid():
             form.save()
-            return render(request, "customer/detail.html", {"company": company})
+            return redirect("customer:detail", company.id)
     else:
         form = CompanyForm(instance=company)
     return render(request, "customer/edit_customer.html", {"form": form})

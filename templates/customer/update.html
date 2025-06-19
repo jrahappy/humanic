@@ -33,7 +33,7 @@
 
     <section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-9">
       <div class="card-body grow-0">
-        <form method="POST" action="{% url 'customer:update' company.id%}">
+        <form method="POST" action="{% url 'customer:update' company.id %}">
         {% csrf_token %}
         <div class="grid grid-cols-4 gap-2">
           <div class="form-control">
