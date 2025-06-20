@@ -4,6 +4,8 @@ from django.db.models import Func
 from .models import Company, ServiceFee, CustomerLog, CustomerContact, CustomerFiles
 from django.core.exceptions import ValidationError
 
+# from django_recaptcha.fields import ReCaptchaField
+
 
 class CustomerFilesForm(ModelForm):
     class Meta:
@@ -26,8 +28,23 @@ class CustomerLogForm(ModelForm):
         exclude = ["company", "updated_by", "deleted_at"]
 
 
-class CompanyForm(ModelForm):
+class InquiryForm(ModelForm):
+    # captcha = ReCaptchaField()
 
+    class Meta:
+        model = Company
+        fields = {
+            "business_name",
+            "contact_person",
+            "office_cellphone",
+            "office_email",
+            "bio",
+            "is_public",
+            # "captcha",
+        }
+
+
+class CompanyForm(ModelForm):
     class Meta:
         model = Company
         fields = {

@@ -1,5 +1,9 @@
 {% extends "web/base.html" %}
 {% load static  %}
+{% load widget_tweaks %}
+
+{% block title %}휴먼영상의학센터 - 원격판독 문의{% endblock %}
+
 
 <div class="bg-white">
 
@@ -33,7 +37,7 @@
                         </div>
                     </div>
                     <!-- <img src="https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1280&q=80" alt="" class="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-2"> -->
-                    <img src="{% static 'img/DUL_6256.jpg' %}" alt="" class="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-2">
+                    <img src="{% static 'static/img/DUL_6256.jpg' %}" alt="" class="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-2">
                 </div>
             </div>
         <div class="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-white sm:h-32"></div>
@@ -110,35 +114,58 @@
             <form action="#" method="POST" class="px-6 pb-24 pt-20 sm:pb-32 lg:px-8 lg:py-24">
             <div class="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
                 <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+                    <form action="#" method="POST">
+                    {% csrf_token %}
                     <div class="sm:col-span-2">
                         <label for="first-name" class="block text-sm/6 font-semibold text-gray-900">병원명</label>
                         <div class="mt-2.5">
-                            <input type="text" name="first-name" id="first-name" autocomplete="given-name" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
-                        </div>
+                            {% render_field form.business_name  class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %}
+                            {% for error in form.business_name.errors %}
+                                <span class="text-red-500">{{ error }}</span>
+                            {% endfor %}
+                        </div>  
                     </div>
                     <div class="sm:col-span-2">
                         <label for="last-name" class="block text-sm/6 font-semibold text-gray-900">담당자</label>
                         <div class="mt-2.5">
-                            <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+                            {% render_field form.contact_person  class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %}
+                            {% for error in form.contact_person.errors %}
+                                <span class="text-red-500">{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
                         <label for="phone-number" class="block text-sm/6 font-semibold text-gray-900">받으실 전화번호</label>
                         <div class="mt-2.5">
-                            <input type="tel" name="phone-number" id="phone-number" autocomplete="tel" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+                            {% render_field form.office_cellphone  class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %}
+                            {% for error in form.office_cellphone.errors %}
+                                <span class="text-red-500">{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
                         <label for="email" class="block text-sm/6 font-semibold text-gray-900">이메일</label>
                         <div class="mt-2.5">
-                            <input type="email" name="email" id="email" autocomplete="email" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+                            {% render_field form.office_email  class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %}
+                            {% for error in form.office_email.errors %}
+                                <span class="text-red-500">{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
-                    <label for="message" class="block text-sm/6 font-semibold text-gray-900">문의내용(간략히)</label>
-                    <div class="mt-2.5">
-                        <textarea name="message" id="message" rows="4" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"></textarea>
+                        <label for="message" class="block text-sm/6 font-semibold text-gray-900">문의내용(간략히)</label>
+                        <div class="mt-2.5">
+                            {% render_field form.bio rows="4" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %}
+                        </div>
                     </div>
+                    <div class="sm:col-span-2">
+                        <div class="mt-2.5">
+                            <input type="checkbox" name="agree" id="agree" class="checkbox checkbox-primary" required>
+                            <label for="agree" class="ml-2 text-sm/6 font-semibold text gray-900">휴먼영상의학센터의 <a href="{% url 'web:terms' %}" class="text-indigo-600 hover:text-indigo-500">이용약관</a>과 <a href="{% url 'web:privacy' %}" class="text-indigo-600 hover:text-indigo-500">개인정보처리방침</a>에 동의합니다.</label>
+                            {% if form.agree.errors %}
+                                <span class="text-red-500">{{ form.agree.errors }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end">
