@@ -204,8 +204,8 @@ MEDIA_ROOT = BASE_DIR / "media/"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-# STATIC_URL = "static/"
-STATIC_URL = "https://humanicfiles.s3.us-east-2.amazonaws.com/"
+STATIC_URL = "static/"
+# STATIC_URL = "https://humanicfiles.s3.us-east-2.amazonaws.com/"
 # https://humanicfiles.s3.us-east-2.amazonaws.com/static/js/main.js
 # STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -226,7 +226,7 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "storages.backends.s3.S3Storage",  # For static files (or keep ManifestStaticFilesStorage)
         "OPTIONS": {
-            "location": "static",  # Optional: specify a location for static files in S3
+            "location": "",  # Optional: specify a location for static files in S3
         },
     },
     # "staticfiles": {
