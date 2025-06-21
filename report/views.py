@@ -208,7 +208,7 @@ def partial_provider_by_month(request, ayear, provider):
             "y": "Total Revenue",
             "color": "Modality",
         },
-        title="2024년",
+        title=ayear + "년 " + radiologist + " 판독의",
         barmode="group",  # Group bars by modality within each month
     )
 

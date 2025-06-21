@@ -219,20 +219,30 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",  # Keep S3 for media files if desired
-    },
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3.S3Storage",  # For static files (or keep ManifestStaticFilesStorage)
-        "OPTIONS": {
-            "location": "",  # Optional: specify a location for static files in S3
+if DEBUG:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",  # Keep S3 for media files if desired
         },
-    },
-    # "staticfiles": {
-    #     "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",  # For static files
-    # },
-}
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # For local static files in development
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",  # Keep S3 for media files if desired
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3.S3Storage",  # For static files (or keep ManifestStaticFilesStorage)
+            "OPTIONS": {
+                "location": "static",  # Optional: specify a location for static files in S3
+            },
+        },
+        # "staticfiles": {
+        #     "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",  # For static files
+        # },
+    }
 
 # DJANGO_VITE = {"default": {"dev_mode": False}}
 DJANGO_VITE = {
