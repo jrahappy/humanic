@@ -278,7 +278,13 @@ CKEDITOR_CONFIGS = {
 TAGGIT_CASE_INSENSITIVE = True
 
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+# CELERY_RESULT_BACKEND = env(
+#     "CELERY_RESULT_BACKEND"
+# )  # Use Django database for storing task results
 CELERY_RESULT_BACKEND = "django-db"  # Use Django database for storing task results
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"  # Use django-celery-beat for periodic tasks
+CELERY_RESULT_EXTENDED = True  # Store extended result information
+
 CELERY_BROKER_TRANSPORT_OPTIONS = {
     "visibility_timeout": 3600,  # 1 hour
 }
@@ -291,28 +297,6 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # CRISPY_TEMPLATE_PACK = "tailwind"  # Use Tailwind CSS for crispy forms
 
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "handlers": {
-#         "file": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             "filename": "/home/ubuntu/logs/humanrad.log",
-#         },
-#         "console": {
-#             "level": "INFO",
-#             "class": "logging.StreamHandler",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["file", "console"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#     },
-# }
 
 LOG_DIR = os.path.join(BASE_DIR, "logs")
 # Ensure log directory exists
@@ -321,44 +305,68 @@ os.makedirs(LOG_DIR, exist_ok=True)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
     "handlers": {
         "file": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
+            # "filename": "/home/ubuntu/logs/humanrad.log",
             "filename": os.path.join(LOG_DIR, "humanrad.log"),
-            "formatter": "verbose",
         },
-        # "console": {
-        #     "level": "INFO",
-        #     "class": "logging.StreamHandler",
-        #     "formatter": "simple",
-        # },
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+        },
     },
     "loggers": {
         "django": {
-            "handlers": ["file"],
+            "handlers": ["file", "console"],
             "level": "DEBUG",
             "propagate": True,
         },
-        "humanrad": {  # Custom logger for your app
-            "handlers": ["file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "": {  # Root logger for uncaught logs
-            "handlers": ["file"],
-            "level": "WARNING",
-            "propagate": False,
-        },
     },
 }
+
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "verbose": {
+#             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+#             "style": "{",
+#         },
+#         "simple": {
+#             "format": "{levelname} {message}",
+#             "style": "{",
+#         },
+#     },
+#     "handlers": {
+#         "file": {
+#             "level": "DEBUG",
+#             "class": "logging.FileHandler",
+#             "filename": os.path.join(LOG_DIR, "humanrad.log"),
+#             "formatter": "verbose",
+#         },
+#         # "console": {
+#         #     "level": "INFO",
+#         #     "class": "logging.StreamHandler",
+#         #     "formatter": "simple",
+#         # },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["file"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#         "humanrad": {  # Custom logger for your app
+#             "handlers": ["file"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "": {  # Root logger for uncaught logs
+#             "handlers": ["file"],
+#             "level": "WARNING",
+#             "propagate": False,
+#         },
+#     },
+# }

@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block title %}
-   <title>게시판 | Humanrad</title>
+    게시판
 {% endblock %}
 
 {% block header %}
@@ -41,7 +41,7 @@
             </thead>
             <tbody id="post_list" class="divide-y divide-gray-300">
                 {% for post in posts %}
-                <tr data-company-id="{{company.id}}">
+                <tr data-post-id="{{post.id}}">
                     <td class="whitespace-nowrap px-3 py-2 text-sm pl-6"> {{ post.category|handle_none }}</td>
                     <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium  sm:pl-6 hover:bg-sky-100" >
                         <a href="{% url 'blog:detail' post.id %}">
