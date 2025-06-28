@@ -23,7 +23,7 @@ class CustomUser(AbstractUser):
     # doctor or not
     is_doctor = models.BooleanField("Is Doctor", default=False)
     is_terms = models.BooleanField("Is Terms", default=False)
-    # 12/29/2024 협진유저일 경우 is_privacy = True 로 하는 방안 고민해보자
+    # 12/29/2024 협진유저일 경우 is_privacy = True
     is_privacy = models.BooleanField("Is Privacy", default=False)
     is_staff = models.BooleanField("Is Staff", default=False)
     is_superuser = models.BooleanField("Is Superuser", default=False)

@@ -1,0 +1,90 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+
+{% block title %}
+  Chat
+{% endblock %}
+
+{% block header %}
+  {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+  <div class="card-body grow-0">
+    <div class="flex justify-between gap-2 w-full">
+      <div class="flex flex-col md:flex-row justify-between w-2/3">
+        <h2 class="card-title ms-4">
+          Chats 
+        </h2>
+        <div class="flex">
+          <form method="get" action="{% url 'collab:home' %}">
+            <label class="input input-bordered flex items-center gap-2">
+              <input type="text" class="grow" placeholder="Search" name="q" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                class="h-4 w-4 opacity-70">
+                <path
+                  fill-rule="evenodd"
+                  d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </label>
+          </form>
+        </div>
+      </div>
+      <div class="text-end me-4 w-1/3">
+        <a href="{% url 'collab:refer_create' %}" class="btn btn-primary btn-sm text-white">새 검사 의뢰</a>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="w-full h-full min-h-80 bg-base-100 shadow-sm col-span-12 xl:col-span-12">
+  <div class="flex gap-4 p-4">
+    <div class="w-92 flex-none card card-compact bg-base-100 shadow-sm">
+      <div class="card-body max-h-18">
+        <h3 class="card-title">Staffs</h3>
+      </div>
+      <div class="overflow-y-auto max-h-120 p-3 mb-20 pb-100">
+        {% for staff in staffs %}
+        
+        <div class="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+         
+            <div class="w-12 h-12 bg-gray-300 rounded-full mr-3">
+                <img src="https://placehold.co/200x/dddddd/999999.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" class="w-12 h-12 rounded-full">
+            </div>
+            <div class="flex-1">
+                <h2 class="text-lg font-semibold"> {{ staff.first_name }}
+                 
+                </h2>
+                <p class="text-gray-600">
+                    <a href="#" 
+                    class="text-blue-500 hover:underline"
+                    hx-get="{% url 'chat:chat_window' staff.id %}"
+                    hx-target="#chat-content">
+                        Open Chat
+                    </a>
+                </p>
+            </div>
+            
+          
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="flex-1">
+        <div id="chat-content" class="h-full overflow-y-auto p-4 pb-36">
+          
+        </div>
+  
+    </div>
+  
+  </div>
+</section>
+{% endblock %}
+
+{% block aside %}
+  {% include 'app_base_aside.html' %}
+{% endblock %}

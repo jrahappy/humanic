@@ -149,11 +149,24 @@
         </ul>
     </li>
     <li>
-        <a>
-            <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
-            Messages
-            <span class="badge badge-info badge-sm">12</span>
-        </a>
+        <details>
+            <summary>
+                <svg data-src="https://unpkg.com/heroicons/20/solid/inbox.svg" class="h-5 w-5"></svg>
+                Messages
+                <span class="badge badge-info badge-sm">12</span>
+            </summary>
+        <ul>
+            <li><a href="#"
+                hx-get="{% url 'chat:index' %}"
+                hx-trigger="click"
+                hx-target="#main_area"
+                hx-swap="outerHTML"
+                hx-push-url="true"
+                hx-indicator="#spinner"
+                class="px-5"
+                >Chat</a></li>
+        </ul>
+        
     </li>
     <li>
         <details>

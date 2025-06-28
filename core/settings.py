@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "channels",
     "django_extensions",
     "django_vite",
     "rest_framework",
@@ -73,6 +74,7 @@ INSTALLED_APPS = [
     "task",
     "web",
     "api",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -145,6 +147,20 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [
+                {
+                    "address": env("REDIS_URL"),
+                    "password": env("REDIS_PASSWORD"),
+                }
+            ],
+        },
+    },
+}
+ASGI_APPLICATION = "core.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -202,12 +218,7 @@ AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default=None)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = "static/"
-# STATIC_URL = "https://humanicfiles.s3.us-east-2.amazonaws.com/"
-# https://humanicfiles.s3.us-east-2.amazonaws.com/static/js/main.js
-# STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
@@ -325,48 +336,3 @@ LOGGING = {
         },
     },
 }
-
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "formatters": {
-#         "verbose": {
-#             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-#             "style": "{",
-#         },
-#         "simple": {
-#             "format": "{levelname} {message}",
-#             "style": "{",
-#         },
-#     },
-#     "handlers": {
-#         "file": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             "filename": os.path.join(LOG_DIR, "humanrad.log"),
-#             "formatter": "verbose",
-#         },
-#         # "console": {
-#         #     "level": "INFO",
-#         #     "class": "logging.StreamHandler",
-#         #     "formatter": "simple",
-#         # },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["file"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#         "humanrad": {  # Custom logger for your app
-#             "handlers": ["file"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
-#         "": {  # Root logger for uncaught logs
-#             "handlers": ["file"],
-#             "level": "WARNING",
-#             "propagate": False,
-#         },
-#     },
-# }

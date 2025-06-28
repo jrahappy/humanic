@@ -1,0 +1,9 @@
+<div id="presence">
+    {% for user in presence %}
+        {% if presence.user.id %}
+            <span>{{ user.username }}: Online</span>
+        {% else %}
+            <span>{{ user.username }}: Offline</span>
+        {% endif %}
+    {% endfor %}
+</div>

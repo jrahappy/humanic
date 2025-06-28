@@ -453,26 +453,31 @@ def partial_stat_tele(request):
 
     file_name = f"{adate}_{company.id}.csv"
     s3_path = f"customer_csv_files/{company.id}/{file_name}"
-    # s3_path = s3_path.lstrip("/")  # Ensure no leading slash for default_storage
-    file_full_path = default_storage.url(
-        s3_path
-    )  # This generates the URL, doesn't check existence
+    # Remove any leading slash, just in case
+    s3_path = s3_path.lstrip("/")
+    file_full_path = default_storage.url(s3_path)
 
-    print(f"DEBUG: s3_path being checked: '{s3_path}'")
-    print(f"DEBUG: URL: '{file_full_path}'")
+    # print(f"DEBUG: s3_path being checked: '{s3_path}'")
+    # print(f"DEBUG: URL: '{file_full_path}'")
 
-    # https://humanicfiles.s3.us-east-2.amazonaws.com/customer_csv_files/1/2025-02-28_1.csv
-
-    if default_storage.exists(s3_path):
-        csv_ox = True
-    else:
+    # S3 storage may be case-sensitive and may have eventual consistency delays.
+    # Double-check the bucket, folder, and file name for typos or case mismatches.
+    # Also, try listing the directory to debug:
+    dir_path = f"customer_csv_files/{company.id}"
+    try:
+        files = default_storage.listdir(dir_path)[1]
+        print(f"DEBUG: Files in S3 dir '{dir_path}': {files}")
+        if file_name in files:
+            csv_ox = True
+        else:
+            csv_ox = False
+    except Exception as e:
+        print(f"DEBUG: Error listing S3 dir: {e}")
         csv_ox = False
 
-    print(f"DEBUG: CSV file exist: {csv_ox}")
+    # print(f"DEBUG: CSV file exist: {csv_ox}")
 
-    logger.info(f"Checking existence for s3_path: {s3_path}")
-    csv_exists = default_storage.exists(s3_path)
-    logger.info(f"Exists result: {csv_exists}")
+    # logger.info(f"Exists result: {csv_ox}")
 
     rpms = (
         ReportMaster.objects.filter(ayear=syear, amonth=smonth, company=company)
@@ -1371,6 +1376,14 @@ def company_update(request, company_id):
 
     context = {"company": company, "contacts": contacts, "form": form}
     return render(request, "collab/company_update.html", context)
+
+
+def profile(request):
+    user = request.user
+    company = Company.objects.filter(customuser=user).first()
+    profile = Profile.objects.filter(user=user).first()
+    context = {"profile": profile, "company": company}
+    return render(request, "collab/profile.html", context)
 
 
 def profile(request):
