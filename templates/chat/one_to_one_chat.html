@@ -1,0 +1,71 @@
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl mb-4">Chat with {{ receiver.username }}</h1>
+    <div id="chat-messages" class="chat-container">
+        {% for message in messages %}
+            <div class="message {% if message.sender == user %}you{% else %}other{% endif %}">
+                <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                <small>{{ message.timestamp }}</small>
+            </div>
+        {% endfor %}
+    </div>
+    <form hx-post="{% url 'chat:send_message' %}" hx-target="#chat-messages" hx-swap="beforeend">
+        {% csrf_token %}
+        <input type="text" name="message" class="border p-2 w-full" required>
+        <input type="hidden" name="receiver_id" value="{{ receiver_id }}">
+        <button type="submit" class="bg-blue-500 text-white p-2 mt-2">Send</button>
+    </form>
+</div>
+
+<script>
+    // Initialize WebSocket
+    const ws = new WebSocket('wss://humanrad.com/ws/chat/{{ receiver_id }}/');
+
+    // Handle successful connection
+    ws.onopen = function() {
+        console.log('WebSocket connected successfully to wss://humanrad.com/ws/chat/{{ receiver_id }}/');
+        const messages = document.getElementById('chat-messages');
+        messages.innerHTML += `
+            <div class="message system">
+                <small>Connected to chat</small>
+            </div>`;
+        messages.scrollTop = messages.scrollHeight;
+    };
+
+    // Handle incoming messages
+    ws.onmessage = function(event) {
+        try {
+            const data = JSON.parse(event.data);
+            const messages = document.getElementById('chat-messages');
+            messages.innerHTML += `
+                <div class="message ${data.sender === '{{ user.username }}' ? 'you' : 'other'}">
+                    <strong>${data.sender}</strong>: ${data.message}
+                    <small>${data.timestamp}</small>
+                </div>`;
+            messages.scrollTop = messages.scrollHeight;
+        } catch (e) {
+            console.error('Error parsing WebSocket message:', e);
+        }
+    };
+
+    // Handle connection closure
+    ws.onclose = function(event) {
+        console.error('WebSocket closed. Code:', event.code, 'Reason:', event.reason);
+        const messages = document.getElementById('chat-messages');
+        messages.innerHTML += `
+            <div class="message system error">
+                <small>Chat disconnected. Please refresh the page.</small>
+            </div>`;
+        messages.scrollTop = messages.scrollHeight;
+    };
+
+    // Handle connection errors
+    ws.onerror = function(error) {
+        console.error('WebSocket error:', error);
+        const messages = document.getElementById('chat-messages');
+        messages.innerHTML += `
+            <div class="message system error">
+                <small>Failed to connect to chat. Please try again.</small>
+            </div>`;
+        messages.scrollTop = messages.scrollHeight;
+    };
+</script>

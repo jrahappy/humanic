@@ -1,16 +1,3 @@
-import '../css/main.css';
-import { sayHello } from './hello.js';
-import htmx from 'htmx.org';
-window.htmx = htmx;
-
-import Alpine from 'alpinejs'
-window.Alpine = Alpine
-Alpine.start()
-
-console.log('Hello from main.js');
-sayHello('World');
-
-
 document.addEventListener("DOMContentLoaded", function() {
     const collapsibleSections = document.querySelectorAll("details");
 
@@ -26,4 +13,11 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem(sectionId, section.open ? "open" : "closed");
         });
     });
+});
+
+// base model close event
+const base_modal = document.getElementById('base_modal');
+base_modal.addEventListener('close', () => {
+    console.log('Base modal closed');
+    base_modal.innerHTML = ""
 });

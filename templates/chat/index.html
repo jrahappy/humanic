@@ -62,7 +62,7 @@
                 <p class="text-gray-600">
                     <a href="#" 
                     class="text-blue-500 hover:underline"
-                    hx-get="{% url 'chat:chat_window' staff.id %}"
+                    hx-get="{% url 'chat:one_to_one_chat' staff.id|default_if_none:0 %}"
                     hx-target="#chat-content">
                         Open Chat
                     </a>

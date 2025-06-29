@@ -69,7 +69,7 @@ def one_to_one_chat_view(request, receiver_id):
     )
     return render(
         request,
-        "one_to_one_chat.html",
+        "chat/one_to_one_chat.html",
         {
             "receiver": receiver,
             "messages": messages,
@@ -98,7 +98,7 @@ def send_message(request):
             )
         return render(
             request,
-            "partials/message.html",
+            "chat/partials/message.html",
             {"message": {"sender": request.user, "content": content}},
         )
     return redirect("home")

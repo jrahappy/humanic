@@ -1,26 +1,62 @@
+import json
+import os
+from pathlib import Path
+import environ
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-import json
+from redis import Redis
+from django.utils import timezone
 from accounts.models import CustomUser
 from chat.models import Group, Message
-from django.utils import timezone
-from redis import Redis
-
-import os
-import environ
-from pathlib import Path
-
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+from django.core.exceptions import ObjectDoesNotExist
+from redis.exceptions import ConnectionError as RedisConnectionError
 
 
-class GroupChatConsumer(AsyncWebsocketConsumer):
+# Environment setup (moved to a utility function for safety)
+def get_env():
+    env = environ.Env(DEBUG=(bool, False))
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    try:
+        environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+    except Exception as e:
+        print(f"Failed to load .env: {e}")
+    return env
+
+
+class BaseChatConsumer(AsyncWebsocketConsumer):
+    """Base class for shared chat functionality."""
+
+    @database_sync_to_async
+    def get_current_time(self):
+        return timezone.now()
+
+    @database_sync_to_async
+    def update_presence(self, delta):
+        env = get_env()
+        try:
+            redis = Redis.from_url(
+                f"redis://:{env('REDIS_PASSWORD')}@{env('REDIS_URL')}"
+            )
+            key = f'presence:{self.scope["user"].id}'
+            count = redis.incrby(key, delta)
+            if count <= 0:
+                redis.delete(key)
+            redis.close()
+            return count
+        except (RedisConnectionError, KeyError) as e:
+            print(f"Redis error in update_presence: {e}")
+            return 0
+
+    @database_sync_to_async
+    def mark_read(self, message_id):
+        try:
+            message = Message.objects.get(id=message_id)
+            message.read_by.add(self.scope["user"])
+        except ObjectDoesNotExist:
+            print(f"Message {message_id} not found")
+
+
+class GroupChatConsumer(BaseChatConsumer):
     async def connect(self):
         self.group_id = self.scope["url_route"]["kwargs"]["group_id"]
         self.group_name = f"group_{self.group_id}"
@@ -30,30 +66,43 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             await self.accept()
             await self.update_presence(1)
         else:
-            await self.close()
+            await self.close(code=403)  # Unauthorized
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
         await self.update_presence(-1)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        message = data["message"]
+        try:
+            data = json.loads(text_data)
+            message = data.get("message")
+            message_type = data.get("type")
 
-        if data.get("type") == "read":
-            await self.mark_read(data["message_id"])
-
-        await self.save_group_message(message)
-
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "chat_message",
-                "message": message,
-                "sender": self.scope["user"].username,
-                "timestamp": str(await self.get_current_time()),
-            },
-        )
+            if message_type == "read":
+                await self.mark_read(data["message_id"])
+                await self.channel_layer.group_send(
+                    self.group_name,
+                    {
+                        "type": "chat_message",
+                        "message": f"Message {data['message_id']} read by {self.scope['user'].username}",
+                        "sender": "system",
+                        "timestamp": str(await self.get_current_time()),
+                    },
+                )
+            elif message:
+                await self.save_group_message(message)
+                await self.channel_layer.group_send(
+                    self.group_name,
+                    {
+                        "type": "chat_message",
+                        "message": message,
+                        "sender": self.scope["user"].username,
+                        "timestamp": str(await self.get_current_time()),
+                    },
+                )
+        except json.JSONDecodeError:
+            print("Invalid JSON received")
+            await self.send(text_data=json.dumps({"error": "Invalid message format"}))
 
     async def chat_message(self, event):
         await self.send(
@@ -68,39 +117,26 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def is_group_member(self):
-        return Group.objects.filter(
-            id=self.group_id, members=self.scope["user"]
-        ).exists()
+        try:
+            return Group.objects.filter(
+                id=self.group_id, members=self.scope["user"]
+            ).exists()
+        except Exception as e:
+            print(f"Error checking group membership: {e}")
+            return False
 
     @database_sync_to_async
     def save_group_message(self, content):
-        group = Group.objects.get(id=self.group_id)
-        Message.objects.create(group=group, sender=self.scope["user"], content=content)
-
-    @database_sync_to_async
-    def get_current_time(self):
-        from django.utils import timezone
-
-        return timezone.now()
-
-    @database_sync_to_async
-    def update_presence(self, delta):
-        from redis import Redis
-
-        redis = Redis.from_url(f"redis://:{env('REDIS_PASSWORD')}@{env('REDIS_URL')}")
-        key = f'presence:{self.scope["user"].id}'
-        count = redis.incrby(key, delta)
-        if count <= 0:
-            redis.delete(key)
-        return count
-
-    @database_sync_to_async
-    def mark_read(self, message_id):
-        message = Message.objects.get(id=message_id)
-        message.read_by.add(self.scope["user"])
+        try:
+            group = Group.objects.get(id=self.group_id)
+            Message.objects.create(
+                group=group, sender=self.scope["user"], content=content
+            )
+        except ObjectDoesNotExist:
+            print(f"Group {self.group_id} not found")
 
 
-class OneToOneChatConsumer(AsyncWebsocketConsumer):
+class OneToOneChatConsumer(BaseChatConsumer):
     async def connect(self):
         self.receiver_id = self.scope["url_route"]["kwargs"]["receiver_id"]
         self.room_name = f'chat_{min(self.scope["user"].id, int(self.receiver_id))}_{max(self.scope["user"].id, int(self.receiver_id))}'
@@ -114,23 +150,36 @@ class OneToOneChatConsumer(AsyncWebsocketConsumer):
         await self.update_presence(-1)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        message = data["message"]
+        try:
+            data = json.loads(text_data)
+            message = data.get("message")
+            message_type = data.get("type")
 
-        if data.get("type") == "read":
-            await self.mark_read(data["message_id"])
-
-        await self.save_one_to_one_message(message)
-
-        await self.channel_layer.group_send(
-            self.room_name,
-            {
-                "type": "chat_message",
-                "message": message,
-                "sender": self.scope["user"].username,
-                "timestamp": str(await self.get_current_time()),
-            },
-        )
+            if message_type == "read":
+                await self.mark_read(data["message_id"])
+                await self.channel_layer.group_send(
+                    self.room_name,
+                    {
+                        "type": "chat_message",
+                        "message": f"Message {data['message_id']} read by {self.scope['user'].username}",
+                        "sender": "system",
+                        "timestamp": str(await self.get_current_time()),
+                    },
+                )
+            elif message:
+                await self.save_one_to_one_message(message)
+                await self.channel_layer.group_send(
+                    self.room_name,
+                    {
+                        "type": "chat_message",
+                        "message": message,
+                        "sender": self.scope["user"].username,
+                        "timestamp": str(await self.get_current_time()),
+                    },
+                )
+        except json.JSONDecodeError:
+            print("Invalid JSON received")
+            await self.send(text_data=json.dumps({"error": "Invalid message format"}))
 
     async def chat_message(self, event):
         await self.send(
@@ -145,33 +194,10 @@ class OneToOneChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_one_to_one_message(self, content):
-        receiver = CustomUser.objects.get(id=self.receiver_id)
-        Message.objects.create(
-            sender=self.scope["user"], receiver=receiver, content=content
-        )
-
-    @database_sync_to_async
-    def get_current_time(self):
-
-        return timezone.now()
-
-    @database_sync_to_async
-    def update_presence(self, delta):
-        from redis import Redis
-
-        redis = Redis.from_url(f"redis://:{env('REDIS_PASSWORD')}@{env('REDIS_URL')}")
-        key = f'presence:{self.scope["user"].id}'
-        count = redis.incrby(key, delta)
-        if count <= 0:
-            redis.delete(key)
-        return count
-
-    @database_sync_to_async
-    def mark_read(self, message_id):
-        message = Message.objects.get(id=message_id)
-        message.read_by.add(self.scope["user"])
-
-
-# Note: The OneToOneChatConsumer assumes that the Message model has a 'receiver' field.
-# If it does not, you will need to adjust the model and the save method accordingly.
-# Also, ensure that the routing for this consumer is set up correctly in your routing.py file.
+        try:
+            receiver = CustomUser.objects.get(id=self.receiver_id)
+            Message.objects.create(
+                sender=self.scope["user"], receiver=receiver, content=content
+            )
+        except ObjectDoesNotExist:
+            print(f"User {self.receiver_id} not found")
