@@ -1,8 +1,7 @@
 import os
-from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from . import routing
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
@@ -10,9 +9,12 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
+# Now import consumers after Django is set up
+from . import routing
+
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
-        "websocket": AuthMiddlewareStack(URLRouter(core.routing.websocket_urlpatterns)),
+        "websocket": AuthMiddlewareStack(URLRouter(routing.websocket_urlpatterns)),
     }
 )
