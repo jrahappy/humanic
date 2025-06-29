@@ -18,7 +18,7 @@
 
 <script>
     // Initialize WebSocket
-    const ws = new WebSocket('wss://humanrad.com/ws/chat/{{ receiver_id }}/');
+    const ws = new WebSocket(`ws://${window.location.host}/ws/chat/${ receiver_id }/`);
 
     // Handle successful connection
     ws.onopen = function() {
