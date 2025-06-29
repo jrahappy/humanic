@@ -212,7 +212,7 @@ AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
-AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default=None)
+AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN")
 
 # Media files (user-uploaded content)
 MEDIA_URL = "/media/"
@@ -238,6 +238,12 @@ if DEBUG:
         "staticfiles": {
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # For local static files in development
         },
+        # "staticfiles": {
+        #     "BACKEND": "storages.backends.s3.S3Storage",  # For static files (or keep ManifestStaticFilesStorage)
+        #     "OPTIONS": {
+        #         "location": "static",  # Optional: specify a location for static files in S3
+        #     },
+        # },
     }
 else:
     STORAGES = {
