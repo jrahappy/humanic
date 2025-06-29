@@ -64,6 +64,10 @@ class GroupChatConsumer(BaseChatConsumer):
         if await self.is_group_member():
             await self.channel_layer.group_add(self.group_name, self.channel_name)
             await self.accept()
+            print(
+                f"User {self.scope['user'].username} connected to group {self.group_id}"
+            )
+            # Update presence count for the group
             await self.update_presence(1)
         else:
             await self.close(code=403)  # Unauthorized
@@ -144,6 +148,7 @@ class OneToOneChatConsumer(BaseChatConsumer):
         await self.channel_layer.group_add(self.room_name, self.channel_name)
         await self.accept()
         await self.update_presence(1)
+        print(f"User {self.scope['user'].username} connected to room {self.room_name}")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
@@ -201,3 +206,75 @@ class OneToOneChatConsumer(BaseChatConsumer):
             )
         except ObjectDoesNotExist:
             print(f"User {self.receiver_id} not found")
+
+
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.receiver_id = self.scope["url_route"]["kwargs"]["receiver_id"]
+        self.user = self.scope["user"]
+
+        if self.user.is_anonymous:
+            await self.close()
+            return
+
+        # Create a unique room name for the two users
+        user_ids = sorted([self.user.id, int(self.receiver_id)])
+        self.room_name = f"chat_{user_ids[0]}_{user_ids[1]}"
+        self.room_group_name = f"chat_{self.room_name}"
+
+        # Join room group
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    # Receive message from WebSocket
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json["message"]
+
+        # Save message to database
+        await self.save_message(message)
+
+        # Send message to room group
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "chat_message",
+                "message": message,
+                "sender": self.user.username,
+                "timestamp": str(timezone.now()),
+            },
+        )
+
+    # Receive message from room group
+    async def chat_message(self, event):
+        message = event["message"]
+        sender = event["sender"]
+        timestamp = event["timestamp"]
+
+        # Send message to WebSocket
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "message": message,
+                    "sender": sender,
+                    "timestamp": timestamp,
+                }
+            )
+        )
+
+    @database_sync_to_async
+    def save_message(self, message):
+        from django.utils import timezone
+
+        receiver = User.objects.get(id=self.receiver_id)
+        Message.objects.create(
+            sender=self.user,
+            receiver=receiver,
+            content=message,
+            timestamp=timezone.now(),
+        )

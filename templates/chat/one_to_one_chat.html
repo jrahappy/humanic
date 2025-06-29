@@ -8,7 +8,7 @@
             </div>
         {% endfor %}
     </div>
-    <form hx-post="{% url 'chat:send_message' %}" hx-target="#chat-messages" hx-swap="beforeend">
+    <form id="chat-form" hx-post="{% url 'chat:send_message' %}" hx-target="#chat-messages" hx-swap="beforeend">
         {% csrf_token %}
         <input type="text" name="message" class="border p-2 w-full" required>
         <input type="hidden" name="receiver_id" value="{{ receiver_id }}">
@@ -17,12 +17,13 @@
 </div>
 
 <script>
-    // Initialize WebSocket
-    const ws = new WebSocket(`wss://${window.location.host}/ws/chat/{{ receiver_id }}/`);
+    // Initialize WebSocket with proper protocol detection
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws/chat/{{ receiver_id }}/`);
 
     // Handle successful connection
     ws.onopen = function() {
-        console.log('WebSocket connected successfully to wss://humanrad.com/ws/chat/{{ receiver_id }}/');
+        console.log(`WebSocket connected successfully to ${wsProtocol}//${window.location.host}/ws/chat/{{ receiver_id }}/`);
         const messages = document.getElementById('chat-messages');
         messages.innerHTML += `
             <div class="message system">
@@ -36,12 +37,21 @@
         try {
             const data = JSON.parse(event.data);
             const messages = document.getElementById('chat-messages');
+            if (!data.sender || !data.message || !data.timestamp) {
+                console.error('Invalid message format:', data);
+                return;
+            }
+            const timestamp = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            data.timestamp = timestamp; // Format timestamp for display
+            const chat_form = document.getElementById('chat-form');
             messages.innerHTML += `
                 <div class="message ${data.sender === '{{ user.username }}' ? 'you' : 'other'}">
                     <strong>${data.sender}</strong>: ${data.message}
                     <small>${data.timestamp}</small>
                 </div>`;
             messages.scrollTop = messages.scrollHeight;
+            chat_form.reset(); // Clear the input field after sending
+            
         } catch (e) {
             console.error('Error parsing WebSocket message:', e);
         }

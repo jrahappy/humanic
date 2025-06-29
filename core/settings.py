@@ -328,6 +328,7 @@ LOGGING = {
             "class": "logging.FileHandler",
             # "filename": "/home/ubuntu/logs/humanrad.log",
             "filename": os.path.join(LOG_DIR, "humanrad.log"),
+            "encoding": "utf-8",
         },
         "console": {
             "level": "INFO",

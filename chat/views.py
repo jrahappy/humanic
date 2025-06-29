@@ -85,21 +85,59 @@ def send_message(request):
         content = request.POST.get("message")
         group_id = request.POST.get("group_id")
         receiver_id = request.POST.get("receiver_id")
+        timestamp = timezone.now()
         if group_id:
             group = Group.objects.get(id=group_id)
             if request.user in group.members.all():
                 Message.objects.create(
-                    group=group, sender=request.user, content=content
+                    group=group,
+                    sender=request.user,
+                    content=content,
+                    timestamp=timestamp,
                 )
         elif receiver_id:
             receiver = CustomUser.objects.get(id=receiver_id)
-            Message.objects.create(
-                sender=request.user, receiver=receiver, content=content
+            message = Message.objects.create(
+                sender=request.user,
+                receiver=receiver,
+                content=content,
+                timestamp=timestamp,
             )
+
+            # Send message through WebSocket
+            try:
+                from channels.layers import get_channel_layer
+                from asgiref.sync import async_to_sync
+                import json
+
+                channel_layer = get_channel_layer()
+
+                # Create room name (same logic as in consumer)
+                user_ids = sorted([request.user.id, int(receiver_id)])
+                room_group_name = f"chat_chat_{user_ids[0]}_{user_ids[1]}"
+
+                async_to_sync(channel_layer.group_send)(
+                    room_group_name,
+                    {
+                        "type": "chat_message",
+                        "message": content,
+                        "sender": request.user.username,
+                        "timestamp": timestamp.isoformat(),
+                    },
+                )
+            except Exception as e:
+                print(f"WebSocket send error: {e}")
+
         return render(
             request,
             "chat/partials/message.html",
-            {"message": {"sender": request.user, "content": content}},
+            {
+                "message": {
+                    "sender": request.user,
+                    "content": content,
+                    "timestamp": timestamp,
+                }
+            },
         )
     return redirect("home")
 

@@ -10,11 +10,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django_asgi_app = get_asgi_application()
 
 # Now import consumers after Django is set up
-from . import routing
+import chat.routing
 
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
-        "websocket": AuthMiddlewareStack(URLRouter(routing.websocket_urlpatterns)),
+        "websocket": AuthMiddlewareStack(URLRouter(chat.routing.websocket_urlpatterns)),
     }
 )
