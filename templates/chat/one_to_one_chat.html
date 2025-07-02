@@ -17,9 +17,14 @@
 </div>
 
 <script>
-    // Initialize WebSocket with proper protocol detection
+    // Initialize WebSocket with dynamic protocol and domain
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws/chat/{{ receiver_id }}/`);
+    // const wsHost = window.location.host; // e.g., humanrad.com or localhost:8000
+    const wsHost = "humanrad.com"; // Use the sanitized host from Django template
+    const receiverId = "{{ receiver_id | escapejs }}"; // Sanitized Django template variable
+    const wsUrl = `${wsProtocol}//${wsHost}/wss/chat/${receiverId}/`;
+    
+    const ws = new WebSocket(wsUrl);
 
     // Handle successful connection
     ws.onopen = function() {
