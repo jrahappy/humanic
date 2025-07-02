@@ -143,12 +143,43 @@ class GroupChatConsumer(BaseChatConsumer):
 class OneToOneChatConsumer(BaseChatConsumer):
     async def connect(self):
         self.receiver_id = self.scope["url_route"]["kwargs"]["receiver_id"]
-        self.room_name = f'chat_{min(self.scope["user"].id, int(self.receiver_id))}_{max(self.scope["user"].id, int(self.receiver_id))}'
 
-        await self.channel_layer.group_add(self.room_name, self.channel_name)
-        await self.accept()
-        await self.update_presence(1)
-        print(f"User {self.scope['user'].username} connected to room {self.room_name}")
+        # Check if user is authenticated and has valid id
+        if (
+            self.scope["user"].is_anonymous
+            or not hasattr(self.scope["user"], "id")
+            or self.scope["user"].id is None
+        ):
+            print(
+                f"Authentication failed: user={self.scope['user']}, id={getattr(self.scope['user'], 'id', None)}"
+            )
+            await self.close(code=403)
+            return
+
+        try:
+            receiver_id_int = int(self.receiver_id)
+            user_id = self.scope["user"].id
+
+            # Ensure both IDs are valid integers
+            if user_id is None:
+                print(f"User ID is None for user: {self.scope['user']}")
+                await self.close(code=403)
+                return
+
+            self.room_name = (
+                f"chat_{min(user_id, receiver_id_int)}_{max(user_id, receiver_id_int)}"
+            )
+
+            await self.channel_layer.group_add(self.room_name, self.channel_name)
+            await self.accept()
+            await self.update_presence(1)
+            print(
+                f"User {self.scope['user'].username} connected to room {self.room_name}"
+            )
+
+        except (ValueError, TypeError) as e:
+            print(f"Invalid receiver_id or user_id: {e}")
+            await self.close(code=400)
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
@@ -213,19 +244,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.receiver_id = self.scope["url_route"]["kwargs"]["receiver_id"]
         self.user = self.scope["user"]
 
-        if self.user.is_anonymous:
-            await self.close()
+        if (
+            self.user.is_anonymous
+            or not hasattr(self.user, "id")
+            or self.user.id is None
+        ):
+            print(f"Authentication failed for ChatConsumer: user={self.user}")
+            await self.close(code=403)
             return
 
-        # Create a unique room name for the two users
-        user_ids = sorted([self.user.id, int(self.receiver_id)])
-        self.room_name = f"chat_{user_ids[0]}_{user_ids[1]}"
-        self.room_group_name = f"chat_{self.room_name}"
+        try:
+            receiver_id_int = int(self.receiver_id)
+            user_id = self.user.id
 
-        # Join room group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            # Create a unique room name for the two users
+            user_ids = sorted([user_id, receiver_id_int])
+            self.room_name = f"chat_{user_ids[0]}_{user_ids[1]}"
+            self.room_group_name = f"chat_{self.room_name}"
 
-        await self.accept()
+            # Join room group
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            await self.accept()
+            print(
+                f"ChatConsumer: User {self.user.username} connected to room {self.room_name}"
+            )
+
+        except (ValueError, TypeError) as e:
+            print(f"ChatConsumer error: {e}")
+            await self.close(code=400)
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -271,7 +317,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def save_message(self, message):
         from django.utils import timezone
 
-        receiver = User.objects.get(id=self.receiver_id)
+        receiver = CustomUser.objects.get(id=self.receiver_id)
         Message.objects.create(
             sender=self.user,
             receiver=receiver,
