@@ -314,9 +314,8 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # CRISPY_TEMPLATE_PACK = "tailwind"  # Use Tailwind CSS for crispy forms
 
-
-LOG_DIR = os.path.join(BASE_DIR, "logs")
-# Ensure log directory exists
+# Logging configuration
+LOG_DIR = "/var/log/gunicorn"  # Use system-wide log directory
 os.makedirs(LOG_DIR, exist_ok=True)
 
 LOGGING = {
@@ -326,7 +325,6 @@ LOGGING = {
         "file": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            # "filename": "/home/ubuntu/logs/humanrad.log",
             "filename": os.path.join(LOG_DIR, "humanrad.log"),
             "encoding": "utf-8",
         },
@@ -343,3 +341,31 @@ LOGGING = {
         },
     },
 }
+
+# LOG_DIR = os.path.join(BASE_DIR, "logs")
+# # Ensure log directory exists
+# os.makedirs(LOG_DIR, exist_ok=True)
+
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "file": {
+#             "level": "DEBUG",
+#             "class": "logging.FileHandler",
+#             "filename": os.path.join(LOG_DIR, "humanrad.log"),
+#             "encoding": "utf-8",
+#         },
+#         "console": {
+#             "level": "INFO",
+#             "class": "logging.StreamHandler",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["file", "console"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#     },
+# }
