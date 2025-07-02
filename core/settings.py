@@ -16,7 +16,11 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1"])
+ALLOWED_HOSTS = [
+    "humanrad.com",
+    "www.humanrad.com",
+    "127.0.0.1",
+]
 
 SITE_ID = 1
 
@@ -311,31 +315,31 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 # CRISPY_TEMPLATE_PACK = "tailwind"  # Use Tailwind CSS for crispy forms
 
 
-# LOG_DIR = os.path.join(BASE_DIR, "logs")
-# # Ensure log directory exists
-# os.makedirs(LOG_DIR, exist_ok=True)
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+# Ensure log directory exists
+os.makedirs(LOG_DIR, exist_ok=True)
 
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "handlers": {
-#         "file": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             # "filename": "/home/ubuntu/logs/humanrad.log",
-#             "filename": os.path.join(LOG_DIR, "humanrad.log"),
-#             "encoding": "utf-8",
-#         },
-#         "console": {
-#             "level": "INFO",
-#             "class": "logging.StreamHandler",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["file", "console"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#     },
-# }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            # "filename": "/home/ubuntu/logs/humanrad.log",
+            "filename": os.path.join(LOG_DIR, "humanrad.log"),
+            "encoding": "utf-8",
+        },
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file", "console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
