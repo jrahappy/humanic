@@ -16,19 +16,24 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-# ALLOWED_HOSTS = [
-#     "humanrad.com",
-#     "www.humanrad.com",
-#     "127.0.0.1",
-# ]
+ALLOWED_HOSTS = [
+    "humanrad.com",
+    "www.humanrad.com",
+    "127.0.0.1",
+    "localhost",
+    "44.220.242.249",
+]
 
-ALLOWED_HOSTS = env.list(
-    "ALLOWED_HOSTS",
-    default=[
-        "humanrad.com",
-        "www.humanrad.com",
-    ],
-)
+# ALLOWED_HOSTS = env.list(
+#     "ALLOWED_HOSTS",
+#     default=[
+#         "humanrad.com",
+#         "www.humanrad.com",
+#         "127.0.0.1",
+#         "localhost",
+#         "44.220.242.249",
+#     ],
+# )
 SITE_ID = 1
 
 # Application definition
