@@ -19,6 +19,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
+def echo_page(request):
+    """
+    A simple view to test WebSocket echo functionality.
+    """
+    return render(request, "chat/echo_page.html")
+
+
 @login_required
 def index(request):
     user = request.user
