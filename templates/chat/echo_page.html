@@ -20,7 +20,15 @@
 <script>
     
     // Initialize WebSocket with dynamic protocol and domain
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws/echo/");
+        const wsProtocol = "wss:"; // Use secure WebSocket protocol
+    // const wsHost = window.location.host; // e.g., humanrad.com or localhost:8000
+    const wsHost = "humanrad.com"; // Use the sanitized host from Django template
+    const receiverId = "{{ receiver_id | escapejs }}"; // Sanitized Django template variable
+    const wsUrl = `${wsProtocol}//${wsHost}/wss/chat/echo/`;
+    console.log(`Connecting to WebSocket at ${wsUrl}`);
+
+    const ws = new WebSocket(wsUrl);
+    // const ws = new WebSocket("ws://127.0.0.1:8000/ws/echo/");
 
     console.log('Connecting to WebSocket at ws://localhost:8000/ws/echo/');
 

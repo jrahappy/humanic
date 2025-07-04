@@ -12,6 +12,19 @@ from django.core.exceptions import ObjectDoesNotExist
 from redis.exceptions import ConnectionError as RedisConnectionError
 
 
+class EchoConsumer(AsyncWebsocketConsumer):
+    """A simple echo consumer for testing WebSocket connections."""
+
+    async def connect(self):
+        await self.accept()
+        print("EchoConsumer connected")
+
+    async def receive(self, text_data):
+        # Echo the received message back to the client
+        await self.send(f"You said : {text_data}")
+        print(f"Echoed message: {text_data}")
+
+
 # Environment setup (moved to a utility function for safety)
 def get_env():
     env = environ.Env(DEBUG=(bool, False))

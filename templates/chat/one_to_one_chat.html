@@ -8,11 +8,11 @@
             </div>
         {% endfor %}
     </div>
-    <form id="chat-form" hx-post="{% url 'chat:send_message' %}" hx-target="#chat-messages" hx-swap="beforeend">
-        {% csrf_token %}
+    <form id="chat-form" >
         <input type="text" name="message" class="border p-2 w-full" required>
-        <input type="hidden" name="receiver_id" value="{{ receiver_id }}">
         <button type="submit" class="bg-blue-500 text-white p-2 mt-2">Send</button>
+    </form>
+
     </form>
 </div>
 
@@ -35,34 +35,22 @@
         const messages = document.getElementById('chat-messages');
         messages.innerHTML += `
             <div class="message system">
-                <small>Connected to chat</small>
+                <small>Connected to chat for ${receiverId}</small>
             </div>`;
         messages.scrollTop = messages.scrollHeight;
     };
 
     // Handle incoming messages
     ws.onmessage = function(event) {
-        try {
-            const data = JSON.parse(event.data);
-            const messages = document.getElementById('chat-messages');
-            if (!data.sender || !data.message || !data.timestamp) {
-                console.error('Invalid message format:', data);
-                return;
-            }
-            const timestamp = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            data.timestamp = timestamp; // Format timestamp for display
-            const chat_form = document.getElementById('chat-form');
-            messages.innerHTML += `
-                <div class="message ${data.sender === '{{ user.username }}' ? 'you' : 'other'}">
-                    <strong>${data.sender}</strong>: ${data.message}
-                    <small>${data.timestamp}</small>
-                </div>`;
-            messages.scrollTop = messages.scrollHeight;
-            chat_form.reset(); // Clear the input field after sending
-            
-        } catch (e) {
-            console.error('Error parsing WebSocket message:', e);
-        }
+        const data = JSON.parse(event.data);
+        console.log('Received message:', data);
+        const messages = document.getElementById('chat-messages');
+        messages.innerHTML += `
+            <div class="message ${data.sender === 'you' ? 'you' : 'other'}">
+                <strong>${data.sender}</strong>: ${data.content}
+                <small>${data.timestamp}</small>
+            </div>`;
+        messages.scrollTop = messages.scrollHeight;
     };
 
     // Handle connection closure
