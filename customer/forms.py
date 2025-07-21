@@ -65,6 +65,7 @@ class CompanyForm(ModelForm):
             "website",
             "contact_person",
             "is_collab",
+            "is_collab_contract",
             "is_tele",
             "tags",
         }

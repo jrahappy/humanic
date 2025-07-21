@@ -14,4 +14,8 @@ urlpatterns = [
     path("doctorContact/", views.doctorContact, name="doctorContact"),
     path("terms/", views.terms, name="terms"),
     path("privacy/", views.privacy, name="privacy"),
+    path("email_policy/", views.email_policy, name="email_policy"),
+    path("specialties/", views.specialties, name="specialties"),
+    path("intro/", views.intro, name="intro"),
+    path("faq/", views.faq, name="faq"),
 ]

@@ -18,20 +18,28 @@
 
 <script>
     // Initialize WebSocket with dynamic protocol and domain
-    // const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsProtocol = "wss:"; // Use secure WebSocket protocol
-    // const wsHost = window.location.host; // e.g., humanrad.com or localhost:8000
-    const wsHost = "humanrad.com"; // Use the sanitized host from Django template
-    const receiverId = "{{ receiver_id | escapejs }}"; // Sanitized Django template variable
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsHost = window.location.host;
+    const receiverId = "{{ receiver_id | escapejs }}";
     const wsUrl = `${wsProtocol}//${wsHost}/wss/chat/${receiverId}/`;
 
     console.log(`Connecting to WebSocket at ${wsUrl}`);
     
     const ws = new WebSocket(wsUrl);
+    const chat_form = document.getElementById('chat-form');
+    chat_form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const messageInput = chat_form.querySelector('input[name="message"]');
+        const message = messageInput.value.trim();
+        if (message) {
+            ws.send(JSON.stringify({ content: message, sender: 'you' }));
+            messageInput.value = ''; // Clear input after sending
+        }
+    });
 
     // Handle successful connection
     ws.onopen = function() {
-        console.log(`WebSocket connected successfully to ${wsProtocol}//${window.location.host}/ws/chat/{{ receiver_id }}/`);
+        console.log(`WebSocket connected successfully to ${wsUrl}`);
         const messages = document.getElementById('chat-messages');
         messages.innerHTML += `
             <div class="message system">

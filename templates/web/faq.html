@@ -1,0 +1,393 @@
+{% extends "web/base.html" %}
+{% load static %}
+
+<div class="bg-white">
+
+{% block header %}
+  {% include "web/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <main class="isolate">
+    <div class="bg-white">
+        <!-- Hero Section -->
+        <div class="relative isolate px-6 pt-14 lg:px-8">
+            <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+                <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#ADE628] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"></div>
+            </div>
+            <div class="mx-auto max-w-5xl py-32 sm:py-48 lg:py-56">
+                <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+                    <div class="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                    
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h1 class="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl"> 원격판독 홈페이지 Q&A </h1>
+                    <p class="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">고객분들의 다양한 질문들에 대해서 답변드립니다.</p>
+                    <div class="mt-10 flex items-center justify-center gap-x-6">
+                    
+                </div>
+            </div>
+        </div>
+        <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#32CD32] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"></div>
+        </div>
+    </div>
+    <!-- Hero Section End -->
+    <div class="bg-white mx-auto max-w-7xl">
+        <div class="mx-auto divider divide-gray-200 px-4 sm:px-6 lg:px-8"></div>
+    </div>
+    <div class="bg-white">
+      <div class="mx-auto max-w-7xl px-6 py-4 sm:py-4 lg:px-8">
+        <div class="mt-20">
+          <dl class="space-y-16 sm:grid sm:grid-cols-1 sm:gap-x-6 sm:gap-y-16 sm:space-y-0 lg:gap-x-10">
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">원격판독은 어떻게 이용하나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                원격판독 문의를 주시면 담당자와 직접 1:1 상담을 진행하게 되며 이후 원하시는 세부분야의 판독 가능여부를 확인 후 원격판독 서비스를 제공해드립니다.
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  # 원격판독 절차 안내
+                </h4>
+                <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                  <ul class="pl-4">
+                    <li>1. 계약 체결/판독의 지정</li>
+                    <li>2. PACS 연동</li>
+                    <li>3. 휴먼영상의학센터 개발팀 연동</li>
+                    <li>4. 테스트 / 교육</li>
+                    <li>5. 영상판독 시작</li>
+                  </ul>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">휴먼영상의학센터 원격판독의 장점은 무엇인가요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                휴먼영상의학센터는 국내에서 가장 많은 영상의학과 전문의가 근무하는 의료기관으로 가장 안정적인 원격판독 서비스를 받아보실 수 있습니다. 또한 8개 세부분야별 영상의학과 전문의 판독으로 고품질의 전문적인 판독을 제공하며, 누적 10억장 이상의 원격판독 경험을 보유하고 있습니다. 
+              </dd> 
+            </div>
+            
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">병원의 PACS를 그대로 이용할 수 있나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                네, 병원에서 현재 사용하는 PACS와 간편한 연동을 통해 원격판독을 진행할 수 있습니다. 
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">토요일에도 판독이 가능한가요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                네. 휴먼영상의학센터는 토요일 오전 9시 ~ 13시 까지 응급판독 서비스를 지원하고 있습니다. 
+                (단, 소아, 비뇨, 혈관, 심장, 유방 파트는 토, 일 응급 판독이 불가합니다.) 
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900"> 병원의 PACS를 그대로 이용할 수 있나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                네, 병원에서 현재 사용하는 PACS와 간편한 연동을 통해 원격판독을 진행할 수 있습니다. 
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">원격판독의 법적 근거는 무엇인가요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                 의료법 제34조에 따라 의료인 간 지식·기술 지원을 위한 원격의료가 허용되며, 시설 및 장비 기준은 시행규칙 제29조를 따릅니다. 
+
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">판독 결과는 언제까지 받아볼 수 있나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                 <table class="w-full text-left border-collapse border border-gray-300">
+                  <thead>
+                    <tr>
+                      <th class="text-base/7 font-semibold text-gray-900">구분</th>
+                      <th class="text-base/7 font-semibold text-gray-900">제공 시간 기준</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-base/7 text-gray-600">일반 판독</td>
+                      <td class="text-base/7 text-gray-600">48시간 이내 완료 및 회신</td>
+                    </tr>
+                    <tr>
+                      <td class="text-base/7 text-gray-600">응급 판독</td>
+                      <td class="text-base/7 text-gray-600">2시간 이내 판독 및 회신</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">판독 소견서를 작성하지 않으면 어떻게 되나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                촬영료(70%)만 산정 가능하며, 판독료(30%)는 청구 불가합니다. 청구 적격성에도 영향을 미칩니다.
+              </dd>
+            </div>
+            
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900"> 영상판독료는 무엇인가요? </dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                영상판독료는 환자에게 CT, MRI, X-ray 등 영상검사를 실시한 후, 전문의가 판독소견서를 작성했을 때 청구할 수 있는 건강보험 급여 항목입니다.
+                즉, 단순히 촬영만 했다고 해서 받을 수 있는 것이 아니라, 아래 조건을 충족해야 합니다:
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  [건강보험 산정 기준 요약] 
+                </h4>
+                <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                  <ul class="pl-4">
+                    <li>영상진단료는 촬영료(70%) + 판독료(30%)로 구성되어 있습니다.</li>
+                    <li>판독소견서를 반드시 작성하고 보관해야만 판독료(30%)를 함께 청구할 수 있습니다.</li>
+                    <li>만약 소견서를 작성하지 않으면,  촬영료(70%)만 인정되며, 판독료는 지급되지 않습니다.</li>
+                  </ul>
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  # 건강보험 요양급여비용 산정지침 (영상진단료 관련)
+                </h4>
+                <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                  출처: 「건강보험 요양급여비용 산정지침」 제1편 제2부 제3장 "영상진단 및 방사선치료료" 제4절
+                  <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                  “영상진단료의 소정점수에는 판독료(소정점수의 30%)와 촬영료 등(소정점수의 70%)이 포함되어 있으며, 영상진단을 실시한 경우에는 반드시 판독소견서를 작성·비치하여야 한다. 판독소견서를 작성·비치하지 않은 경우에는 촬영료 등(70%)만 산정한다.”
+                  </p>
+                  <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                    즉, 상근 여부와 무관하게 영상의학과 전문의가 판독소견서를 제공하면
+                    ➝ 판독료(30%)까지 산정 가능하다는 의미입니다.
+                  </p>
+                </p>
+
+                <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                [원격판독과의 관계]
+                </p>
+                <p class="mt-2 p-2 pl-4 text-base/7 text-gray-600">
+                
+                영상의학과 전문의가 직접 판독하고 소견서를 제공해 주기 때문에, 원격판독을 통해 정당한 판독료 청구가 가능합니다. 영상의학과 전문의가 상근하지 않은 경우에도 원격판독 서비스를 이용하면 보험급여 산정 기준을 충족할 수 있습니다.
+
+                </p>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">영상진단료 구성은 어떻게 되나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                <p class="mt-2 text-base/7 text-gray-600">
+                  영상진단료는 판독료 30% + 촬영료 등 70%로 구성됩니다.
+                </p>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  환자에게 영상검사를 시행하면, 촬영료(70%)와 판독료(30%)를 포함한 전체 금액이 건강보험 수가로 인정됩니다.
+                  하지만 판독소견서를 작성해 보관하지 않으면, 촬영료(70%)만 산정되고 판독료(30%)는 청구할 수 없습니다.
+                </p>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  즉, 판독소견서를 반드시 작성하고 비치해야 전체 영상진단료를 받을 수 있습니다. 이 점에서 원격판독 서비스를 활용하면 전문의 소견을 확보할 수 있으므로, 정상적인 판독료 청구가 가능해집니다.
+                </p>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  #  추가 혜택
+                   해당 의료기관에 상근 영상의학과 전문의가 직접 판독한 경우에는, 영상진단료의 10%가 추가로 가산됩니다.
+                   (단, 원격판독은 상근 전문의에 해당하지 않으므로 가산 적용은 제외됩니다.)
+                </p>
+             </dd>
+            </div>
+            
+            
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">원격판독은 어떤 병원에 적합한가요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                영상의학과 전문의가 상주하지 않거나 전문의의 부족으로 인한 업무 과중으로 지원이 필요한 병원, 검진기관, 응급환자 진단이 필요한 병원 등에 특히 효과적입니다. 
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                   A. 영상의학과 전문의가 상근하지 않은 병원
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  전문의가 부재하여 판독이 지연되거나 불가능한 경우, 신속하고 정확한 판독 서비스를 안정적으로 제공받을 수 있습니다.
+                </p>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  소견서 작성이 가능해져 판독료 청구도 정당하게 할 수 있습니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  B. 빠른 판독이 필요한 병원
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  응급실이나 입원환자가 있어 영상판독이 필요한 경우, 응급판독을 통해 2시간 이내의 판독 대응이 가능합니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  C. CT, MRI 등 고가 장비는 보유했지만 인력이 부족한 병원
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  장비는 있지만 전문의가 부족하여 효율적인 활용이 어려운 경우, 원격판독으로 장비 활용률을 높이고 검사 서비스 품질을 향상시킬 수 있습니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  D. 검진센터, 중소병원, 의원 등
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  소규모 기관에서도 원격판독을 통해 대형병원 수준의 영상의학과 전문 판독 서비스를 제공할 수 있습니다.
+                </p>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-base/7 font-semibold text-gray-900">영상의학과 전문의 판독이 왜 중요한가요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                영상의학과 전문의 판독은 보다 정확하고 안전한 진료, 그리고 보험청구 및 검진기관 기준 충족을 위한 핵심 요소입니다. 원격판독을 통해 상근 전문의가 부재시에도 이 기준을 충분히 만족시킬 수 있습니다.
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  A. 정확한 진단과 환자 안전
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  영상의학과 전문의는 영상 판독에 특화된 진단 전문가입니다. 질병을 조기에 발견하고, 불필요한 추가검사를 줄여 정확하고 안전한 진료를 가능하게 합니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  B. 보험 청구를 위한 필수 조건
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  CT, MRI, X-ray 등 영상검사를 시행한 경우, 판독소견서가 작성·비치되어야만 판독료를 포함한 전액 청구가 가능합니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  C. 국민건강보험공단 검진기관 기준 충족
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  건강검진기관은 건강검진 운영세칙 제6조에 따라 영상판독 시 다음 사항을 반드시 명시해야 합니다:
+                  <ul>
+                    <li>판독소견</li>
+                    <li>판독일자</li>
+                    <li>영상의학과 전문의의 성명</li>
+                    <li>근무처</li>
+                    <li>자격번호</li>
+                    <li>서명</li>
+                  </ul>
+                </p>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  #  건강검진 운영세칙 제 6조 중<br>
+                  ②. 1. 가. 검진기관과 검사 및 판독을 의뢰받은 기관은 방사선 영상 판독소견서 (해당기관 소정양식) 에 판독소견, 판독일자, 판독을 실시한 영상의학과 전문의의 성명, 근무처, (전문의) 자격번호를 기재하고 서명한다. 다만 컴퓨터 영상처리장치 (CR), 디지털 촬영장치 (DR), 영상저장 및 전송 시스템 (Full PACS)을 이용한 경우에는 『건강검진 실시기준』 제10조 제4항 및 『암검진 실시기준』 제9조 제2항에 따라 전산매체로 관리할 수 있다.
+                </p>
+              </dd>
+                
+            </div>
+    <div>
+              <dt class="text-base/7 font-semibold text-gray-900">원격판독 시 개인정보보호는 어떻게 되나요?</dt>
+              <dd class="mt-2 text-base/7 text-gray-600">
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                의료기관 간 비식별화된 정보 연계
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  원격판독 시에는 환자의 이름, 주민등록번호 등 민감한 식별정보를 제거하거나 암호화하여 전송합니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  보안이 강화된 시스템 사용
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  환자 정보에 접근할 수 있는 인원은 최소한의 의료진으로 제한되며, 모든 열람 기록은 로그로 남아 추적이 가능합니다.
+                </p>
+                <h4 class="text-base/7 font-semibold text-gray-900 mt-4">
+                  관련 법령 철저 준수
+                </h4>
+                <p class="mt-2 text-base/7 text-gray-600">
+                  「의료법」 제21조(기록 보존), 「개인정보 보호법」 및 「의료기관 인증기준」에 따라 영상자료 및 판독소견서는 안전하게 보관됩니다.
+                  의료영상은 의료기관 간 전용 보안 네트워크 또는 암호화된 전송 시스템(PACS, VPN 등)을 통해 주고받습니다.
+                  원격판독 시에는 환자의 이름, 주민등록번호 등 민감한 식별정보를 제거하거나 암호화하여 전송합니다.
+                </p>
+              </dd>
+                
+            </div>
+            <!-- More questions... -->
+          </dl>
+        </div>
+      </div>
+    </div>
+    
+   
+    <!-- Blog section -->
+<!--      
+    <div class="bg-white py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl lg:mx-0">
+          <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">휴먼영상의학센터 소식들</h2>
+          <p class="mt-2 text-lg/8 text-gray-600">영상의학, 병원 관련 소식들을 나눕니다.</p>
+        </div>
+        <div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <article class="flex max-w-xl flex-col items-start justify-between">
+            <div class="flex items-center gap-x-4 text-xs">
+              <time datetime="2020-03-16" class="text-gray-500">Mar 16, 2020</time>
+              <a href="#" class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">Marketing</a>
+            </div>
+            <div class="group relative">
+              <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+                <a href="#">
+                  <span class="absolute inset-0"></span>
+                  Boost your conversion rate
+                </a>
+              </h3>
+              <p class="mt-5 line-clamp-3 text-sm/6 text-gray-600">Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.</p>
+            </div>
+            <div class="relative mt-8 flex items-center gap-x-4">
+              <img src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-10 rounded-full bg-gray-50">
+              <div class="text-sm/6">
+                <p class="font-semibold text-gray-900">
+                  <a href="#">
+                    <span class="absolute inset-0"></span>
+                    Michael Foster
+                  </a>
+                </p>
+                <p class="text-gray-600">Co-Founder / CTO</p>
+              </div>
+            </div>
+          </article>
+    
+          <article class="flex max-w-xl flex-col items-start justify-between">
+            <div class="flex items-center gap-x-4 text-xs">
+              <time datetime="2020-03-16" class="text-gray-500">Mar 16, 2020</time>
+              <a href="#" class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">Marketing</a>
+            </div>
+            <div class="group relative">
+              <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+                <a href="#">
+                  <span class="absolute inset-0"></span>
+                  Boost your conversion rate
+                </a>
+              </h3>
+              <p class="mt-5 line-clamp-3 text-sm/6 text-gray-600">Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.</p>
+            </div>
+            <div class="relative mt-8 flex items-center gap-x-4">
+              <img src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-10 rounded-full bg-gray-50">
+              <div class="text-sm/6">
+                <p class="font-semibold text-gray-900">
+                  <a href="#">
+                    <span class="absolute inset-0"></span>
+                    Michael Foster
+                  </a>
+                </p>
+                <p class="text-gray-600">Co-Founder / CTO</p>
+              </div>
+            </div>
+          </article>
+    
+          <article class="flex max-w-xl flex-col items-start justify-between">
+            <div class="flex items-center gap-x-4 text-xs">
+              <time datetime="2020-03-16" class="text-gray-500">Mar 16, 2020</time>
+              <a href="#" class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">Marketing</a>
+            </div>
+            <div class="group relative">
+              <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+                <a href="#">
+                  <span class="absolute inset-0"></span>
+                  Boost your conversion rate
+                </a>
+              </h3>
+              <p class="mt-5 line-clamp-3 text-sm/6 text-gray-600">Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.</p>
+            </div>
+            <div class="relative mt-8 flex items-center gap-x-4">
+              <img src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-10 rounded-full bg-gray-50">
+              <div class="text-sm/6">
+                <p class="font-semibold text-gray-900">
+                  <a href="#">
+                    <span class="absolute inset-0"></span>
+                    Michael Foster
+                  </a>
+                </p>
+                <p class="text-gray-600">Co-Founder / CTO</p>
+              </div>
+            </div>
+          </article>
+          
+          
+        </div>
+      </div>
+    </div>
+  -->
+    
+  </main>
+  {% endblock %}
+  {% block footer %}
+  {% include "web/footer.html" %}
+  {% endblock %}
+</div>

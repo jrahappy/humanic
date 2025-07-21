@@ -1,0 +1,336 @@
+{% extends "web/base.html" %}
+{% load static %}
+
+<div class="bg-white">
+
+{% block header %}
+  {% include "web/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+<main class="isolate">
+    <div class="bg-white">
+        <!-- Hero Section -->
+        <div class="relative isolate px-6 pt-14 lg:px-8">
+                  <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+        <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ffffff] to-[#ADE628] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"></div>
+      </div>
+      <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+        <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#32CD32] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"></div>
+      </div>
+
+            <div class="mx-auto max-w-5xl py-32 sm:py-48 lg:py-56">
+                <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+                    <div class="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                    
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h1 class="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl"> 휴먼영상의 원격판독 서비스</h1>
+                    <p class="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">신뢰할 수 있고 경쟁력 있는 원격판독 서비스를 제안드립니다.</p>
+                    <div class="mt-10 flex items-center justify-center gap-x-6">
+                    
+                </div>
+            </div>
+        </div>
+        <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#32CD32] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"></div>
+        </div>
+        
+    </div>
+
+    <!-- Hero Section End -->
+    <div class="bg-lime-50">
+        <div class="mx-auto max-w-7xl px-6 py-24 sm:py-24 lg:flex lg:items-center lg:justify-start lg:px-8">
+            <h2 class="max-w-2xl text-2xl/5 font-semibold tracking-tight text-gray-900 sm:text-4xl/14 mx-4 px-6">
+                휴먼영상의학센터는 <br>원격 판독 서비스를 제공하는 <br>영상의학 전문 의료기관입니다.
+            </h2>
+            <div class="mt-10 flex items-center gap-x-6 lg:mt-0 lg:shrink-0">
+                <ul class="grid grid-cols-1 gap-x-8 gap-y-4">
+                    <li class="">
+                        원격판독, 전문의 구인, 판독의 질 관리, <br>업무량 변동 대응까지 병원의 영상의학과 운영 전반을 지원합니다.
+                    </li>
+                    <li>
+                        복부, 흉부, 유방, 뇌신경 등 8개 세부 분야별 전문의가 <br>네트워크를 통해 정확하고 전문적인 판독 서비스를 제공합니다. 
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white">
+        <div class="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8">
+            <div class="w-full">
+                <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">휴먼영상의학센터 원격판독 서비스 종류</p>
+                <p class="mt-4 text-gray-500 text-center">정기 ,응급원격 판독부터 대량 및 단기 판독까지 원격판독이 필요한 전 분야의 업무수행이 가능합니다. </p>
+            </div>
+
+            <div class="mt-11 grid grid-cols-1 items-start gap-x-6 gap-y-16 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
+                <div class="card w-full bg-base-100 shadow-lg">
+                    <div class="card-body h-64">
+                        <span class="badge badge-xs badge-primary"> </span>
+                        <div class="flex flex-col justify-evenly     h-full">
+                            <h2 class="text-3xl font-bold">정기 원격판독</h2>
+                            <span class="text-xl">48시간 이내 판독</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-full bg-base-100 shadow-lg">
+                    <div class="card-body h-64">
+                        <span class="badge badge-xs badge-error">   </span>
+                        <div class="flex flex-col justify-evenly     h-full">
+                            <h2 class="text-3xl font-bold">응급 원격판독</h2>
+                            <span class="text-xl">2시간 이내 판독</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-full bg-base-100 shadow-lg">
+                    <div class="card-body h-64">
+                        <span class="badge badge-xs badge-info"> </span>
+                        <div class="flex flex-col justify-evenly     h-full">
+                            <h2 class="text-3xl font-bold">OLD 영상판독</h2>
+                            <span class="text-xl">대량, 소량 OLD 영상 판독</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-full bg-base-100 shadow-lg">
+                    <div class="card-body h-64">
+                        <span class="badge badge-xs badge-success"> </span>
+                        <div class="flex flex-col justify-evenly     h-full">
+                            <h2 class="text-3xl font-bold">단기 판독</h2>
+                            <span class="text-xl">원내 판독의 부재시(휴가, 연수)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <div class="bg-lime-700">
+        <div class="mx-auto max-w-7xl px-6 py-12 sm:py-24 lg:flex lg:items-center lg:flex-col lg:px-8">
+            <p class="mb-2 font-semibold tracking-tight text-white text-center sm:text-4xl">
+                왜 휴먼영상의학센터 원격판독일까요?
+            </p>
+           
+            <div class="mt-10 flex items-center gap-x-6 lg:mt-0 lg:shrink-0">
+            <!-- <a href="#" class="text-sm/6 font-semibold text-gray-900">Learn more <span aria-hidden="true">→</span></a> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto grid max-w-2xl grid-cols-1 items-start gap-x-8 gap-y-16 sm:gap-y-24 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div class="lg:pr-4 h-full">
+                    <div class="relative overflow-hidden rounded-3xl bg-gray-100 px-6 pt-64 pb-9 shadow-2xl sm:px-12 lg:max-w-lg lg:px-8 lg:pb-8 xl:px-10 xl:pb-10">
+                        <img src="{% static 'img/doc01.png' %}" alt="" class="absolute inset-0 rounded-3xl object-cover" />
+                        <div class="absolute inset-0 bg-gray-50 mix-blend-multiply"></div>
+                        <div aria-hidden="true" class="absolute top-1/2 left-1/2 -ml-16 -translate-x-1/2 -translate-y-1/2 transform-gpu blur-3xl">
+                            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="aspect-1097/845 w-274.25 bg-gradient-to-tr from-#ffffff to-lime-50 "></div>
+                        </div>
+                        <figure class="relative isolate mt-48">
+                            <div class="avatar-group -space-x-4">
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c_bv.png' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-abdo-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-chest-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-heart-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-inter-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-mamo-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-neuro-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-ped-1.jpg' %}" />
+                                    </div>
+                                </div>
+                                <div class="avatar">
+                                    <div class="w-16">
+                                        <img src="{% static 'img/c-skel.png' %}" />
+                                    </div>
+                                </div>
+                                
+                                <div class="avatar avatar-placeholder">
+                                    <div class="bg-neutral text-neutral-content w-12">
+                                    <span>+140</span>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <p class="mt-6 text-xl/8 font-semibold text-gray-900">
+                                영상의학과 전문의 150여명의 
+                            </p>
+                            <p class="mt-2 text-2xl/7 font-semibold text-gray-900">
+                                안정적이고 우수한 판독 서비스
+                            </p>
+                            
+                        </figure>
+                        
+                    </div>
+                </div>
+                <div>
+                    <p class="text-5xl font-semibold text-lime-800 mb-12">OVER 150 SPECIALISTS</p>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg mb-6">
+                        <p class="text-base/7 font-semibold text-indigo-600">신뢰의 파트너</p>
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-4xl">국내 최다 영상의학과 전문의 근무 </h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">휴먼영상의학센터는 영상의학과 전문의로만 구성된 순수 원격판독 센터로 국내에서 가장 많은 영상의학과 전문의가 근무하고 있는 의료기관입니다. </p>
+                        </div>
+                    </div>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg">
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-4xl">검증된 원격판독, 안정적인 판독의 운영 </h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">국내 20개 대학병원 전국 800여개 병원 고객사에게 고품질의 원격판독 서비스를 제공하며 많은 신뢰를 받아왔습니다. 검증된 원격판독 서비스 휴먼이 제공합니다. </p>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-gray-100 py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto grid max-w-2xl grid-cols-1 items-start gap-x-8 gap-y-16 sm:gap-y-24 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div class="lg:pr-4 h-full">
+                    <div class="relative overflow-hidden rounded-3xl bg-gray-100 px-6 pt-64 pb-9 shadow-2xl sm:px-12 lg:max-w-lg lg:px-8 lg:pb-8 xl:px-10 xl:pb-10">
+                        <img src="{% static 'img/hourglass.png' %}" alt="" class="absolute inset-0 rounded-3xl object-cover" />
+                        <div class="absolute inset-0 bg-gray-50 mix-blend-multiply"></div>
+                        <div aria-hidden="true" class="absolute top-1/2 left-1/2 -ml-16 -translate-x-1/2 -translate-y-1/2 transform-gpu blur-3xl">
+                            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="aspect-1097/845 w-274.25 bg-gradient-to-tr from-#ffffff to-lime-50 "></div>
+                        </div>
+                        <figure class="relative isolate mt-48">
+                            <p class="mt-6 text-xl/8 font-semibold text-gray-900">
+                            </p>
+                            <p class="mt-2 text-2xl/7 font-semibold text-gray-900">
+                            </p>
+                        </figure>
+                    </div>
+                </div>
+                <div class=" p-8 rounded-lg shadow-lg">
+                    <p class="text-5xl font-semibold text-lime-800 mb-12">FAST - Turn around time</p>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg mb-6">
+                        <p class="text-base/7 font-semibold text-indigo-600">신속한 파트너</p>
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-4xl">기간내 판독을 위한 주 단위 판독 검증</h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">기간내 판독을 위해 병원 디렉터 (대표원장단)이 매 월 판독 검증 및 성과 평가를 실시하며, 팀별 판독 품질 향상을 위해 주 단위 검증을 하고 있습니다.   </p>
+                        </div>
+                    </div>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg">
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-4xl">고품질의 판독 서비스를 위한 프로토콜 관리</h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">일관된 판독문 작성을 위해 통일된 판독 형식 공유와 안내, 메뉴얼 작성 및 준수, 의뢰병원별 이슈 관리를 통해 최상의 판톡 프로토콜을 관리를 시행하고 있습니다.  </p>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto grid max-w-2xl grid-cols-1 items-start gap-x-8 gap-y-16 sm:gap-y-24 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div class="lg:pr-4 h-full">
+                    <div class="relative overflow-hidden rounded-3xl bg-gray-100 px-6 pt-64 pb-9 shadow-2xl sm:px-12 lg:max-w-lg lg:px-8 lg:pb-8 xl:px-10 xl:pb-10">
+                        <img src="{% static 'img/kakao.png' %}" alt="" class="absolute inset-0 rounded-3xl object-cover" />
+                        <div class="absolute inset-0 bg-gray-50 mix-blend-multiply"></div>
+                        <div aria-hidden="true" class="absolute top-1/2 left-1/2 -ml-16 -translate-x-1/2 -translate-y-1/2 transform-gpu blur-3xl">
+                            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="aspect-1097/845 w-274.25 bg-gradient-to-tr from-#ffffff to-lime-50 "></div>
+                        </div>
+                        <figure class="relative isolate mt-48">
+                            <p class="mt-6 text-xl/8 font-semibold text-gray-900"></p>
+                            <p class="mt-2 text-2xl/7 font-semibold text-gray-900"></p>
+                        </figure>
+                    </div>
+                </div>
+                <div class=" p-8 rounded-lg shadow-lg">
+                    <p class="text-5xl font-semibold text-lime-800 mb-12">Real-time Communication</p>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg mb-6">
+                        <p class="text-base/7 font-semibold text-indigo-600">신속한 파트너</p>
+                        <h1 class="mt-2 text-xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-2xl">원격판독 서비스의 실시간 1:1 상담 관리 </h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">전담 코디네이터 및 콜센터를 통한 실시간 1:1 관리가 이루어지며, 해당 임상의사와 각 분야별 영상의학 전문의간 실시간 커뮤니케이션 및 진료협진을 지원합니다. </p>
+                        </div>
+                    </div>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg">
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-2xl">병원 진료와 동일, 토요일 오전에도 운영</h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">전담 코디네이터 및 콜센터는 병원 진료와 동일하게 토요일 오전에도 운영되며 이용방법문의, 장애문의, 판독결과 문의 등  최상의 서비스를 제공합니다. </p>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-gray-100 py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto grid max-w-2xl grid-cols-1 items-start gap-x-8 gap-y-16 sm:gap-y-24 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div class="lg:pr-4 h-full">
+                    <div class="relative overflow-hidden rounded-3xl bg-gray-100 px-6 pt-64 pb-9 shadow-2xl sm:px-12 lg:max-w-lg lg:px-8 lg:pb-8 xl:px-10 xl:pb-10">
+                        <img src="{% static 'img/dash00.png' %}" alt="" class="absolute inset-0 rounded-3xl object-cover" />
+                        <div class="absolute inset-0 bg-gray-50 mix-blend-multiply"></div>
+                        <div aria-hidden="true" class="absolute top-1/2 left-1/2 -ml-16 -translate-x-1/2 -translate-y-1/2 transform-gpu blur-3xl">
+                            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="aspect-1097/845 w-274.25 bg-gradient-to-tr from-#ffffff to-lime-50 "></div>
+                        </div>
+                        <figure class="relative isolate mt-24">
+                            <p class="mt-6 text-xl/8 font-semibold text-gray-900">
+                            </p>
+                            <p class="mt-2 text-2xl/7 font-semibold text-gray-900">
+                                간편한 정산, 데이터 제공으로 <br>실무진의 업무 경감 
+                            </p>
+                        </figure>
+                        
+                    </div>
+                </div>
+                <div class=" p-8 rounded-lg shadow-lg">
+                    <p class="text-5xl font-semibold text-lime-800 mb-12">Simple Settlement</p>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg mb-6">
+                        <p class="text-base/7 font-semibold text-indigo-600">정확한 파트너</p>
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-2xl">Web Dashboard 제공 - 정산시간 최소화</h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">매월 Humanrad+를 통해 정산용 판독 데이터를 공개하여, 의뢰병원 실무진의 업무를 지원하며, 투명한 정산금액 데이터를 공개합니다. </p>
+                        </div>
+                    </div>
+                    <div class="text-base/7 text-gray-700 lg:max-w-lg">
+                        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-2xl">간편한 분류별 통계 조회  </h1>
+                        <div class="max-w-xl">
+                            <p class="mt-6">판독의, 세부전공, Modality별 원하는 분류별 통계를 제공하여, 체계적이고 효율적인 현황파악 및 모니터링이 가능합니다. </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block footer %}
+  {% include "web/footer.html" %}
+{% endblock %}

@@ -29,6 +29,22 @@ def privacy(request):
     return render(request, "web/privacy.html")
 
 
+def email_policy(request):
+    return render(request, "web/email_policy.html")
+
+
+def specialties(request):
+    return render(request, "web/specialties.html")
+
+
+def intro(request):
+    return render(request, "web/intro.html")
+
+
+def faq(request):
+    return render(request, "web/faq.html")
+
+
 def clinicContact(request):
     if request.method == "POST":
         form = InquiryForm(request.POST)

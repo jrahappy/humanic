@@ -1,13 +1,15 @@
 {% load static %}
-<header class="absolute inset-x-0 top-0 z-50" x-data="{ open: false }">
+<header class="absolute inset-x-0 top-0 z-50" x-data="{ open: false, submenuOpen: false }">
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-    <div class="flex lg:flex-1">
-      <a href="/web/home" class="-m-1.5 p-1.5">
+    <div class="w-96">
+      <a href="/web/home" class="-m-1.5 p-1.5 mb-2">
         <span class="sr-only">휴먼영상의학센터</span>
-        <img class="h-12 w-auto" src="{% static 'img/human_main_logo.png' %}" alt="휴먼영상의학센터">
+        <img class="h-12 w-auto" src="{% static 'img/logo-color.png' %}" alt="휴먼영상의학센터">
       </a>
     </div>
-    <div class="flex lg:hidden">
+    
+    <!-- Mobile menu button -->
+    <div class="lg:hidden">
       <button @click="open = true"  type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
         <span class="sr-only">Open main menu</span>
         <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
@@ -15,30 +17,103 @@
         </svg>
       </button>
     </div>
-    <div class="hidden lg:flex lg:gap-x-12">
-      <a href="{% url 'web:home' %}" class="text-sm font-semibold leading-6 text-gray-900">원격판독소개</a>
-      <a href="{% url 'web:clinicContact' %}" class="text-sm font-semibold leading-6 text-gray-900">원격판독 의뢰</a>
-      <a href="{% url 'web:doctorContact' %}" class="text-sm font-semibold leading-6 text-gray-900">판독의 모심</a>
-      <a href="{% url 'web:doctorContact' %}" class="text-sm font-semibold leading-6 text-gray-900">고객지원</a>
+    
+    <!-- Desktop Navigation with Dropdown -->
+    <div class="hidden lg:flex flex-auto lg:relative">
+      <div class="flex flex-auto gap-x-12 pt-4" 
+           @mouseenter="submenuOpen = true" 
+           @mouseleave="submenuOpen = false">
+        <a href="{% url 'web:home' %}" class="text-sm font-semibold leading-6 text-gray-900 px-3 py-2 border-b-2 border-transparent hover:border-green-500 transition-colors duration-200">원격판독 소개</a>
+        <a href="{% url 'web:clinicContact' %}" class="text-sm font-semibold leading-6 text-gray-900 px-3 py-2 border-b-2 border-transparent hover:border-green-500 transition-colors duration-200">원격판독 상담</a>
+        <a href="{% url 'web:doctorContact' %}" class="text-sm font-semibold leading-6 text-gray-900 px-3 py-2 border-b-2 border-transparent hover:border-green-500 transition-colors duration-200">판독의 모심</a>
+        <a href="{% url 'web:doctorContact' %}" class="text-sm font-semibold leading-6 text-gray-900 px-3 py-2 border-b-2 border-transparent hover:border-green-500 transition-colors duration-200">고객지원</a>
+      </div>
+      
+      <!-- Unified Dropdown Menu -->
+      <div x-show="submenuOpen" 
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0 translate-y-1"
+           x-transition:enter-end="opacity-100 translate-y-0"
+           x-transition:leave="transition ease-in duration-150"
+           x-transition:leave-start="opacity-100 translate-y-0"
+           x-transition:leave-end="opacity-0 translate-y-1"
+           class="absolute top-full left-0 mt-1 rounded-md bg-white shadow-lg z-50 mr-24"
+           @mouseenter="submenuOpen = true" 
+           @mouseleave="submenuOpen = false">
+        <div class="py-4 px-2 flex flex-auto">
+          <div class="grid grid-cols-4 gap-2">
+            <!-- 원격판독 소개 서브메뉴 -->
+            <div>
+              <div class="space-y-1">
+                <a href="{% url 'web:intro' %}" class="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1 rounded">원격판독 서비스 소개</a>
+                <a href="{% url 'web:specialties' %}" class="block text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded">8개 분야별 판독센터</a>
+              </div>
+            </div>
+
+            <!-- 원격판독 상담 서브메뉴 -->
+            <div>
+              <div class="space-y-1">
+                <a href="{% url 'web:clinicContact' %}" class="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1 rounded">원격판독 상담</a>
+              </div>
+            </div>
+
+            <!-- 판독의 모심 서브메뉴 -->
+            <div>
+              <div class="space-y-1">
+                <a href="{% url 'web:doctorContact' %}" class="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1 rounded">판독의 모심</a>
+              </div>
+            </div>
+
+            <!-- 고객지원 서브메뉴 -->
+            <div>
+              <div class="space-y-1">
+                <a href="{% url 'web:faq' %}" class="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1 rounded">자주 묻는 질문</a>
+                <a href="#" class="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1 rounded">문의 사항</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+    
+    <!-- Login/Portal Section -->
+    <div class="hidden lg:flex lg:flex-none">
       {% if user.is_authenticated %}
         <a href="{% url 'briefing:index' %}" class="text-sm font-semibold leading-6 text-gray-900 me-2">HumanRad Portal</a>
       {% else %}
         <a href="{% url 'account_login' %}" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">→</span></a>
       {% endif %}
     </div>
-  </nav>
-  <div  class="lg:hidden">
     
-    <!-- Mobile Menu -->
-    <div x-show="open" x-transition class="fixed inset-0 z-50" role="dialog" aria-modal="true" id="mobile-menu">
+  
+  </nav>
+  
+  <!-- Mobile Menu -->
+  <div class="lg:hidden">
+    <div x-show="open" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50" 
+         role="dialog" 
+         aria-modal="true" 
+         id="mobile-menu">
       <div class="fixed inset-0 bg-black/30" @click="open = false"></div>
-      <div class="fixed inset-y-0 right-0 w-full sm:max-w-sm bg-white px-6 py-6 overflow-y-auto z-50 sm:ring-1 sm:ring-gray-900/10">
+      <div x-show="open"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="translate-x-full"
+           x-transition:enter-end="translate-x-0"
+           x-transition:leave="transition ease-in duration-200"
+           x-transition:leave-start="translate-x-0"
+           x-transition:leave-end="translate-x-full"
+           class="fixed inset-y-0 right-0 w-full sm:max-w-sm bg-white px-6 py-6 overflow-y-auto z-50 sm:ring-1 sm:ring-gray-900/10">
         <div class="flex items-center justify-between">
-          <a href="#" class="-m-1.5 p-1.5">
+          <a href="/web/home" class="-m-1.5 p-1.5">
             <span class="sr-only">휴먼영상의학센터</span>
-            <img class="h-8 w-auto" src="{% static 'static/img/human_main_logo.png' %}" alt="휴먼영상의학센터">
+            <img class="h-8 w-auto" src="{% static 'img/human_main_logo.png' %}" alt="휴먼영상의학센터">
           </a>
           <button @click="open = false" type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
             <span class="sr-only">Close menu</span>
@@ -49,18 +124,45 @@
         </div>
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-500/10">
+            <!-- 원격판독 소개 섹션 -->
             <div class="space-y-2 py-6">
-              <a href="{% url 'web:home' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">원격판독소개</a>
-              <a href="{% url 'web:clinicContact' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">원격판독 의뢰</a>
-              <a href="{% url 'web:doctorContact' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">판독의 모심</a>
-              <a href="{% url 'web:doctorContact' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">고객지원</a>
+              <div class="text-sm font-semibold text-gray-900 mb-3">원격판독 소개</div>
+              <a href="{% url 'web:home' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-gray-700 hover:bg-gray-50 ml-4">원격판독 서비스 소개</a>
+              <a href="{% url 'web:home' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-blue-600 hover:bg-blue-50 ml-4">8개 분야별 전문 판독센터</a>
             </div>
+            
+            <!-- 원격판독 상담 섹션 -->
+            <div class="space-y-2 py-6">
+              <div class="text-sm font-semibold text-gray-900 mb-3">원격판독 상담</div>
+              <a href="{% url 'web:clinicContact' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-gray-700 hover:bg-gray-50 ml-4">원격판독 상담</a>
+            </div>
+            
+            <!-- 판독의 모심 섹션 -->
+            <div class="space-y-2 py-6">
+              <div class="text-sm font-semibold text-gray-900 mb-3">판독의 모심</div>
+              <a href="{% url 'web:doctorContact' %}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-gray-700 hover:bg-gray-50 ml-4">판독의 모심</a>
+            </div>
+            
+            <!-- 고객지원 섹션 -->
+            <div class="space-y-2 py-6">
+              <div class="text-sm font-semibold text-gray-900 mb-3">고객지원</div>
+              <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-gray-700 hover:bg-gray-50 ml-4">자주 묻는 질문</a>
+              <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-gray-700 hover:bg-gray-50 ml-4">문의 사항</a>
+              <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-medium text-gray-700 hover:bg-gray-50 ml-4">오시는길</a>
+            </div>
+            
+            <!-- 로그인/포털 섹션 -->
             <div class="py-6">
               {% if user.is_authenticated %}
                 <a href="{% url 'briefing:index' %}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">HumanRad Portal</a>
               {% else %}
                 <a href="{% url 'account_login' %}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Log in <span aria-hidden="true">→</span></a>
               {% endif %}
+            </div>
+            
+            <!-- 브랜드 -->
+            <div class="py-6">
+              <span class="text-xl font-bold text-gray-900">Humanrad+</span>
             </div>
           </div>
         </div>

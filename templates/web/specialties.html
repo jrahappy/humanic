@@ -1,0 +1,669 @@
+{% extends "web/base.html" %}
+{% load static %}
+
+<div class="bg-white">
+
+{% block header %}
+  {% include "web/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+<main class="isolate">
+    <div class="bg-white">
+        
+        <!-- Hero Section -->
+        <div class="relative isolate px-6 pt-14 lg:px-8">
+            <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+                <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ffffff] to-[#ADE628] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"></div>
+                </div>
+            <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+                <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#32CD32] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"></div>
+            </div>
+            <div class="mx-auto max-w-5xl py-32 sm:py-48 lg:py-56">
+                <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+                    <div class="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                    
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h1 class="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl"> 국내 최초 8개 분야별 전문판독센터</h1>
+                    <p class="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">150여명의 분야별 전문 판독의들이 근무하는 휴먼영상 전문판독센터를 소개합니다.</p>
+                    <div class="mt-10 flex items-center justify-center gap-x-6">
+                    
+                </div>
+            </div>
+        </div>
+        <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#32CD32] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"></div>
+        </div>
+        
+    </div>
+
+    <!-- Hero Section End -->
+    <div class="bg-lime-50">
+        <div class="mx-auto max-w-7xl px-6 py-24 sm:py-24 lg:flex lg:items-center lg:justify-start lg:px-8">
+            <h2 class="max-w-2xl text-2xl/5 font-semibold tracking-tight text-gray-900 sm:text-4xl/14 mx-4 px-6">
+                휴먼영상의학센터는 <br>8개 세부분야별 전문판독센터를 운영하고 있습니다. 
+            </h2>
+            <div class="mt-10 flex items-center gap-x-6 lg:mt-0 lg:shrink-0">
+                <ul class="grid grid-cols-1 gap-x-8 gap-y-4">
+                    <li class="">
+                        8개 세부 전공별 전문 판독센터
+                    </li>
+                    <li>
+                        각 세부 전문 분야별 section chief
+                    </li>
+                    <li>
+                        국내 최정상급 영상의학과 전문의 선생님들
+                    </li>
+                    <li>
+                        전임의 중 최소 1년이상 해당 세부전공분야를 수료하신 전문의 선생님
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-4 lg:px-4">
+            <div class="mx-auto max-w-7xl lg:text-center shadow-lg p-8 bg-gray-50 rounded-lg">
+                <h2 class="text-base/7 font-semibold text-indigo-600 mb-4">휴먼영상의학센터 전문판독센터</h2>
+                <div class="flex flex-row w-full justify-center mt-2 bg-gray-50 rounded-lg p-4">
+                    <div class="py-4">
+                        <img class="h-100" src="{% static 'img/drNa.png' %}" alt="나동규 원장">
+                    </div>
+                    <div class="p-16">
+                        <p class="mt-2 text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl lg:text-balance content-left">나동규 원장</p>
+                        <p class="mt-6 text-lg/8 text-gray-700 text-left">
+                            Section Head Chief
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-auto mt-8 max-w-2xl sm:mt-4 lg:mt-0 lg:max-w-7xl lg:grid lg:grid-cols-4 lg:gap-x-8 lg:gap-y-10 lg:mt-8 bg-gray-50 rounded-lg shadow-lg p-8">
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        신경두경부 <br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/nerv_icon.png' %}" alt="신경두경부">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        흉부<br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/breast_icon.png' %}" alt="흉부">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        복부<br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/abdomal_icon.png' %}" alt="복수">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        심장<br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/heart_icon.png' %}" alt="심장">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        근골격 <br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/skel_icon.png' %}" alt="근골격">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        유방갑상선 <br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/mamo_icon.png' %}" alt="유방갑상선">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        소아 <br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/child_icon.png' %}" alt="소아">
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mt-2 text-2xl font-semibold text-gray-900 text-center">
+                        혈관<br>판독센터
+                    </div>
+                    <div class="mt-4 text-lg text-gray-600">
+                        <img class="inline-block size-24 rounded-full" src="{% static 'img/blood_icon.png' %}" alt="혈관">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-lime-700">
+        <div class="mx-auto max-w-7xl px-6 py-12 sm:py-24 lg:flex lg:items-center lg:flex-col lg:px-8">
+            <p class="mb-2 font-semibold tracking-tight text-white text-center sm:text-4xl">
+                8개 파트별 Section Chief와 전문 판독의를 소개합니다. 
+            </p>
+            <p class="max-w-3xl text-3xl font-semibold tracking-tight text-white text-center sm:text-4xl">
+            세부 전공별 Radiology Specialist 150+
+
+            </p>
+            <div class="mt-10 flex items-center gap-x-6 lg:mt-0 lg:shrink-0">
+            <!-- <a href="#" class="text-sm/6 font-semibold text-gray-900">Learn more <span aria-hidden="true">→</span></a> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 세부 전문의 소개 -->
+     <div class="bg-white py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-4 lg:px-4">
+            <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1">
+                <!-- 전공별 전문의 리더들 -->
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            BRAIN
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            신경두경부 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/leewoongjae.png' %}" alt="이웅재 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 이웅재 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (신경두경부)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">중앙대학교병원 임상조교수</li>
+                                        <li class="mt-1">서울대학교병원 전임의</li>
+                                        <li class="mt-1">대한영상의학회 정회원</li>
+                                        <li class="mt-1">대한신경두경부영상의학회 정회원</li>
+                                        <li class="mt-1">대한신경중재치료의학회 정회원</li>
+                                        <li class="mt-1">대한뇌졸중학회 정회원</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>신경두경부 영상의학, 신경중재치료의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>신경두경부 영상진단, 뇌혈관질환의 신경중재치료</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">김대식, 나동규, 서효빈, 손규리, 유은혜, 이상현, 이은정, 장기현, 정미선, 최성규</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            CHEST
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            흉부 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/c-heart-1.jpg' %}" alt="전수령 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 전수령 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (흉부)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">서울대학교병원 강남센터 진료교수</li>
+                                        <li class="mt-1">대한영상의학회 정회원</li>
+                                        <li class="mt-1">대한흉부영상의학회 정회원</li>
+                                        <li class="mt-1">대한심장영상의학회 정회원</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>흉부, 심장 영상의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>흉부 영상진단, 심혈관 영상진단</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">김동현, 김우선, 송용섭,심미숙, 이경희, 이녕근, 이주원, 정선영, 최윤영, 홍새롬 등.</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            Musculoskeletal
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            근골격 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/c-skel.png' %}" alt="전우선 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 전우선 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (근골격)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">前 인제대학교 상계백병원 교수</li>
+                                        <li class="mt-1">前 서울대학교병원 영상의학과 외래교수</li>
+                                        <li class="mt-1">대한영상의학회 정회원</li>
+                                        <li class="mt-1">대한근골격영상의학회 정회원</li>
+                                        <li class="mt-1">대한척추영상의학연구회 정회원</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>척추, 근골격 영상의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>척추 영상진단, 근골격, 관절 영상진단</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">김나라, 김예나, 박성희, 이주연, 전규태, 정지영, 최성규 등</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            BREAST
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            유방/갑상선 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/c-mamo-1.jpg' %}" alt="김수진 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 김수진 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (유방/갑상선)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">前 중앙대의대 영상의학과 교수</li>
+                                        <li class="mt-1">前 신촌세브란스 전임의</li>
+                                        <li class="mt-1">前 국립암센터 근무</li>
+                                        <li class="mt-1">대한영상의학회 평생회원</li>
+                                        <li class="mt-1">대한유방영상의학회 정회원</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>유방, 갑상선 영상의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>유방, 갑상선 영상 진단, 유방 및 갑상선 종양 진단 및 치료</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">김가람, 김윤정 등</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            ABDOMEN
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            복부 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/c-abdo-1.jpg' %}" alt="전주현 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 전주현 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (복부)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">前 서울대학교병원 진료교수</li>
+                                        <li class="mt-1">前 세종병원 영상의학과 과장</li>
+                                        <li class="mt-1">대한영상의학회 정회원</li>
+                                        <li class="mt-1">대한복부영상의학회 정회원</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>복부영상의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>복부 CT, MRI</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">김혜진, 김희정, 박양신, 전용식, 조성휘, 최혁재 등.</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            HEART
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            심장 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/kimjungah.png' %}" alt="김정아 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 김정아 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (심장)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">前 서울대학교병원 강남센터 진료교수</li>
+                                        <li class="mt-1">前 서울대학교 분당서울대병원 진료교수</li>
+                                        <li class="mt-1">前 인제대학교 일산백병원 조교수</li>
+                                        <li class="mt-1">前 연세대학교 용인세브란스병원 부교수</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>심장혈관 영상의학</li>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>심장 CT, MRI</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">임태환 외.</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            Pediatric
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            소아 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/c-ped-1.jpg' %}" alt="윤혜영 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 윤혜영 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (소아)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">前 성균관의대 삼성서울병원 부교수</li>
+                                        <li class="mt-1">前 분당서울대병원 진료교수</li>
+                                        <li class="mt-1">前 서울아산병원 임상교수</li>
+                                        <li class="mt-1">前 강원대학교병원 임상교수</li>
+                                        <li class="mt-1">前 대한소아영상의학회 회장</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>소아 영상의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>소아 영상진단</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">김인원, 김우선 외</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow-lg">
+                    <div class="">
+                        <p class="mt-4 text-lg font-semibold text-gray-900 text-left px-8 mt-6 ">
+                            <span class="inline-block align-middle mr-2 text-lime-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="gray-600" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="6"/>
+                                </svg>
+                            </span>
+                            Vascular
+                        </p>
+                        <p class="text-3xl font-semibold text-gray-900 text-left px-8">
+                            혈관 판독센터
+                        </p>
+                        <p class="px-8 h-5 ml-8 border-b border-gray-500"></p>
+                    </div>
+                    <div class="flex flex-row p-8 mt-2 pb-12">
+                        <div class="w-72 flex-none align-self-center mr-4">
+                            <img class="mx-auto h-48 rounded-t-full rounded-b-full" src="{% static 'img/c_bv.png' %}" alt="김영일 원장">
+                        </div>
+                        <div class="flex flex-col justify-start ml-4 w-full">
+                            <div class="p-2">
+                                <h3 class="text-lg font-semibold text-gray-900 text-left">파트장 김영일 전문의</h3>
+                            </div>
+                            <div class="flex flex-row flex-wrap flex-evenly">
+                                <div class="flex-1 p-4 ml-2">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        영상의학과 전문의 (신경두경부)
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 ">
+                                        <li class="mt-1">前 SKSH(Sheikh Khalifa Specialty Hospital) 영상의학과장</li>
+                                        <li class="mt-1">前 서울대학교병원 영상의학과 진료교수</li>
+                                        <li class="mt-1">前 국립암센터 간암센터 연구직의사</li>
+                                        <li class="mt-1">대한영상의학회 정회원</li>
+                                        <li class="mt-1">대한인터벤션영상의학회 정회원</li>                                        
+                                    </ul>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        세부전공
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>인터벤션 및 심혈관 영상의학</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        진료분야
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2">
+                                        <li>인터벤션 및 심혈관 영상진단</li>
+                                    </ul>
+                                    <p class="font-semibold text-sm text-gray-700 text-left">
+                                        판독의
+                                    </p>
+                                    <ul class="list-disc pl-6 text-gray-600 text-sm text-left font-semibold mt-2 max-w-2xl">
+                                        <li class="w-72">이상환 외</li>
+                                    </ul>
+                                </div>
+                                <div class="flex-none p-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+
+</main>
+{% endblock %}
+
+{% block footer %}
+  {% include "web/footer.html" %}
+{% endblock %}

@@ -20,6 +20,11 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ("id", "group", "sender", "content", "timestamp")
-    search_fields = ("content",)
-    list_filter = ("group", "sender", "timestamp")
+    list_display = ("id", "group", "sender", "receiver", "content_preview", "timestamp")
+    search_fields = ("content", "sender__username", "receiver__username")
+    list_filter = ("group", "sender", "receiver", "timestamp")
+    raw_id_fields = ("sender", "receiver")
+    
+    def content_preview(self, obj):
+        return obj.content[:50] + "..." if len(obj.content) > 50 else obj.content
+    content_preview.short_description = "Content"

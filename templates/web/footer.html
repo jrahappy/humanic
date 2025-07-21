@@ -1,12 +1,26 @@
-<footer class="bg-white">
+<footer class="bg-gray-900">
   <div class="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
     <nav class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6" aria-label="Footer">
-      <a href="#" class="text-gray-600 hover:text-gray-900">About</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Blog</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Jobs</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Press</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Accessibility</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Partners</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900"
+        onclick="base_modal.showModal(); return false;"
+        hx-get="{% url 'web:terms' %}" 
+        hx-target="#base_modal" 
+        hx-swap="innerHTML">이용약관</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900"
+        onclick="base_modal.showModal(); return false;"
+        hx-get="{% url 'web:privacy' %}" 
+        hx-target="#base_modal" 
+        hx-swap="innerHTML">개인정보보호정책</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900"
+        onclick="base_modal.showModal(); return false;"
+        hx-get="{% url 'web:email_policy' %}" 
+        hx-target="#base_modal" 
+        hx-swap="innerHTML">이메일 수집거부</a>
+
+      <a href="#" class="text-gray-600 hover:text-gray-900"
+        hx-get="https://humic.co.kr/pop/location-popup.html" 
+        hx-target="#base_modal" 
+        hx-swap="innerHTML">오시는길</a>
     </nav>
     <div class="mt-16 flex justify-center gap-x-10">
       <a href="#" class="text-gray-600 hover:text-gray-800">
