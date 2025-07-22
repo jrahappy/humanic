@@ -387,3 +387,14 @@ where uploadhistory_id=96 and case_id='70184898'
 # 6/16/2025 
 
     - CSV file 만들기 기능을 Celery task 로 백그라안드로 구현함
+
+# 7/20/2025 
+    - 고객병원에서 협진계약 여부 필드 추가함.
+        -> 이 필드로 협진 검사회송시에 바로 Archive 처리여부가 결정됨(False이면 바로 Archive, True 이면 Cosign 시 처리)
+    - Frontend static file 관련해서 django-vite 를 통해서 tailwindcss, htmx, alpinejs 등을 모두 하나로 번들링함
+        -> npm run build
+        -> git
+        -> server에서 collectstatic 함. 왜냐하면 production 모드에서는 static을 aws s3로 업로드하기 때문
+        => django-vite는 template tag 형태로 js, css 파일을 맵핑해주는 역할을 함. settings 에서 해당 부분을 세팅함
+
+

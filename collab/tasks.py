@@ -18,9 +18,55 @@ from accounts.models import CustomUser
 from .models import Refers, ReferHistory
 from django.utils import timezone
 from django.db import DatabaseError
+from django.db.models import Prefetch
 
 
 logger = logging.getLogger(__name__)
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    max_retries=3,
+    default_retry_delay=30,
+)
+def update_interpreted_refer_status_for_not_contract_customer(self):
+    try:
+        human_ic = CustomUser.objects.get(username="HumanIC")
+        refers = (
+            Refers.objects.filter(
+                status="Interpreted",
+                referred_date__lt=timezone.now() - datetime.timedelta(days=7),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "company",
+                    queryset=Company.objects.filter(is_collab_contract=False),
+                    to_attr="non_contract_companies",
+                )
+            )
+            .order_by("referred_date")
+        )
+
+        for refer in refers.iterator():
+            if refer.status == "Archived":
+                continue
+            if refer.non_contract_companies:
+                refer.status = "Archived"
+                refer.updated_at = timezone.now()
+                refer.save(update_fields=["status", "updated_at"])
+                ReferHistory.objects.create(
+                    refer=refer,
+                    changed_status="Archived",
+                    memo="Refer archived due to non-contract status.",
+                    changed_by=human_ic,
+                    changed_at=timezone.now(),
+                )
+                logger.info(...)
+    except Exception as exc:
+        logger.error(f"Error triggering refer status update: {exc}")
+        raise self.retry(exc=exc)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
