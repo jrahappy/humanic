@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Value, CharField, Q, Sum, Count
+from django.db.models import Value, CharField, Q, Sum, Count, Prefetch
 from django.db.models.functions import Concat, ExtractYear, ExtractMonth
 from .models import (
     Refers,
@@ -50,6 +50,30 @@ from .tasks import customer_month_csv, update_refer_status, update_cosigend_refe
 from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
+
+
+def test(request):
+    """
+    A simple test view to check if the server is running.
+    """
+    refers = (
+        Refers.objects.filter(
+            status="Interpreted",
+            referred_date__lt=timezone.now() - datetime.timedelta(days=7),
+        )
+        .prefetch_related(
+            Prefetch(
+                "company",
+                queryset=Company.objects.filter(is_collab_contract=False),
+                to_attr="non_contract_companies",
+            )
+        )
+        .order_by("referred_date")
+    )
+    count_refers = refers.count()
+    return render(
+        request, "collab/test.html", {"refers": refers, "count_refers": count_refers}
+    )
 
 
 def working_setting(request):

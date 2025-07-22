@@ -49,9 +49,8 @@ def update_interpreted_refer_status_for_not_contract_customer(self):
             .order_by("referred_date")
         )
 
-        for refer in refers.iterator():
-            if refer.status == "Archived":
-                continue
+        for refer in refers:
+
             if refer.non_contract_companies:
                 refer.status = "Archived"
                 refer.updated_at = timezone.now()
@@ -63,7 +62,7 @@ def update_interpreted_refer_status_for_not_contract_customer(self):
                     changed_by=human_ic,
                     changed_at=timezone.now(),
                 )
-                logger.info(...)
+
     except Exception as exc:
         logger.error(f"Error triggering refer status update: {exc}")
         raise self.retry(exc=exc)

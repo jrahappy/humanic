@@ -379,6 +379,8 @@ WM info Human!234
     - sudo supervisorctl reread
     - sudo supervisorctl update
     - sudo supervisorctl status 
+    - sudo supervisorctl restart all / Celery restart command
+
 
 where uploadhistory_id=96 and id>=3197720
 
