@@ -1,0 +1,75 @@
+{% extends 'app_base.html' %}
+{% load custom_filters %}
+{% load widget_tweaks %}
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="card card-compact col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex gap-2 w-full">
+            <h2 class="card-title flex-initial w-64 px-4 ">
+                협진의뢰 관리
+            </h2>
+            <div class="flex-auto">
+                <form method="get" action="{% url 'crm:collab_kanban' %}" class="flex flex-row gap-2 align-bottom">
+                    <label class="input input-bordered input-sm flex items-center gap-2">
+                        <input type="text" class="grow input input-sm" placeholder="Search" name="q" value="{{q}}" />
+                    </label>
+                    <button type="submit" class="btn btn-primary btn-sm">검색</button>
+                    <button type="button" class="btn btn-sm"
+                        onclick="window.location.href='{% url 'crm:collab_kanban' %}'"
+                    >전체보기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="card card-compact col-span-4 overflow-hidden bg-base-100 shadow-sm xl:col-span-4">
+    
+    <div class="card-body grow-0 ms-6">
+        <span class="badge badge-xs badge-warning">{{ companies|length }}곳의 고객병원들</span>
+        <div class="flex justify-between">
+            <h2 class="text-2xl font-bold">병원 목록</h2>           
+        </div>
+        <div class="overflow-y-auto mt-4" style="height: calc(100vh - 200px);">
+            <ul class="mt-6 flex flex-col gap-2 text-xs">
+                {% for company in companies %}
+                <li class="mb-2">
+                    <a href="#" class="px-5 hover:bg-gray-100 hover:text-blue-500"
+                        hx-get="{% url 'crm:refers_by_company_monthly' company.id %}?s_year={{ s_year|default:'' }}&s_month={{ s_month|default:'' }}"
+                        hx-target="#data_detail"
+                        hx-swap="innerHTML"
+                        hx-indicator="#spinner"
+                    >
+                        {{ company.business_name }} 
+                    </a>
+                </li>
+                {% endfor %}
+                {% if not companies %}
+                <li class="menu-title">
+                    <span>등록된 병원이 없습니다.</span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</section>
+<section class="card card-compact col-span-8 overflow-hidden bg-base-100 shadow-sm xl:col-span-8">
+    <div id="data_detail" class="card-body grow-0">
+        
+      
+    </div>
+</section>    
+    
+{% endblock %}
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}

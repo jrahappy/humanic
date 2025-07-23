@@ -1,0 +1,80 @@
+    <div class="card-body grow-0">
+        <div class="grid grid-cols-2 gap-4">
+            <h3 class="text-lg font-bold">{{ s_month }}월 {{ company.business_name }} 협진의뢰 요약</h2>
+            <div class="flex flex-row gap-2 align-bottom">
+                <a href="#" class="btn btn-sm btn-primary"
+                    hx-get="{% url 'crm:refers_by_company_monthly' company.id %}?s_year={{ today.year|default:'' }}&s_month={{ today.month|default:'' }}"
+                    hx-target="#data_detail"
+                    hx-swap="innerHTML"
+                    hx-indicator="#spinner"
+                >
+                    {{ today.month }}월
+                </a>
+                <a href="#" class="btn btn-sm btn-primary"
+                    hx-get="{% url 'crm:refers_by_company_monthly' company.id %}?s_year={{ one_month_before.year|default:'' }}&s_month={{ one_month_before.month|default:'' }}"
+                    hx-target="#data_detail"
+                    hx-swap="innerHTML"
+                    hx-indicator="#spinner"
+                >
+                    {{ one_month_before.month }}월
+                </a>
+                <a href="#" class="btn btn-sm btn-primary"
+                    hx-get="{% url 'crm:refers_by_company_monthly' company.id %}?s_year={{ two_months_before.year|default:'' }}&s_month={{ two_months_before.month|default:'' }}"
+                    hx-target="#data_detail"
+                    hx-swap="innerHTML"
+                    hx-indicator="#spinner"
+                >
+                    {{ two_months_before.month }}월
+                </a>
+            </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="mt-4">
+            <h3 class="text-lg font-bold">진단검사별 합계</h3>
+            <table class="table table-zebra w-80">
+                <thead>
+                    <tr>
+                        <th>검사명</th>
+                        <th>건수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rs in rsd %}
+                    <tr>
+                        <td>{{ rs.diagnosis__code1 }}</td>
+                        <td>{{ rs.count }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not rsd %}
+                    <tr>
+                        <td colspan="2" class="text-center">기록된 검사가 없습니다.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div class="divider"></div>
+        
+        <div class="mt-4">
+            {% for refer in refers %}
+            <div class="border-b border-gray-200 pb-2 mb-2">
+                <div class="mb-2">
+                    <strong>{{ refer.referred_date }}</strong>: {{ refer.patient_name }} ({{ refer.patient_gender }}/{{ refer.patient_birthdate|date:"Y-m-d" }})
+
+                </div>
+                <ul class="list-disc pl-5">
+                    {% for diagnosis in refer.refersimplediagnosis_set.all %}
+                    <li> {{ diagnosis.diagnosis }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+            {% if not refers %}
+            <div class="mb-2">
+                <strong>데이터 없음</strong>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+        
