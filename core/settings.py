@@ -267,6 +267,7 @@ else:
 # DJANGO_VITE = {"default": {"dev_mode": False}}
 DJANGO_VITE = {
     "default": {
+        # "dev_mode": False
         "dev_mode": env("DEBUG"),  # Use Vite dev server in development
         # "dev_server_protocol": "http",
         # "dev_server_host": "localhost",

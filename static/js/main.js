@@ -1,4 +1,4 @@
-import '../css/main.css';
+import '@/css/main.css';
 import { sayHello } from './hello.js';
 import htmx from 'htmx.org';
 window.htmx = htmx;

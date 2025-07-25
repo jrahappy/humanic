@@ -4,9 +4,8 @@
   "main": "vite.config.js",
   "type": "module",
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.10",
-    "daisyui": "^5.0.43",
-    "tailwindcss": "^4.1.10",
+    "@tailwindcss/vite": "^4.1.11",
+    "daisyui": "^5.0.47",
     "vite": "^6.3.5"
   },
   "scripts": {
