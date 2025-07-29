@@ -42,6 +42,7 @@ venv/
 .humanic/
 humanic/
 .claude/
+**/.claude/
 .DS_Store
 Thumbs.db
 .vscode/
