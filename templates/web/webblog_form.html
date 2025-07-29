@@ -1,0 +1,179 @@
+{% extends 'app_base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}공고 수정{% else %}새 공고 작성{% endif %}
+{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">{% if form.instance.pk %}공고 수정{% else %}새 공고 작성{% endif %}</a>
+            </h2>
+            <a href="{% url 'web:webblog_list' %}" class="btn btn-ghost btn-sm">목록으로</a>
+        </div>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12 mt-4">
+    <div class="card-body">
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error mb-4">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="form-control">
+                    <label class="label" for="{{ form.category.id_for_label }}">
+                        <span class="label-text">{{ form.category.label }}</span>
+                    </label>
+                    {{ form.category|add_class:"select select-bordered w-full" }}
+                    {% if form.category.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.category.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.title.id_for_label }}">
+                        <span class="label-text">{{ form.title.label }}</span>
+                    </label>
+                    {{ form.title|add_class:"input input-bordered w-full" }}
+                    {% if form.title.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.title.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.dept.id_for_label }}">
+                        <span class="label-text">{{ form.dept.label }}</span>
+                    </label>
+                    {{ form.dept|add_class:"input input-bordered w-full" }}
+                    {% if form.dept.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.dept.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.phone.id_for_label }}">
+                        <span class="label-text">{{ form.phone.label }}</span>
+                    </label>
+                    {{ form.phone|add_class:"input input-bordered w-full" }}
+                    {% if form.phone.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.phone.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.from_date.id_for_label }}">
+                        <span class="label-text">{{ form.from_date.label }}</span>
+                    </label>
+                    {{ form.from_date|add_class:"input input-bordered w-full" }}
+                    {% if form.from_date.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.from_date.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.to_date.id_for_label }}">
+                        <span class="label-text">{{ form.to_date.label }}</span>
+                    </label>
+                    {{ form.to_date|add_class:"input input-bordered w-full" }}
+                    {% if form.to_date.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.to_date.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.status.id_for_label }}">
+                        <span class="label-text">{{ form.status.label }}</span>
+                    </label>
+                    {{ form.status|add_class:"select select-bordered w-full" }}
+                    {% if form.status.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.status.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+                
+                <div class="form-control">
+                    <label class="label" for="{{ form.featured_image.id_for_label }}">
+                        <span class="label-text">{{ form.featured_image.label }}</span>
+                    </label>
+                    <input type="file" id="{{ form.featured_image.id_for_label }}" name="featured_image" accept="image/*" class="file-input file-input-bordered w-full" />
+                    {% if form.instance.featured_image %}
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-600">현재 이미지:</p>
+                        <img src="{{ form.instance.featured_image.url }}" alt="Current featured image" class="mt-1 h-32 w-auto rounded-lg shadow-sm">
+                    </div>
+                    {% endif %}
+                    {% if form.featured_image.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.featured_image.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-control mt-6">
+                <label class="label" for="{{ form.content.id_for_label }}">
+                    <span class="label-text">{{ form.content.label }}</span>
+                </label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.content.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <div class="card-actions justify-end mt-6">
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %}수정{% else %}작성{% endif %}
+                </button>
+                <a href="{% url 'web:webblog_list' %}" class="btn btn-ghost">
+                    취소
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block aside %}
+    {% include 'app_base_aside.html' %}
+{% endblock %}
+
+{% block extra_css %}
+{{ form.media.css }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{ form.media.js }}
+{% endblock %}

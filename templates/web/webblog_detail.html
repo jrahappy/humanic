@@ -1,0 +1,187 @@
+{% extends 'app_base.html' %}
+{% load humanize %}
+
+{% block title %}
+    {{ blog.title }}
+{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">{{ blog.title }}</a>
+            </h2>
+            <div class="flex gap-2">
+                {% if user == blog.author or user.is_staff %}
+                <a href="{% url 'web:webblog_update' pk=blog.pk %}" class="btn btn-primary btn-sm">수정</a>
+                <a href="{% url 'web:webblog_delete' pk=blog.pk %}" class="btn btn-error btn-sm">삭제</a>
+                {% endif %}
+                <a href="{% url 'web:webblog_list' %}" class="btn btn-ghost btn-sm">목록으로</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12 mt-4">
+    <div class="card-body">
+        
+        <div class="flex items-center gap-2 mb-4">
+            <span class="badge {% if blog.category == 'hr' %}badge-success{% else %}badge-info{% endif %} me-2">
+                {{ blog.get_category_display }}
+            </span>
+            
+            {% if blog.status == 'Published' %}
+            <span class="badge badge-success me-2">게시중</span>
+            {% elif blog.status == 'Draft' %}
+            <span class="badge badge-warning me-2">임시저장</span>
+            {% else %}
+            <span class="badge badge-neutral me-2">보관</span>
+            {% endif %}
+
+            <span class="text-sm text-base-content/70 me-2">{{ blog.dept }}</span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="stats shadow">
+                <div class="stat">
+                    <div class="stat-title">모집 기간</div>
+                    <div class="stat-value text-sm">{{ blog.from_date|date:"Y.m.d" }} ~ {{ blog.to_date|date:"Y.m.d" }}</div>
+                </div>
+            </div>
+            
+            <div class="stats shadow">
+                <div class="stat">
+                    <div class="stat-title">연락처</div>
+                    <div class="stat-value text-sm">{{ blog.phone|default:"미등록" }}</div>
+                </div>
+            </div>
+            
+            <div class="stats shadow">
+                <div class="stat">
+                    <div class="stat-title">작성자</div>
+                    <div class="stat-value text-sm">{{ blog.author.first_name|default:blog.author.username }}</div>
+                </div>
+            </div>
+            
+            <div class="stats shadow">
+                <div class="stat">
+                    <div class="stat-title">작성일</div>
+                    <div class="stat-value text-sm">{{ blog.created_at|date:"Y.m.d H:i" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="divider"></div> -->
+
+        <article class="prose max-w-none p-4 bg-base-100 rounded-lg shadow-sm">
+            {{ blog.content|safe }}
+        </article>
+    </div>
+</section>
+
+<!-- Comments Section -->
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body">
+        <h3 class="card-title mb-4">지원 현황 ({{ comments.count }})</h3>
+                
+        {% if blog.category == 'hr' %}
+        <!-- <form method="post" action="{% url 'web:webblog_comment' pk=blog.pk %}" enctype="multipart/form-data" class="mb-6">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">이름</span>
+                    </label>
+                    <input type="text" name="applicant" required class="input input-bordered">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">연락처</span>
+                    </label>
+                    <input type="text" name="phone" class="input input-bordered">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">이메일</span>
+                    </label>
+                    <input type="email" name="email" required class="input input-bordered">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">첨부파일</span>
+                    </label>
+                    <input type="file" name="attached_file" class="file-input file-input-bordered w-full">
+                </div>
+            </div>
+            <div class="form-control mt-4">
+                <label class="label cursor-pointer justify-start">
+                    <input type="checkbox" name="is_agreed" required class="checkbox mr-2">
+                    <span class="label-text">개인정보 수집 및 이용에 동의합니다</span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-success mt-4">
+                지원하기
+            </button>
+        </form> -->
+        {% endif %}
+
+        <!-- <div class="divider">지원 목록</div> -->
+
+        {% if comments %}
+        <div class="overflow-x-auto rounded-lg shadow-sm">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>연락처</th>
+                        <th>이메일</th>
+                        <th>첨부파일</th>
+                        <th>개인정보 동의</th>
+                        <th>지원일시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in comments %}
+                    <tr>
+                        <td>{{ comment.applicant }}</td>
+                        <td>{{ comment.phone|default:"-" }}</td>
+                        <td>{{ comment.email }}</td>
+                        <td>
+                            {% if comment.attached_file %}
+                            <a href="{{ comment.attached_file.url }}" class="link link-primary text-sm" target="_blank">
+                                📎 다운로드
+                            </a>
+                            {% else %}
+                            <span class="text-base-content/50">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if comment.is_agreed %}
+                            <span class="badge badge-success badge-xs">동의</span>
+                            {% else %}
+                            <span class="badge badge-ghost badge-xs">미동의</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-sm">{{ comment.created_at|date:"Y.m.d H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-8 text-base-content/70">아직 지원자가 없습니다.</div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
+
+{% block aside %}
+    {% include 'app_base_aside.html' %}
+{% endblock %}

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "celery_progress",
     "django_recaptcha",
     "ckeditor",
+    "django_summernote",
     "taggit",
     "django_cleanup.apps.CleanupConfig",
     "dogfoot",
@@ -296,6 +297,26 @@ CKEDITOR_CONFIGS = {
 }
 
 TAGGIT_CASE_INSENSITIVE = True
+
+# Summernote settings
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        'width': '100%',
+        'height': '480',
+        'toolbar': [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']],
+        ],
+    },
+    'attachment_filesize_limit': 4 * 1024 * 1024,  # 4MB
+    'attachment_require_authentication': True,
+}
 
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 # CELERY_RESULT_BACKEND = env(

@@ -1,0 +1,83 @@
+{% extends 'app_base.html' %}
+
+{% block title %}
+    문의 삭제
+{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow text-error">
+                <a class="link-hover link">문의 삭제 확인</a>
+            </h2>
+            <a href="{% url 'web:webinquiry_detail' pk=object.pk %}" class="btn btn-ghost btn-sm">취소</a>
+        </div>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12 mt-4">
+    <div class="card-body">
+        
+        <div class="alert alert-warning mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <span>정말 이 문의를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</span>
+        </div>
+        
+        <div class="bg-base-200 p-6 rounded-lg mb-6">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <div class="text-sm font-medium text-base-content/70">업체명</div>
+                    <div class="font-medium">{{ object.business_name }}</div>
+                </div>
+                <div>
+                    <div class="text-sm font-medium text-base-content/70">담당자</div>
+                    <div class="font-medium">{{ object.name }} ({{ object.position }})</div>
+                </div>
+                <div>
+                    <div class="text-sm font-medium text-base-content/70">연락처</div>
+                    <div class="font-medium">{{ object.phone }}</div>
+                </div>
+                <div>
+                    <div class="text-sm font-medium text-base-content/70">이메일</div>
+                    <div class="font-medium">{{ object.email }}</div>
+                </div>
+                <div class="sm:col-span-2">
+                    <div class="text-sm font-medium text-base-content/70">상태</div>
+                    <div class="font-medium">
+                        <span class="badge {% if object.status == 'Inquiry' %}badge-info{% elif object.status == 'In Progress' %}badge-warning{% else %}badge-success{% endif %}">
+                            {{ object.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="sm:col-span-2">
+                    <div class="text-sm font-medium text-base-content/70">작성일</div>
+                    <div class="font-medium">{{ object.created_at|date:"Y년 m월 d일 H:i" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="card-actions justify-end">
+                <button type="submit" class="btn btn-error">
+                    삭제 확인
+                </button>
+                <a href="{% url 'web:webinquiry_detail' pk=object.pk %}" class="btn btn-ghost">
+                    취소
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block aside %}
+    {% include 'app_base_aside.html' %}
+{% endblock %}

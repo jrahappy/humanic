@@ -1,0 +1,79 @@
+<div class="p-6 bg-gray-50 border-t border-gray-200">
+    <style>
+        /* Ensure proper styling for HTML content */
+        .job-content {
+            line-height: 1.6;
+        }
+        .job-content h1, .job-content h2, .job-content h3, .job-content h4, .job-content h5, .job-content h6 {
+            font-weight: bold;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .job-content h1 { font-size: 2rem; }
+        .job-content h2 { font-size: 1.5rem; }
+        .job-content h3 { font-size: 1.25rem; }
+        .job-content h4 { font-size: 1.125rem; }
+        .job-content p {
+            margin-bottom: 1rem;
+        }
+        .job-content ul, .job-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        .job-content ul { list-style-type: disc; }
+        .job-content ol { list-style-type: decimal; }
+        .job-content li {
+            margin-bottom: 0.25rem;
+        }
+        .job-content strong, .job-content b {
+            font-weight: bold;
+        }
+        .job-content em, .job-content i {
+            font-style: italic;
+        }
+        .job-content a {
+            color: #4F46E5;
+            text-decoration: underline;
+        }
+        .job-content a:hover {
+            color: #4338CA;
+        }
+        .job-content blockquote {
+            border-left: 4px solid #E5E7EB;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+        }
+        .job-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .job-content table th,
+        .job-content table td {
+            border: 1px solid #E5E7EB;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .job-content table th {
+            background-color: #F9FAFB;
+            font-weight: bold;
+        }
+        .job-content img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <div class="job-content">
+        {{ job.content|safe }}
+    </div>
+    <div class="mt-6">
+        <button 
+            hx-get="{% url 'web:job_application_modal' job_id=job.pk %}"
+            hx-target="#modal-container"
+            hx-swap="innerHTML"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            지원하기
+        </button>
+    </div>
+</div>

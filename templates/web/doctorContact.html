@@ -1,6 +1,17 @@
 {% extends "web/base.html" %}
 {% load static  %}
 
+{% block extra_css %}
+<style>
+  .htmx-request .htmx-indicator {
+    display: inline-block;
+  }
+  .htmx-indicator {
+    display: none;
+  }
+</style>
+{% endblock %}
+
 <div class="bg-white">
 
 {% block header %}
@@ -34,8 +45,99 @@
         </div>
       </div>
     </div>
+    
+    <!-- Success Message -->
+    {% if application_success %}
+    <div class="bg-green-50 border-l-4 border-green-400 p-4 mx-auto max-w-7xl my-8">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-green-800">지원 완료</h3>
+          <p class="text-sm text-green-700 mt-1">
+            {% if applied_job_title %}
+            "{{ applied_job_title }}" 포지션에 대한 지원서가 성공적으로 제출되었습니다.
+            {% else %}
+            지원서가 성공적으로 제출되었습니다.
+            {% endif %}
+            빠른 시일 내에 연락드리겠습니다.
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
+    <!-- Job Postings Section -->
+    {% if job_postings %}
+    <div class="bg-gray-50 py-16">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-3xl text-center mb-12">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">현재 채용 중인 포지션</h2>
+          <p class="mt-4 text-lg text-gray-600">아래 포지션에 지원하실 수 있습니다</p>
+        </div>
+        
+        <div class="space-y-6">
+          {% for job in job_postings %}
+          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                  채용중
+                </span>
+                <span class="text-sm text-gray-500">{{ job.created_at|date:"Y.m.d" }}</span>
+              </div>
+              
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ job.title }}</h3>
+              
+              <div class="space-y-2 mb-4">
+                <p class="text-sm text-gray-600">
+                  <span class="font-medium">부서:</span> {{ job.dept }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  <span class="font-medium">모집기간:</span> {{ job.from_date|date:"Y.m.d" }} ~ {{ job.to_date|date:"Y.m.d" }}
+                </p>
+                {% if job.phone %}
+                <p class="text-sm text-gray-600">
+                  <span class="font-medium">문의:</span> {{ job.phone }}
+                </p>
+                {% endif %}
+              </div>
+              
+              <div class="mt-6 flex items-center justify-between">
+                <button onclick="toggleJobDetail(this, '{{ job.pk }}')"
+                        class="text-indigo-600 hover:text-indigo-800 font-medium text-sm focus:outline-none">
+                  <span class="toggle-text">자세히 보기 →</span>
+                  <span class="htmx-indicator ml-1">
+                    <svg class="animate-spin h-4 w-4 text-indigo-600 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
+                </button>
+                <span class="text-sm text-gray-500">
+                  지원자 {{ job.comments.count }}명
+                </span>
+              </div>
+            </div>
+            
+            <!-- Expandable Detail Section -->
+            <div id="job-detail-{{ job.pk }}"></div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    
+    {% endif %}
+    
+    <!-- Modal Container for HTMX -->
+    <div id="modal-container"></div>
+    
     <!-- Features section -->
-    <div class="relative isolate bg-white">
+    <!-- <div class="relative isolate bg-white">
         <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
             <div class="relative px-6 pb-20 pt-24 sm:pt-24 lg:static lg:px-8 lg:py-24">
                 <div class="mx-auto max-w-xl lg:mx-0 lg:max-w-lg">
@@ -128,10 +230,82 @@
             </div>
             </form>
         </div>
-    </div>
+    </div> -->
   </main>
   {% endblock %}
   {% block footer %}
   {% include "web/footer.html" %}
   {% endblock %}
 </div>
+
+{% block extra_js %}
+<script>
+// Track expanded state
+let expandedJobs = {};
+
+// Toggle job detail
+function toggleJobDetail(button, jobId) {
+    const detailId = 'job-detail-' + jobId;
+    const detail = document.getElementById(detailId);
+    const toggleText = button.querySelector('.toggle-text');
+    
+    if (expandedJobs[jobId]) {
+        // Close detail
+        detail.innerHTML = '';
+        detail.style.maxHeight = '0';
+        toggleText.textContent = '자세히 보기 →';
+        expandedJobs[jobId] = false;
+    } else {
+        // Load detail via HTMX
+        htmx.ajax('GET', '{% url "web:job_detail_htmx" job_id=0 %}'.replace('0', jobId), {
+            target: '#' + detailId,
+            swap: 'innerHTML'
+        }).then(() => {
+            toggleText.textContent = '접기 ↑';
+            expandedJobs[jobId] = true;
+        });
+    }
+}
+
+// Handle ESC key to close modals
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+
+// Function to close modal and cleanup
+function closeModal() {
+    document.getElementById('modal-container').innerHTML = '';
+    document.body.classList.remove('modal-open');
+}
+
+// Add smooth transitions for job details after HTMX swap
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.target.id && evt.detail.target.id.startsWith('job-detail-')) {
+        // Add transition styles
+        evt.detail.target.style.transition = 'max-height 0.3s ease-out';
+        evt.detail.target.style.overflow = 'hidden';
+        
+        // If content exists, expand it
+        if (evt.detail.target.innerHTML.trim()) {
+            setTimeout(() => {
+                evt.detail.target.style.maxHeight = evt.detail.target.scrollHeight + 'px';
+            }, 10);
+        }
+    }
+});
+
+// Initialize HTMX
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if HTMX is loaded
+    if (typeof htmx === 'undefined') {
+        console.error('HTMX is not loaded!');
+    } else {
+        console.log('HTMX version:', htmx.version);
+        // Make sure HTMX processes the dynamic content
+        htmx.process(document.body);
+    }
+});
+</script>
+{% endblock %}

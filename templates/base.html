@@ -8,7 +8,7 @@
     <title>Document</title>
     {% vite_hmr_client %}
     {% vite_asset 'static/js/main.js' %}
-    
+    {% block extra_css %}{% endblock %}
 </head>
 <body class="h-full w-full">
     {% include 'messages.html' %}
@@ -18,6 +18,6 @@
         {% block content %}
         {% endblock %}
     </div>
-    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,153 @@
+{% extends 'app_base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if form.instance.pk %}문의 수정{% else %}문의 작성{% endif %}
+{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">{% if form.instance.pk %}문의 수정{% else %}문의 작성{% endif %}</a>
+            </h2>
+            <a href="{% url 'web:webinquiry_list' %}" class="btn btn-ghost btn-sm">목록으로</a>
+        </div>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12 mt-4">
+    <div class="card-body">
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error mb-4">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="form-control">
+                    <label class="label" for="{{ form.business_name.id_for_label }}">
+                        <span class="label-text">{{ form.business_name.label }}</span>
+                    </label>
+                    {{ form.business_name|add_class:"input input-bordered w-full" }}
+                    {% if form.business_name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.business_name.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.name.id_for_label }}">
+                        <span class="label-text">{{ form.name.label }}</span>
+                    </label>
+                    {{ form.name|add_class:"input input-bordered w-full" }}
+                    {% if form.name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.name.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.position.id_for_label }}">
+                        <span class="label-text">{{ form.position.label }}</span>
+                    </label>
+                    {{ form.position|add_class:"input input-bordered w-full" }}
+                    {% if form.position.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.position.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.phone.id_for_label }}">
+                        <span class="label-text">{{ form.phone.label }}</span>
+                    </label>
+                    {{ form.phone|add_class:"input input-bordered w-full" }}
+                    {% if form.phone.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.phone.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control sm:col-span-2">
+                    <label class="label" for="{{ form.email.id_for_label }}">
+                        <span class="label-text">{{ form.email.label }}</span>
+                    </label>
+                    {{ form.email|add_class:"input input-bordered w-full" }}
+                    {% if form.email.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.email.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+                
+                {% if user.is_staff %}
+                <div class="form-control">
+                    <label class="label" for="{{ form.status.id_for_label }}">
+                        <span class="label-text">{{ form.status.label }}</span>
+                    </label>
+                    {{ form.status|add_class:"select select-bordered w-full" }}
+                    {% if form.status.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.status.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-control mt-6">
+                <label class="label" for="{{ form.message.id_for_label }}">
+                    <span class="label-text">{{ form.message.label }}</span>
+                </label>
+                {{ form.message|add_class:"textarea textarea-bordered w-full h-32" }}
+                {% if form.message.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.message.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <div class="form-control mt-6">
+                <label class="label cursor-pointer justify-start">
+                    {{ form.is_agreed }}
+                    <span class="label-text ml-2">{{ form.is_agreed.label }}</span>
+                </label>
+                {% if form.is_agreed.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.is_agreed.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <div class="card-actions justify-end mt-6">
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %}수정{% else %}제출{% endif %}
+                </button>
+                <a href="{% url 'web:webinquiry_list' %}" class="btn btn-ghost">
+                    취소
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block aside %}
+    {% include 'app_base_aside.html' %}
+{% endblock %}

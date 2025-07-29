@@ -1,0 +1,134 @@
+{% extends 'app_base.html' %}
+{% load humanize %}
+
+{% block title %}
+    문의 목록
+{% endblock %}
+
+{% block header %}
+    {% include 'app_base_header.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
+    <div class="card-body grow-0">
+        <div class="flex justify-between gap-2">
+            <h2 class="card-title grow">
+                <a class="link-hover link">문의 목록</a>
+            </h2>
+            <a href="{% url 'web:webinquiry_create' %}" class="btn btn-primary btn-sm">새 문의 작성</a>
+        </div>
+    </div>
+</section>
+
+<section class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12 mt-4">
+    <div class="card-body grow-0">
+        <!-- Search and Filter -->
+        <div class="flex flex-wrap gap-4 mb-4">
+            <form method="get" class="flex gap-2">
+                <input type="text" name="search" value="{{ request.GET.search }}" 
+                       placeholder="검색어 입력..." 
+                       class="input input-bordered input-sm">
+                <button type="submit" class="btn btn-sm btn-primary">검색</button>
+            </form>
+            
+            <div class="flex gap-2">
+                <a href="{% url 'web:webinquiry_list' %}" 
+                   class="btn btn-sm {% if not request.GET.status %}btn-primary{% else %}btn-outline{% endif %}">전체</a>
+                <a href="?status=Inquiry{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                   class="btn btn-sm {% if request.GET.status == 'Inquiry' %}btn-primary{% else %}btn-outline{% endif %}">문의</a>
+                <a href="?status=In Progress{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                   class="btn btn-sm {% if request.GET.status == 'In Progress' %}btn-primary{% else %}btn-outline{% endif %}">진행중</a>
+                <a href="?status=Closed{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                   class="btn btn-sm {% if request.GET.status == 'Closed' %}btn-primary{% else %}btn-outline{% endif %}">완료</a>
+            </div>
+        </div>
+   
+        <div class="mt-4 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-hidden sm:rounded-lg">
+                        <table class="table table-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">업체명</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">담당자</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">직책</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">연락처</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">이메일</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">상태</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">작성일</th>
+                                    <th scope="col" class="relative px-3 py-3.5"><span class="sr-only">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for inquiry in inquiries %}
+                                <tr>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                        <a href="{% url 'web:webinquiry_detail' pk=inquiry.pk %}" class="link link-primary">
+                                            {{ inquiry.business_name }}
+                                        </a>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ inquiry.name }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ inquiry.position }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ inquiry.phone }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ inquiry.email }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <span class="badge {% if inquiry.status == 'Inquiry' %}badge-info{% elif inquiry.status == 'In Progress' %}badge-warning{% else %}badge-success{% endif %} badge-sm">
+                                            {{ inquiry.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ inquiry.created_at|date:"Y.m.d" }}</td>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                        {% if user.is_staff %}
+                                        <a href="{% url 'web:webinquiry_update' pk=inquiry.pk %}" class="link link-primary mr-2">수정</a>
+                                        <a href="{% url 'web:webinquiry_delete' pk=inquiry.pk %}" class="link link-error">삭제</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4 text-gray-500">등록된 문의가 없습니다.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if is_paginated %}
+        <div class="mt-4 flex justify-center">
+            <div class="join">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="join-item btn btn-sm">
+                    «
+                </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="join-item btn btn-sm {% if page_obj.number == num %}btn-active{% endif %}">
+                    {{ num }}
+                </a>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="join-item btn btn-sm">
+                    »
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+
+{% block aside %}
+
+	{% include 'app_base_aside.html' %}
+	
+{% endblock %}

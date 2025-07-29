@@ -1,0 +1,106 @@
+{% extends "web/base.html" %}
+{% load static %}
+
+{% block title %}{{ news.title }} - 휴먼영상의학센터{% endblock %}
+
+<div class="bg-white">
+
+{% block header %}
+  {% include "web/header.html" %}
+{% endblock %}
+
+{% block content %}
+  <main class="isolate">
+    <div class="bg-white">
+        <!-- Hero Section -->
+        <div class="relative isolate px-6 pt-14 lg:px-8">
+            <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+                <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#ADE628] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"></div>
+            </div>
+            <div class="mx-auto max-w-5xl py-32 sm:py-48 lg:py-56">
+                <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+                    <div class="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                    
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h1 class="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">휴먼영상의학센터 소식</h1>
+                    <p class="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">{{ news.title }}</p>
+                    <div class="mt-10 flex items-center justify-center gap-x-6">
+                        <a href="{% url 'web:news_list' %}" class="text-sm font-semibold leading-6 text-gray-900">← 목록으로 돌아가기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#32CD32] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"></div>
+        </div>
+    </div>
+    <!-- Hero Section End -->
+
+    <div class="bg-white mx-auto max-w-7xl">
+        <div class="mx-auto divider divide-gray-200 px-4 sm:px-6 lg:px-8"></div>
+    </div>
+    <div class="bg-white">
+      <div class="mx-auto max-w-7xl px-6 py-4 sm:py-4 lg:px-8">
+        <div class="mt-20 mb-32">
+          <div class="max-w-4xl mx-auto">
+            <dl class="space-y-16 sm:grid sm:grid-cols-1 sm:gap-x-6 sm:gap-y-16 sm:space-y-0 lg:gap-x-10">
+              <div>
+                <dt class="text-xl font-semibold text-gray-900">{{ news.title }}</dt>
+                <dd class="mt-4 text-base/7 text-gray-600">
+                  <div class="flex items-center text-sm text-gray-500 mb-6">
+                    <span>{{ news.author.first_name|default:news.author.username }}</span>
+                    <span class="mx-2">·</span>
+                    <time datetime="{{ news.created_at|date:'Y-m-d' }}">
+                      {{ news.created_at|date:"Y년 m월 d일" }}
+                    </time>
+                    <span class="mx-2">·</span>
+                    <span class="text-lime-600">{{ news.get_category_display }}</span>
+                  </div>
+                  
+                  {% if news.featured_image %}
+                  <div class="mb-8">
+                    <img src="{{ news.featured_image.url }}" alt="{{ news.title }}" class="w-full rounded-lg shadow-sm">
+                  </div>
+                  {% endif %}
+                  
+                  <div class="prose prose-lg max-w-none">
+                    {{ news.content|safe }}
+                  </div>
+                </dd>
+              </div>
+            </dl>
+            
+            <!-- Department and period info -->
+            {% if news.dept or news.from_date %}
+            <div class="mt-16">
+              <dl class="space-y-8">
+                {% if news.dept %}
+                <div>
+                  <dt class="text-base/7 font-semibold text-gray-900">부서</dt>
+                  <dd class="mt-2 text-base/7 text-gray-600">{{ news.dept }}</dd>
+                </div>
+                {% endif %}
+                {% if news.from_date and news.to_date %}
+                <div>
+                  <dt class="text-base/7 font-semibold text-gray-900">기간</dt>
+                  <dd class="mt-2 text-base/7 text-gray-600">
+                    {{ news.from_date|date:"Y년 m월 d일" }} ~ {{ news.to_date|date:"Y년 m월 d일" }}
+                  </dd>
+                </div>
+                {% endif %}
+              </dl>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}
+
+{% block footer %}
+  {% include "web/footer.html" %}
+{% endblock %}
+</div>

@@ -11,6 +11,7 @@ urlpatterns = [
     # re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
     # re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     path("primrose/", admin.site.urls),
+    path("summernote/", include("django_summernote.urls")),
     path("", include("web.urls")),
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),

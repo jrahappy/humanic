@@ -1,3 +1,4 @@
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,6 +17,7 @@ logs/
 logs/
 *.pid
 *.pid.lock
+
 # Project-specific
 dogfoot/
 
@@ -47,6 +49,12 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# 불필요한 기타 파일/폴더
+.claude/
+nul
+.checklist
+CLAUDE.md
 
 # Notes and documentation
 note.md

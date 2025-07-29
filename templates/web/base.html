@@ -17,7 +17,8 @@
         body {
             font-family: 'Noto Sans KR', sans-serif;
         }
-    </style> 
+    </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body class="h-full w-full">
     <div class="min-h-full">
@@ -29,5 +30,6 @@
         {% endblock %}
     </div>
     <dialog id="base_modal" class="modal"></dialog>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
