@@ -79,7 +79,7 @@
     <!-- Login/Portal Section -->
     <div class="hidden lg:flex lg:flex-none">
       {% if user.is_authenticated %}
-        <a href="{% url 'briefing:index' %}" class="text-sm font-semibold leading-6 text-gray-900 me-2">HumanRad Portal</a>
+        <a href="{% url 'briefing:index' %}" class="text-sm font-semibold leading-6 text-gray-900 me-2">Portal</a>
       {% else %}
         <a href="{% url 'account_login' %}" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">→</span></a>
       {% endif %}

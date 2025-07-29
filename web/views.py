@@ -404,9 +404,24 @@ def news_detail(request, pk):
         category="news"
     ).exclude(pk=pk).order_by("-created_at")[:3]
     
+    # Get next and previous posts
+    next_post = WebBlog.objects.filter(
+        status="Published",
+        category="news",
+        created_at__lt=news.created_at
+    ).order_by("-created_at").first()
+    
+    previous_post = WebBlog.objects.filter(
+        status="Published",
+        category="news",
+        created_at__gt=news.created_at
+    ).order_by("created_at").first()
+    
     context = {
         "news": news,
         "related_news": related_news,
+        "next_post": next_post,
+        "previous_post": previous_post,
     }
     return render(request, "web/news_detail.html", context)
 

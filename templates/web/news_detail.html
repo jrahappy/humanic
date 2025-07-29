@@ -71,28 +71,52 @@
                 </dd>
               </div>
             </dl>
-            
-            <!-- Department and period info -->
-            {% if news.dept or news.from_date %}
-            <div class="mt-16">
-              <dl class="space-y-8">
-                {% if news.dept %}
-                <div>
-                  <dt class="text-base/7 font-semibold text-gray-900">부서</dt>
-                  <dd class="mt-2 text-base/7 text-gray-600">{{ news.dept }}</dd>
+                        
+            <!-- Next/Previous Post Navigation -->
+            <div class="mt-16 border-t border-gray-200 pt-16">
+              <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                {% if previous_post %}
+                <div class="text-left">
+                  <p class="text-sm font-semibold text-gray-500 mb-2">이전 글</p>
+                  <a href="{% url 'web:news_detail' pk=previous_post.pk %}" class="group">
+                    <h3 class="text-lg font-medium text-gray-900 group-hover:text-lime-600 transition-colors">
+                      {{ previous_post.title }}
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      {{ previous_post.created_at|date:"Y년 m월 d일" }}
+                    </p>
+                  </a>
                 </div>
+                {% else %}
+                <div></div>
                 {% endif %}
-                {% if news.from_date and news.to_date %}
-                <div>
-                  <dt class="text-base/7 font-semibold text-gray-900">기간</dt>
-                  <dd class="mt-2 text-base/7 text-gray-600">
-                    {{ news.from_date|date:"Y년 m월 d일" }} ~ {{ news.to_date|date:"Y년 m월 d일" }}
-                  </dd>
+                
+                {% if next_post %}
+                <div class="text-right sm:text-right">
+                  <p class="text-sm font-semibold text-gray-500 mb-2">다음 글</p>
+                  <a href="{% url 'web:news_detail' pk=next_post.pk %}" class="group">
+                    <h3 class="text-lg font-medium text-gray-900 group-hover:text-lime-600 transition-colors">
+                      {{ next_post.title }}
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      {{ next_post.created_at|date:"Y년 m월 d일" }}
+                    </p>
+                  </a>
                 </div>
+                {% else %}
+                <div></div>
                 {% endif %}
-              </dl>
+              </div>
+              
+              <div class="mt-12 text-center">
+                <a href="{% url 'web:news_list' %}" class="inline-flex items-center gap-x-2 text-sm font-semibold text-gray-900 hover:text-lime-600 transition-colors">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                  목록으로 돌아가기
+                </a>
+              </div>
             </div>
-            {% endif %}
           </div>
         </div>
       </div>
