@@ -12,6 +12,7 @@ urlpatterns = [
     path("join-group/<int:group_id>/", views.join_group, name="join_group"),
     path("presence/", views.check_presence, name="check_presence"),
     path("echo/", views.echo_page, name="echo_page"),
+    path("screen_capture/", views.screen_capture, name="screen_capture"),
     # path('room/<str:room_name>/', views.room, name='room'),
     # path('chat/', views.chat, name='chat'),
 ]

@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import { resolve } from "path";
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: "/static/",
@@ -17,5 +17,5 @@ export default defineConfig({
   },
   plugins: [
     tailwindcss(),
-  ],  
+  ],
 })

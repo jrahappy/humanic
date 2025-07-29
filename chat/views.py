@@ -10,14 +10,12 @@ import os
 import environ
 from pathlib import Path
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+def screen_capture(request):
+    """
+    A simple view to render a screen capture page.
+    """
+    return render(request, "chat/screen_capture.html")
 
 
 def echo_page(request):

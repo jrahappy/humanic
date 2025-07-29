@@ -1,5 +1,4 @@
-import '@/css/main.css';
-import { sayHello } from './hello.js';
+import '../css/main.css';
 import htmx from 'htmx.org';
 window.htmx = htmx;
 
@@ -7,6 +6,7 @@ import Alpine from 'alpinejs'
 window.Alpine = Alpine
 Alpine.start()
 
+import { sayHello } from './hello.js';
 console.log('Hello from main.js');
 sayHello('World');
 

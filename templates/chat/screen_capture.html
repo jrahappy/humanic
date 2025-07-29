@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 화면 영역 캡처</title>
+    <style>
+        /* 기본 스타일링 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #606770;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        strong {
+            color: #1877f2;
+        }
+
+        /* 버튼 공통 스타일 */
+        .action-btn {
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* 캡처 버튼 */
+        #captureBtn {
+            background-color: #1877f2;
+        }
+
+        #captureBtn:hover {
+            background-color: #166fe5;
+        }
+        
+        /* 복사 버튼 */
+        #copyBtn {
+            background-color: #42b72a; /* Green */
+            margin-top: 1rem;
+            display: none; /* 초기에는 숨김 */
+        }
+
+        #copyBtn:hover {
+            background-color: #36a420;
+        }
+
+        /* 결과 섹션 */
+        .result-container {
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: #1c1e21;
+            border-bottom: 1px solid #dddfe2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        #resultImage {
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            max-width: 100%;
+            display: none; /* 초기에는 숨김 */
+        }
+
+        /* 화면 선택 오버레이 */
+        #selectionOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: crosshair;
+            z-index: 9999;
+        }
+
+        #selectionBox {
+            position: absolute;
+            border: 2px dashed #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>화면 영역 캡처하기</h1>
+        <p>
+            버튼을 누르면 브라우저가 공유할 화면을 선택하는 창을 띄웁니다.<br>
+            <strong>다른 탭을 캡처하려면, 선택 창에서 [탭] 항목을 고른 후 원하는 탭을 선택하세요.</strong>
+        </p>
+        
+        <button id="captureBtn" class="action-btn">캡처 시작</button>
+
+        <div class="result-container">
+            <h2>캡처 결과:</h2>
+            <img id="resultImage" alt="캡처된 이미지가 여기에 표시됩니다.">
+            <br>
+            <button id="copyBtn" class="action-btn">클립보드에 복사</button>
+        </div>
+    </div>
+
+    <script>
+        const captureBtn = document.getElementById('captureBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const resultImage = document.getElementById('resultImage');
+        let currentImageBlob = null;
+
+        captureBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { 
+                        cursor: 'always'
+                    },
+                    audio: false
+                });
+
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                video.onloadedmetadata = () => {
+                    startSelection(video, stream);
+                };
+
+            } catch (err) {
+                console.error("캡처 오류:", err);
+                // 사용자가 권한 요청을 취소한 경우는 일반적인 상황이므로 alert를 띄우지 않습니다.
+                if (err.name !== 'NotAllowedError') {
+                    alert("화면 캡처를 시작할 수 없습니다. 브라우저가 지원하지 않을 수 있습니다.");
+                }
+            }
+        });
+
+        copyBtn.addEventListener('click', async () => {
+            if (!currentImageBlob) {
+                alert('복사할 이미지가 없습니다.');
+                return;
+            }
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'image/png': currentImageBlob
+                    })
+                ]);
+                
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '복사 완료!';
+                copyBtn.disabled = true;
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.disabled = false;
+                }, 2000);
+
+            } catch (err) {
+                console.error('클립보드 복사 실패:', err);
+                alert('이미지를 클립보드에 복사할 수 없습니다. 브라우저가 지원하지 않거나 권한이 필요할 수 있습니다.');
+            }
+        });
+
+        function startSelection(video, stream) {
+            const overlay = document.createElement('div');
+            overlay.id = 'selectionOverlay';
+            document.body.appendChild(overlay);
+
+            const selectionBox = document.createElement('div');
+            selectionBox.id = 'selectionBox';
+            overlay.appendChild(selectionBox);
+
+            let startX, startY, isDrawing = false;
+
+            overlay.addEventListener('mousedown', e => {
+                startX = e.clientX;
+                startY = e.clientY;
+                isDrawing = true;
+            });
+
+            overlay.addEventListener('mousemove', e => {
+                if (!isDrawing) return;
+                const currentX = e.clientX;
+                const currentY = e.clientY;
+
+                const width = Math.abs(currentX - startX);
+                const height = Math.abs(currentY - startY);
+                const left = Math.min(startX, currentX);
+                const top = Math.min(startY, currentY);
+
+                selectionBox.style.left = `${left}px`;
+                selectionBox.style.top = `${top}px`;
+                selectionBox.style.width = `${width}px`;
+                selectionBox.style.height = `${height}px`;
+            });
+
+            overlay.addEventListener('mouseup', e => {
+                if (!isDrawing) return;
+                isDrawing = false;
+                
+                const endX = e.clientX;
+                const endY = e.clientY;
+
+                const rect = {
+                    x: Math.min(startX, endX),
+                    y: Math.min(startY, endY),
+                    width: Math.abs(endX - startX),
+                    height: Math.abs(endY - startY)
+                };
+
+                if (rect.width > 10 && rect.height > 10) {
+                    captureArea(video, rect);
+                }
+
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(overlay);
+            });
+        }
+
+        function captureArea(video, rect) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            const scale = video.videoWidth / window.innerWidth;
+            
+            canvas.width = rect.width * scale;
+            canvas.height = rect.height * scale;
+
+            context.drawImage(
+                video,
+                rect.x * scale,
+                rect.y * scale,
+                rect.width * scale,
+                rect.height * scale,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            canvas.toBlob(blob => {
+                currentImageBlob = blob;
+                const dataUrl = URL.createObjectURL(blob);
+                resultImage.src = dataUrl;
+                resultImage.style.display = 'block';
+                copyBtn.style.display = 'inline-block';
+            }, 'image/png');
+        }
+    </script>
+
+</body>
+</html>

@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "main": "vite.config.js",
   "type": "module",
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.1.11",
-    "daisyui": "^5.0.47",
-    "vite": "^6.3.5"
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build"
@@ -16,8 +11,14 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "devDependencies": {
+    "daisyui": "^5.0.47",
+    "vite": "^7.0.6"
+  },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "alpinejs": "^3.14.9",
-    "htmx.org": "^2.0.4"
+    "htmx.org": "^2.0.6",
+    "tailwindcss": "^4.1.11"
   }
 }

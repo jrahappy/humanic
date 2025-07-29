@@ -3,7 +3,10 @@ from django.http import HttpResponse
 from customer.forms import (
     InquiryForm,
 )
+from web.models import WebInquiry, WebBlog
 
+# from django.contrib.auth.decorators import login_required
+# from django.utils.decorators import method_decorator
 # from django_recaptcha.fields import RecaptchaField
 
 

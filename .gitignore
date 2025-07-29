@@ -41,12 +41,15 @@ venv/
 venv/
 .humanic/
 humanic/
+.claude/
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
 *.swp
 *.swo
+.checklist
+*.bak
 
 # Notes and documentation
 note.md
