@@ -1,7 +1,9 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Func
+from django.db.models.functions import Collate
 from django.http import HttpResponse
+from django.utils import timezone
 from .models import Opportunity, Chance
 from .forms import OpportunityForm, ChanceForm
 from customer.models import Company, CustomerLog
@@ -12,6 +14,79 @@ from .filters import RefersFilter, LogsFilter
 import datetime
 import json
 import html
+
+
+def report_by_company(request):
+    """
+    A view to generate a report by company.
+    """
+    ko_kr = Func(
+        "business_name",
+        function="ko_KR.utf8",
+        template='(%(expressions)s) COLLATE "%(function)s"',
+    )
+
+    companies = Company.objects.filter(is_collab_contract=True).order_by(ko_kr.asc())
+
+    if not companies:
+        return HttpResponse("No company found for the user.", status=404)
+
+    context = {
+        "companies": companies,
+    }
+    return render(request, "crm/report_by_company.html", context)
+
+
+def refers_by_company_monthly(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+
+    s_month = request.GET.get("s_month", "")
+    if s_month:
+        s_month = int(s_month)
+    else:
+        s_month = timezone.now().month
+    s_year = request.GET.get("s_year", "")
+    if s_year:
+        s_year = int(s_year)
+    else:
+        s_year = timezone.now().year
+
+    today = timezone.now().date()
+    today_month = today.month
+    one_month_before = today - datetime.timedelta(days=30)
+    two_months_before = today - datetime.timedelta(days=60)
+
+    selected_date = datetime.date(s_year, s_month, 1)
+    start_date = selected_date
+    last_date = (selected_date + datetime.timedelta(days=31)).replace(
+        day=1
+    ) - datetime.timedelta(days=1)
+
+    # print(start_date, last_date, "start_date, last_date")
+    s_month = selected_date.month
+    s_year = selected_date.year
+    refers = Refers.objects.filter(
+        company=company, referred_date__gte=start_date, referred_date__lte=last_date
+    ).order_by("-referred_date")
+
+    rsd = (
+        ReferSimpleDiagnosis.objects.filter(refer__in=refers)
+        .values("diagnosis__code1")
+        .annotate(count=Count("id"))
+        .order_by("-count")
+    )
+
+    context = {
+        "company": company,
+        "refers": refers,
+        "rsd": rsd,
+        "s_month": s_month,
+        "s_year": s_year,
+        "today": today,
+        "one_month_before": one_month_before,
+        "two_months_before": two_months_before,
+    }
+    return render(request, "crm/refers_by_company_monthly.html", context)
 
 
 def collab_refer_file_upload(request, refer_id):

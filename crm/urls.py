@@ -4,6 +4,12 @@ from . import views
 app_name = "crm"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("report_by_company/", views.report_by_company, name="report_by_company"),
+    path(
+        "refers_by_company_monthly/<int:company_id>/",
+        views.refers_by_company_monthly,
+        name="refers_by_company_monthly",
+    ),
     path("new_opp/<int:company_id>/", views.new_opp, name="new_opp"),
     path("opps_customer/<int:company_id>/", views.opps_customer, name="opps_customer"),
     path("edit_opp/<int:opp_id>/", views.edit_opp, name="edit_opp"),
