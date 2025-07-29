@@ -37,18 +37,6 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="form-control">
-                    <label class="label" for="{{ form.category.id_for_label }}">
-                        <span class="label-text">{{ form.category.label }}</span>
-                    </label>
-                    {{ form.category|add_class:"select select-bordered w-full" }}
-                    {% if form.category.errors %}
-                    <label class="label">
-                        <span class="label-text-alt text-error">{{ form.category.errors.0 }}</span>
-                    </label>
-                    {% endif %}
-                </div>
-
-                <div class="form-control">
                     <label class="label" for="{{ form.title.id_for_label }}">
                         <span class="label-text">{{ form.title.label }}</span>
                     </label>
@@ -56,6 +44,18 @@
                     {% if form.title.errors %}
                     <label class="label">
                         <span class="label-text-alt text-error">{{ form.title.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="{{ form.category.id_for_label }}">
+                        <span class="label-text">{{ form.category.label }}</span>
+                    </label>
+                    {{ form.category|add_class:"select select-bordered w-full" }}
+                    {% if form.category.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.category.errors.0 }}</span>
                     </label>
                     {% endif %}
                 </div>

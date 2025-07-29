@@ -44,6 +44,25 @@
             업무처리 상황판
         </a>
     </li>
+    <li>
+        <details>
+            <summary>
+                <svg
+                    data-src="https://unpkg.com/heroicons/20/solid/globe-alt.svg"
+                    class="h-5 w-5"></svg>
+                홈페이지관리
+            </summary>
+            <ul>
+                <li>
+                    <a href="{% url 'web:webblog_list' %}" class="px-5">구인/소식 공고</a>
+                </li>
+                <li>
+                    <a href="{% url 'web:webinquiry_list' %}" class="px-5">판독문의 관리</a>
+                </li>
+                
+            </ul>
+        </details>
+    </li>
     <!-- <li>
         <a href="{% url 'crm:collab' %}">
             <svg data-src="https://unpkg.com/heroicons/20/solid/building-library.svg" class="h-5 w-5"></svg>

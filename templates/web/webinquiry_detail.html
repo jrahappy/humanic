@@ -39,19 +39,42 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="stats shadow">
-                <div class="stat">
-                    <div class="stat-title">업체 정보</div>
-                    <div class="stat-value text-lg">{{ inquiry.business_name }}</div>
-                    <div class="stat-desc">{{ inquiry.position }} {{ inquiry.name }}</div>
+            <div class="card bg-base-200">
+                <div class="card-body">
+                    <h3 class="card-title text-base">업체 정보</h3>
+                    <div class="mt-2">
+                        <p class="text-xl font-semibold text-primary">{{ inquiry.business_name }}</p>
+                        <div class="mt-3 space-y-1">
+                            <p class="flex items-center gap-2">
+                                <span class="text-sm text-base-content/60">담당자:</span>
+                                <span class="font-medium">{{ inquiry.name }}</span>
+                            </p>
+                            <p class="flex items-center gap-2">
+                                <span class="text-sm text-base-content/60">직책:</span>
+                                <span class="font-medium">{{ inquiry.position }}</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="stats shadow">
-                <div class="stat">
-                    <div class="stat-title">연락처</div>
-                    <div class="stat-value text-sm">{{ inquiry.phone }}</div>
-                    <div class="stat-desc">{{ inquiry.email }}</div>
+            <div class="card bg-base-200">
+                <div class="card-body">
+                    <h3 class="card-title text-base">연락처</h3>
+                    <div class="mt-2 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            <span class="text-lg font-medium">{{ inquiry.phone }}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <a href="mailto:{{ inquiry.email }}" class="text-lg font-medium link link-primary">{{ inquiry.email }}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,7 +99,7 @@
         
         {% if user.is_staff %}
         <div class="card-actions justify-end mt-6">
-            <form method="post" action="{% url 'web:webinquiry_update' pk=inquiry.pk %}" class="flex gap-2">
+            <form method="post" action="{% url 'web:webinquiry_update_status' pk=inquiry.pk %}" class="flex gap-2">
                 {% csrf_token %}
                 <select name="status" class="select select-bordered select-sm">
                     <option value="Inquiry" {% if inquiry.status == 'Inquiry' %}selected{% endif %}>문의</option>

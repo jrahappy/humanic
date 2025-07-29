@@ -55,6 +55,12 @@ class WebBlog(models.Model):
 
 
 class WebBlogComment(models.Model):
+    choices_status = [
+        ("Pending", "Pending"),
+        ("Approved", "Approved"),
+        ("Rejected", "Rejected"),
+    ]
+    status = models.CharField(max_length=20, choices=choices_status, default="Pending")
     blog = models.ForeignKey(WebBlog, on_delete=models.CASCADE, related_name="comments")
     applicant = models.CharField(max_length=100)
     phone = models.CharField(max_length=15, blank=True, null=True)
@@ -64,6 +70,7 @@ class WebBlogComment(models.Model):
         upload_to="webblog_comments/", blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Comment by {self.applicant} on {self.blog}"

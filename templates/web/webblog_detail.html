@@ -143,7 +143,11 @@
                         <th>이메일</th>
                         <th>첨부파일</th>
                         <th>개인정보 동의</th>
+                        <th>상태</th>
                         <th>지원일시</th>
+                        {% if user.is_staff %}
+                        <th>관리</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -168,7 +172,25 @@
                             <span class="badge badge-ghost badge-xs">미동의</span>
                             {% endif %}
                         </td>
+                        <td>
+                            <span class="badge {% if comment.status == 'Pending' %}badge-warning{% elif comment.status == 'Approved' %}badge-success{% else %}badge-error{% endif %} badge-sm">
+                                {{ comment.get_status_display }}
+                            </span>
+                        </td>
                         <td class="text-sm">{{ comment.created_at|date:"Y.m.d H:i" }}</td>
+                        {% if user.is_staff %}
+                        <td>
+                            <form method="post" action="{% url 'web:webblogcomment_update_status' blog_pk=blog.pk comment_pk=comment.pk %}" class="flex gap-1">
+                                {% csrf_token %}
+                                <select name="status" class="select select-bordered select-xs">
+                                    <option value="Pending" {% if comment.status == 'Pending' %}selected{% endif %}>대기중</option>
+                                    <option value="Approved" {% if comment.status == 'Approved' %}selected{% endif %}>승인</option>
+                                    <option value="Rejected" {% if comment.status == 'Rejected' %}selected{% endif %}>거절</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-xs">변경</button>
+                            </form>
+                        </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -37,6 +37,11 @@ urlpatterns = [
         name="webblog_delete",
     ),
     path("blog/<int:pk>/comment/", views.webblog_comment, name="webblog_comment"),
+    path(
+        "blog/<int:blog_pk>/comment/<int:comment_pk>/update-status/",
+        views.webblogcomment_update_status,
+        name="webblogcomment_update_status",
+    ),
     # Job Application (separate from blog)
     path(
         "job-application/<int:job_id>/", views.job_application, name="job_application"
@@ -64,6 +69,11 @@ urlpatterns = [
         "inquiry/<int:pk>/update/",
         views.WebInquiryUpdateView.as_view(),
         name="webinquiry_update",
+    ),
+    path(
+        "inquiry/<int:pk>/update-status/",
+        views.webinquiry_update_status,
+        name="webinquiry_update_status",
     ),
     path(
         "inquiry/<int:pk>/delete/",

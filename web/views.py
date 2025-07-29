@@ -360,6 +360,40 @@ def webinquiry_success(request):
     return render(request, "web/webinquiry_success.html")
 
 
+@login_required
+def webinquiry_update_status(request, pk):
+    """Update only the status of an inquiry"""
+    if not request.user.is_staff:
+        return redirect('web:webinquiry_list')
+    
+    inquiry = get_object_or_404(WebInquiry, pk=pk)
+    
+    if request.method == "POST":
+        status = request.POST.get('status')
+        if status in ['Inquiry', 'In Progress', 'Closed']:
+            inquiry.status = status
+            inquiry.save()
+    
+    return redirect('web:webinquiry_detail', pk=pk)
+
+
+@login_required
+def webblogcomment_update_status(request, blog_pk, comment_pk):
+    """Update only the status of a blog comment"""
+    if not request.user.is_staff:
+        return redirect('web:webblog_detail', pk=blog_pk)
+    
+    comment = get_object_or_404(WebBlogComment, pk=comment_pk, blog__pk=blog_pk)
+    
+    if request.method == "POST":
+        status = request.POST.get('status')
+        if status in ['Pending', 'Approved', 'Rejected']:
+            comment.status = status
+            comment.save()
+    
+    return redirect('web:webblog_detail', pk=blog_pk)
+
+
 def news_detail(request, pk):
     """Public news detail view for visitors"""
     news = get_object_or_404(WebBlog, pk=pk, status="Published", category="news")
