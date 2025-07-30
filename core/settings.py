@@ -2,10 +2,7 @@ import environ
 import os
 from pathlib import Path
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
+env = environ.Env(DEBUG=(bool, False))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,16 +10,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = env("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-# ALLOWED_HOSTS = [
-#     "humanrad.com",
-#     "www.humanrad.com",
-#     "127.0.0.1",
-#     "localhost",
-#     "44.220.242.249",
-# ]
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 SITE_ID = 1
@@ -49,11 +38,6 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "django_htmx",
-    # "tailwind",
-    # "theme",
-    # "django_browser_reload",
-    # "crispy_forms",
-    # "crispy_tailwind",
     "import_export",
     "celery_progress",
     "django_recaptcha",
@@ -88,9 +72,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "django_browser_reload.middleware.BrowserReloadMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]
 
@@ -129,9 +111,6 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-# NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
-# TAILWIND_APP_NAME = "theme"
-# TAILWIND_CSS_PATH = "css/dist/styles.css"
 
 TEMPLATES = [
     {
@@ -241,12 +220,6 @@ if DEBUG:
         "staticfiles": {
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # For local static files in development
         },
-        # "staticfiles": {
-        #     "BACKEND": "storages.backends.s3.S3Storage",  # For static files (or keep ManifestStaticFilesStorage)
-        #     "OPTIONS": {
-        #         "location": "static",  # Optional: specify a location for static files in S3
-        #     },
-        # },
     }
 else:
     STORAGES = {
@@ -259,20 +232,12 @@ else:
                 "location": "static",  # Optional: specify a location for static files in S3
             },
         },
-        # "staticfiles": {
-        #     "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",  # For static files
-        # },
     }
 
-# DJANGO_VITE = {"default": {"dev_mode": False}}
+
 DJANGO_VITE = {
     "default": {
-        "dev_mode": env("DEBUG"),  # Use Vite dev server in development
-        # "dev_server_protocol": "http",
-        # "dev_server_host": "localhost",
-        # "dev_server_port": 5173,
-        # "assets_path": BASE_DIR / "assets",
-        # "manifest_path": BASE_DIR / "assets/manifest.json",
+        "dev_mode": env("DEBUG"),
     }
 }
 
@@ -334,71 +299,3 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Seoul"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-
-
-# CRISPY_TEMPLATE_PACK = "tailwind"  # Use Tailwind CSS for crispy forms
-
-# Logging configuration
-# LOG_DIR = "/var/log/gunicorn"  # Use system-wide log directory
-# os.makedirs(LOG_DIR, exist_ok=True)
-
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "handlers": {
-#         "file": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             "filename": os.path.join(LOG_DIR, "humanrad.log"),
-#             "encoding": "utf-8",
-#         },
-#         "console": {
-#             "level": "INFO",
-#             "class": "logging.StreamHandler",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["file", "console"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#     },
-# }
-
-# LOG_DIR = os.path.join(BASE_DIR, "logs")
-# # Ensure log directory exists
-# os.makedirs(LOG_DIR, exist_ok=True)
-
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "handlers": {
-#         "file": {
-#             "level": "DEBUG",
-#             "class": "logging.FileHandler",
-#             "filename": os.path.join(LOG_DIR, "humanrad.log"),
-#             "encoding": "utf-8",
-#         },
-#         "console": {
-#             "level": "INFO",
-#             "class": "logging.StreamHandler",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["file", "console"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#     },
-# }
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["file", "console"],
-#             "level": "DEBUG",
-#             "propagate": True,
-#         },
-#     },
-# }
