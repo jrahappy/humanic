@@ -141,3 +141,12 @@
 app_base_aside
 {% endblock %}
 
+{% block extra_css %}
+{{ form.media.css }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{ form.media.js }}
+{% endblock %}
+

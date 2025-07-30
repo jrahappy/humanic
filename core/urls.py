@@ -12,7 +12,7 @@ urlpatterns = [
     # re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     path("primrose/", admin.site.urls),
     path("summernote/", include("django_summernote.urls")),
-    path("", include("web.urls")),
+    path("", include("web.urls", namespace="web")),  # Only one should use 'web'
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),
     path("dashboard/", include("dashboard.urls")),
@@ -29,7 +29,6 @@ urlpatterns = [
     path("referdex/", include("referdex.urls")),
     path("crm/", include("crm.urls")),
     path("collab/", include("collab.urls")),
-    path("web/", include("web.urls")),
     path("api/", include("api.urls")),
     path("chat/", include("chat.urls")),
 ]
@@ -44,4 +43,5 @@ if settings.DEBUG:
 
 # Serve media files in development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-
-# from django_ckeditor_5.widgets import CKEditor5Widget
+from django_summernote.widgets import SummernoteWidget
 from .models import Post
 from django.core.exceptions import ValidationError
 
@@ -21,11 +20,9 @@ class BlogForm(ModelForm):
             # "afile": "파일첨부",
             "is_public": "공개여부",
         }
-        # widgets = {
-        #     "content": CKEditor5Widget(
-        #         attrs={"class": "django_ckeditor_5"}, config_name="default"
-        #     ),
-        # }
+        widgets = {
+            "content": SummernoteWidget(),
+        }
 
     def clean_title(self):
         title = self.cleaned_data.get("title")

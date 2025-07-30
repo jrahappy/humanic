@@ -33,7 +33,6 @@ diff-match-patch==20230430
 Django==5.1
 django-allauth==64.1.0
 django-celery-beat==2.8.1
-django-ckeditor==6.7.1
 django-cleanup==8.1.0
 django-crispy-forms==2.3
 django-debug-toolbar==4.4.6

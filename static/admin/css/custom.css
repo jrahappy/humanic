@@ -1,0 +1,55 @@
+/* Custom styles for Django admin */
+
+/* Make Summernote editor wider in admin */
+.summernote-div {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.django-summernote-widget {
+    width: 100% !important;
+}
+
+.django-summernote-widget iframe {
+    width: 100% !important;
+    min-height: 480px !important;
+}
+
+/* Adjust form field width */
+.form-row {
+    max-width: none !important;
+}
+
+fieldset.module {
+    max-width: none !important;
+}
+
+/* Make the content area wider */
+#content {
+    max-width: none !important;
+}
+
+/* Adjust the main container */
+#container {
+    max-width: 1600px !important;
+    margin: 0 auto;
+}
+
+/* Make text inputs and select boxes wider */
+input[type="text"], 
+input[type="email"], 
+input[type="url"], 
+textarea, 
+select {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Specific for Summernote container */
+.note-editor {
+    width: 100% !important;
+}
+
+.note-editing-area {
+    width: 100% !important;
+}

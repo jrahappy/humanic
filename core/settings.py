@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     "import_export",
     "celery_progress",
     "django_recaptcha",
-    "ckeditor",
     "django_summernote",
     "taggit",
     "django_cleanup.apps.CleanupConfig",
@@ -288,34 +287,35 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
 
-CKEDITOR_CONFIGS = {
-    "default": {
-        "height": 800,
-        "width": 1200,
-        "removePlugins": "exportpdf",
-    }
-}
-
 TAGGIT_CASE_INSENSITIVE = True
 
 # Summernote settings
 SUMMERNOTE_CONFIG = {
-    'summernote': {
-        'width': '100%',
-        'height': '480',
-        'toolbar': [
-            ['style', ['style']],
-            ['font', ['bold', 'underline', 'clear']],
-            ['fontname', ['fontname']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']],
+    "iframe": True,
+    "summernote": {
+        "width": "100%",
+        "height": "480",
+        "toolbar": [
+            ["style", ["style"]],
+            ["font", ["bold", "underline", "clear"]],
+            ["fontname", ["fontname"]],
+            ["color", ["color"]],
+            ["para", ["ul", "ol", "paragraph"]],
+            ["table", ["table"]],
+            ["insert", ["link", "picture", "video"]],
+            ["view", ["fullscreen", "codeview", "help"]],
         ],
     },
-    'attachment_filesize_limit': 4 * 1024 * 1024,  # 4MB
-    'attachment_require_authentication': True,
+    "attachment_filesize_limit": 4 * 1024 * 1024,  # 4MB
+    "attachment_require_authentication": True,
+    "css": (
+        "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/theme/monokai.min.css",
+    ),
+    "codemirror": {
+        "mode": "htmlmixed",
+        "lineNumbers": "true",
+        "theme": "monokai",
+    },
 }
 
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
@@ -384,6 +384,15 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 #             "level": "INFO",
 #             "class": "logging.StreamHandler",
 #         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["file", "console"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#     },
+# }
 #     },
 #     "loggers": {
 #         "django": {

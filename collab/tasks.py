@@ -108,7 +108,7 @@ def update_refer_status(self):
             logger.info(
                 f"Refer '{refer.patient_name}' (ID: {refer.id}) "
                 f"status updated from '{current_status}' to '{next_status}'. "
-                f"Total updates: {refer.update_count}"
+                f"Total updates: '{updated_count}'"
             )
         except Refers.DoesNotExist:
             logger.error(
@@ -167,7 +167,7 @@ def update_cosigend_refer_status(self):
             logger.info(
                 f"Refer '{refer.patient_name}' (ID: {refer.id}) "
                 f"status updated from '{current_status}' to '{next_status}'. "
-                f"Total updates: {refer.update_count}"
+                f"Total updates: '{updated_count}'"
             )
         except Refers.DoesNotExist:
             logger.error(

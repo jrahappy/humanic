@@ -1,7 +1,6 @@
 from django.db import models
 from accounts.models import CustomUser
 from utils.base_func import get_blog_category
-from ckeditor.fields import RichTextField
 
 
 def upload_location(instance, filename):
@@ -17,8 +16,7 @@ class Post(models.Model):
     is_public = models.BooleanField(default=False)
     category = models.CharField(max_length=50, choices=get_blog_category(), default="1")
     title = models.CharField(max_length=200, help_text="200 characters max")
-    # content = models.TextField(null=True, blank=True)
-    content = RichTextField(null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
     afile = models.FileField(upload_to=upload_location, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
