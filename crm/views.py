@@ -20,19 +20,53 @@ def report_by_company(request):
     """
     A view to generate a report by company.
     """
+
+    current_month = timezone.now().month
+    current_year = timezone.now().year
+
+    pre_month = current_month - 1 if current_month > 1 else 12
+    pre_year = current_year if current_month > 1 else current_year - 1
+
     ko_kr = Func(
         "business_name",
         function="ko_KR.utf8",
         template='(%(expressions)s) COLLATE "%(function)s"',
     )
 
-    companies = Company.objects.filter(is_collab_contract=True).order_by(ko_kr.asc())
+    companies = (
+        Company.objects.filter(is_collab_contract=True)
+        .annotate(
+            refers_count=Count(
+                "refers",
+                filter=Q(
+                    refers__referred_date__month=current_month,
+                    refers__referred_date__year=current_year,
+                ),
+            )
+        )
+        .annotate(
+            pre_refers_count=Count(
+                "refers",
+                filter=Q(
+                    refers__referred_date__month=pre_month,
+                    refers__referred_date__year=pre_year,
+                ),
+            )
+        )
+        .order_by(ko_kr.asc())
+    )
+
+    # print(companies, "companies")
 
     if not companies:
         return HttpResponse("No company found for the user.", status=404)
 
     context = {
         "companies": companies,
+        "current_month": current_month,
+        "current_year": current_year,
+        "pre_month": pre_month,
+        "pre_year": pre_year,
     }
     return render(request, "crm/report_by_company.html", context)
 

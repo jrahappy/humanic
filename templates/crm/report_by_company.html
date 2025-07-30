@@ -39,7 +39,7 @@
         <div class="overflow-y-auto mt-4" style="height: calc(100vh - 200px);">
             <ul class="mt-6 flex flex-col gap-2 text-xs">
                 {% for company in companies %}
-                <li class="mb-2">
+                <li class="mb-2 flex flex-row items-center justify-between">
                     <a href="#" class="px-5 hover:bg-gray-100 hover:text-blue-500"
                         hx-get="{% url 'crm:refers_by_company_monthly' company.id %}?s_year={{ s_year|default:'' }}&s_month={{ s_month|default:'' }}"
                         hx-target="#data_detail"
@@ -47,7 +47,20 @@
                         hx-indicator="#spinner"
                     >
                         {{ company.business_name }} 
+                        
                     </a>
+                    <div class="mt-1">
+                        {% if company.refers_count %}
+                            <span class="badge badge-xs badge-secondary w-14">{{ current_month }}월: {{ company.refers_count }}건</span>
+                        {% else %}
+                            <span class="badge badge-xs badge-ghost w-14"></span>
+                        {% endif %}
+                        {% if company.pre_refers_count %}
+                            <span class="badge badge-xs badge-primary w-14">{{ pre_month }}월: {{ company.pre_refers_count }}건</span>
+                        {% else %}  
+                            <span class="badge badge-xs badge-ghost w-14"></span>
+                        {% endif %}
+                    </div>
                 </li>
                 {% endfor %}
                 {% if not companies %}
