@@ -400,3 +400,29 @@ where uploadhistory_id=96 and case_id='70184898'
         => django-vite는 template tag 형태로 js, css 파일을 맵핑해주는 역할을 함. settings 에서 해당 부분을 세팅함
 
 
+# 7/30/2025 
+    - 협진에 필요한 SBAR 기반 템플릿
+    - 샘플 템플릿
+
+        SITUATION
+        Reporting: Dr. 홍길동 (A병원 응급실 내과)
+        Patient: 김철수 / M / 68세 / A1001234
+        Reason: 협진 의뢰 (심정지 의심, 흉통 지속 중)
+
+        BACKGROUND
+        Admission: 2025-07-29, 진단: 급성 관상동맥 증후군
+        PMH: 고혈압, 당뇨, 이전 PCI 시술 (2023년)
+        Current Tx: Aspirin, Atorvastatin, Nitroglycerin
+        Labs/Imaging: Troponin ↑, ECG ST-elevation, 흉부 CT 정상
+
+        ASSESSMENT
+        Current status: 흉통 지속, BP 130/85, HR 95, SpO₂ 88% (NRB mask)
+        Response: Nitroglycerin 투여에도 완화 없음
+        Allegy: Penicillin 알레르기 (발진)
+
+        RECOMMENDATION
+        - 긴급 심장내과 평가 및 PCI 협진 요청
+        - CT 결과 및 과거 PCI 시술 차트 복사 요청
+        - 수용 가능 여부와 예상 일정 회신 요청
+
+        

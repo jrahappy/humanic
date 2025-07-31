@@ -37,7 +37,7 @@
             <h2 class="text-2xl font-bold">병원 목록</h2>           
         </div>
         <div class="overflow-y-auto mt-4" style="height: calc(100vh - 200px);">
-            <ul class="mt-6 flex flex-col gap-2 text-xs">
+            <ul class="mt-6 flex flex-col gap-2 text-xs pe-2">
                 {% for company in companies %}
                 <li class="mb-2 flex flex-row items-center justify-between">
                     <a href="#" class="px-5 hover:bg-gray-100 hover:text-blue-500"
@@ -51,14 +51,14 @@
                     </a>
                     <div class="mt-1">
                         {% if company.refers_count %}
-                            <span class="badge badge-xs badge-secondary w-14">{{ current_month }}월: {{ company.refers_count }}건</span>
+                            <span class="badge badge-xs badge-secondary w-6">{{ company.refers_count }}</span>
                         {% else %}
-                            <span class="badge badge-xs badge-ghost w-14"></span>
+                            <span class="badge badge-xs badge-ghost w-6"></span>
                         {% endif %}
                         {% if company.pre_refers_count %}
-                            <span class="badge badge-xs badge-primary w-14">{{ pre_month }}월: {{ company.pre_refers_count }}건</span>
+                            <span class="badge badge-xs badge-primary w-6">{{ company.pre_refers_count }}</span>
                         {% else %}  
-                            <span class="badge badge-xs badge-ghost w-14"></span>
+                            <span class="badge badge-xs badge-ghost w-6"></span>
                         {% endif %}
                     </div>
                 </li>

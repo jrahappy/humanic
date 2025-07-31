@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q, Func
 from django.db.models.functions import Collate
 from django.http import HttpResponse
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from .models import Opportunity, Chance
 from .forms import OpportunityForm, ChanceForm
@@ -13,7 +14,7 @@ from collab.views import create_history
 from .filters import RefersFilter, LogsFilter
 import datetime
 import json
-import html
+from rich import print
 
 
 def report_by_company(request):
@@ -33,25 +34,52 @@ def report_by_company(request):
         template='(%(expressions)s) COLLATE "%(function)s"',
     )
 
+    # companies = (
+    #     Company.objects.filter(is_collab_contract=True)
+    #     .annotate(
+    #         refers_count=Count(
+    #             "refers",
+    #             filter=Q(
+    #                 refers__referred_date__month=current_month,
+    #                 refers__referred_date__year=current_year,
+    #             )
+    #             & ~Q(refers__status="Draft"),
+    #         ),
+    #     )  # Remove the extra closing parenthesis here
+    #     .annotate(
+    #         pre_refers_count=Count(
+    #             "refers",
+    #             filter=Q(
+    #                 refers__referred_date__month=pre_month,
+    #                 refers__referred_date__year=pre_year,
+    #             )
+    #             & ~Q(refers__status="Draft"),
+    #         ),
+    #     )
+    #     .order_by(ko_kr.asc())
+    # )
+
     companies = (
         Company.objects.filter(is_collab_contract=True)
         .annotate(
             refers_count=Count(
                 "refers",
                 filter=Q(
-                    refers__referred_date__month=current_month,
-                    refers__referred_date__year=current_year,
-                ),
-            )
-        )
+                    refers__cosigned_at__month=current_month,
+                    refers__cosigned_at__year=current_year,
+                )
+                & ~Q(refers__status="Draft"),
+            ),
+        )  # Remove the extra closing parenthesis here
         .annotate(
             pre_refers_count=Count(
                 "refers",
                 filter=Q(
-                    refers__referred_date__month=pre_month,
-                    refers__referred_date__year=pre_year,
-                ),
-            )
+                    refers__cosigned_at__month=pre_month,
+                    refers__cosigned_at__year=pre_year,
+                )
+                & ~Q(refers__status="Draft"),
+            ),
         )
         .order_by(ko_kr.asc())
     )
@@ -87,8 +115,15 @@ def refers_by_company_monthly(request, company_id):
 
     today = timezone.now().date()
     today_month = today.month
-    one_month_before = today - datetime.timedelta(days=30)
-    two_months_before = today - datetime.timedelta(days=60)
+    one_month_before = today - relativedelta(months=1)
+    two_months_before = today - relativedelta(months=2)
+
+    print(
+        today,
+        one_month_before,
+        two_months_before,
+        "today, one_month_before, two_months_before",
+    )
 
     selected_date = datetime.date(s_year, s_month, 1)
     start_date = selected_date
@@ -99,21 +134,35 @@ def refers_by_company_monthly(request, company_id):
     # print(start_date, last_date, "start_date, last_date")
     s_month = selected_date.month
     s_year = selected_date.year
-    refers = Refers.objects.filter(
-        company=company, referred_date__gte=start_date, referred_date__lte=last_date
-    ).order_by("-referred_date")
+    refers = (
+        Refers.objects.filter(
+            company=company, cosigned_at__gte=start_date, cosigned_at__lte=last_date
+        )
+        .exclude(status="Draft")
+        .order_by("-cosigned_at")
+    )
+
+    refer_count = refers.count()
 
     rsd = (
         ReferSimpleDiagnosis.objects.filter(refer__in=refers)
-        .values("diagnosis__code1")
+        .values(
+            "diagnosis__code1",
+            "diagnosis__code2",
+            "diagnosis__code3",
+            "diagnosis__code4",
+        )
         .annotate(count=Count("id"))
         .order_by("-count")
     )
+    rsd_count = ReferSimpleDiagnosis.objects.filter(refer__in=refers).count()
 
     context = {
         "company": company,
         "refers": refers,
+        "refer_count": refer_count,
         "rsd": rsd,
+        "rsd_count": rsd_count,
         "s_month": s_month,
         "s_year": s_year,
         "today": today,
