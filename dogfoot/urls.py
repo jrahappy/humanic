@@ -23,6 +23,7 @@ urlpatterns = [
         views.patient_clinic_update,
         name="patient-clinic-update",
     ),
+    path("diagrams/", views.diagrams, name="diagrams"),
     # path("megamenu/create", views.mega_menu_create, name="mega-menu-create"),
     # path("megamenu/<int:pk>/delete", views.mega_menu_delete, name="mega-menu-delete"),
     # path("megamenu/<int:pk>/update", views.mega_menu_update, name="mega-menu-update"),

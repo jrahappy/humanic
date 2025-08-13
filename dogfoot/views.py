@@ -16,6 +16,67 @@ from django.contrib.auth.decorators import login_required
 from accounts.models import CustomUser as User
 
 
+@login_required
+def diagrams(request):
+
+    context = {"apps": {}}
+
+    app_configs = apps.get_app_configs()
+
+    for app_config in app_configs:
+        app_name = app_config.name
+        if (
+            "django" in app_name
+            or "allauth" in app_name
+            or "crispy" in app_name
+            or "debug" in app_name
+            or "social" in app_name
+            or "server" in app_name
+            or "storages" in app_name
+            or "widget_tweaks" in app_name
+            or "tailwind" in app_name
+            or "theme" in app_name
+            or "import_export" in app_name
+            or "ckeditor" in app_name
+            or "celery_progress" in app_name
+        ):
+            pass
+        else:
+            context["apps"][app_name] = {"models": {}}
+
+            got_models = app_config.get_models()
+            for model in got_models:
+                model_name = model.__name__
+                context["apps"][app_name]["models"][model_name] = {"fields": {}}
+
+                fields = model._meta.get_fields()
+                for field in fields:
+                    field_name = field.name
+                    field_type = field.get_internal_type()
+                    related_table = getattr(field, "related_model", None)
+                    related_table_name = (
+                        related_table._meta.db_table if related_table else "N/A"
+                    )
+                    field_attributes = {
+                        "type": field_type,
+                        "related_table": related_table_name,
+                        # "verbose_name": field.verbose_name,
+                        # "blank": field.blank,
+                        "choices": getattr(field, "choices", "N/A"),
+                        # "default": field.default if callable(field.default) else str(field.default),
+                        # "help_text": field.help_text,
+                        "max_length": getattr(field, "max_length", "N/A"),
+                        # "null": field.null,
+                        "unique": getattr(field, "unique", "N/A"),
+                    }
+                    context["apps"][app_name]["models"][model_name]["fields"][
+                        field_name
+                    ] = field_attributes
+
+        # print(context)
+    return render(request, "dogfoot/diagrams.html", context)
+
+
 # 이 함수는  Staff이 환자 정보를 추가한 경우에 병원 정보가 누락된 환자들에 대해 병원 정보를 추가하는 함수입니다.
 @login_required
 def patient_clinic_update(request):
