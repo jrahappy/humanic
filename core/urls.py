@@ -12,6 +12,7 @@ urlpatterns = [
     # re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     path("primrose/", admin.site.urls),
     path("summernote/", include("django_summernote.urls")),
+    path("celery-progress/", include("celery_progress.urls")),
     path("", include("web.urls", namespace="web")),  # Only one should use 'web'
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),

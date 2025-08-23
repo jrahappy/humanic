@@ -60,7 +60,14 @@
                                   <!-- <td class="whitespace-nowrap px-3 py-4 ">{{ data.ReportMaster_count|intcomma }}</td> -->
                                   <td class="whitespace-nowrap px-3 py-4 ">
                                       {% if data.imported == False %}
-                                        <a href="{% url 'minibooks:create_reportmaster' data.id %}" class="btn btn-info btn-sm">생성</a>
+                                        <a
+                                        onclick="base_modal.showModal()"
+                                        hx-get="{% url 'minibooks:create_reportmaster' data.id %}"
+                                        hx-target="#base_modal"
+                                        hx-swap="innerHTML"
+                                        hx-trigger="click"
+                                        hx-class="block"
+                                        class="btn btn-info btn-sm">생성</a>
                                       {% else %}
                                         <div class="badge badge-{{ data.imported|yesno:'success,error' }} text-white">{{ data.imported|yesno:'Done,No' }}</div>
                                       {% endif %}
@@ -79,14 +86,23 @@
                                     {% else %}
                                     
                                     <div class="badge badge-{{ data.aggregated|yesno:'success,error' }} text-white">{{ data.aggregated|yesno:'Done,No' }}</div>
-                                        <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">재통계화</a>
-                                        <a 
-                                            hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
-                                            hx-target="#general_modal" 
-                                            hx-swap="outerHTML" 
+                                        <!-- <a href="{% url 'minibooks:aggregate_data' data.id %}" class="btn btn-info btn-sm">재통계화</a> -->
+                                        <button 
+                                            onclick="base_modal.showModal()" 
+                                            class="btn btn-sm btn-info" 
+                                            hx-get="{% url 'minibooks:aggregate_data' data.id %}" 
                                             hx-trigger="click" 
-                                            hx-class="block" 
-                                            class="btn btn-sm btn-info">맛보기</a>
+                                            hx-target="#base_modal" 
+                                            hx-swap="innerHTML" 
+                                            hx-indicator="#spinner">재통계화</button>
+                                        <button 
+                                            onclick="base_modal.showModal()" 
+                                            class="btn btn-sm btn-info" 
+                                            hx-get="{% url 'minibooks:aggregate_data_result' data.id %}" 
+                                            hx-trigger="click" 
+                                            hx-target="#base_modal" 
+                                            hx-swap="innerHTML" 
+                                            hx-indicator="#spinner">맛보기</button>
                                     
                                     {% endif %}  
                                     <a href="{% url 'minibooks:aggregate_data_weekday' data.id %}" class="btn btn-info btn-sm">Weekly Stat</a>
@@ -167,9 +183,6 @@
     </div>
 
 </section>
-<div id="general_modal" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    
-</div>
   
     
 {% endblock %}

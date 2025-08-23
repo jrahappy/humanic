@@ -37,7 +37,7 @@ from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 from calendar import monthrange
 from django.http import HttpResponse
-from .tasks import create_reportmaster_task, clean_data_task
+from .tasks import create_reportmaster_task, clean_data_task, long_running_task
 from django.http import JsonResponse
 import logging
 
@@ -411,7 +411,7 @@ def clean_data(request, id):
 
 def get_progress(request, id):
     v_uploadhistory = get_object_or_404(UploadHistory, id=id)
-    return render(request, "minibooks/progress.html", {"uh": v_uploadhistory})
+    return render(request, "minibooks/current_progress.html", {"uh": v_uploadhistory})
 
 
 def current_progress(request, id):
@@ -686,8 +686,14 @@ def current_progress(request, id):
 def create_reportmaster(request, id):
     try:
         upload = UploadHistory.objects.get(id=id)
-        task = create_reportmaster_task.delay(id, request.user.id)
-        return JsonResponse({"status": "Task started", "task_id": task.id})
+        if upload:
+            task = create_reportmaster_task.delay(id, request.user.id)
+            return render(request, "minibooks/progress.html", {"task_id": task.id})
+        else:
+            return JsonResponse(
+                {"status": "Error", "message": "Uploaded Data not found"}, status=404
+            )
+            # return JsonResponse({"status": "Task started", "task_id": task.id})
     except UploadHistory.DoesNotExist:
         return JsonResponse(
             {"status": "Error", "message": "Upload not found"}, status=404
@@ -1055,10 +1061,12 @@ def agg_detail(request, id):
 
 
 def partial_tracking(request, id):
+
+    async_result = long_running_task.delay(seconds=20)
     rs_tracking = UploadHistoryTrack.objects.filter(uploadhistory=id).order_by(
         "-created_at"
     )
-    context = {"rs_tracking": rs_tracking}
+    context = {"rs_tracking": rs_tracking, "task_id": async_result.id}
 
     return render(request, "minibooks/partial_tracking.html", context)
 

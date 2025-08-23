@@ -1,0 +1,32 @@
+{% load static %}
+<dialog id="dlg" class="p-6 rounded-xl w-[480px]">
+  <h3 class="text-lg font-semibold mb-3">Processing…</h3>
+  <div class="w-full h-3 bg-gray-200 rounded">
+    <div id="dlg-progress-bar" class="h-3 bg-blue-500 rounded" style="width:0%">&nbsp;</div>
+  </div>
+  <div id="dlg-progress-message" class="mt-2 text-sm text-gray-600">Waiting…</div>
+  <pre id="dlg-result" class="mt-2 text-xs text-gray-500"></pre>
+  <form method="dialog" class="mt-4">
+    <button class="px-3 py-1.5 rounded border">Close</button>
+  </form>
+</dialog>
+
+<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script>
+  async function runTask() {
+    const resp = await fetch("{% url 'start-task' %}", {
+      method: 'POST',
+      headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({seconds: 20})
+    });
+    const data = await resp.json();
+    document.getElementById('dlg').showModal();
+
+    const url = "{% url 'celery_progress:task_status' 'TASK_ID' %}".replace('TASK_ID', data.task_id);
+    CeleryProgressBar.initProgressBar(url, {
+      progressBarId: 'dlg-progress-bar',
+      progressBarMessageId: 'dlg-progress-message',
+      resultElementId: 'dlg-result'
+    });
+  }
+</script>

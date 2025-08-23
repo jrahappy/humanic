@@ -69,4 +69,5 @@ urlpatterns = [
         name="re_calc_share",
     ),
     path("get_open/<int:id>/<str:is_opened>/", views.get_open, name="get_open"),
+    # path("progress/<int:id>/", views.progress, name="progress"),
 ]

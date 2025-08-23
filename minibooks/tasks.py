@@ -1,4 +1,5 @@
 from celery import shared_task
+from celery_progress.backend import ProgressRecorder
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib import messages
@@ -10,9 +11,26 @@ from .models import UploadHistory, Company, ReportMaster
 from accounts.models import Profile, CustomUser
 from django.db.models import Q
 import logging
+import time
 
 
 logger = logging.getLogger(__name__)
+
+
+@shared_task(bind=True)
+def long_running_task(self, seconds=20):
+    """
+    Example task that reports progress each second.
+    """
+    progress = ProgressRecorder(self)
+    total = int(seconds)
+    result = 0
+    for i in range(total):
+        time.sleep(1)  # simulate work
+        result += i
+        # update the bar (current, total[, description])
+        progress.set_progress(i + 1, total, description=f"Step {i+1}/{total}")
+    return {"sum": result, "message": "Done!"}
 
 
 @shared_task
@@ -44,6 +62,7 @@ def clean_data_task(self, uploadhistory_id, user_id):
             .order_by("id")
         )
 
+        progress = ProgressRecorder(self)
         v_rawdata_count = v_rawdata.count()
         # logger.info(f"Data cleaning started for {v_rawdata_count} rows for UploadHistory ID {uploadhistory_id}")
 
@@ -136,6 +155,9 @@ def clean_data_task(self, uploadhistory_id, user_id):
                 )
                 # logger.info(f"Data for ReportMaster ID {data.id} / {i} verified")
                 i += 1
+                progress.set_progress(
+                    i + 1, v_rawdata_count, description=f"In progress: {i+1}/{total}"
+                )
             else:
                 unverified_message = ""
                 if not company_verified:
@@ -212,6 +234,8 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
     """
     a_raw = None
     try:
+
+        progress = ProgressRecorder(self)
         # Fetch UploadHistory
         a_raw = UploadHistory.objects.get(id=uploadhistory_id)
         platform = a_raw.platform
@@ -411,6 +435,8 @@ def create_reportmaster_task(self, uploadhistory_id, user_id):
                         )
                     total_processed += 1
                 i += 1
+                progress.set_progress(i, total_rows, f"Processed row {i}/{total_rows}")
+
             except Exception as e:
                 logger.error(f"Error at row {i}: {e}")
                 # Log to UploadHistory

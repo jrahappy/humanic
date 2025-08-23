@@ -1,5 +1,9 @@
-{% load crispy_forms_tags %}
-
+{% load static %}
+<style>
+    .progress-wrapper { width: 420px; height: 18px; background: #eee; border-radius: 9px; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; background: #68a9ef; } /* library defaults use this color */
+    .muted { color: #666; font-size: .9em; }
+</style>
 <section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
         <div class="flex justify-between gap-2">
@@ -53,5 +57,28 @@
         <div class="modal-box">
         </div>
     </div>
+    <div class="progress-wrapper" style="margin-top:12px;">
+        <div id="progress-bar" class="progress-bar">&nbsp;</div>
+    </div>
+    <div id="progress-bar-message">Waiting for task to start...</div>
+    <div id="celery-result" class="muted"></div>
+
+    <!-- The library JS -->
+    <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+
+    <script>
+        // === Option A: task_id provided by the view ===
+        {% if task_id %}
+        document.addEventListener("DOMContentLoaded", function () {
+            var url = "{% url 'celery_progress:task_status' task_id %}";
+            CeleryProgressBar.initProgressBar(url, {
+            // optional hooks:
+            onResult: function (el, result) {
+                el.textContent = JSON.stringify(result);
+            }
+            });
+        });
+        {% endif %}
+    </script>   
   </section>
 

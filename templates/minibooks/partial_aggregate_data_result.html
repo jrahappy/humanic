@@ -1,4 +1,4 @@
-{% load crispy_forms_tags %}
+{% load static %}
 
 <section id="general_modal" class="card col-span-12 overflow-hidden bg-base-100 shadow-sm xl:col-span-12">
     <div class="card-body grow-0">
@@ -6,12 +6,9 @@
             <h2 class="card-title grow">
                 <a class="link-hover link">Report Data (total:{{ total_rows }})</a>
             </h2>
-            <a href="#"
-                hx-get="{% url 'minibooks:index' %}"
-                hx-trigger="click"
-                hx-target="#general_modal"
-                hx-swap="outerHTML"
-                class="btn">Close</a>
+            <form method="dialog">
+                <button class="btn btn-warning btn-sm">Close</button>
+            </form>
         </div>
         <div class="overflow-x-auto overflow-y-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
             <table class="table table-sm">
